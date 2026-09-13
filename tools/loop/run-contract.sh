@@ -12,6 +12,13 @@ CRIT="$ROOT/.loop/criteria.tsv"
 ARMED="$ROOT/.loop/armed.sha256"
 OUT="$ROOT/.loop/results.json"
 
+# 중첩 방지 — 기준 안에서 계약을 다시 부르면 무한히 겹쳐 돈다.
+if [ "${IN_CONTRACT:-0}" = "1" ]; then
+  echo "계약이 계약 안에서 다시 불렸다 — 기준에 run-contract 를 넣지 마라." >&2
+  exit 79
+fi
+export IN_CONTRACT=1
+
 [ -f "$CRIT" ] || { echo "계약 파일이 없다: $CRIT" >&2; exit 78; }
 CUR="$(shasum -a 256 "$CRIT" | awk '{print $1}')"
 

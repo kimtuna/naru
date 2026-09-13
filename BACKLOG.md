@@ -43,48 +43,48 @@ P0 의 전부다** — 이게 없으면 매 바퀴가 사람 시간에 묶인다
   > **항목 이름에서 「XDG」를 뺐다** — macOS 는 XDG 를 무시한다(NUMBERS 2절).
 - [x] 계약 배선 — `criteria.tsv` + `run-contract.sh`, 증거가 `results.json` 에 기계로 쓰인다 | verify: `bash tools/loop/run-contract.sh`
 - [x] **세션 지시서 `PROMPT.md`** — 읽기 → 만들기 → 자체 QA → 커밋, 정지 규칙과 red lines | verify: 사람이 읽는다
-- [ ] **대조군 절차를 스크립트로 만든다** — 검사를 하나 일부러 깨뜨렸을 때 빨개지는지 확인 | verify: `bash tools/loop/redteam.sh`
-- [ ] `[ASK]` **드라이버 `loop.sh`** — 백로그 한 줄 뽑기 → 세션 열기 → 계약 실행 → 초록이면 커밋 → 다음.
-      **무인이냐 반자동이냐를 사람이 정해야 한다** (무인이면 예산 감지·연속 실패 감지·`[ASK]` 갈라내기가 전부 필요하다)
+- [x] **대조군 절차를 스크립트로 만든다** — 검사를 하나 일부러 깨뜨렸을 때 빨개지는지 확인 | verify: `bash tools/loop/redteam.sh`
+- [x] **드라이버 `loop.sh` · `ctl.sh`** — 백로그 한 줄 뽑기 → 세션 → 계약 → 초록이면 다음.
+      **무인으로 정했다** (2026-09-13). 정지 규칙 7개를 드라이버가 강제한다 | verify: `test -x tools/loop/loop.sh`
 
 ## P1 — 걸어다니는 세계
 
-- [ ] 색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동 | verify: `check.sh tests`
-- [ ] 논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25 | verify: `check.sh tests`
-- [ ] **마우스가 방향을 정한다** — 이동 방향과 별개. 4방향 스냅 + 히스테리시스 | verify: `check.sh tests`
-- [ ] 시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드 | verify: `check.sh tests`
-- [ ] 이동 충돌 — 바다에 못 들어가고, 해안에 비스듬히 붙으면 미끄러진다 | verify: `check.sh tests`
-- [ ] 카메라가 플레이어를 따라간다. **줌 없음** (해상도가 시야 이득이 되면 안 된다) | verify: `check.sh tests`
+- [ ] 색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동 | verify: `tools/loop/check.sh tests`
+- [ ] 논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25 | verify: `tools/loop/check.sh tests`
+- [ ] **마우스가 방향을 정한다** — 이동 방향과 별개. 4방향 스냅 + 히스테리시스 | verify: `tools/loop/check.sh tests`
+- [ ] 시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드 | verify: `tools/loop/check.sh tests`
+- [ ] 이동 충돌 — 바다에 못 들어가고, 해안에 비스듬히 붙으면 미끄러진다 | verify: `tools/loop/check.sh tests`
+- [ ] 카메라가 플레이어를 따라간다. **줌 없음** (해상도가 시야 이득이 되면 안 된다) | verify: `tools/loop/check.sh tests`
 
 ## P2 — 손: 인벤토리와 도구
 
 > **좌클릭 하나다.** 무엇을 하는지는 「무엇을 눌렀나」가 아니라 **「무엇을 겨눴나」**가 정한다.
 
-- [ ] 인벤토리 코어 (순수 클래스) — 일반 18칸, **꽉 찼을 때 넘치는 몫이 안 사라진다** | verify: `check.sh tests`
-- [ ] 화면 아래 상시 핫바 9칸 + 숫자키로 손에 들기 | verify: `godot --path . -- shot /tmp/hotbar`
-- [ ] 좌클릭 = 손에 든 것의 동작. **대상이 없어도 사용 모션이 나온다** | verify: `check.sh tests`
-- [ ] 월드 오브젝트 배치 — 나무 · 돌 · 광물 1종을 시드로 놓는다 | verify: `check.sh tests`
-- [ ] **벌목** — 도끼로 나무를 베면 목재가 바닥에 떨어진다 | verify: `check.sh tests`
-- [ ] **채광** — 곡괭이로 돌/광물을 캔다 | verify: `check.sh tests`
-- [ ] 바닥 드롭 + 걸어가서 줍기. 인벤토리가 꽉 차면 바닥에 남는다 | verify: `check.sh tests`
+- [ ] 인벤토리 코어 (순수 클래스) — 일반 18칸, **꽉 찼을 때 넘치는 몫이 안 사라진다** | verify: `tools/loop/check.sh tests`
+- [ ] 화면 아래 상시 핫바 9칸 + 숫자키로 손에 들기 | verify: `tools/loop/check.sh tests`
+- [ ] 좌클릭 = 손에 든 것의 동작. **대상이 없어도 사용 모션이 나온다** | verify: `tools/loop/check.sh tests`
+- [ ] 월드 오브젝트 배치 — 나무 · 돌 · 광물 1종을 시드로 놓는다 | verify: `tools/loop/check.sh tests`
+- [ ] **벌목** — 도끼로 나무를 베면 목재가 바닥에 떨어진다 | verify: `tools/loop/check.sh tests`
+- [ ] **채광** — 곡괭이로 돌/광물을 캔다 | verify: `tools/loop/check.sh tests`
+- [ ] 바닥 드롭 + 걸어가서 줍기. 인벤토리가 꽉 차면 바닥에 남는다 | verify: `tools/loop/check.sh tests`
 
 ## P3 — 만드는 것
 
 > **초반이 답답한 것은 의도다.** 타이머와 출력 버퍼를 처음부터 넣는다 —
 > 나중에 드론·주민이 그 버퍼에서 꺼내가는 구조가 그대로 얹힌다.
 
-- [ ] 제작대 1개 + **레시피를 데이터로** (`{inputs, output, amount}`) | verify: `check.sh tests`
-- [ ] **수량 지정 → 재료 선소모 → 타이머 → 출력 버퍼 → 수동 수령** | verify: `check.sh tests`
-- [ ] 수령 시 인벤토리가 모자라면 **들어가는 만큼만 들어가고 나머지는 버퍼에 남는다** | verify: `check.sh tests`
-- [ ] 도구 3종을 실제로 제작한다 — 도끼 · 곡괭이 · 총 | verify: `check.sh tests`
+- [ ] 제작대 1개 + **레시피를 데이터로** (`{inputs, output, amount}`) | verify: `tools/loop/check.sh tests`
+- [ ] **수량 지정 → 재료 선소모 → 타이머 → 출력 버퍼 → 수동 수령** | verify: `tools/loop/check.sh tests`
+- [ ] 수령 시 인벤토리가 모자라면 **들어가는 만큼만 들어가고 나머지는 버퍼에 남는다** | verify: `tools/loop/check.sh tests`
+- [ ] 도구 3종을 실제로 제작한다 — 도끼 · 곡괭이 · 총 | verify: `tools/loop/check.sh tests`
 - [ ] `[ASK]` **제작 타이머 기본값** — 임시로 1개당 5초. 실제로 돌려보고 사람이 정한다
 
 ## P4 — 기르는 것
 
-- [ ] 게임 내 시계 — 하루 20분(낮 10 + 밤 10), 화면이 밤에 어두워진다 | verify: `check.sh tests`
-- [ ] 밭 일구기 / 심기 / 물주기 / 수확. **간 밭을 다시 치면 흙으로 돌아간다** | verify: `check.sh tests`
-- [ ] **물 준 날에만 한 단계 자란다. 안 주면 안 자랄 뿐 죽지 않는다** | verify: `check.sh tests`
-- [ ] 조리 → **버프 음식 1종**. 먹으면 실제로 스탯이 오르고 시간이 지나면 풀린다 | verify: `check.sh tests`
+- [ ] 게임 내 시계 — 하루 20분(낮 10 + 밤 10), 화면이 밤에 어두워진다 | verify: `tools/loop/check.sh tests`
+- [ ] 밭 일구기 / 심기 / 물주기 / 수확. **간 밭을 다시 치면 흙으로 돌아간다** | verify: `tools/loop/check.sh tests`
+- [ ] **물 준 날에만 한 단계 자란다. 안 주면 안 자랄 뿐 죽지 않는다** | verify: `tools/loop/check.sh tests`
+- [ ] 조리 → **버프 음식 1종**. 먹으면 실제로 스탯이 오르고 시간이 지나면 풀린다 | verify: `tools/loop/check.sh tests`
 - [ ] `[ASK]` **작물 성장 단계 수와 하루당 진행량** — 임시값으로 만들고 사람이 플레이해서 정한다
 
 ## P5 — 나가는 것: 침몰한 마을 (축소판)
@@ -93,22 +93,22 @@ P0 의 전부다** — 이게 없으면 매 바퀴가 사람 시간에 묶인다
 > 이 섬을 첫 번째로 만드는 이유 — **전투와 생활이 한 화면에서 동시에 일하는 유일한 구조**라
 > 「두 관객」 가설을 여기서 바로 검증할 수 있다.
 
-- [ ] 선착장 — 올라타면 원정 맵으로 넘어가고, 끝나면 내 섬으로 돌아온다 | verify: `check.sh tests`
-- [ ] 원정 맵 생성 — 좁은 실내, 잔해로 막힌 통로 | verify: `check.sh tests`
-- [ ] **잔해를 곡괭이·도끼로 뚫어 길과 보물을 찾는다** | verify: `check.sh tests`
-- [ ] **몰려오는 적** — 웨이브로 밀려오고 좁은 통로에서 막힌다 | verify: `check.sh tests`
-- [ ] 총으로 적을 처치한다. 체력 · 죽음 | verify: `check.sh tests`
-- [ ] **끝나는 조건** — 버티기를 완료하면 탈출로가 열린다. **한 판에 걸린 시간을 로그로 남긴다** | verify: `check.sh tests`
-- [ ] 원정 산출물 1종(상위 금속)이 드롭된다 | verify: `check.sh tests`
+- [ ] 선착장 — 올라타면 원정 맵으로 넘어가고, 끝나면 내 섬으로 돌아온다 | verify: `tools/loop/check.sh tests`
+- [ ] 원정 맵 생성 — 좁은 실내, 잔해로 막힌 통로 | verify: `tools/loop/check.sh tests`
+- [ ] **잔해를 곡괭이·도끼로 뚫어 길과 보물을 찾는다** | verify: `tools/loop/check.sh tests`
+- [ ] **몰려오는 적** — 웨이브로 밀려오고 좁은 통로에서 막힌다 | verify: `tools/loop/check.sh tests`
+- [ ] 총으로 적을 처치한다. 체력 · 죽음 | verify: `tools/loop/check.sh tests`
+- [ ] **끝나는 조건** — 버티기를 완료하면 탈출로가 열린다. **한 판에 걸린 시간을 로그로 남긴다** | verify: `tools/loop/check.sh tests`
+- [ ] 원정 산출물 1종(상위 금속)이 드롭된다 | verify: `tools/loop/check.sh tests`
 - [ ] `[ASK]` **웨이브 수와 잔해 채굴 시간의 비율** — 「막으면서 캐야 한다」가 성립하는 값. **눈으로만 정할 수 있다**
 
 ## P6 — 한 바퀴가 닫힌다
 
 > **여기가 프로토타입의 목적이다.** 위 전부는 이 한 항목을 위한 준비다.
 
-- [ ] 원정 산출물로 **더 좋은 도구 1종**을 만든다 | verify: `check.sh tests`
-- [ ] 그 도구로 원정이 실제로 쉬워지는지 잰다 (잔해 채굴 시간 · 클리어 시간) | verify: `check.sh tests`
-- [ ] 버프 음식을 먹고 간 판과 안 먹고 간 판의 차이를 잰다 — **「보급」이 실제로 듣는가** | verify: `check.sh tests`
+- [ ] 원정 산출물로 **더 좋은 도구 1종**을 만든다 | verify: `tools/loop/check.sh tests`
+- [ ] 그 도구로 원정이 실제로 쉬워지는지 잰다 (잔해 채굴 시간 · 클리어 시간) | verify: `tools/loop/check.sh tests`
+- [ ] 버프 음식을 먹고 간 판과 안 먹고 간 판의 차이를 잰다 — **「보급」이 실제로 듣는가** | verify: `tools/loop/check.sh tests`
 - [ ] `[ASK]` **사람이 직접 끝까지 플레이한다.** 한 바퀴가 재미있는가? — **이 판정만이 프로토타입의 결론이다**
 
 ---

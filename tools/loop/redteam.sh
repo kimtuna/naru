@@ -20,9 +20,11 @@ fi
 BAK="$(mktemp -d)"
 cp project.godot "$BAK/" 2>/dev/null || true
 cp .loop/criteria.tsv "$BAK/" 2>/dev/null || true
+cp tools/tests/test_isolation.gd "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
+  cp "$BAK/test_isolation.gd" tools/tests/test_isolation.gd 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
 }
@@ -57,6 +59,14 @@ cp "$BAK/project.godot" project.godot
 printf '9\t검사를 무르게 하려는 가짜 기준\ttrue\n' >> .loop/criteria.tsv
 expect 77 "무장 뒤 계약 변조를 채점자가 잡는다"
 cp "$BAK/criteria.tsv" .loop/criteria.tsv
+
+python3 - <<'PYX'
+import io
+p='tools/tests/test_isolation.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s[:s.index('func test_user_data_is_writable')])
+PYX
+expect 1 "검사를 지우면 테스트 바닥이 잡는다"
+cp "$BAK/test_isolation.gd" tools/tests/test_isolation.gd
 
 expect 0 "원복하면 다시 초록이다"
 

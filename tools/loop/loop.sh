@@ -34,6 +34,60 @@ stop() {                                  # stop <사유>
 # ── 백로그에서 다음 미완료 항목 한 줄 ──────────────────────────────
 next_item() { grep -n -m1 '^- \[ \] ' BACKLOG.md || true; }
 
+# 항목 줄에서 설명과 verify 명령을 가른다.
+desc_of()   { printf '%s' "${1%%| verify:*}" | sed 's/^- \[[ x]\] *//; s/[[:space:]]*$//'; }
+verify_of() {
+  local v="${1#*| verify:}"
+  [ "$v" = "$1" ] && { printf ''; return; }
+  printf '%s' "$v" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s/^`//; s/`$//'
+}
+
+# ── 초록으로 끝난 항목의 verify 를 계약에 영구 기준으로 승격한다 ──────
+#
+# **이게 없으면 항목 일을 하나도 안 해도 초록이 나온다** — 계약이
+# import/parse/tests 셋뿐이라 그 항목과 무관하게 통과하기 때문이다.
+# 승격한 뒤 다시 무장하므로 세션은 그 기준을 건드릴 수 없고,
+# 다음 바퀴부터 회귀도 자동으로 잡힌다.
+promote() {                               # promote <설명> <verify 명령>
+  [ "$DRY" = "1" ] && return 0
+  local d="$1" v="$2"
+  [ -z "$v" ] && return 0
+  # **재귀 차단.** 계약 자신을 부르는 verify 를 기준으로 올리면 무한히 겹쳐 돈다
+  # (redteam.sh 는 계약을 6번 부른다).
+  case "$v" in
+    *run-contract*|*redteam*|*loop.sh*) say "기준 승격 건너뜀 (계약을 다시 부른다): $v"; return 0 ;;
+  esac
+  grep -qF "	$v" .loop/criteria.tsv && return 0     # 이미 있다
+  local id
+  id="$(( $(grep -cv '^[[:space:]]*#' .loop/criteria.tsv) + 1 ))"
+  printf '%s\t%s\t%s\n' "$id" "$d" "$v" >> .loop/criteria.tsv
+  bash tools/loop/arm-contract.sh >/dev/null
+  git add .loop/criteria.tsv .loop/armed.sha256
+  git -c user.name=loop -c user.email=loop@local commit -q \
+    -m "계약에 기준 $id 추가 — $d" || true
+  say "기준 $id 승격: $v"
+}
+
+# ── 테스트 개수 바닥을 지금 개수로 올린다 ────────────────────────────
+#
+# 계약 안에 인자로 박혀 있고 계약은 무장돼 있으므로 세션이 못 낮춘다.
+# 다음 바퀴에 검사를 지우면 그 자리에서 빨개진다.
+bump_mintests() {
+  [ "$DRY" = "1" ] && return 0
+  local now cur
+  now="$(bash tools/loop/check.sh tests 2>&1 | sed -n 's/^TESTS \([0-9]*\) passed.*/\1/p' | tail -1)"
+  [ -z "$now" ] && return 0
+  cur="$(sed -n 's/.*mintests\.sh \([0-9]*\).*/\1/p' .loop/criteria.tsv | tail -1)"
+  [ -z "$cur" ] && return 0
+  [ "$now" -le "$cur" ] && return 0
+  sed -i '' "s|mintests\.sh $cur|mintests.sh $now|" .loop/criteria.tsv
+  bash tools/loop/arm-contract.sh >/dev/null
+  git add .loop/criteria.tsv .loop/armed.sha256
+  git -c user.name=loop -c user.email=loop@local commit -q \
+    -m "테스트 바닥 $cur → $now" || true
+  say "테스트 바닥 $cur → $now"
+}
+
 # ── 회귀 감지: 지난번 초록이던 기준이 지금 빨강인가 ─────────────────
 regressed() {
   [ -f "$PREV" ] || return 1
@@ -136,17 +190,35 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
   [ "$crc" -eq 77 ] && stop "계약이 무장 뒤에 변조됐다 (red line) — 바퀴 $cycle"
   [ "$crc" -eq 78 ] && stop "계약 파일이 없거나 공허하다 — 바퀴 $cycle"
 
+  # 7b) 이 항목 자신의 verify 도 돌린다. 계약만으로는 항목을 안 해도 초록이 난다.
+  vcmd="$(verify_of "$item")"
+  vrc=0
+  if [ -n "$vcmd" ]; then
+    if ! command -v "${vcmd%% *}" >/dev/null 2>&1; then
+      stop "이 항목의 verify 가 명령이 아니다 — 사람이 봐야 한다: $vcmd"
+    fi
+    say "verify: $vcmd"
+    if eval "$vcmd" > "$RD/verify.txt" 2>&1; then
+      say "  verify 초록"
+    else
+      vrc=1; say "  verify 빨강"; tail -5 "$RD/verify.txt" | sed 's/^/      /'
+    fi
+  fi
+
   # 회귀
   if reg="$(regressed)"; then
     stop "회귀 — 통과하던 기준이 깨졌다: $reg"
   fi
 
   head_after="$(git rev-parse HEAD)"
+  [ "$vrc" -ne 0 ] && crc=1
   if [ "$crc" -eq 0 ]; then
     if [ "$head_after" = "$head_before" ] && [ "$DRY" = "0" ]; then
       stop "초록인데 세션이 커밋하지 않았다 — 작업이 워킹트리에 떠 있다"
     fi
     say "✔ 초록"
+    promote "$(desc_of "$item")" "$vcmd"
+    bump_mintests
     fails=0
   else
     fails=$((fails+1))
