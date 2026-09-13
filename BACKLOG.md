@@ -49,7 +49,9 @@ P0 의 전부다** — 이게 없으면 매 바퀴가 사람 시간에 묶인다
 
 ## P1 — 걸어다니는 세계
 
-- [ ] 색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동 | verify: `tools/loop/check.sh tests`
+- [x] 색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동 | verify: `tools/loop/check.sh tests`
+  > **대각선을 정규화해서 사실상 8방향이 됐다** (NUMBERS 5절). 속력은 어느 방향이든 240 이다.
+  > 4방향으로 잠글지는 사람이 실제로 걸어 보고 정한다.
 - [ ] 논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25 | verify: `tools/loop/check.sh tests`
 - [ ] **마우스가 방향을 정한다** — 이동 방향과 별개. 4방향 스냅 + 히스테리시스 | verify: `tools/loop/check.sh tests`
 - [ ] 시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드 | verify: `tools/loop/check.sh tests`

@@ -21,10 +21,14 @@ BAK="$(mktemp -d)"
 cp project.godot "$BAK/" 2>/dev/null || true
 cp .loop/criteria.tsv "$BAK/" 2>/dev/null || true
 cp tools/tests/test_isolation.gd "$BAK/" 2>/dev/null || true
+cp scripts/player_motion.gd "$BAK/" 2>/dev/null || true
+cp scripts/player.gd "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
   cp "$BAK/test_isolation.gd" tools/tests/test_isolation.gd 2>/dev/null || true
+  cp "$BAK/player_motion.gd" scripts/player_motion.gd 2>/dev/null || true
+  cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
 }
@@ -67,6 +71,21 @@ io.open(p,'w',encoding='utf-8').write(s[:s.index('func test_user_data_is_writabl
 PYX
 expect 1 "검사를 지우면 테스트 바닥이 잡는다"
 cp "$BAK/test_isolation.gd" tools/tests/test_isolation.gd
+
+# ── P1-1 이동 ────────────────────────────────────────────────────────
+sed -i '' 's|return input.normalized() \* SPEED|return input * SPEED|' scripts/player_motion.gd
+expect 1 "대각선 정규화를 빼면 tests 가 잡는다 (339.41 px/s)"
+cp "$BAK/player_motion.gd" scripts/player_motion.gd
+
+# **이 하나가 실측 게이트의 존재 이유다.** 노드가 PlayerMotion 을 부르기는 하므로
+# 단위 검사 18개는 전부 초록으로 남는다 — measure_move.gd 만 잡는다 (2026-09-13 실측).
+sed -i '' 's|velocity = PlayerMotion.velocity(input)|velocity = PlayerMotion.velocity(input) * 0.5|' scripts/player.gd
+expect 1 "노드가 속도를 제 맘대로 바꾸면 실측이 잡는다 (120 px/s)"
+cp "$BAK/player.gd" scripts/player.gd
+
+sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
+expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
+cp "$BAK/project.godot" project.godot
 
 expect 0 "원복하면 다시 초록이다"
 

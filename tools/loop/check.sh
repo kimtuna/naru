@@ -39,7 +39,13 @@ step_tests() {
   local out rc
   out="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/run_tests.gd 2>&1)"; rc=$?
   printf '%s\n' "$out" | grep -E '^\s*(ok|FAIL)|^TESTS'
-  [ $rc -eq 0 ]
+  [ $rc -eq 0 ] || return 1
+  # 실측: 실제 씬을 물리로 돌려 초당 몇 px 움직이는지 잰다.
+  # 순수 계산이 맞아도 노드가 그걸 안 쓰면 여기서만 빨개진다.
+  local mout mrc
+  mout="$("$G" 60 -- --headless --path "$ROOT" --script res://tools/tests/measure_move.gd 2>&1)"; mrc=$?
+  printf '%s\n' "$mout" | grep -E '^MOVE' || { printf '%s\n' "$mout" | tail -5; echo "MOVE FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  [ $mrc -eq 0 ]
 }
 
 case "$WHAT" in
