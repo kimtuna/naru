@@ -18,6 +18,7 @@ tools/loop/check.sh all            # import → parse → tests  (순서 중요)
 tools/loop/check.sh import|parse|tests
 tools/loop/godot.sh <초> -- <인자>  # Godot 의 유일한 입구
 tools/loop/godot.sh 5 -- --path .  # 사람이 직접 띄워 보기
+tools/loop/shot.sh <out.png> [씬] [프레임] [--max-flat N]   # 화면을 PNG 로 굽는다
 ```
 
 ## 규칙

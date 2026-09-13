@@ -44,12 +44,14 @@ P0 의 전부다** — 이게 없으면 매 바퀴가 사람 시간에 묶인다
 - [x] 계약 배선 — `criteria.tsv` + `run-contract.sh`, 증거가 `results.json` 에 기계로 쓰인다 | verify: `bash tools/loop/run-contract.sh`
 - [x] **세션 지시서 `PROMPT.md`** — 읽기 → 만들기 → 자체 QA → 커밋, 정지 규칙과 red lines | verify: 사람이 읽는다
 - [x] **대조군 절차를 스크립트로 만든다** — 검사를 하나 일부러 깨뜨렸을 때 빨개지는지 확인 | verify: `bash tools/loop/redteam.sh`
+- [x] **화면 QA — `tools/loop/shot.sh`** — Godot 자신의 프레임버퍼를 PNG 로 굽는다.
+      `screencapture` 는 화면 기록 권한에 막혀 무인 루프가 못 쓴다 | verify: `bash tools/loop/shot.sh /tmp/_v.png`
 - [x] **드라이버 `loop.sh` · `ctl.sh`** — 백로그 한 줄 뽑기 → 세션 → 계약 → 초록이면 다음.
       **무인으로 정했다** (2026-09-13). 정지 규칙 7개를 드라이버가 강제한다 | verify: `test -x tools/loop/loop.sh`
 
 ## P1 — 걸어다니는 세계
 
-- [x] 색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동 | verify: `tools/loop/check.sh tests`
+- [x] 색 네모 플레이어가 48px 타일 위를 속도 240 으로 **8방향** 이동 (대각선 정규화) | verify: `tools/loop/check.sh tests`
   > **대각선을 정규화해서 사실상 8방향이 됐다** (NUMBERS 5절). 속력은 어느 방향이든 240 이다.
   > 4방향으로 잠글지는 사람이 실제로 걸어 보고 정한다.
 - [ ] 논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25 | verify: `tools/loop/check.sh tests`
