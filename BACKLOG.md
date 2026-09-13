@@ -41,8 +41,11 @@ P0 의 전부다** — 이게 없으면 매 바퀴가 사람 시간에 묶인다
   > **두 항목을 한 바퀴에 넣었다.** 1번의 `verify` 가 `check.sh all` 이라 2번 없이는
   > 검증 자체가 안 된다. 「한 바퀴 한 항목」에서 벗어난 것이므로 적어 둔다.
   > **항목 이름에서 「XDG」를 뺐다** — macOS 는 XDG 를 무시한다(NUMBERS 2절).
-- [ ] 계약 배선 — `criteria.tsv` + `run-contract.sh`, 증거가 `results.json` 에 기계로 쓰인다 | verify: `bash tools/loop/run-contract.sh`
+- [x] 계약 배선 — `criteria.tsv` + `run-contract.sh`, 증거가 `results.json` 에 기계로 쓰인다 | verify: `bash tools/loop/run-contract.sh`
+- [x] **세션 지시서 `PROMPT.md`** — 읽기 → 만들기 → 자체 QA → 커밋, 정지 규칙과 red lines | verify: 사람이 읽는다
 - [ ] **대조군 절차를 스크립트로 만든다** — 검사를 하나 일부러 깨뜨렸을 때 빨개지는지 확인 | verify: `bash tools/loop/redteam.sh`
+- [ ] `[ASK]` **드라이버 `loop.sh`** — 백로그 한 줄 뽑기 → 세션 열기 → 계약 실행 → 초록이면 커밋 → 다음.
+      **무인이냐 반자동이냐를 사람이 정해야 한다** (무인이면 예산 감지·연속 실패 감지·`[ASK]` 갈라내기가 전부 필요하다)
 
 ## P1 — 걸어다니는 세계
 

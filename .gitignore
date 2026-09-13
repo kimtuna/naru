@@ -2,3 +2,4 @@
 .godot-home/
 .DS_Store
 *.tmp
+.loop/results.json
