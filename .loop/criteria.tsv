@@ -4,3 +4,4 @@
 2	모든 GDScript 가 파스된다	tools/loop/check.sh parse
 3	단위 테스트가 통과하고 개수가 줄지 않는다	bash tools/loop/mintests.sh 18
 4	색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동	tools/loop/check.sh tests
+5	매 바퀴 읽는 문서가 부풀지 않았다	bash tools/loop/doclen.sh CLAUDE.md:45 PROMPT.md:70 .loop/state.md:90

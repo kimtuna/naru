@@ -88,6 +88,19 @@ bump_mintests() {
   say "테스트 바닥 $cur → $now"
 }
 
+# ── 바퀴 기록을 잘라낸다 ─────────────────────────────────────────────
+# state.md 는 바퀴마다 자란다. 통째로 읽게 두면 바퀴 비용이 계속 는다
+# (1판은 매 바퀴 읽는 문서가 758+1012+826 줄까지 갔다).
+roll_state() {
+  [ "$DRY" = "1" ] && return 0
+  local out; out="$(python3 tools/loop/state.py roll 3)"
+  say "$out"
+  if [ -n "$(git status --porcelain .loop/state.md .loop/archive 2>/dev/null)" ]; then
+    git add .loop/state.md .loop/archive 2>/dev/null || true
+    git -c user.name=loop -c user.email=loop@local commit -q -m "바퀴 기록 롤링" || true
+  fi
+}
+
 # ── 회귀 감지: 지난번 초록이던 기준이 지금 빨강인가 ─────────────────
 regressed() {
   [ -f "$PREV" ] || return 1
@@ -148,11 +161,16 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
   head_before="$(git rev-parse HEAD)"
 
   # 6) 세션
+  # 문맥은 **드라이버가 조립한다** — 세션이 파일을 여는 횟수를 줄이는 것이
+  # 바퀴 비용을 줄이는 가장 큰 자리다. state.md 는 자라므로 꼬리만 넣는다.
   {
     cat PROMPT.md
-    printf '\n\n---\n\n## 이번 바퀴 (%d/%d)\n\n%s\n\n' "$cycle" "$MAX_CYCLES" "$item"
-    printf '위 항목 **하나만** 만든다. 끝나면 BACKLOG.md 의 그 줄을 `- [x]` 로 바꾸고,\n'
-    printf '`.loop/state.md` 에 잰 값과 함께 적고, 경로를 지정해서 커밋한다.\n'
+    printf '\n\n---\n\n## 이번 바퀴 (%d/%d)\n\n%s\n' "$cycle" "$MAX_CYCLES" "$item"
+    printf '\n### 최근 바퀴 (state.md 를 열지 마라 — 이게 전부다)\n\n'
+    python3 tools/loop/state.py tail 2
+    printf '\n### 지금 계약\n\n```\n'
+    grep -v '^[[:space:]]*#' .loop/criteria.tsv | cut -f1,2
+    printf '```\n'
   } > "$RD/prompt.txt"
 
   if [ "$DRY" = "1" ]; then
@@ -219,6 +237,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     say "✔ 초록"
     promote "$(desc_of "$item")" "$vcmd"
     bump_mintests
+    roll_state
     fails=0
   else
     fails=$((fails+1))
