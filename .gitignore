@@ -3,3 +3,9 @@
 .DS_Store
 *.tmp
 .loop/results.json
+.loop/runs/
+.loop/loop.log
+.loop/loop.pid
+.loop/spend.txt
+.loop/STOPPED
+.loop/results.prev.json
