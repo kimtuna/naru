@@ -62,6 +62,14 @@ PASS=0; MISS=0; N=0
 EV="$ROOT/.loop/redteam"; rm -rf "$EV"; mkdir -p "$EV"
 expect() {          # expect <기대 exit> <이름>
   local want="$1" name="$2" rc; N=$((N+1))
+  # **깨뜨렸다고 했는데 정말 깨졌나.** 대조군은 문자열 치환으로 코드를 망가뜨리는데,
+  # 나중 회차가 그 사이에 줄을 끼우면 치환이 조용히 빗나간다 — 그러면 상태 검사는
+  # 초록이고 「놓쳤다」로 뜬다. 「게이트가 약하다」와 「아무것도 안 깨뜨렸다」는
+  # 전혀 다른 일이라 여기서 가른다. 회차 21 이 회차 20 의 대조군을 이렇게 죽였다.
+  if [ "$want" -ne 0 ] && [ -z "$(git status --porcelain)" ]; then
+    printf '  \033[33m헛돌았다\033[0m  %s  — 워킹트리가 그대로다. 대조군이 아무것도 안 깨뜨렸다\n' "$name"
+    MISS=$((MISS+1)); return
+  fi
   bash tools/loop/run-contract.sh >"$EV/last.txt" 2>&1; rc=$?
   if [ "$rc" -eq "$want" ]; then
     printf '  \033[32m잡았다\033[0m  %s  (exit %d)\n' "$name" "$rc"; PASS=$((PASS+1))
@@ -407,7 +415,7 @@ python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    "\t_poll_hotbar()\n\tqueue_redraw()", "\tqueue_redraw()", 1))
+    "\t_poll_hotbar()\n", "", 1))
 PYX
 expect 1 "숫자키를 안 읽으면 실측이 잡는다 (손이 1번 칸에 굳는다)"
 cp "$BAK/main.gd" scripts/main.gd
