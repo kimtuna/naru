@@ -52,6 +52,9 @@ h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
   background:var(--panel);font-size:13.5px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .alert.bad{border-color:var(--bad);background:var(--badbg)}
 .alert.halt{border-color:var(--halt);background:var(--haltbg)}
+.alert.info{border-color:var(--line);background:var(--panel);color:var(--dim)}
+.alert.past{border-color:var(--line);background:var(--panel);color:var(--faint)}
+.alert.past strong,.alert.info strong{font-weight:600}
 .alert.next{border-style:dashed}
 .alert .k{font-size:11.5px;color:var(--faint);letter-spacing:.3px}
 .alert .note{margin-left:auto;font-size:11px;color:var(--faint);font-family:ui-monospace,monospace}
@@ -145,6 +148,7 @@ a.badge{text-decoration:none}
 a.badge:hover{background:var(--accent);color:var(--panel);text-decoration:none}
 .entry{scroll-margin-top:16px}
 .items li{scroll-margin-top:16px}
+#ago{color:var(--faint)}
 #fresh{position:fixed;right:16px;bottom:16px;z-index:9;font:inherit;font-size:13px;
   font-weight:600;padding:10px 16px;border-radius:999px;cursor:pointer;
   border:1px solid var(--ok);background:var(--okbg);color:var(--ok);
@@ -163,18 +167,18 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 20:02:28</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 20:37:22</span><span id="ago"></span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">마지막 회차</span><span class="v"><i class="dot run"></i>회차 21</span><span class="note">초록 · 2026-09-14</span></div>
-<div class="tile"><span class="k">상태</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 20:00</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">26 <small>/ 56</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">마지막 회차</span><span class="v"><i class="dot idle"></i>회차 22</span><span class="note">— · </span></div>
+<div class="tile"><span class="k">상태</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 20:37</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">27 <small>/ 57</small></span><span class="note">백로그 항목</span></div>
 <div class="tile"><span class="k">누적 비용</span><span class="v">$75.0085</span></div>
 </section>
-<div class="alert halt"><strong>멈춘 사유</strong> — 초록인데 일지를 안 적었다 — 세션이 안 채운 줄: 문제 · 원인 · 고친 것 · 남긴 것 (docs/JOURNAL.md 바퀴 21)<span class="note">2026-09-14 19:44:28</span></div>
-<div class="alert next"><span class="k">다음 항목</span><span class="pill">P2</span><strong>일지를 세션의 마지막 답변에서 뽑는다</strong> — 세션이 <code>docs/JOURNAL.md</code> 에 직접 쓰게</div>
+<div class="alert past"><strong>지난 멈춤 — 그 뒤에 다시 초록이 났다</strong> 회귀 — 통과하던 기준이 깨졌다: 4<span class="note">2026-09-14 20:32:49</span></div>
+<div class="alert next"><span class="k">백로그 다음 줄</span><span class="pill">P2</span><strong>일지 뽑기 게이트를 상태 검사 기준으로 올린다</strong> — 회차 22 가 만든</div>
 <h2>진행 — 한 줄 = 한 회차</h2>
 <div class="phases">
 <details class="phase full">
@@ -213,8 +217,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P2</span>
     <span class="ptitle">손: 인벤토리와 도구</span>
-    <span class="pcount">7/13</span>
-    <span class="bar"><i style="width:54%"></i></span></summary>
+    <span class="pcount">8/14</span>
+    <span class="bar"><i style="width:57%"></i></span></summary>
   <ul class="items">
 <li class="done" id="i15" ><a class="turn" href="#t15" title="15회차 일지로">15회차</a><span class="box">✔</span><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</li>
 <li class="done" id="i16" ><a class="turn" href="#t16" title="16회차 일지로">16회차</a><span class="box">✔</span><strong>캐릭터 네모를 1칸 폭으로 · 충돌 상자를 발밑에</strong> — 지금 그리는 네모는 48×48(1.5칸 ×</li>
@@ -223,7 +227,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done" id="i19" ><a class="turn" href="#t19" title="19회차 일지로">19회차</a><span class="box">✔</span><strong>한 칸 스택 상한 99 → 999</strong> — 사람이 정했다 (2026-09-14)</li>
 <li class="done" id="i20" ><a class="turn" href="#t20" title="20회차 일지로">20회차</a><span class="box">✔</span>화면 아래 상시 핫바 9칸 + 숫자키로 손에 들기</li>
 <li class="done" id="i21" ><a class="turn" href="#t21" title="21회차 일지로">21회차</a><span class="box">✔</span>좌클릭 = 손에 든 것의 동작. <strong>대상이 없어도 사용 모션이 나온다</strong></li>
-<li class="todo"><span class="box"></span><strong>일지를 세션의 마지막 답변에서 뽑는다</strong> — 세션이 <code>docs/JOURNAL.md</code> 에 직접 쓰게</li>
+<li class="done" id="i22" ><a class="turn" href="#t22" title="22회차 일지로">22회차</a><span class="box">✔</span><strong>일지를 세션의 마지막 답변에서 뽑는다</strong> — 세션이 <code>docs/JOURNAL.md</code> 에 직접 쓰게</li>
+<li class="todo"><span class="box"></span><strong>일지 뽑기 게이트를 상태 검사 기준으로 올린다</strong> — 회차 22 가 만든</li>
 <li class="todo"><span class="box"></span>월드 오브젝트 배치 — 나무 · 돌 · 광물 1종을 시드로 놓는다</li>
 <li class="todo"><span class="box"></span><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</li>
 <li class="todo"><span class="box"></span><strong>채광</strong> — 곡괭이로 돌/광물을 캔다</li>
@@ -319,7 +324,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">매 회차 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  53/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  70/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
@@ -332,6 +337,20 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <h2>회차 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry muted" id="t22">
+  <div class="ehead">
+    <a class="badge" href="#i22" title="진행 목록으로">회차 22</a>
+<h3><strong>일지를 세션의 마지막 답변에서 뽑는다</strong> — 세션이 <code>docs/JOURNAL.md</code> 에 직접 쓰게</h3>
+    <span class="edate"></span>
+    <span class="eres muted">—</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">일지를 <strong>쓰라고 시키는 것으로는 안 된다.</strong> 회차 12 · 21 이 일을 끝내고 커밋까지 하고도 일지만 빼먹었다. 그리고 이번 회차엔 둘째 문제가 겹쳤다 — <strong>항목의 <code>verify</code> 가 백로그의 이어지는 줄에 있어서 드라이버가 아예 못 봤다.</strong> 새 게이트를 만들어도 상태 검사로 승격되지 않는다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">첫째, 일지는 <strong>별도의 파일 열기</strong>였다. 답변은 어차피 쓰지만 파일 쓰기는 하나 더 하는 일이라, 예산·시간이 마르면 제일 먼저 잘리는 자리다(회차 21 의 마지막 답변은 「대조군 판정이 나오면 일지를 마저 적겠습니다」에서 끝나 있다). 둘째, <code>next_item</code> 이 <code>grep -m1</code> 으로 <strong>한 줄만</strong> 뽑는데 <code>verify_of</code> 는 그 한 줄에서만 찾는다 — 여러 줄 항목의 verify 는 조용히 사라지고, 「항목을 진짜로 했나」를 아무도 안 묻는 회차가 된다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><code>tools/loop/journal.sh</code> 에 <code>extract &lt;n&gt; &lt;파일&gt;</code> — <code>session.json</code> 의 마지막 답변에서 <code>## 회차 N</code> 블록을 뽑아 일지에 넣는다. 코드 울타리 안이어도 · 답변 한가운데여도 · 두 번 적혔어도(뒤엣것을 쓴다) 찾고, 이미 있는 절이면 <strong>세션 줄만 갈고 드라이버 줄은 살린다.</strong> <code>tools/loop/journal-selftest.sh</code>(29종, 바닥 29) 를 새로 만들고 <code>redteam.sh</code> 에 대조군 8종. <code>loop.sh</code> 는 세션이 끝나면 바로 뽑고(6b), <code>verify_in_block</code> 으로 항목 블록 전체에서 verify 를 다시 찾는다. <code>docs/PROMPT.md</code> · <code>CLAUDE.md</code> · <code>docs/JOURNAL.md</code> 머리말에서 「일지를 파일에 덧붙인다」를 「답변 끝에 블록으로 낸다」로 바꿨다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>줄의 주인을 말이 아니라 코드가 가른다.</strong> 지금까지 「날짜·결과·채점·비용·커밋 은 쓰지 마라」는 지시였다 — 이제 세션이 <code>결과: 됐습니다</code> 를 써 보내도 뽑을 때 버려진다. 그리고 <strong>자리표시자만 든 템플릿은 일지로 안 본다</strong>: <code>check</code> 는 <code>&lt;이번 회차에…&gt;</code> 도 글자로 보고 통과시키므로, 거르는 자리가 <code>extract</code> 밖에 없다. 둘째: <strong><code>docs/JOURNAL.md</code> 가 세션의 「안 됨」 목록으로 갔다.</strong> 드라이버가 쓰는 파일이다.</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>이 회차의 게이트는 아직 무장된 상태 검사에 없다.</strong> 이 항목의 <code>verify</code> 가 둘째 줄 아래에 있어 돌고 있던 드라이버가 못 봤고, <code>verify_in_block</code> 을 넣어 고쳤지만 <strong>bash 는 <code>while … done</code> 을 통째로 파스한 뒤 실행하므로 드라이버 변경은 다음 실행부터</strong>다. 그래서 <code>docs/BACKLOG.md</code> 맨 위에 「일지 뽑기 게이트를 기준으로 올린다」를 작은 항목으로 넣었다 — 그 회차가 초록으로 닫히면 <code>promote</code> 가 제가 올린다. 그리고 <strong>이번 회차는 일지를 파일에 직접 썼다</strong>(<code>extract</code> 로 넣긴 했지만 세션이 불렀다) — 돌고 있는 드라이버가 아직 6b 를 모르기 때문이다. 다음 회차부터는 드라이버가 부른다.</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v"><code>JOURNAL SELFTEST 29 passed, 0 failed (바닥 29)</code> · <code>ALL GREEN</code> 6/6 · <code>TESTS 100 passed, 0 failed</code> · <code>DOCLEN docs/PROMPT.md 60/70줄</code> · REDTEAM 은 커밋 뒤에 잰다 (워킹트리가 깨끗해야 돈다) — 대조군 8종: 블록 없음을 조용히 넘김 / 드라이버 줄을 안 버림 / 답변 맨 앞만 봄 / 두 번 뽑으면 절이 둘 / 자리표시자를 안 거름 / 이어지는 줄을 버림 / 검사를 지움 / 손 안 댄 상태.</span></div>
+</article>
 <article class="entry ok" id="t21">
   <div class="ehead">
     <a class="badge" href="#i21" title="진행 목록으로">회차 21</a>
@@ -773,6 +792,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">회차 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/e3d5e6c"><code>e3d5e6c</code></a><span class="cd">2026-09-14</span>회차 22 · 일지를 세션의 마지막 답변에서 뽑는다 — 세션은 파일을 안 쓴다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/a7d29d5"><code>a7d29d5</code></a><span class="cd">2026-09-14</span>헛도는 대조군을 잡는다 — 회차 21 이 회차 20 의 것을 죽였다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/2f85a0e"><code>2f85a0e</code></a><span class="cd">2026-09-14</span>바퀴 → 회차 · 계약 → 상태 검사 · 진행 줄에서 일지로 점프</li>
 <li><a href="https://github.com/kimtuna/naru/commit/d3a4e50"><code>d3a4e50</code></a><span class="cd">2026-09-14</span>바퀴 21 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/405027e"><code>405027e</code></a><span class="cd">2026-09-14</span>테스트 바닥 90 → 100</li>
@@ -783,8 +804,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/206c71c"><code>206c71c</code></a><span class="cd">2026-09-14</span>바퀴 20 · 화면 아래 상시 핫바 9칸 + 숫자키로 손에 들기</li>
 <li><a href="https://github.com/kimtuna/naru/commit/03f360d"><code>03f360d</code></a><span class="cd">2026-09-14</span>바퀴 19 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/af09d4e"><code>af09d4e</code></a><span class="cd">2026-09-14</span>바퀴 기록 롤링</li>
-<li><a href="https://github.com/kimtuna/naru/commit/1fd02c7"><code>1fd02c7</code></a><span class="cd">2026-09-14</span>테스트 바닥 75 → 76</li>
-<li><a href="https://github.com/kimtuna/naru/commit/ca6802a"><code>ca6802a</code></a><span class="cd">2026-09-14</span>바퀴 19 일지 · 백로그 · 상태</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 회차</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 회차가 올라왔다 — 새로고침</button>
@@ -793,6 +812,14 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   var el=document.getElementById('fresh'),
       me=(document.getElementById('baked')||{}).textContent||'';
   if(!me) return;
+  var ago=document.getElementById('ago');
+  function tick(){
+    if(!ago) return;
+    var d=(Date.now()-new Date(me.replace(' ','T')).getTime())/60000;
+    ago.textContent = d<1 ? ' · 방금' : d<60 ? ' · '+Math.floor(d)+'분 전'
+                    : d<1440 ? ' · '+Math.floor(d/60)+'시간 전' : ' · '+Math.floor(d/1440)+'일 전';
+  }
+  tick(); setInterval(tick,30000);
   el.addEventListener('click',function(){location.reload();});
   setInterval(function(){
     fetch(location.href,{cache:'no-store'}).then(function(r){return r.text();})

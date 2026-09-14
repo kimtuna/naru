@@ -150,7 +150,24 @@ def render():
     done = sum(1 for p in phases for i in p["items"] if i["done"])
     total = sum(len(p["items"]) for p in phases)
     spend = read(".loop/spend.txt", "0").strip() or "0"
+    # **멈춤은 두 종류다.** 「시킨 회차를 다 돌았다」는 정상 종료고,
+    # 「일지를 안 적었다」는 사고다. 그리고 **이미 지나간 멈춤**이 있다 —
+    # 그 뒤에 채점이 다시 돌아 초록이 났으면 그건 해결된 일이라 경고로 두면 안 된다.
     stopped = read(".loop/STOPPED").strip()
+    st_when, st_why, st_kind = "", "", ""
+    if stopped:
+        parts = stopped.splitlines()
+        st_when = parts[0].strip() if parts else ""
+        st_why = " ".join(x.strip() for x in parts[1:]) or "(사유 없음)"
+        done_words = ("소진", "ALL GREEN", "[ASK]")
+        st_kind = "done" if any(w in st_why for w in done_words) else "halt"
+        # 채점이 그 뒤에 다시 돌아 초록이면 지나간 일이다
+        try:
+            ts = (res or {}).get("ts", "").replace("T", " ")[:19]
+            if ts and st_when and ts > st_when and (res or {}).get("all_green"):
+                st_kind = "past"
+        except Exception:
+            pass
     # **「지금 돌고 있나」는 구운 페이지가 알 수 없다.** 드라이버가 이 스크립트를
     # 부르는 시점엔 드라이버 자신이 살아 있어서 늘 「돌고 있다」로 굳었고,
     # 바로 뒤에 루프가 끝나도 페이지는 영영 그대로였다. 잰 것만 적는다 —
@@ -182,7 +199,7 @@ def render():
     A(f'''<header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">{esc(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))}</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">{esc(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))}</span><span id="ago"></span></p></div>
   </div>
   <nav><a href="{REPO}/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>''')
@@ -208,15 +225,16 @@ def render():
         A('<div class="alert bad"><strong>상태 검사가 무장 뒤에 변조됐다.</strong> '
           '채점자가 <code>exit 77</code> 로 죽는다 — red line 이다.</div>')
     if stopped:
-        parts = stopped.splitlines()
-        when = parts[0] if parts else ""
-        why = " ".join(parts[1:]) or "(사유 없음)"
-        A(f'<div class="alert halt"><strong>멈춘 사유</strong> — {inline(why)}'
-          f'<span class="note">{esc(when)}</span></div>')
+        label = {"done": "여기서 멈췄다 — 시킨 만큼 다 돌았다",
+                 "past": "지난 멈춤 — 그 뒤에 다시 초록이 났다",
+                 "halt": "멈췄다 — 사람이 볼 것"}[st_kind]
+        cls = {"done": "info", "past": "past", "halt": "halt"}[st_kind]
+        A(f'<div class="alert {cls}"><strong>{esc(label)}</strong> {inline(st_why)}'
+          f'<span class="note">{esc(st_when)}</span></div>')
     if nxt:
         tag = '<span class="pill ask">ASK</span>' if nxt["ask"] else \
               f'<span class="pill">{esc(nxt_phase)}</span>'
-        A(f'<div class="alert next"><span class="k">다음 항목</span>{tag}{inline(nxt["desc"])}</div>')
+        A(f'<div class="alert next"><span class="k">백로그 다음 줄</span>{tag}{inline(nxt["desc"])}</div>')
 
     # ── 진행 ──
     A('<h2>진행 — 한 줄 = 한 회차</h2>')
@@ -351,6 +369,14 @@ FRESH = """<button id="fresh" hidden>새 회차가 올라왔다 — 새로고침
   var el=document.getElementById('fresh'),
       me=(document.getElementById('baked')||{}).textContent||'';
   if(!me) return;
+  var ago=document.getElementById('ago');
+  function tick(){
+    if(!ago) return;
+    var d=(Date.now()-new Date(me.replace(' ','T')).getTime())/60000;
+    ago.textContent = d<1 ? ' · 방금' : d<60 ? ' · '+Math.floor(d)+'분 전'
+                    : d<1440 ? ' · '+Math.floor(d/60)+'시간 전' : ' · '+Math.floor(d/1440)+'일 전';
+  }
+  tick(); setInterval(tick,30000);
   el.addEventListener('click',function(){location.reload();});
   setInterval(function(){
     fetch(location.href,{cache:'no-store'}).then(function(r){return r.text();})
@@ -433,6 +459,9 @@ h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
   background:var(--panel);font-size:13.5px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .alert.bad{border-color:var(--bad);background:var(--badbg)}
 .alert.halt{border-color:var(--halt);background:var(--haltbg)}
+.alert.info{border-color:var(--line);background:var(--panel);color:var(--dim)}
+.alert.past{border-color:var(--line);background:var(--panel);color:var(--faint)}
+.alert.past strong,.alert.info strong{font-weight:600}
 .alert.next{border-style:dashed}
 .alert .k{font-size:11.5px;color:var(--faint);letter-spacing:.3px}
 .alert .note{margin-left:auto;font-size:11px;color:var(--faint);font-family:ui-monospace,monospace}
@@ -526,6 +555,7 @@ a.badge{text-decoration:none}
 a.badge:hover{background:var(--accent);color:var(--panel);text-decoration:none}
 .entry{scroll-margin-top:16px}
 .items li{scroll-margin-top:16px}
+#ago{color:var(--faint)}
 #fresh{position:fixed;right:16px;bottom:16px;z-index:9;font:inherit;font-size:13px;
   font-weight:600;padding:10px 16px;border-radius:999px;cursor:pointer;
   border:1px solid var(--ok);background:var(--okbg);color:var(--ok);

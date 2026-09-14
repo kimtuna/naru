@@ -7,7 +7,7 @@ extends SceneTree
 ## 올린다 — 막는 길이 없다** (회차 13 · NUMBERS 11절). 못 막으니 **횟수를 줄인다.**
 ## 상태 검사 한 판에 창 3번 → 2번, `redteam.sh` 한 판이면 93번 → 62번.
 ##
-## **순서가 상태 검사가다**: VIEW 를 먼저 잰다. DRAW 는 플레이어를 해안으로 순간이동시키고
+## **순서가 상태 검사다**: VIEW 를 먼저 잰다. DRAW 는 플레이어를 해안으로 순간이동시키고
 ## 걷게 하므로, 그 뒤에 화면을 재면 「처음 뜬 창」이 아니라 「걷다 만 화면」을 재게 된다.
 ##
 ## ── VIEW: 실제 창을 띄워 논리 화면·창 크기·배율·보이는 칸을 잰다 ──────────
@@ -92,13 +92,18 @@ const HB_BOTTOM_GAP := 16.0        # 화면 아래 끝에서 이보다 멀면 �
 # 월드에는 아직 오브젝트가 하나도 없고 플레이어는 맨땅(또는 바다)을 겨눈다.
 const USE_ITEM := &"wood"          # 손에 들려 볼 것. 맨손과 색이 달라야 「든 것」이 보인다
 const USE_EMPTY_SLOT := 8          # 맨손을 만들 빈 칸
-const USE_MAX_FRAMES := 40         # 한 모션에서 따라가는 프레임 상한 (화면이 빠른 기계 대비)
+## **프레임 수로 끊지 않는다.** 모션은 `_process(delta)` 로 도는 **시간**인데 프레임은
+## 시간이 아니다 — 창이 가려져 vsync 가 풀리면 1400fps 가 나서 40프레임이 0.08초밖에 안 되고,
+## 0.24초짜리 모션이 12% 에서 끊긴다 (2026-09-14 실측: 진행도 0.12 · 자리 1개).
+## 회차 11 이 `FACE` 에서 같은 구멍을 「유휴 프레임이 물리 한 틱도 못 품는다」로 고쳤다.
+const USE_MAX_MSEC := 3000        # 한 모션을 따라가는 벽시계 상한 (ms)
+const USE_MAX_FRAMES := 4000      # 폭주 방어용 상한. 판정에 쓰는 값이 아니다
 const USE_UNTIL := 0.6             # 진행도가 여기까지 오면 그만 본다
 const USE_MIN_FRAMES := 3          # 그 전에 최소 이만큼은 본다
 const USE_MIN_SPOTS := 3           # 서로 다른 자리가 이만큼은 나와야 「모션」이다
 const USE_MIN_SPAN := 4.0          # 처음과 끝이 이만큼은 벌어져야 한다 (px)
 const USE_SAME := 0.5              # 이보다 가까우면 같은 자리로 센다 (px)
-const USE_END_FRAMES := 120        # 버튼을 놓고 모션이 끝나기를 기다리는 상한
+const USE_END_MSEC := 2000         # 버튼을 놓고 모션이 끝나기를 기다리는 상한 (ms · 0.24초의 8배)
 
 var _view_bad := 0
 var _draw_bad := 0
@@ -437,7 +442,10 @@ func _swing_once(phase: String, want: Color, tool_rect: ColorRect, body: ColorRe
 	var geo_bad := 0
 	var first := ""
 	var frames := 0
+	var t0 := Time.get_ticks_msec()
 	for i in USE_MAX_FRAMES:
+		if Time.get_ticks_msec() - t0 > USE_MAX_MSEC:
+			break
 		await process_frame
 		await RenderingServer.frame_post_draw
 		frames += 1
@@ -475,16 +483,19 @@ func _swing_once(phase: String, want: Color, tool_rect: ColorRect, body: ColorRe
 	Input.action_release(action)
 
 	# **모션은 「네모가 뜬다」가 아니라 「네모가 움직인다」다.**
+	# **표본이 촘촘하면 「앞의 것 전부와 떨어졌나」로는 못 센다.** 171프레임을 잡으면
+	# 이웃한 두 자리가 0.13 px 차이라 첫 하나 말고는 전부 「같은 자리」가 되어,
+	# 21.82 px 를 지나갔는데도 자리가 1개로 나온다 (2026-09-14 실측).
+	# **직전에 센 자리에서 멀어질 때마다** 하나로 센다 — 표본이 몇 개든 같은 답이 나온다.
 	var distinct := 0
 	var span := 0.0
+	var last_kept := Vector2.INF
 	for a in spots.size():
-		var same := false
 		for b in a:
-			if spots[a].distance_to(spots[b]) <= USE_SAME:
-				same = true
 			span = maxf(span, spots[a].distance_to(spots[b]))
-		if not same:
+		if last_kept == Vector2.INF or spots[a].distance_to(last_kept) > USE_SAME:
 			distinct += 1
+			last_kept = spots[a]
 	_use_swings += 1
 	print("USE [%s] 프레임 %d · 자리 %d · 벌어짐 %.2f px · 픽셀 어긋남 %d · 기하 어긋남 %d · 색 %s · 진행도 %.2f" % [
 		phase, frames, distinct, span, px_bad, geo_bad, want.to_html(false), _player.swing.progress()])
@@ -502,13 +513,15 @@ func _swing_once(phase: String, want: Color, tool_rect: ColorRect, body: ColorRe
 
 	# ④ **놓으면 끝난다.** 안 끝나면 네모가 화면에 영영 남는다.
 	var waited := 0
-	for i in USE_END_FRAMES:
+	var t1 := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t1 <= USE_END_MSEC:
 		await process_frame
 		waited += 1
 		if not tool_rect.visible:
 			break
 	if tool_rect.visible:
-		_use_fail("버튼을 놓은 뒤 [%s]" % phase, "%d 프레임을 기다려도 네모가 남아 있다" % waited,
+		_use_fail("버튼을 놓은 뒤 [%s]" % phase,
+			"%d 프레임 · %d ms 를 기다려도 네모가 남아 있다" % [waited, Time.get_ticks_msec() - t1],
 			"%.2f초 안에 사라진다" % HandSwing.SWING_SEC)
 
 func _use_fail(what: String, actual: String, expected: String) -> void:
