@@ -246,6 +246,11 @@ def render():
     <span class="edate">{esc(f.get("날짜", ""))}</span>
     <span class="eres {rcls}">{esc(res_txt or "—")}</span>
   </div>''')
+        if not e["human"] and not any(f.get(k) for k in ("문제", "원인", "고친 것")):
+            # 빈 절을 조용히 넘기면 「문제 없는 바퀴」와 구별이 안 된다.
+            A('<div class="row prob"><span class="k">일지</span>'
+              '<span class="v"><strong>세션이 안 적었다.</strong> '
+              '드라이버가 스텁만 찍었다 — 무엇이 막혔는지 남은 게 없다.</span></div>')
         for k, cls in (("문제", "prob"), ("원인", "cause"), ("고친 것", "fix"),
                        ("바꾼 결정", "decide"), ("남긴 것", "left")):
             if f.get(k) and f[k] != "없음":

@@ -36,6 +36,39 @@
 
 ---
 
+## 사람 · 문서를 docs/ 로 · 바퀴 일지 · GitHub Pages 대시보드
+- 날짜: 2026-09-14
+- 결과: 초록
+- 문제: 바깥에서 **루프가 어떤 상태인지 볼 방법이 없었다.** `.loop/results.json` ·
+  `spend.txt` · `STOPPED` 은 전부 `.gitignore` 라 GitHub 에서 안 보이고, md 가 루트에
+  흩어져 있어 나중에 다시 볼 때 어느 파일이 어느 층인지 헷갈렸다. 그리고 **일지가 없었다** —
+  `.loop/state.md` 는 만든 것 위주라 「무엇이 막혔고 왜 그랬나」가 바퀴마다 새면서 사라졌다.
+- 원인: 기록의 **독자를 나눈 적이 없다.** `state.md` 는 다음 바퀴의 세션이 읽는 것이고,
+  사람이 몇 주 뒤에 읽을 기록은 따로 필요한데 같은 파일에 섞여 있었다.
+  그런데 `state.md` 는 롤링되므로 **사람이 읽을 것까지 같이 잘려 나갔다.**
+- 고친 것: md 를 전부 `docs/` 로 옮겼다 (`CLAUDE.md` 만 루트 — Claude Code 가 루트만
+  자동 로드한다). `docs/JOURNAL.md` 신설 — 세션은 **읽지 않고 끝에 절만 덧붙인다**.
+  `tools/loop/journal.sh` 가 `next`/`check`/`stamp` 를 맡고, `tools/loop/report.py` 가
+  `docs/index.html` 을 굽는다. 드라이버가 매 바퀴 끝에 찍고 굽고 커밋한다.
+- 바꾼 결정: **일지의 줄마다 주인을 갈랐다.** 세션이 `문제·원인·고친 것·바꾼 결정·잰 값·남긴 것`
+  을, 드라이버가 `날짜·결과·채점·비용·커밋` 을 쓴다. 채점 칸에는 `results.json` — 채점자가
+  쓴 것 — 만 들어가므로 세션의 「됐습니다」가 결과가 되지 않는다.
+  그리고 **빨간 바퀴에도 일지는 남긴다** — `git reset --hard` 전에 빼뒀다가 도로 넣는다.
+  왜 빨갰는지가 제일 비싼 기록인데 지금까지는 되돌리기에 같이 쓸려 나갔다.
+  **세션이 사람 판단 줄을 비워 두면 초록이어도 멈춘다** (`journal.sh check`).
+- 잰 값: `REDTEAM 11 잡음, 0 놓침` · `ALL GREEN` (기준 5) · `TESTS 18 passed, 0 failed` ·
+  `MOVE 가로 238.55 px/s · 대각 239.93 px/s` (둘 다 240.00 px) ·
+  `DOCLEN CLAUDE.md 41/45 · docs/PROMPT.md 60/70 · .loop/state.md 59/90` ·
+  조립된 프롬프트 `122 → 141줄` (일지 지시 19줄. **바퀴마다 늘지 않는 고정분이다**)
+- 남긴 것: **dry-run 이 버그 둘을 잡았다** — `cat PROMPT.md` 가 이동을 못 따라가
+  지시서가 통째로 빠졌고(81줄), dry-run 은 `finish_journal` 을 건너뛰어 일지 게이트가
+  항상 빨갰다. 둘 다 고쳤다. **경로를 옮길 때 `--dry-run` 을 먼저 돌린다** 를 규칙으로 삼을 만하다.
+  대시보드는 값을 페이지에 구워 넣는다 — 굽지 않으면 낡는다. 사람이 손으로 볼 땐
+  `tools/loop/ctl.sh report`.
+- 채점: 1 IMPORT ok · 2 PARSE 11개 스크립트, 실패 0 · 3 TESTS 18 passed, 0 failed · 4 TESTS 18 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  59/90줄
+- 비용: $2.7869 누적 (사람 세션 — 루프 예산 밖)
+- 커밋: `7533cb0`
+
 ## 사람 · 문서 구조 세분화 (매 바퀴 읽는 비용을 고정으로)
 - 날짜: 2026-09-13
 - 결과: 초록
