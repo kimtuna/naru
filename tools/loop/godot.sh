@@ -34,6 +34,20 @@ SECS="${1:?사용법: godot.sh <초> -- <godot 인자...>}"
 shift
 [ "${1:-}" = "--" ] && shift
 
+# ── 포커스 되돌리기 (2026-09-14 · 바퀴 13 실측) ───────────────────────
+# **창을 띄우면 macOS 가 Godot 을 무조건 맨 앞으로 올린다.** 막는 길이 없다 —
+# `no_focus` 도 화면 밖 위치도 `open -g` 도 전부 뺏겼다 (NUMBERS 11절).
+# 못 막으니 **끝나고 되돌려 준다**: 띄우기 직전의 맨 앞 앱을 기억했다가,
+# 끝났을 때 맨 앞이 그 앱이 아니면 다시 앞으로 보낸다.
+# 안 하면 사람이 매번 손으로 클릭해서 돌아와야 한다 (실측: 끝 앞이 늘 딴 앱이었다).
+#
+# **게이트만 켠다** (`NARU_FOCUS_RESTORE=1`). 사람이 직접 띄운 창은 안 켠다 —
+# 보는 동안 딴 앱으로 옮겼을 수 있는데 그걸 도로 뺏으면 그게 또 도둑질이다.
+restore_from=""
+if [ "${NARU_FOCUS_RESTORE:-0}" = "1" ] && command -v lsappinfo >/dev/null 2>&1; then
+  restore_from="$(lsappinfo info -only bundlepath "$(lsappinfo front)" 2>/dev/null | sed -n 's/.*"LSBundlePath"="\(.*\)"/\1/p')"
+fi
+
 set -m
 "$GODOT" "$@" &
 pid=$!
@@ -43,4 +57,10 @@ watcher=$!
 wait "$pid"; rc=$?
 kill "$watcher" >/dev/null 2>&1 || true
 wait "$watcher" 2>/dev/null || true
+
+if [ -n "$restore_from" ] && [ -d "$restore_from" ]; then
+  now="$(lsappinfo info -only bundlepath "$(lsappinfo front)" 2>/dev/null | sed -n 's/.*"LSBundlePath"="\(.*\)"/\1/p')"
+  [ "$now" != "$restore_from" ] && open "$restore_from" >/dev/null 2>&1
+fi
+
 exit "$rc"

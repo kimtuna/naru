@@ -62,8 +62,10 @@ step_measure() {
   # project.godot 의 글자가 맞아도 카메라 줌이나 content_scale_factor 로
   # 눈에 보이는 칸 수는 달라진다 — 그 구멍을 여기서 막는다.
   # **--headless 를 쓰지 않는다** — 헤드리스 드라이버는 창 크기가 (0,0) 이라 배율을 못 잰다.
+  # `NARU_FOCUS_RESTORE=1`: 창이 사람의 포커스를 가져간다 — 막을 길이 없어서
+  # **끝나고 되돌려 준다** (바퀴 13 · NUMBERS 11절). 창을 띄우는 두 곳에만 건다.
   local vout vrc
-  vout="$("$G" 60 -- --path "$ROOT" --script res://tools/tests/measure_view.gd 2>&1)"; vrc=$?
+  vout="$(NARU_FOCUS_RESTORE=1 "$G" 60 -- --path "$ROOT" --script res://tools/tests/measure_view.gd 2>&1)"; vrc=$?
   printf '%s\n' "$vout" | grep -E '^VIEW ' || { printf '%s\n' "$vout" | tail -5; echo "VIEW FAIL 측정이 아무것도 안 찍었다"; return 1; }
   [ $vrc -eq 0 ] || return 1
   # 방향 실측: 메인 씬을 **제 SubViewport 에** 세우고 합성 마우스 이벤트를 밀어 넣어
@@ -115,7 +117,7 @@ step_measure() {
   # **서서 한 번 · 걷고 한 번** 잰다 — 색 캐시는 걸어야 상한다.
   # **--headless 를 쓰지 않는다** — 헤드리스는 렌더러가 더미라 뷰포트 텍스처가 빈다.
   local dout drc
-  dout="$("$G" 120 -- --path "$ROOT" --script res://tools/tests/measure_draw.gd 2>&1)"; drc=$?
+  dout="$(NARU_FOCUS_RESTORE=1 "$G" 120 -- --path "$ROOT" --script res://tools/tests/measure_draw.gd 2>&1)"; drc=$?
   printf '%s\n' "$dout" | grep -E '^DRAW (\[|ok|FAIL)' || { printf '%s\n' "$dout" | tail -5; echo "DRAW FAIL 측정이 아무것도 안 찍었다"; return 1; }
   [ $drc -eq 0 ]
 }

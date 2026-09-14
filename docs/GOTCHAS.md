@@ -44,6 +44,14 @@
   `godot.sh` 가 **`HOME` 자체를 프로젝트 안으로 돌린다** (NUMBERS 2절).
 - **`screencapture` 는 화면 기록 권한에 막힌다** (`could not create image from display`).
   무인 루프는 못 쓴다 — `tools/loop/shot.sh` 로 Godot 프레임버퍼를 읽는다.
+- **창을 띄우면 Godot 이 무조건 맨 앞으로 온다.** 끌 손잡이가 없다 —
+  `no_focus` · 화면 밖 `--position`(물려 들어온다) · `LSUIElement` 번들 · `open -g` ·
+  최소화(프레임버퍼가 단색이 된다) **6가지 전부 뺏겼다** (NUMBERS 11절).
+  막지 말고 **끝나고 되돌려라**: `NARU_FOCUS_RESTORE=1` 를 `godot.sh` 에 건다.
+- **CLI 로 프로젝트 설정을 못 덮는다.** `--display/window/size/no_focus=true` 는
+  에러 없이 **인자로 통과만 되고** 설정은 그대로다. 조용히 아무 일도 안 일어난다.
+- **맨 앞 앱은 `lsappinfo` 로 잰다.** `osascript` + System Events 는 접근성 권한을
+  물어서 무인 루프가 못 쓴다 — `tools/loop/focus.sh`.
 - **BSD `tr` 은 `\x1f` 를 못 읽는다.** 8진수 `\037` 을 쓴다.
 - **bash 3.2 라 `mapfile` 이 없다.** `while IFS= read -r` 로 읽는다.
 

@@ -14,7 +14,8 @@ MAXFLAT="100"
 [ "${4:-}" = "--max-flat" ] && MAXFLAT="${5:-100}"
 
 rm -f "$OUT"
-out="$(bash "$ROOT/tools/loop/godot.sh" 40 -- --path "$ROOT" \
+# `NARU_FOCUS_RESTORE=1`: 창이 포커스를 가져간다 — 끝나고 되돌려 준다 (NUMBERS 11절).
+out="$(NARU_FOCUS_RESTORE=1 bash "$ROOT/tools/loop/godot.sh" 40 -- --path "$ROOT" \
         --script res://tools/qa/shot.gd -- "$OUT" "$SCENE" "$FRAMES" 2>&1)"
 line="$(printf '%s' "$out" | grep -E '^SHOT' | tail -1)"
 [ -z "$line" ] && { printf '%s\n' "$out" | tail -5; echo "SHOT 실패 — 출력이 없다"; exit 1; }
