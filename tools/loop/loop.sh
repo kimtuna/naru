@@ -111,7 +111,11 @@ finish_journal() {                        # finish_journal <바퀴> <항목> <�
   # 찍히는 커밋은 **항목을 만든 커밋**이다. 이 함수는 roll_state 뒤에 도는데
   # 그 사이 부기 커밋(기준 승격 · 바닥 올림 · 롤링)이 끼면 그게 찍힌다.
   bash tools/loop/journal.sh stamp "$1" "$2" "$3" "${4:-$(git rev-parse --short HEAD)}" | sed 's/^/    /'
-  python3 tools/loop/report.py | sed 's/^/    /'
+  # **대시보드가 안 구워지면 멈춘다.** 바깥에서 볼 수 있는 유일한 창인데
+  # 조용히 실패하면 페이지가 낡은 채로 며칠을 간다 — 실제로 문법 하나가 깨져서 그랬다.
+  if ! python3 tools/loop/report.py | sed 's/^/    /'; then
+    stop "대시보드를 못 구웠다 — tools/loop/report.py (바퀴 $1)"
+  fi
   if [ -n "$(git status --porcelain docs/JOURNAL.md docs/index.html 2>/dev/null)" ]; then
     git add docs/JOURNAL.md docs/index.html docs/.nojekyll 2>/dev/null || true
     git -c user.name=loop -c user.email=loop@local commit -q \
