@@ -123,7 +123,9 @@ func test_remove_gives_back_only_what_is_there() -> void:
 	eq(inv.free_slots(), 16, "빈 칸이 하나 돌아왔다")
 	eq(inv.amounts[0], MAX, "앞 칸은 꽉 찬 채로 남는다")
 	eq(inv.remove(STONE, 5), 0, "없는 것은 0개 나온다")
-	eq(inv.remove(WOOD, 1000), 2 * MAX - 8, "모자라면 있는 만큼만")
+	# **있는 것보다 많이** 달라고 해야 이 줄이 뜻을 갖는다. 1000 이라고 적었더니
+	# 상한이 999 가 된 순간 1990 개가 든 가방에 1000 을 부르는 — 그냥 성공하는 줄이 됐다.
+	eq(inv.remove(WOOD, 10 * MAX), 2 * MAX - 8, "모자라면 있는 만큼만")
 	eq(inv.total(), 0, "빈 가방")
 	eq(inv.free_slots(), 18, "칸이 전부 돌아왔다")
 	_sane(inv, "다 뺀 뒤")
@@ -141,3 +143,20 @@ func test_bad_input_never_eats_items() -> void:
 	eq(inv.remove(WOOD, 0), 0, "0개 빼기")
 	eq(inv.count(WOOD), 4, "0개 빼도 그대로")
 	_sane(inv, "이상한 입력 뒤")
+
+## **정해진 숫자를 글자로 박는다.** 위의 검사들은 전부 `MAX` 라는 이름으로만 쓰므로
+## 상수가 조용히 움직여도 한 줄도 안 빨개진다 — 「꽉 찬 가방」이 그냥 다른 상황이 될 뿐이다.
+## 바퀴 17 의 스폰 좌표와 같은 자리다: **사람이 고른 값은 이름이 아니라 숫자로 묶어야 한다.**
+## 그래서 상수만 보지 않고 **실제로 채워서** 한 칸이 999 를 받는지까지 다시 센다.
+func test_stack_cap_is_the_number_the_human_chose() -> void:
+	eq(Inventory.STACK_MAX, 999, "한 칸 스택 상한 (2026-09-14 사람이 정했다)")
+	var inv := Inventory.new()
+	eq(inv.add(WOOD, 999), 0, "999개가 한 번에 들어간다")
+	eq(inv.free_slots(), 17, "999개는 칸 하나만 쓴다")
+	eq(inv.amounts[0], 999, "한 칸이 실제로 999개를 담았다")
+	eq(inv.add(WOOD, 1), 0, "1000번째는 들어가되")
+	eq(inv.free_slots(), 16, "둘째 칸을 연다")
+	eq(inv.amounts[1], 1, "넘친 1개")
+	_sane(inv, "999 를 채운 뒤")
+	# 가방 한 개의 용량 — 18칸 × 999. 「꽉 찼다」를 재는 모든 검사가 딛는 바닥이다.
+	eq(_packed().total(), 17982, "가방 한 개 용량 18칸 × 999")

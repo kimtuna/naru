@@ -369,6 +369,14 @@ sed -i '' 's|^const SLOTS := 18|const SLOTS := 36|' scripts/inventory.gd
 expect 1 "가방을 36칸으로 늘리면 tests 가 잡는다 (18칸)"
 cp "$BAK/inventory.gd" scripts/inventory.gd
 
+# ── 바퀴 19 스택 상한 ────────────────────────────────────────────────
+# **사람이 고른 값은 이름이 아니라 숫자로 묶여 있어야 한다.** 검사들이 전부
+# `MAX := Inventory.STACK_MAX` 로만 쓰면 상한이 99 로 돌아가도 한 줄도 안 빨개진다 —
+# 「꽉 찬 가방」이 그냥 다른 상황이 될 뿐이라 전부 그대로 통과한다.
+sed -i '' 's|^const STACK_MAX := 999|const STACK_MAX := 99|' scripts/inventory.gd
+expect 1 "스택 상한을 99 로 되돌리면 tests 가 잡는다 (사람이 정한 999)"
+cp "$BAK/inventory.gd" scripts/inventory.gd
+
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
 cp "$BAK/project.godot" project.godot

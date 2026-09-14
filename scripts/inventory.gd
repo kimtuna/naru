@@ -12,7 +12,9 @@ extends RefCounted
 ## 칸 하나의 불변식: `ids[i] == EMPTY` 와 `amounts[i] == 0` 은 **항상 같이** 참이다.
 
 const SLOTS := 18       # 일반 칸. 핫바 9칸은 따로 얹는다 (GDD D-2c)
-const STACK_MAX := 99   # [ASK] 임시값 — 사람이 정할 것. 도구처럼 1개만 쌓이는 것은 아직 없다
+const STACK_MAX := 999  # 사람이 정했다 (2026-09-14). 가방이 꽉 차서 돌아가는 것은
+                        # 이 게임이 만들려는 압박이 아니다 — 압박은 원정에서 온다 (GDD A-3).
+                        # **아이디별 상한**(도구는 1개)은 도구가 나오는 P3 에 같이 정한다.
 const EMPTY := &""
 
 var ids: Array[StringName] = []
