@@ -237,6 +237,56 @@ PYX
 expect 1 "카메라가 부드럽게 끌려오면 실측이 잡는다 (걷는 동안 중심에서 밀린다)"
 cp "$BAK/main.gd" scripts/main.gd
 
+# ── 바퀴 9 월드 그리기 ────────────────────────────────────────────────
+# 넷 다 **단위 검사 66개를 전부 초록으로 남긴다** — WorldView 의 순수 계산은 멀쩡하고
+# main.gd 가 그걸 쓰는 방식만 망가지기 때문이다. measure_draw.gd 만 잡는다.
+
+# 그릴 칸 수도 273 그대로다 — **픽셀을 안 보면 못 잡는다.**
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t\t\tdraw_rect(Rect2(tx * t, ty * t, t, t), _cache[i])\n", "", 1))
+PYX
+expect 1 "아무것도 안 그리면 그리기 실측이 잡는다 (화면이 배경색뿐)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# **사람 눈에는 멀쩡한 섬이 보인다.** 파란 칸을 걸어 다니고 풀밭에서 막힌다 —
+# 그림과 충돌이 한 칸씩 다른 월드를 보는 것이다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t\t\t_cache[i] = WorldView.color_at(WORLD_SEED, tx, ty)",
+    "\t\t\t_cache[i] = WorldView.color_at(WORLD_SEED + 1, tx, ty)", 1))
+PYX
+expect 1 "다른 씨앗으로 그리면 잡는다 (보이는 땅에 못 선다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# **화면 픽셀은 한 점도 안 달라진다.** 화면 밖 65263칸은 아무 데도 안 보인다 —
+# 그래서 main.gd 가 세어 둔 그린 칸 수를 같이 읽는다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tvar r := WorldView.tile_range(visible_world_rect())",
+    "\tvar r := Rect2i(0, 0, WorldGen.SIZE, WorldGen.SIZE)", 1))
+PYX
+expect 1 "월드를 통째로 그리면 잡는다 (273 → 65536 칸)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# **서 있을 때는 완벽하게 멀쩡하다.** 걸어야 화면이 월드에서 미끄러진다 —
+# measure_draw.gd 가 두 번 재는 이유가 이 한 줄이다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tif r != _cache_range:\n\t\t_fill_cache(r)",
+    "\tif _cache.is_empty():\n\t\t_fill_cache(r)", 1))
+PYX
+expect 1 "색 캐시를 안 버리면 잡는다 (걸으면 땅이 어긋난다)"
+cp "$BAK/main.gd" scripts/main.gd
+
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
 cp "$BAK/project.godot" project.godot

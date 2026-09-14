@@ -95,7 +95,15 @@ step_tests() {
   local camout camrc
   camout="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_camera.gd 2>&1)"; camrc=$?
   printf '%s\n' "$camout" | grep -E '^CAMERA' || { printf '%s\n' "$camout" | tail -5; echo "CAMERA FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $camrc -eq 0 ]
+  [ $camrc -eq 0 ] || return 1
+  # 그리기 실측: 해안에 세우고 **구운 픽셀을 그 자리의 월드 칸 색과 맞춰 본다.**
+  # WorldView 가 맞아도 main 이 안 그리거나 다른 씨앗으로 그리면 단위 검사는 전부 초록이다.
+  # **서서 한 번 · 걷고 한 번** 잰다 — 색 캐시는 걸어야 상한다.
+  # **--headless 를 쓰지 않는다** — 헤드리스는 렌더러가 더미라 뷰포트 텍스처가 빈다.
+  local dout drc
+  dout="$("$G" 120 -- --path "$ROOT" --script res://tools/tests/measure_draw.gd 2>&1)"; drc=$?
+  printf '%s\n' "$dout" | grep -E '^DRAW (\[|ok|FAIL)' || { printf '%s\n' "$dout" | tail -5; echo "DRAW FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  [ $drc -eq 0 ]
 }
 
 case "$WHAT" in

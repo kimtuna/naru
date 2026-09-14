@@ -83,7 +83,9 @@ static func spawn_tile() -> Vector2i:
 ## ── 잡음 ──────────────────────────────────────────────────────────────
 
 ## 좌표 → 0..1. 순서가 없는 순수 함수다.
-static func _unit(world_seed: int, x: int, y: int) -> float:
+## **밖으로 냈다**: 타일 색을 칸마다 조금 흔드는 데 WorldView 가 같은 해시를 쓴다 —
+## 두 벌을 두면 언젠가 한쪽만 고쳐진다.
+static func unit(world_seed: int, x: int, y: int) -> float:
 	var h := world_seed & 0xFFFFFFFF
 	h = (h ^ (x * 374761393)) & 0xFFFFFFFF
 	h = (h ^ (y * 668265263)) & 0xFFFFFFFF
@@ -100,10 +102,10 @@ static func _value(world_seed: int, x: float, y: float) -> float:
 	var fy := y - yi
 	var u := fx * fx * (3.0 - 2.0 * fx)
 	var v := fy * fy * (3.0 - 2.0 * fy)
-	var a := _unit(world_seed, xi, yi)
-	var b := _unit(world_seed, xi + 1, yi)
-	var c := _unit(world_seed, xi, yi + 1)
-	var d := _unit(world_seed, xi + 1, yi + 1)
+	var a := unit(world_seed, xi, yi)
+	var b := unit(world_seed, xi + 1, yi)
+	var c := unit(world_seed, xi, yi + 1)
+	var d := unit(world_seed, xi + 1, yi + 1)
 	return lerpf(lerpf(a, b, u), lerpf(c, d, u), v)
 
 ## 옥타브를 겹친다. 큰 덩어리가 섬을, 작은 것이 해안선의 들쭉날쭉을 만든다.
