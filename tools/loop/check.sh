@@ -81,7 +81,14 @@ step_tests() {
     return 1
   fi
   echo "WORLD 두 프로세스 체크섬 일치"
-  [ $w1rc -eq 0 ] && [ $w2rc -eq 0 ]
+  [ $w1rc -eq 0 ] && [ $w2rc -eq 0 ] || return 1
+  # 충돌 실측: **메인 씬을 통째로** 물리로 돌려 진짜 섬의 해안에 걸어서 부딪힌다.
+  # WorldCollide 가 맞아도 노드가 안 부르거나 main.gd 가 월드를 안 꽂으면
+  # 플레이어는 바다 위를 걸어간다 — 그 구멍을 여기서 막는다.
+  local cout crc
+  cout="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_collide.gd 2>&1)"; crc=$?
+  printf '%s\n' "$cout" | grep -E '^COLLIDE' || { printf '%s\n' "$cout" | tail -5; echo "COLLIDE FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  [ $crc -eq 0 ]
 }
 
 case "$WHAT" in

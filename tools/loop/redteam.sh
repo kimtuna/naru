@@ -25,6 +25,7 @@ cp docs/PROMPT.md "$BAK/" 2>/dev/null || true
 cp scripts/player_motion.gd "$BAK/" 2>/dev/null || true
 cp scripts/player_facing.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_gen.gd "$BAK/" 2>/dev/null || true
+cp scripts/world_collide.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
@@ -36,6 +37,7 @@ restore() {
   cp "$BAK/player_motion.gd" scripts/player_motion.gd 2>/dev/null || true
   cp "$BAK/player_facing.gd" scripts/player_facing.gd 2>/dev/null || true
   cp "$BAK/world_gen.gd" scripts/world_gen.gd 2>/dev/null || true
+  cp "$BAK/world_collide.gd" scripts/world_collide.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
@@ -155,6 +157,34 @@ sed -i '' 's|^const SIZE := 256|const SIZE := 128|' scripts/world_gen.gd
 expect 1 "월드를 256 → 128 로 줄이면 tests 가 잡는다"
 cp "$BAK/world_gen.gd" scripts/world_gen.gd
 
+
+# ── P1-5 이동 충돌 ────────────────────────────────────────────────────
+# 앞의 둘은 **단위 검사 53개를 전부 초록으로 남긴다** — WorldCollide 자체는 멀쩡하고
+# 그걸 쓰는 배선만 끊기기 때문이다. measure_collide.gd 만 잡는다.
+sed -i '' 's|position = WorldCollide.move(position, velocity \* delta, solid)|position += velocity * delta|' scripts/player.gd
+expect 1 "노드가 충돌을 안 물으면 실측이 잡는다 (바다 위를 걸어간다)"
+cp "$BAK/player.gd" scripts/player.gd
+
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t_player.solid = WorldCollide.solid_from_seed(WORLD_SEED, tile_offset)", "\tpass", 1))
+PYX
+expect 1 "main 이 월드를 안 꽂으면 실측이 잡는다 (막는 칸이 하나도 없다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# 벽에 닿으면 **통째로** 정지한다 — 「바다에 못 들어간다」는 그대로 맞고 미끄러짐만 죽는다.
+# 사람 눈에는 「해안에 비스듬히 붙으면 걸린다」로만 보인다.
+python3 - <<'PYX'
+import io
+p='scripts/world_collide.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tp.y = _sweep(p, motion.y, 1, solid, half)",
+    "\tif not is_equal_approx(p.x, pos.x + motion.x):\n\t\treturn p\n\tp.y = _sweep(p, motion.y, 1, solid, half)", 1))
+PYX
+expect 1 "벽에 닿을 때 통째로 멈추면 잡는다 (해안에서 안 미끄러진다)"
+cp "$BAK/world_collide.gd" scripts/world_collide.gd
 
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
