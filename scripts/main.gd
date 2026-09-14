@@ -16,9 +16,16 @@ extends Node2D
 ## **보이는 칸만 그린다.** 그릴 범위는 `visible_world_rect()` 가 준다 —
 ## 카메라의 위치·줌이 전부 그 안에 들어 있다.
 ##
+## **좌클릭은 손에 든 것으로 간다** (GDD D-2c): 무엇을 하는지는 「무엇을 눌렀나」가
+## 아니라 「무엇을 겨눴나」가 정하므로 버튼은 하나다. 여기서는 **손에 든 것의 색을
+## 플레이어에게 넘기는 것**까지만 한다 — 맞힐 것이 아직 월드에 없다.
+##
 ## **핫바는 화면에 못 박혀 있다** (GDD D-2c): `UI` 는 `CanvasLayer` 라 카메라를 안 탄다.
 ## 숫자키를 읽어 손을 옮기는 것도 여기서 한다 — `Hotbar` 는 순수 계산이라
 ## 엔진 입력을 안 본다.
+
+## 좌클릭의 입력 액션 이름. project.godot 의 글자와 **한 곳에서** 만난다.
+const USE_ACTION := &"use"
 
 ## 이 판의 씨앗. 저장·불러오기가 생기면 세이브에서 온다 (GDD D-1).
 const WORLD_SEED := 20260914
@@ -87,6 +94,7 @@ func _link_world() -> void:
 ## 다시 그려야 한다.
 func _process(_delta: float) -> void:
 	_poll_hotbar()
+	_poll_use()
 	queue_redraw()
 
 ## 숫자키 1..9 → 손. 액션 이름은 `Hotbar` 가 만든다 — 여기서 글자를 다시 적으면
@@ -98,6 +106,14 @@ func _poll_hotbar() -> void:
 			hotbar.select(i)
 			_hotbar_view.queue_redraw()
 		_key_down[i] = down
+
+## 좌클릭 → 손에 든 것의 동작. **누르고 있으면 계속 휘두른다** (HandSwing 머리말)
+## 이라서 「눌린 순간」을 따로 안 잡는다 — 겹치지 않게 막는 것은 `HandSwing.start()` 다.
+## 숫자키가 직전 프레임을 들고 있어야 했던 것과 다른 자리다: 저쪽은 **한 번**이고
+## 이쪽은 **누르는 동안 내내**다.
+func _poll_use() -> void:
+	if Input.is_action_pressed(USE_ACTION):
+		_player.use(HandSwing.color_for(hotbar.held_id()))
 
 ## 지금 화면에 걸리는 월드 범위(픽셀). 카메라의 위치·줌이 전부 여기 들어 있다.
 func visible_world_rect() -> Rect2:

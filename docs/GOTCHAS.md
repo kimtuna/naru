@@ -30,6 +30,10 @@
 - **`root.add_child()` 로 붙인 씬의 `_ready` 는 `_initialize()` 안에서 아직 안 돌았다.**
   거기서 배선(`player.solid` 같은 것)을 읽으면 늘 비어 있다 — **몇 프레임 기다렸다가**
   `_process` 에서 본다 (`measure_collide.gd` 의 `WARMUP`).
+- **단위 검사(`run_tests.gd`)에는 프레임이 아예 없다.** `root.is_inside_tree()` 가 `false` 라
+  `add_child` 를 해도 `_ready` 가 안 오고 **`@onready` 가 전부 `null`** 이다 (2026-09-14 실측) —
+  씬 노드를 헤드리스로 시험하려면 `p.notification(Node.NOTIFICATION_READY)` 로 손수 깨운다
+  (`test_player_scene.gd`).
 - **`measure_facing.gd` 는 사람이 마우스를 만지면 빨개진다.** 진짜 커서를 뺏는 게이트라
   그렇다 — `FACE FAIL 커서 각 … 잰 값 14.93°` 처럼 **커서 각부터 어긋난다**(2026-09-14 실측).
   코드 문제가 아니다. 마우스에서 손을 떼고 다시 돌린다.

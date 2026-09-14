@@ -39,6 +39,16 @@ extends SceneTree
 ## 그래서 여기서 **칸마다 두 점**(테두리 · 바탕)을 구운 픽셀에서 읽고,
 ## **숫자키를 눌러 강조가 옮겨 가는지**까지 다시 굽는다.
 ##
+## ── USE: 좌클릭이 **대상 없이도** 모션을 내나 · 그 모션이 움직이나 ───────────
+## 왜 단위 검사로 부족한가: `test_hand_swing.gd` 는 부채꼴의 기하를, `test_player_scene.gd`
+## 는 「씬에 네모가 있나 · 버튼이 묶였나」를 잰다. 둘 다 초록인 채로 **main 이 클릭을
+## 안 읽거나**(`_poll_use` 를 안 부른다) **네모를 안 보이게 두거나**(`visible`)
+## **손에 든 것과 무관한 색으로 그려도** 한 줄이 안 빨개진다.
+## 그래서 여기서 **모션이 도는 동안 프레임마다** 네모의 자리를 모으고 그 자리의 픽셀을
+## 읽는다: 자리가 안 변하면 그건 모션이 아니라 켜진 네모다.
+## **맞힐 것이 하나도 없는 곳에서 잰다** — 월드에는 아직 오브젝트가 없다.
+## 맨손으로 한 번 · 손에 든 것으로 한 번, 두 모션을 본다.
+##
 ## **DRAW 는 핫바가 덮은 자리를 건너뛴다.** 안 그러면 「월드를 그렸나」가 핫바 때문에
 ## 통째로 빨개진다 — 건너뛴 만큼은 HOTBAR 가 대신 판정한다. 그래서 둘은 짝이다.
 ##
@@ -77,9 +87,24 @@ const HB_BG_PROBE := Vector2(4.0, 4.0)
 const HB_KEY := 3                  # 눌러 볼 숫자키. 처음 든 1번 칸과 달라야 옮겨간 것이 보인다
 const HB_BOTTOM_GAP := 16.0        # 화면 아래 끝에서 이보다 멀면 「상시 핫바」가 아니다
 
+# ── USE 기대값 ───────────────────────────────────────────────────────
+# **대상이 없어도 모션이 나온다** (BACKLOG P2). 이 게이트가 서는 자리가 그 문장이다:
+# 월드에는 아직 오브젝트가 하나도 없고 플레이어는 맨땅(또는 바다)을 겨눈다.
+const USE_ITEM := &"wood"          # 손에 들려 볼 것. 맨손과 색이 달라야 「든 것」이 보인다
+const USE_EMPTY_SLOT := 8          # 맨손을 만들 빈 칸
+const USE_MAX_FRAMES := 40         # 한 모션에서 따라가는 프레임 상한 (화면이 빠른 기계 대비)
+const USE_UNTIL := 0.6             # 진행도가 여기까지 오면 그만 본다
+const USE_MIN_FRAMES := 3          # 그 전에 최소 이만큼은 본다
+const USE_MIN_SPOTS := 3           # 서로 다른 자리가 이만큼은 나와야 「모션」이다
+const USE_MIN_SPAN := 4.0          # 처음과 끝이 이만큼은 벌어져야 한다 (px)
+const USE_SAME := 0.5              # 이보다 가까우면 같은 자리로 센다 (px)
+const USE_END_FRAMES := 120        # 버튼을 놓고 모션이 끝나기를 기다리는 상한
+
 var _view_bad := 0
 var _draw_bad := 0
 var _hb_bad := 0
+var _use_bad := 0
+var _use_swings := 0
 var _frames := 0
 var _main: Node2D
 var _player: Node2D
@@ -96,6 +121,7 @@ func _initialize() -> void:
 	_measure_view()
 	await _measure_draw()
 	await _measure_hotbar()
+	await _measure_use()
 	_finish()
 
 # ── VIEW ─────────────────────────────────────────────────────────────
@@ -293,6 +319,7 @@ func _measure_hotbar() -> void:
 	await _settle()
 	var img := _bake()
 	if img == null:
+		_hb_fail("화면", "텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
 		_hb_report()
 		return
 	_hb_pixels(img, "처음", hotbar.selected)
@@ -306,16 +333,18 @@ func _measure_hotbar() -> void:
 			"%d번 칸" % (hotbar.selected + 1), "%d번 칸 (누르기 전 %d번)" % [HB_KEY, before + 1])
 	await _settle()
 	var img2 := _bake()
-	if img2 != null:
+	if img2 == null:
+		_hb_fail("화면 (숫자키 뒤)", "텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
+	else:
 		_hb_pixels(img2, "숫자키 %d" % HB_KEY, HB_KEY - 1)
 	_hb_report()
 
-## 지금 화면을 굽는다. 비면 그 자리에서 실패로 적고 null 을 준다.
+## 지금 화면을 굽는다. 비었거나 크기가 다르면 null 이다 — **보고는 부르는 쪽이 한다**
+## (HOTBAR 와 USE 가 같이 쓴다).
 func _bake() -> Image:
 	var tex: ViewportTexture = root.get_texture()
 	var img: Image = tex.get_image() if tex != null else null
 	if img == null or img.get_width() != LOGICAL_I.x or img.get_height() != LOGICAL_I.y:
-		_hb_fail("화면", "텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
 		return null
 	return img
 
@@ -370,16 +399,137 @@ func _hb_report() -> void:
 	print("HOTBAR %s (9칸 × 두 점 · 숫자키 %d 를 눌러 다시 굽는다)" % [
 		"ok" if _hb_bad == 0 else "FAIL %d개" % _hb_bad, HB_KEY])
 
+# ── USE ──────────────────────────────────────────────────────────────
+## 좌클릭 → **손에 든 것의 동작.** 맞힐 것이 없어도 모션이 나오고, 그 모션이 움직인다.
+##
+## **DRAW 보다 뒤에 있어야 한다**: 휘두르는 네모는 플레이어 둘레에 뜨는데 DRAW 는
+## 그 자리를 「월드와 같은 색이어야 한다」로 본다. 안 휘두르는 동안에는 네모가 아예
+## 없으므로 앞의 두 게이트는 이 항목이 생겨도 표본 한 점을 안 잃는다.
+func _measure_use() -> void:
+	var tool_rect := _player.get_node_or_null("Tool") as ColorRect
+	var body := _player.get_node_or_null("Body") as ColorRect
+	if tool_rect == null or body == null:
+		_use_fail("휘두르는 네모", "Player/Tool 이나 Player/Body 가 없다", "플레이어 씬에 둘 다")
+		_use_report()
+		return
+
+	# ① **안 휘두를 때는 화면에 없다.** 늘 떠 있으면 모션이 아니라 장식이다.
+	if tool_rect.visible:
+		_use_fail("좌클릭 전", "휘두르는 네모가 이미 보인다", "안 보인다")
+
+	# ② **맨손도 휘두른다** (GDD D-2c 맨손 채집). 빈 칸을 든다.
+	_main.hotbar.select(USE_EMPTY_SLOT)
+	await _swing_once("맨손", HandSwing.BARE, tool_rect, body)
+
+	# ③ **손에 든 것의 색으로 휘두른다.** 목재를 넣고 그 칸을 든다 —
+	#    색이 늘 같으면 무엇을 휘두르는지 화면에서 못 읽는다.
+	_main.hotbar.items.add(USE_ITEM, 3)
+	_main.hotbar.select(0)
+	await _swing_once("목재", HotbarView.item_color(USE_ITEM), tool_rect, body)
+	_use_report()
+
+## 한 모션을 **프레임마다 따라간다.** 버튼을 쥐고 있다가, 진행도가 USE_UNTIL 을 넘으면 놓는다.
+func _swing_once(phase: String, want: Color, tool_rect: ColorRect, body: ColorRect) -> void:
+	var action: StringName = _main.USE_ACTION
+	Input.action_press(action)
+	var spots: Array[Vector2] = []
+	var px_bad := 0
+	var geo_bad := 0
+	var first := ""
+	var frames := 0
+	for i in USE_MAX_FRAMES:
+		await process_frame
+		await RenderingServer.frame_post_draw
+		frames += 1
+		if not tool_rect.visible:
+			_use_fail("모션 [%s]" % phase, "%d 프레임째에 네모가 사라졌다 (진행도 %.2f)" % [
+				frames, _player.swing.progress()], "버튼을 쥐고 있는 동안 계속 보인다")
+			break
+		var center: Vector2 = tool_rect.global_position + tool_rect.size * 0.5
+		spots.append(center)
+
+		# 기하 — **몸통 한가운데에서 사거리만큼 · 겨눈 부채꼴 안.**
+		var hub: Vector2 = _player.global_position + body.position + body.size * 0.5
+		var d := hub.distance_to(center)
+		var deg := rad_to_deg(absf((center - hub).angle_to(_player.facing)))
+		if absf(d - HandSwing.REACH) > 0.01 or deg > HandSwing.ARC_DEG * 0.5 + 0.01:
+			geo_bad += 1
+			if first == "":
+				first = "자리 · 사거리 %.2f px (기대 %.1f) · 벌어진 각 %.2f도 (기대 %.1f 이하)" % [
+					d, HandSwing.REACH, deg, HandSwing.ARC_DEG * 0.5]
+
+		# 픽셀 — **그 자리에 정말 그 색이 그려졌나.**
+		var img := _bake()
+		if img == null:
+			_use_fail("화면 [%s]" % phase, "텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
+			break
+		var sp := root.get_canvas_transform() * center
+		var got := img.get_pixel(clampi(int(sp.x), 0, LOGICAL_I.x - 1), clampi(int(sp.y), 0, LOGICAL_I.y - 1))
+		if not _near(got, want):
+			px_bad += 1
+			if first == "":
+				first = "화면 (%d,%d) · 잰 값 %s · 기대 %s" % [
+					int(sp.x), int(sp.y), got.to_html(false), want.to_html(false)]
+		if frames >= USE_MIN_FRAMES and _player.swing.progress() >= USE_UNTIL:
+			break
+	Input.action_release(action)
+
+	# **모션은 「네모가 뜬다」가 아니라 「네모가 움직인다」다.**
+	var distinct := 0
+	var span := 0.0
+	for a in spots.size():
+		var same := false
+		for b in a:
+			if spots[a].distance_to(spots[b]) <= USE_SAME:
+				same = true
+			span = maxf(span, spots[a].distance_to(spots[b]))
+		if not same:
+			distinct += 1
+	_use_swings += 1
+	print("USE [%s] 프레임 %d · 자리 %d · 벌어짐 %.2f px · 픽셀 어긋남 %d · 기하 어긋남 %d · 색 %s · 진행도 %.2f" % [
+		phase, frames, distinct, span, px_bad, geo_bad, want.to_html(false), _player.swing.progress()])
+	if px_bad > 0:
+		_use_fail("휘두르는 네모가 화면에 없거나 다른 색이다 [%s]" % phase,
+			"%d / %d 프레임 (첫 어긋남: %s)" % [px_bad, frames, first],
+			"매 프레임 손에 든 것의 색 (허용 색차 %.1f/255)" % (TOL * 255.0))
+	if geo_bad > 0:
+		_use_fail("휘두르는 네모가 엉뚱한 자리다 [%s]" % phase,
+			"%d / %d 프레임 (첫 어긋남: %s)" % [geo_bad, frames, first], "사거리 위 · 부채꼴 안")
+	if distinct < USE_MIN_SPOTS or span < USE_MIN_SPAN:
+		_use_fail("모션이 안 움직인다 [%s]" % phase,
+			"서로 다른 자리 %d개 · 벌어짐 %.2f px" % [distinct, span],
+			"%d개 이상 · %.1f px 이상 (한 자리에 붙박이면 모션이 아니다)" % [USE_MIN_SPOTS, USE_MIN_SPAN])
+
+	# ④ **놓으면 끝난다.** 안 끝나면 네모가 화면에 영영 남는다.
+	var waited := 0
+	for i in USE_END_FRAMES:
+		await process_frame
+		waited += 1
+		if not tool_rect.visible:
+			break
+	if tool_rect.visible:
+		_use_fail("버튼을 놓은 뒤 [%s]" % phase, "%d 프레임을 기다려도 네모가 남아 있다" % waited,
+			"%.2f초 안에 사라진다" % HandSwing.SWING_SEC)
+
+func _use_fail(what: String, actual: String, expected: String) -> void:
+	_use_bad += 1
+	print("USE FAIL %s — 잰 값 %s · 기대 %s" % [what, actual, expected])
+
+func _use_report() -> void:
+	print("USE %s (모션 %d번 · **대상 0개** · 사거리 %.0f px · 부채꼴 %.0f도 · %.2f초)" % [
+		"ok" if _use_bad == 0 else "FAIL %d개" % _use_bad, _use_swings,
+		HandSwing.REACH, HandSwing.ARC_DEG, HandSwing.SWING_SEC])
+
 # ── 끝 ───────────────────────────────────────────────────────────────
-## **셋 중 하나만 빨개도 이 프로세스는 빨갛다.** 합치기 전에도 계약은 전부 봤다.
+## **넷 중 하나만 빨개도 이 프로세스는 빨갛다.** 합치기 전에도 계약은 전부 봤다.
 func _finish() -> void:
 	print("DRAW %s (표본 간격 %d px · 중심 %.0f px 제외 · 서서 + 걷고 두 번)" % [
 		"ok" if _draw_bad == 0 else "FAIL %d개" % _draw_bad, STEP, SKIP_BOX])
 	# 이름이 `WINGATE` 인 이유: `main.gd` 가 시작할 때 `WINDOW   1920 x 1080` 을 찍는다 —
 	# `WINDOW` 로 시작하면 check.sh 의 grep 이 게이트가 죽어도 그 줄을 잡아 초록으로 본다.
-	var bad := _view_bad + _draw_bad + _hb_bad
-	print("WINGATE %s (VIEW %d · DRAW %d · HOTBAR %d · 창 한 번)" % [
-		"ok" if bad == 0 else "FAIL %d개" % bad, _view_bad, _draw_bad, _hb_bad])
+	var bad := _view_bad + _draw_bad + _hb_bad + _use_bad
+	print("WINGATE %s (VIEW %d · DRAW %d · HOTBAR %d · USE %d · 창 한 번)" % [
+		"ok" if bad == 0 else "FAIL %d개" % bad, _view_bad, _draw_bad, _hb_bad, _use_bad])
 	if _main != null:
 		_main.queue_free()
 	quit(1 if bad > 0 else 0)

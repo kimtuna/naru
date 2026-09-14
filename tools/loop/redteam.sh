@@ -28,6 +28,7 @@ cp scripts/world_gen.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_collide.gd "$BAK/" 2>/dev/null || true
 cp scripts/inventory.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar.gd "$BAK/" 2>/dev/null || true
+cp scripts/hand_swing.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
@@ -44,6 +45,7 @@ restore() {
   cp "$BAK/world_collide.gd" scripts/world_collide.gd 2>/dev/null || true
   cp "$BAK/inventory.gd" scripts/inventory.gd 2>/dev/null || true
   cp "$BAK/hotbar.gd" scripts/hotbar.gd 2>/dev/null || true
+  cp "$BAK/hand_swing.gd" scripts/hand_swing.gd 2>/dev/null || true
   cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
@@ -437,6 +439,56 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
 PYX
 expect 1 "핫바를 화면 위로 올리면 잡는다 (아래 여백 8 → 500px)"
 cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd
+
+# ── 바퀴 21 좌클릭 = 손에 든 것의 동작 ───────────────────────────────
+# **앞의 셋은 실행 중의 픽셀만 달라진다** — 씬도 배선도 순수 계산도 멀쩡하다.
+# 사람 눈에는 「클릭해도 아무 일이 없다 / 무엇을 들어도 똑같다」로만 보인다.
+
+# **이 하나가 이번 항목의 문장이다**: 「대상이 없어도 사용 모션이 나온다」.
+# 맞힐 것을 먼저 찾게 만들면, 맞힐 것이 아직 월드에 없으므로 클릭이 통째로 죽는다.
+python3 - <<'PYX'
+import io
+p='scripts/player.gd'; s=io.open(p,encoding='utf-8').read()
+s = s.replace("\tif not swing.start():\n", "\tif not _has_target() or not swing.start():\n", 1)
+io.open(p,'w',encoding='utf-8').write(s + "\nfunc _has_target() -> bool:\n\treturn false\n")
+PYX
+expect 1 "대상이 있어야만 휘두르게 하면 잡는다 (맞힐 것이 아직 월드에 없다)"
+cp "$BAK/player.gd" scripts/player.gd
+
+# 액션은 묶여 있고 `Player.use` 도 멀쩡하다 — 아무도 버튼을 안 읽을 뿐이다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace("\t_poll_use()\n", "", 1))
+PYX
+expect 1 "좌클릭을 안 읽으면 실측이 잡는다 (모션이 한 번도 안 나온다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# 모션은 도는데 **화면에 안 나온다.** 상태만 보는 검사로는 못 잡는다.
+python3 - <<'PYX'
+import io
+p='scripts/player.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t_tool.visible = swing.is_swinging()", "\t_tool.visible = false", 1))
+PYX
+expect 1 "휘두르는 네모를 안 그리면 잡는다 (상태는 도는데 화면이 그대로다)"
+cp "$BAK/player.gd" scripts/player.gd
+
+# 「**손에 든 것**의 동작」이다 — 무엇을 들어도 같은 색이면 그냥 아무 네모다.
+python3 - <<'PYX'
+import io
+p='scripts/hand_swing.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\treturn BARE if held_id == Inventory.EMPTY else HotbarView.item_color(held_id)",
+    "\treturn BARE", 1))
+PYX
+expect 1 "무엇을 들든 같은 색으로 휘두르면 잡는다 (손에 든 것이 화면에 안 보인다)"
+cp "$BAK/hand_swing.gd" scripts/hand_swing.gd
+
+# **모션은 「네모가 뜬다」가 아니라 「네모가 움직인다」다.** 부채꼴이 0 이면 한 자리에 붙박인다.
+sed -i '' 's|^const ARC_DEG := 90.0|const ARC_DEG := 0.0|' scripts/hand_swing.gd
+expect 1 "부채꼴을 0 도로 만들면 잡는다 (네모가 한 자리에 붙박인다)"
+cp "$BAK/hand_swing.gd" scripts/hand_swing.gd
 
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"

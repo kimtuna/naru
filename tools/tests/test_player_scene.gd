@@ -104,3 +104,68 @@ func test_main_scene_has_the_hotbar_on_a_canvas_layer() -> void:
 	if view == null or not (view is HotbarView):
 		failures.append("UI 밑에 HotbarView 'Hotbar' 가 있어야 한다 — 잰 값 %s" % view)
 	m.free()
+
+func test_left_click_is_bound_to_use() -> void:
+	# **좌클릭 하나다** (GDD D-2c). 액션 이름은 `main.gd` 의 상수가 출처다 —
+	# 여기서 글자를 다시 적으면 「배선은 맞는데 코드가 다른 이름을 부른다」를 못 잡는다.
+	var action: StringName = load("res://scripts/main.gd").get_script_constant_map()["USE_ACTION"]
+	eq(action, &"use", "좌클릭 액션 이름")
+	if not InputMap.has_action(action):
+		failures.append("입력 액션이 없다: %s" % action)
+		return
+	var found := false
+	for e in InputMap.action_get_events(action):
+		if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT:
+			found = true
+	check(found, "%s 가 **마우스 왼쪽 버튼**에 묶여야 한다" % action)
+
+func test_player_scene_has_the_swing_rect() -> void:
+	var p: Node = load(PLAYER).instantiate()
+	var tool_rect := p.get_node_or_null("Tool") as ColorRect
+	if tool_rect == null:
+		failures.append("휘두르는 네모(ColorRect 'Tool')가 있어야 한다")
+		p.free()
+		return
+	eq(tool_rect.size, HandSwing.SIZE, "휘두르는 네모 크기 (반 칸)")
+	# **안 휘두를 때는 안 보인다.** 늘 떠 있으면 모션이 아니라 장식이다 —
+	# 씬에 켜 둔 채로 두면 첫 프레임부터 화면에 네모가 하나 더 있다.
+	check(not tool_rect.visible, "휘두르는 네모는 씬에서 꺼져 있어야 한다")
+	# 도구가 몸통보다 크면 손에 쥔 것으로 안 보인다.
+	var body := p.get_node_or_null("Body") as ColorRect
+	if body != null:
+		check(tool_rect.size.x < body.size.x and tool_rect.size.y < body.size.y,
+			"휘두르는 네모는 몸통보다 작아야 한다 — 잰 값 %s · 몸통 %s" % [tool_rect.size, body.size])
+	p.free()
+
+func test_a_swing_starts_with_no_world_and_no_target() -> void:
+	# **대상이 없어도 사용 모션이 나온다** (BACKLOG P2). 여기 플레이어는 월드가 안 꽂혀
+	# 있고(`solid` 가 빈 Callable) 맞힐 것도 하나 없다 — 그래도 모션은 돌아야 한다.
+	# 픽셀로 다시 보는 것은 measure_window 의 USE 다.
+	var p: Player = load(PLAYER).instantiate()
+	# **`_ready` 를 손으로 부른다**: 헤드리스 러너는 프레임을 한 번도 안 돌려서
+	# `root` 가 아직 트리 밖이다 — 트리에 붙여도 `@onready` 가 안 채워진다 (GOTCHAS).
+	p.notification(Node.NOTIFICATION_READY)
+	var tool_rect := p.get_node_or_null("Tool") as ColorRect
+	check(p.solid.is_null(), "월드가 안 꽂힌 플레이어여야 한다 (대상이 하나도 없는 상태)")
+	check(not p.swing.is_swinging(), "좌클릭 전에는 안 휘두른다")
+	check(tool_rect != null and not tool_rect.visible, "좌클릭 전에는 네모가 안 보인다")
+	check(p.use(HandSwing.BARE), "대상이 없어도 좌클릭이 모션을 시작해야 한다")
+	check(p.swing.is_swinging(), "시작한 뒤에는 휘두르는 중이다")
+	if tool_rect != null:
+		check(tool_rect.visible, "휘두르는 동안 네모가 보여야 한다")
+		# 네모가 **몸통 한가운데에서 사거리만큼** 떨어져 있다. 자리가 계산과 갈라지면
+		# 화면에는 나오는데 엉뚱한 데서 휘두른다.
+		var body := p.get_node_or_null("Body") as ColorRect
+		var center: Vector2 = body.position + body.size * 0.5
+		var d: float = center.distance_to(tool_rect.position + tool_rect.size * 0.5)
+		check(absf(d - HandSwing.REACH) < 0.01,
+			"몸통 한가운데 → 네모 중심 거리 — 잰 값 %.3f px · 기대 %.1f px" % [d, HandSwing.REACH])
+	# **겹쳐 눌러도 한 모션이다.**
+	check(not p.use(HandSwing.BARE), "휘두르는 중에 또 누르면 새 모션이 시작되면 안 된다")
+	# 모션이 끝나면 네모가 사라진다 — 게임에서는 `_process` 가 시간을 넣어 준다.
+	p.swing.advance(HandSwing.SWING_SEC)
+	p._place_tool()
+	check(not p.swing.is_swinging(), "0.24초가 지나면 모션이 끝난다")
+	if tool_rect != null:
+		check(not tool_rect.visible, "모션이 끝나면 네모가 사라져야 한다")
+	p.free()

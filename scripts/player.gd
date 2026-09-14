@@ -21,21 +21,48 @@ extends CharacterBody2D
 ## 바라보는 방향. AXES 중 하나다 — 대각선은 없다.
 var facing: Vector2 = Vector2.RIGHT
 
+## 지금 휘두르는 모션. **대상이 없어도 돈다** (HandSwing 머리말).
+var swing := HandSwing.new()
+
+## 이번 모션의 색 = **모션을 시작할 때 손에 들고 있던 것**의 색.
+## 휘두르는 중에 칸을 바꿔도 이번 모션은 들고 시작한 것으로 끝난다 — 한 번의 동작이
+## 중간에 다른 도구로 변하면 사람이 무엇을 휘둘렀는지 못 읽는다.
+var swing_color := HandSwing.BARE
+
 ## 「이 칸이 막나」를 묻는 자리. 월드를 아는 쪽(main.gd)이 꽂아 준다.
 ## **비어 있으면 아무것도 안 막는다** — 플레이어 씬만 띄우는 검사가 월드 없이 돌아야 한다.
 var solid := Callable()
 
 @onready var _body: ColorRect = $Body
 @onready var _nose: ColorRect = $Nose
+@onready var _tool: ColorRect = $Tool
 
 func _ready() -> void:
 	_place_nose()
+	_place_tool()
+
+## **모션은 물리가 아니라 그림이다** — `_process` 에서 돈다. 물리 틱(60Hz 고정)에
+## 묶으면 프레임과 어긋나서, 화면이 빠른 기계에서 네모가 계단으로 튄다.
+func _process(delta: float) -> void:
+	swing.advance(delta)
+	_place_tool()
 
 func _physics_process(delta: float) -> void:
 	var input := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	velocity = PlayerMotion.velocity(input)
 	position = WorldCollide.move(position, velocity * delta, solid)
 	aim_at(get_global_mouse_position())
+
+## **손에 든 것을 쓴다** (좌클릭). 돌려주는 것은 **이번에 모션이 시작됐는가**다.
+##
+## **대상을 안 본다.** 맞힐 것이 있든 없든 모션은 나온다 — 판정은 이 위에 얹힌다
+## (HandSwing 머리말 · BACKLOG P2 「벌목」·「채광」).
+func use(color: Color) -> bool:
+	if not swing.start():
+		return false
+	swing_color = color
+	_place_tool()
+	return true
 
 ## 세계 좌표의 한 점을 겨눈다. 실측 게이트가 커서 없이 부를 수 있게 밖으로 냈다.
 func aim_at(point: Vector2) -> void:
@@ -48,3 +75,14 @@ func aim_at(point: Vector2) -> void:
 func _place_nose() -> void:
 	var half := _body.size * 0.5
 	_nose.position = _body.position + half + facing * half.dot(facing.abs()) - _nose.size * 0.5
+
+## 휘두르는 네모를 **몸통 한가운데**에서 겨눈 쪽 부채꼴 위에 놓는다. 코와 같은 기준점이다.
+## 안 휘두르는 중에는 **아예 안 보인다** — 늘 떠 있으면 그건 모션이 아니라 장식이다.
+func _place_tool() -> void:
+	_tool.visible = swing.is_swinging()
+	if not _tool.visible:
+		return
+	_tool.size = HandSwing.SIZE
+	_tool.color = swing_color
+	var center := _body.position + _body.size * 0.5
+	_tool.position = center + HandSwing.offset(facing, swing.progress()) - _tool.size * 0.5
