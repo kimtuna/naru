@@ -23,8 +23,35 @@ if [ "$rc" -ne 0 ]; then
 fi
 n="$(printf '%s' "$out" | sed -n 's/^TESTS \([0-9]*\) passed.*/\1/p' | tail -1)"
 [ -z "$n" ] && { echo "테스트 개수를 못 읽었다"; exit 1; }
-if [ "$n" -lt "$MIN" ]; then
-  echo "테스트가 줄었다 — 잰 값 ${n}개 · 바닥 ${MIN}개"
+
+# **바닥은 HEAD 를 따라 올라간다** (바퀴 18).
+#
+# 무장된 인자는 드라이버의 `bump_mintests` 가 **바퀴가 끝난 뒤** 지금 개수로 올린다 —
+# 그래서 바퀴와 바퀴 사이에는 딱 맞고, **검사를 늘린 그 바퀴 안에서만 헐겁다.**
+# 66 개짜리 바닥에 검사가 75 개면 아홉 개를 지워도 초록이고, 대조군
+# 「검사를 지우면 바닥이 잡는다」가 바로 그 창에서 죽는다 (바퀴 15·17 이 개수를
+# 66 에 묶어 둔 이유가 이것이다 — 묶는 대신 창을 닫는다).
+#
+# 그래서 **커밋된 HEAD 의 검사 개수**를 같이 바닥으로 쓴다. 워킹트리에서 검사가
+# 사라지면 무장 인자가 무엇이든 그 자리에서 빨개진다. 커밋으로 내리는 것은
+# 여전히 무장된 인자가 막는다 — 이건 그 위에 얹는 층이지 대신이 아니다.
+head_n=""
+if git -C "$ROOT" rev-parse HEAD >/dev/null 2>&1; then
+  head_n=0
+  while IFS= read -r p; do
+    c="$(git -C "$ROOT" show "HEAD:$p" 2>/dev/null | grep -cE '^func test_')" || c=0
+    head_n=$((head_n + c))
+  done < <(git -C "$ROOT" ls-tree -r --name-only HEAD -- tools/tests | grep -E '/test_[^/]*\.gd$')
+fi
+FLOOR="$MIN"
+WHY="무장 ${MIN}"
+if [ -n "$head_n" ] && [ "$head_n" -gt "$MIN" ]; then
+  FLOOR="$head_n"
+  WHY="HEAD ${head_n} > 무장 ${MIN}"
+fi
+
+if [ "$n" -lt "$FLOOR" ]; then
+  echo "테스트가 줄었다 — 잰 값 ${n}개 · 바닥 ${FLOOR}개 (${WHY})"
   exit 1
 fi
-echo "TESTCOUNT ${n} ≥ ${MIN}"
+echo "TESTCOUNT ${n} ≥ ${FLOOR} (${WHY})"

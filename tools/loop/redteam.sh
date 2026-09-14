@@ -26,6 +26,7 @@ cp scripts/player_motion.gd "$BAK/" 2>/dev/null || true
 cp scripts/player_facing.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_gen.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_collide.gd "$BAK/" 2>/dev/null || true
+cp scripts/inventory.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
@@ -39,6 +40,7 @@ restore() {
   cp "$BAK/player_facing.gd" scripts/player_facing.gd 2>/dev/null || true
   cp "$BAK/world_gen.gd" scripts/world_gen.gd 2>/dev/null || true
   cp "$BAK/world_collide.gd" scripts/world_collide.gd 2>/dev/null || true
+  cp "$BAK/inventory.gd" scripts/inventory.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
@@ -97,12 +99,14 @@ printf '9\t검사를 무르게 하려는 가짜 기준\ttrue\n' >> .loop/criteri
 expect 77 "무장 뒤 계약 변조를 채점자가 잡는다"
 cp "$BAK/criteria.tsv" .loop/criteria.tsv
 
+# **이걸 잡는 것은 바퀴 18 부터 무장된 인자가 아니라 `mintests.sh` 의 HEAD 바닥이다.**
+# 검사가 75개인데 무장 인자는 66 이라 하나 지워도 66 위다 — 창이 닫혔는지 여기서 잰다.
 python3 - <<'PYX'
 import io
 p='tools/tests/test_isolation.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s[:s.index('func test_user_data_is_writable')])
 PYX
-expect 1 "검사를 지우면 테스트 바닥이 잡는다"
+expect 1 "검사를 지우면 테스트 바닥이 잡는다 (HEAD 개수를 따라 올라간 바닥)"
 cp "$BAK/test_isolation.gd" tools/tests/test_isolation.gd
 
 # ── P1-1 이동 ────────────────────────────────────────────────────────
@@ -342,6 +346,28 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
 PYX
 expect 1 "충돌 상자를 다시 네모로 만들면 tests 가 잡는다 (발밑 반 칸이 아니다)"
 cp "$BAK/world_collide.gd" scripts/world_collide.gd
+
+# ── 바퀴 18 인벤토리 ─────────────────────────────────────────────────
+# 순수 클래스라 **단위 검사만 잡는다** — 화면에도 실측에도 아직 안 매달려 있다.
+# 그래서 여기서 빨개지지 않으면 「가방이 물건을 먹어도 계약은 초록」이 된다.
+
+# **이 항목의 문장을 정확히 깬다**: 못 넣은 몫을 0 으로 돌려주면 부르는 쪽은
+# 「다 들어갔다」고 믿고 그 개수를 버린다. 가방 안의 총합은 한 개도 안 틀린다 —
+# 사라지는 것은 **가방 밖**이라 상태를 아무리 세도 안 보인다.
+python3 - <<'PYX'
+import io
+p='scripts/inventory.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t\t\tleft -= put\n\treturn left", "\t\t\tleft -= put\n\treturn 0", 1))
+PYX
+expect 1 "못 넣은 몫을 0 으로 돌려주면 잡는다 (꽉 찬 가방이 물건을 먹는다)"
+cp "$BAK/inventory.gd" scripts/inventory.gd
+
+# 칸 수는 **한 군데서만 숫자다**. 조용히 커지면 「꽉 찬 가방」을 재는 검사가
+# 전부 다른 상황을 재게 된다 — 넘치는 몫은 영영 안 생긴다.
+sed -i '' 's|^const SLOTS := 18|const SLOTS := 36|' scripts/inventory.gd
+expect 1 "가방을 36칸으로 늘리면 tests 가 잡는다 (18칸)"
+cp "$BAK/inventory.gd" scripts/inventory.gd
 
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
