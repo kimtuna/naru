@@ -303,7 +303,7 @@ def render():
     A('<footer><strong>이 페이지는 스냅샷이다.</strong> '
       '<code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 '
       '아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 '
-      '바깥에서 읽을 방법이 없다. 드라이버가 매 바퀴 끝에 굽고 커밋한다.</footer>')
+      '바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 '굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>')
     A('</div></body></html>')
     return "\n".join(P)
 

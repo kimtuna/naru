@@ -42,4 +42,8 @@ tools/loop/ctl.sh report      # = python3 tools/loop/report.py
 
 `.loop/results.json` · `spend.txt` · `STOPPED` 는 `.gitignore` 라 GitHub 에 안 올라간다.
 그래서 **생성기가 값을 페이지에 구워 넣는다** — 페이지는 아무것도 fetch 하지 않는다.
-루프가 돌면 드라이버가 매 바퀴 끝에 알아서 굽고 커밋한다.
+
+루프가 돌면 드라이버가 **초록으로 닫힌 바퀴**마다 굽고 커밋하고 **푸시한다.**
+계약 · 항목 verify · 일지를 다 통과한 뒤에만 나가므로 **빨간 상태는 바깥에 안 보인다.**
+끄려면 `PUSH=0 tools/loop/ctl.sh start 5`. 푸시가 실패해도 루프는 계속 돈다 —
+네트워크는 이 루프의 판정 대상이 아니다.

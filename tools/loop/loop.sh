@@ -119,6 +119,22 @@ finish_journal() {                        # finish_journal <바퀴> <항목> <�
   fi
 }
 
+# ── 초록으로 닫힌 바퀴만 바깥으로 내보낸다 ──────────────────────────
+#
+# **빨간 것은 안 나간다.** 계약도 항목 verify 도 일지도 다 통과한 뒤에만 부른다.
+# 대시보드가 GitHub Pages 라, 커밋만 하고 안 밀면 페이지가 낡은 채로 남는다.
+# 푸시가 실패해도 루프는 계속 돈다 — 네트워크는 이 루프의 판정 대상이 아니다.
+push_state() {
+  [ "$DRY" = "1" ] && return 0
+  [ "$PUSH" = "0" ] && { say "푸시 꺼짐 (PUSH=0)"; return 0; }
+  git remote get-url origin >/dev/null 2>&1 || { say "origin 이 없다 — 푸시 건너뜀"; return 0; }
+  if git push -q origin HEAD 2>"$RD/push.err"; then
+    say "푸시됨 → $(git remote get-url origin)"
+  else
+    say "푸시 실패 (로컬은 멀쩡하다):"; tail -3 "$RD/push.err" | sed 's/^/    /'
+  fi
+}
+
 # ── 회귀 감지: 지난번 초록이던 기준이 지금 빨강인가 ─────────────────
 regressed() {
   [ -f "$PREV" ] || return 1
@@ -278,6 +294,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     if [ "$DRY" = "0" ] && ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
       stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 바퀴 $turn)"
     fi
+    push_state
     fails=0
   else
     fails=$((fails+1))
