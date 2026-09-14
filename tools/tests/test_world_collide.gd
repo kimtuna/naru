@@ -5,8 +5,10 @@ extends TestBase
 ## 지도는 **손으로 만든다** — 씨앗 월드로 재면 잡음 상수를 건드릴 때마다 검사가 흔들린다.
 ## `#` 이 막는 칸이고 `.` 이 빈 칸이다. 지도 밖은 비어 있다.
 ##
-## 숫자는 전부 손으로 계산한 값이다: 타일 32 · 몸 반폭 14 · 틈 0.01.
-## 예) 3번 칸(96px)에 오른쪽으로 부딪히면 몸 중심은 96 - 14 - 0.01 = **81.99**.
+## 숫자는 전부 손으로 계산한 값이다: 타일 32 · 상자 반크기 **14 x 8** · 틈 0.01.
+## 예) 3번 칸(96px)에 오른쪽으로 부딪히면 몸 중심은 96 - 14 - 0.01 = **81.99**,
+## 4번 칸(128px)에 아래로 부딪히면 128 - 8 - 0.01 = **119.99** 다 —
+## **상자가 발밑 반 칸이라 세로가 가로보다 6px 더 간다** (바퀴 16).
 ##
 ## **T 를 PlayerMotion.TILE 에서 안 가져온다.** 가져오면 타일을 바꿨을 때 아래 숫자들이
 ## 소리 없이 틀린 채로 초록이 된다 — 손 계산이 독립된 값이어야 검사가 검사다.
@@ -63,14 +65,15 @@ func test_stops_in_front_of_the_wall() -> void:
 	var p := WorldCollide.move(Vector2(48, 48), Vector2(200, 0), _map(COAST))
 	at(p, 81.99, 48.0, "해안에 정면으로 부딪힘")
 
-func test_four_directions_stop_symmetrically() -> void:
-	# 방 한가운데(80,80)에서 네 방향으로 500px 씩 — 어느 쪽이든 벽 앞 14.01px 에 선다.
+func test_four_directions_stop_at_the_box_edge() -> void:
+	# 방 한가운데(80,80)에서 네 방향으로 500px 씩 — 옆은 벽 앞 14.01px, 위아래는 8.01px 다.
+	# **대칭이 아닌 것이 이 바퀴의 요점이다**: 상자가 네모가 아니라 발밑 직사각형이다.
 	var m := _map(BOX)
 	var want := {
 		"오른쪽": [Vector2(500, 0), Vector2(113.99, 80)],
 		"왼쪽": [Vector2(-500, 0), Vector2(46.01, 80)],
-		"아래": [Vector2(0, 500), Vector2(80, 113.99)],
-		"위": [Vector2(0, -500), Vector2(80, 46.01)],
+		"아래": [Vector2(0, 500), Vector2(80, 119.99)],
+		"위": [Vector2(0, -500), Vector2(80, 40.01)],
 	}
 	for name in want:
 		var p := WorldCollide.move(Vector2(80, 80), want[name][0], m)
@@ -106,7 +109,7 @@ func test_slide_keeps_the_full_axis_speed() -> void:
 func test_concave_corner_blocks_both_axes() -> void:
 	var m := _map(["...#", "...#", "####"])
 	var p := WorldCollide.move(Vector2(80, 48), Vector2(200, 200), m)
-	at(p, 81.99, 49.99, "오목한 구석")
+	at(p, 81.99, 55.99, "오목한 구석")
 
 ## ── 끼지 않는다 ───────────────────────────────────────────────────────
 
@@ -117,10 +120,15 @@ func test_body_is_narrower_than_a_tile() -> void:
 	#  숫자라 세션이 못 올린다. 개수를 늘리면 「검사를 지우면 바닥이 잡는다」 대조군이
 	#  딱 하나만큼 헐거워진다 — 바퀴 15 에 실제로 놓쳤다.)
 	eq(PlayerMotion.TILE, T, "손 계산이 깔고 있는 타일 크기")
-	eq(WorldCollide.HALF, T * 0.5 - 2.0, "손 계산이 깔고 있는 몸 반폭")
+	eq(WorldCollide.HALF, Vector2(T * 0.5 - 2.0, T * 0.25), "손 계산이 깔고 있는 상자 반크기")
 	# 같으면 32px 통로에서 부동소수 한 톨에 걸려 낀다. 이 부등식이 아래 검사의 근거다.
-	check(WorldCollide.HALF < T * 0.5,
-		"몸 반폭 — 잰 값 %.2f · 기대 타일 반 %.2f 미만" % [WorldCollide.HALF, T * 0.5])
+	check(WorldCollide.HALF.x < T * 0.5,
+		"상자 반폭 — 잰 값 %.2f · 기대 타일 반 %.2f 미만" % [WorldCollide.HALF.x, T * 0.5])
+	# **발밑 반 칸**: 상자가 몸통 키(1.5칸)를 따라가면 벽 앞 한 칸 반에 멈춰 서서
+	# 「보이는 땅에 못 가는」 그림이 된다 (BACKLOG P2 · 코어 키퍼 관례).
+	check(WorldCollide.HALF.y < WorldCollide.HALF.x,
+		"상자 반높이 — 잰 값 %.2f · 기대 반폭 %.2f 미만 (발밑 상자다)" % [
+			WorldCollide.HALF.y, WorldCollide.HALF.x])
 
 func test_one_tile_corridor_is_passable() -> void:
 	var m := _map(["#.#", "#.#", "#.#", "#.#"])

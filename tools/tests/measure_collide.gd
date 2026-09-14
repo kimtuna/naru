@@ -18,10 +18,15 @@ const RUN := 7             # 세로로 이만큼 곧은 해안을 찾는다 (미
 const RUNWAY := 3          # 해안 서쪽으로 이만큼 땅이 있어야 뛰어들 거리가 나온다
 const STRAIGHT := 1.0      # 바다로 곧장 걷는 시간(초). 240px = 7.5칸이라 활주로(97.99px)를 넘는다
 # 해안을 타는 시간(초). **타일이 32 로 작아지면서 1.2 → 0.9 로 줄였다** (바퀴 15):
-# 대각 한 축 169.71 × 0.9 = 152.7px 라 활주로는 넘기고, 몸 아래끝이
-# 16 + 152.7 + 14 = 182.7px 라 곧은 해안 7줄(224px) 안에 남는다. 1.2 였으면 233.6px 로 넘쳤다.
+# 대각 한 축 169.71 × 0.9 = 152.7px 라 활주로는 넘기고, 상자 아래끝이
+# 16 + 152.7 + 8 = 176.7px 라 곧은 해안 7줄(224px) 안에 남는다. 1.2 였으면 227.7px 로 넘쳤다.
+# (상자가 발밑 반 칸이 되면서 여유가 6px 늘었다 — 바퀴 16. 0.9 는 안 바꿨다.)
 const SLIDE := 0.9
 const TOL_POS := 0.05      # 벽에 붙는 자리는 계산이 정한다 — 틱 경계가 안 섞인다
+# **그리는 네모가 막힌 칸에 걸치는 몫의 상한(px).** 몸통이 1칸 폭(32)이고 상자 반폭이
+# 14 면 걸치는 것은 16 - 14 - 0.01 = **1.99px** 뿐이다 — 일부러 남긴 여유 그 자체다.
+# 1.5칸(48) 이던 바퀴 15 까지는 **10px** 였다: 좌표는 맞는데 사람 눈에는 벽에 파묻혔다.
+const MAX_OVER := 2.5
 const TOL_RATE := 5.0      # 속력은 물리 틱 경계로 ±1틱(4px) 이 남는다 (measure_move 와 같다)
 const WARMUP := 3          # 씬의 _ready(월드 배선)는 첫 프레임 뒤에 돈다
 
@@ -130,7 +135,7 @@ func _check_phase() -> void:
 	var p: Dictionary = _phases[_i]
 	var pos: Vector2 = _player.position
 	var moved := pos - _from
-	var want_x := _wall - WorldCollide.HALF - WorldCollide.EPS
+	var want_x := _wall - WorldCollide.HALF.x - WorldCollide.EPS
 	var rate_y := moved.y / _t
 	var ok := true
 
@@ -146,11 +151,26 @@ func _check_phase() -> void:
 	if absf(rate_y - p["rate_y"]) > TOL_RATE:
 		ok = false
 		_fail("%s 세로 속력" % p["name"], "%.2f px/s" % rate_y, "%.2f ±%.0f px/s" % [p["rate_y"], TOL_RATE])
+	# ④ **그리는 네모가 막힌 칸에 얼마나 걸치나** (바퀴 16). ①②③ 이 전부 맞아도
+	#    네모가 상자보다 한참 넓으면 사람 눈에는 몸이 바다에 잠긴 채로 보인다 —
+	#    단위 검사도 좌표 판정도 이 구멍을 못 본다. **살아 있는 씬의 네모를 읽는다.**
+	var over := pos.x + _body_half_x() - _wall
+	if over > MAX_OVER:
+		ok = false
+		_fail("%s 네모가 바다에 걸침" % p["name"], "%.2f px" % over, "%.2f px 이하" % MAX_OVER)
 
 	if not ok:
 		_bad += 1
-	print("COLLIDE %-12s x %8.2f (바다 면 %.2f) · 세로 %7.2f px/s · %.4f s 동안 %s  %s" % [
-		p["name"], pos.x, _wall, rate_y, _t, moved, "ok" if ok else "FAIL"])
+	print("COLLIDE %-12s x %8.2f (바다 면 %.2f) · 세로 %7.2f px/s · 걸침 %.2f px · %.4f s 동안 %s  %s" % [
+		p["name"], pos.x, _wall, rate_y, over, _t, moved, "ok" if ok else "FAIL"])
+
+## 그리는 네모의 반폭. **씬에서 읽는다** — 상수로 적으면 씬을 넓혀도 안 따라온다.
+## 네모가 없으면 0 을 준다: 그건 `test_player_scene.gd` 가 잡을 일이다.
+func _body_half_x() -> float:
+	if _player == null:
+		return 0.0
+	var body := _player.get_node_or_null("Body") as Control
+	return body.size.x * 0.5 if body != null else 0.0
 
 ## 「이 칸이 막나」 한 번의 값. 지금은 물을 때마다 잡음을 다시 푼다 —
 ## 한 물리 틱에 네 번쯤 묻는다(옆축 2줄 × 두 축). 이 값이 커지면 월드를 미리 구워 둔다.
@@ -169,9 +189,10 @@ func _query_cost() -> void:
 
 func _finish() -> bool:
 	_query_cost()
-	print("COLLIDE %s (구간 %d · 몸 반폭 %.0f · 틈 %.2f · 물리 %d Hz)" % [
+	print("COLLIDE %s (구간 %d · 상자 반크기 %.0f x %.0f · 네모 반폭 %.0f · 틈 %.2f · 물리 %d Hz)" % [
 		"ok" if _bad == 0 else "FAIL %d개" % _bad, _phases.size(),
-		WorldCollide.HALF, WorldCollide.EPS, Engine.physics_ticks_per_second])
+		WorldCollide.HALF.x, WorldCollide.HALF.y, _body_half_x(),
+		WorldCollide.EPS, Engine.physics_ticks_per_second])
 	quit(1 if _bad > 0 else 0)
 	return true
 

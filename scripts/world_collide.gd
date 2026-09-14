@@ -18,13 +18,16 @@ extends RefCounted
 ## 「벽에 붙었으니 전부 정지」가 아니다. 속력을 다시 정규화하지도 않는다:
 ## 대각 240 의 한 축은 169.71 이고, 벽을 타면 그 169.71 로 간다.
 
-## 몸 반폭. **타일 반(16)보다 작아야 한다** — 같으면 32px 통로를 지날 때
-## 부동소수 한 톨에 걸려 낀다. 2px 씩 여유를 둔 값이다.
+## 몸 반크기. **네모가 아니라 직사각형이다** (바퀴 16) — 발밑 상자다.
+##
+##   x = 14  타일 반(16)보다 작아야 한다 — 같으면 32px 통로를 지날 때 부동소수 한 톨에
+##           걸려 낀다. 2px 씩 여유를 둔 값이라 **몸통 1칸 폭보다 2px 좁다**
+##   y = 8   **발밑 반 칸**. 그리는 네모는 1.5칸 키인데 상자는 그 아래끝 반 칸뿐이다 —
+##           머리가 위 칸에 걸쳐도 막히지 않는다 (코어 키퍼 관례 · GDD E-1)
 ##
 ## **타일에서 따라 나온다** — 고정값이 바뀌면(바퀴 15 의 48 → 32) 여기도 따라와야 하는데
 ## 숫자를 박아 두면 안 따라온다. 그러면 몸이 통로보다 넓어져 1칸 통로에 낀다.
-## 그리는 네모(48px)는 이보다 넓다: 몸통이 1.5칸이라 막힌 칸에 10px 걸쳐 보인다 (BACKLOG P2).
-const HALF := PlayerMotion.TILE * 0.5 - 2.0
+const HALF := Vector2(PlayerMotion.TILE * 0.5 - 2.0, PlayerMotion.TILE * 0.25)
 
 ## 벽에 붙일 때 남기는 틈. 0 이면 붙은 칸이 「겹친 칸」으로 읽혀 다음 프레임이 흔들린다.
 const EPS := 0.01
@@ -51,8 +54,8 @@ static func move(pos: Vector2, motion: Vector2, solid: Callable, half := HALF) -
 static func overlaps(pos: Vector2, solid: Callable, half := HALF) -> bool:
 	if not solid.is_valid():
 		return false
-	for ty in range(tile_of(pos.y - half + EPS), tile_of(pos.y + half - EPS) + 1):
-		for tx in range(tile_of(pos.x - half + EPS), tile_of(pos.x + half - EPS) + 1):
+	for ty in range(tile_of(pos.y - half.y + EPS), tile_of(pos.y + half.y - EPS) + 1):
+		for tx in range(tile_of(pos.x - half.x + EPS), tile_of(pos.x + half.x - EPS) + 1):
 			if solid.call(tx, ty):
 				return true
 	return false
@@ -65,15 +68,18 @@ static func tile_of(v: float) -> int:
 
 ## `axis` 0=x, 1=y. 지나가는 칸을 **한 줄씩 전부** 본다 — 한 틱에 여러 칸을 건너뛰는
 ## 속도(빠른 탈것·낮은 프레임률)에서도 벽을 뚫지 않는다.
-static func _sweep(pos: Vector2, d: float, axis: int, solid: Callable, half: float) -> float:
+##
+## **상자가 직사각형이라 축마다 반크기가 다르다** (바퀴 16): 앞모서리는 진행 축의 반크기고,
+## 검사할 줄의 범위는 **옆축**의 반크기다. 하나로 뭉뚱그리면 발밑 상자가 네모로 되돌아간다.
+static func _sweep(pos: Vector2, d: float, axis: int, solid: Callable, half: Vector2) -> float:
 	if is_zero_approx(d):
 		return pos[axis]
 	var step := 1 if d > 0.0 else -1
-	var edge := half * step                       # 진행 방향 앞모서리
+	var edge := half[axis] * step                 # 진행 방향 앞모서리
 	var back := EPS * step                        # 모서리를 칸 안쪽으로 한 톨 당긴다
 	# 옆축이 걸치는 칸의 범위. 이 줄들만 검사하면 된다.
-	var lo := tile_of(pos[1 - axis] - half + EPS)
-	var hi := tile_of(pos[1 - axis] + half - EPS)
+	var lo := tile_of(pos[1 - axis] - half[1 - axis] + EPS)
+	var hi := tile_of(pos[1 - axis] + half[1 - axis] - EPS)
 	var first := tile_of(pos[axis] + edge - back) + step
 	var last := tile_of(pos[axis] + d + edge - back)
 	var c := first

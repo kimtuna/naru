@@ -17,7 +17,7 @@ const AXES: Array[Vector2] = [Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT, Vector2
 
 const SNAP_DEG := 45.0          # 축 하나가 가져가는 부채꼴의 반각 (360 / 4 / 2)
 const HYSTERESIS_DEG := 10.0    # 이미 잡은 방향을 놓는 데 더 필요한 각
-const DEAD_ZONE := 8.0          # 이보다 가까우면 각이 무의미하다 (몸통 반폭 24px 의 1/3)
+const DEAD_ZONE := 8.0          # 이보다 가까우면 각이 무의미하다 (몸통 반폭 16px 의 절반)
 
 ## 가장 가까운 축. 경계(정확히 45°)에서는 AXES 순서가 정한다 — 결정적이어야 한다.
 static func nearest(aim: Vector2) -> Vector2:

@@ -310,6 +310,39 @@ PYZ
 expect 1 "캐시를 두 칸마다 채우면 걷는 구간만 잡는다 (서서는 멀쩡하다)"
 cp "$BAK/main.gd" scripts/main.gd
 
+# ── 바퀴 16 몸통 1칸 · 발밑 상자 ──────────────────────────────────────
+# **첫째는 단위 검사 66개를 전부 초록으로 남긴다** — 씬의 글자(32 x 48)는 그대로고
+# **실행 중의 네모**만 넓어지기 때문이다. 좌표 판정 ①②③ 도 전부 맞는다:
+# 멈추는 자리는 충돌 상자가 정하지 그리는 네모가 정하지 않는다.
+# 사람 눈에만 「몸이 바다에 잠긴 채 서 있다」로 보인다 — `COLLIDE` 의 ④ 만 잡는다.
+python3 - <<'PYX'
+import io
+p='scripts/player.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "func _ready() -> void:\n\t_place_nose()",
+    "func _ready() -> void:\n\t_body.size = Vector2(48, 48)\n\t_place_nose()", 1))
+PYX
+expect 1 "실행 중에 몸통을 1.5칸으로 넓히면 충돌 실측이 잡는다 (걸침 1.99 → 9.99 px)"
+cp "$BAK/player.gd" scripts/player.gd
+
+# 씬의 글자를 되돌리는 쪽. 이건 단위 검사가 잡아야 한다 — 안 잡으면 씬과 상수가
+# 다시 갈라지고, 갈라진 채로 초록인 것이 이 바퀴가 고친 상태다.
+sed -i '' 's|^offset_right = 16.0|offset_right = 32.0|' scenes/player.tscn
+expect 1 "몸통을 1.5칸 폭으로 되돌리면 tests 가 잡는다 (32 → 48px)"
+cp "$BAK/player.tscn" scenes/player.tscn
+
+# 발밑 상자를 다시 네모로. 벽 앞에 서는 자리가 세로로 6px 어긋난다 —
+# 위아래 벽에서 「반 칸 떨어져 멈추는」 그림으로 돌아간다.
+python3 - <<'PYX'
+import io
+p='scripts/world_collide.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "Vector2(PlayerMotion.TILE * 0.5 - 2.0, PlayerMotion.TILE * 0.25)",
+    "Vector2(PlayerMotion.TILE * 0.5 - 2.0, PlayerMotion.TILE * 0.5 - 2.0)", 1))
+PYX
+expect 1 "충돌 상자를 다시 네모로 만들면 tests 가 잡는다 (발밑 반 칸이 아니다)"
+cp "$BAK/world_collide.gd" scripts/world_collide.gd
+
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
 cp "$BAK/project.godot" project.godot

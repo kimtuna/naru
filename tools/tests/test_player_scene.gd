@@ -23,14 +23,31 @@ func test_player_scene_is_a_colored_square() -> void:
 	check(ResourceLoader.exists(PLAYER), "플레이어 씬이 있어야 한다: %s" % PLAYER)
 	var p: Node = load(PLAYER).instantiate()
 	check(p is CharacterBody2D, "루트는 CharacterBody2D 여야 한다 — 잰 값 %s" % p.get_class())
+	var t := PlayerMotion.TILE
 	var body := p.get_node_or_null("Body") as ColorRect
 	if body == null:
 		failures.append("색 네모(ColorRect 'Body')가 있어야 한다")
 	else:
-		# 캐릭터 키 48px = 타일 **1.5칸** (BACKLOG 고정값). 중심이 노드 원점에 오게 24px 씩 밀려 있다.
-		# **그리는 네모이지 충돌 상자가 아니다** — 충돌 상자는 타일을 따라 내려갔다 (WorldCollide.HALF = 14).
-		eq(body.size, Vector2(48, 48), "색 네모 크기")
-		eq(body.position, Vector2(-24, -24), "색 네모 오프셋(중심 맞춤)")
+		# 몸통은 **1칸 폭 × 1.5칸 키** 다 (BACKLOG 고정값 · 코어 키퍼 비율).
+		# **원점이 발밑**이라(바퀴 16) 네모는 그 위로 선다: 아래끝이 발밑 상자의 아래끝과 같다.
+		eq(body.size, Vector2(t, t * 1.5), "색 네모 크기 (1칸 폭 × 1.5칸 키)")
+		eq(body.position, Vector2(-t * 0.5, WorldCollide.HALF.y - t * 1.5),
+			"색 네모 오프셋 (가로 가운데 · 아래끝 = 발밑 상자 아래끝)")
+		# **셋으로 갈라져 있던 값이 여기서 만난다.** 몸통이 1칸보다 넓으면 벽에 붙었을 때
+		# 그만큼이 막힌 칸에 파묻혀 보인다 — 48px 이던 때가 한쪽에 10px 였다.
+		check(body.size.x <= t, "몸통 폭 — 잰 값 %.2f px · 기대 1칸(%.2f px) 이하" % [body.size.x, t])
+	# **충돌 상자는 발밑 반 칸이다.** 씬의 모양은 지금 아무도 안 읽지만
+	# (`move_and_slide` 를 안 쓴다 — WorldCollide 머리말) 값이 갈라지면 나중에 물리를
+	# 붙이는 사람이 **다른 몸**을 얻는다. 그래서 WorldCollide 에 묶어 둔다.
+	var shape := p.get_node_or_null("Shape") as CollisionShape2D
+	var rect: RectangleShape2D = null
+	if shape != null:
+		rect = shape.shape as RectangleShape2D
+	if rect == null:
+		failures.append("충돌 상자(CollisionShape2D 'Shape' + RectangleShape2D)가 있어야 한다")
+	else:
+		eq(rect.size, WorldCollide.HALF * 2.0, "충돌 상자 크기 (발밑 반 칸)")
+		eq(shape.position, Vector2.ZERO, "충돌 상자 자리 (원점이 곧 발밑이다)")
 	p.free()
 
 func test_player_uses_the_motion_class() -> void:

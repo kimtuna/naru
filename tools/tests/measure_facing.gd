@@ -114,9 +114,16 @@ func _check_phase() -> void:
 	if absf(angle_difference(deg_to_rad(p["deg"]), deg_to_rad(aim_deg))) > deg_to_rad(1.0):
 		_fail("커서 각 %s" % p["name"], "%.2f°" % aim_deg, "%.2f°" % p["deg"])
 	# 코 네모가 방향을 따라갔나 — facing 만 맞고 그림이 안 돌면 사람 눈엔 안 보인다.
+	# **몸통 한가운데를 돈다** (바퀴 16): 원점이 발밑으로 내려가서 몸 중심은 그 위에 있고,
+	# 몸통이 정사각형이 아니라 축마다 반지름이 다르다 (옆 16 · 위아래 24).
+	# 기대값을 **씬의 네모에서 다시 세운다** — 코가 상수 하나에 매달려 있지 않다.
 	var nose: Node = _player.get_node_or_null("Nose")
+	var body: Control = _player.get_node_or_null("Body")
 	var nose_c: Vector2 = nose.position + nose.size * 0.5 if nose != null else Vector2.INF
-	var nose_want: Vector2 = want * _player.NOSE_DIST
+	var nose_want := Vector2.INF
+	if body != null:
+		var half: Vector2 = body.size * 0.5
+		nose_want = body.position + half + want * half.dot(want.abs())
 	var ok := got == want and nose_c.is_equal_approx(nose_want)
 	if not ok:
 		_bad += 1
