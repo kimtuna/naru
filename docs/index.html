@@ -152,18 +152,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 15:45:26</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 16:13:48</span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 14</span><span class="note">초록 · 2026-09-14</span></div>
-<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 15:03</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">19 <small>/ 49</small></span><span class="note">백로그 항목</span></div>
-<div class="tile"><span class="k">누적 비용</span><span class="v">$44.4715</span></div>
+<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 15</span><span class="note">초록 · 2026-09-14</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 16:13</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">20 <small>/ 50</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$55.5908</span></div>
 </section>
-<div class="alert halt"><strong>멈춘 사유</strong> — 최대 바퀴 수 2 소진<span class="note">2026-09-14 15:02:37</span></div>
-<div class="alert next"><span class="k">다음 항목</span><span class="pill">P2</span><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</div>
+<div class="alert next"><span class="k">다음 항목</span><span class="pill">P2</span><strong>캐릭터 네모를 1칸 폭으로 · 충돌 상자를 발밑에</strong> — 지금 그리는 네모는 48×48(1.5칸 ×</div>
 <h2>진행 — 한 줄 = 한 바퀴</h2>
 <div class="phases">
 <details class="phase full">
@@ -199,13 +198,14 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done"><span class="box">✔</span><strong>창을 띄우는 게이트가 포커스를 안 뺏는다</strong> — <strong>못 막는다. 항목이 시킨 대로 닫는다</strong></li>
 <li class="done"><span class="box">✔</span><strong>창을 띄우는 게이트를 한 프로세스로 합친다</strong> — <code>tools/tests/measure_window.gd</code></li>
 </ul></details>
-<details class="phase none">
+<details class="phase part" open>
   <summary><span class="pid">P2</span>
     <span class="ptitle">손: 인벤토리와 도구</span>
-    <span class="pcount">0/8</span>
-    <span class="bar"><i style="width:0%"></i></span></summary>
+    <span class="pcount">1/9</span>
+    <span class="bar"><i style="width:11%"></i></span></summary>
   <ul class="items">
-<li class="todo"><span class="box"></span><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</li>
+<li class="done"><span class="box">✔</span><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</li>
+<li class="todo"><span class="box"></span><strong>캐릭터 네모를 1칸 폭으로 · 충돌 상자를 발밑에</strong> — 지금 그리는 네모는 48×48(1.5칸 ×</li>
 <li class="todo"><span class="box"></span>인벤토리 코어 (순수 클래스) — 일반 18칸, <strong>꽉 찼을 때 넘치는 몫이 안 사라진다</strong></li>
 <li class="todo"><span class="box"></span>화면 아래 상시 핫바 9칸 + 숫자키로 손에 들기</li>
 <li class="todo"><span class="box"></span>좌클릭 = 손에 든 것의 동작. <strong>대상이 없어도 사용 모션이 나온다</strong></li>
@@ -301,19 +301,33 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">매 바퀴 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  70/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  63/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
     <span class="cwhat"><strong>월드를 화면에 그린다</strong> — 보이는 칸만. <code>main.gd</code> 의 임시 격자를 걷어낸다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/shot.sh /tmp/w.png</code>
-<ul class="ev"><li>SHOT 960x540  색 217개  가장 넓은 한 색 1.3%  → /tmp/w.png</li></ul>
+<ul class="ev"><li>SHOT 960x540  색 370개  가장 넓은 한 색 0.9%  → /tmp/w.png</li></ul>
 </div>
 </div>
 <h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 15</span>
+    <h3><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</h3>
+    <span class="edate">2026-09-14</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">코드에 <strong>48 이 12군데 박혀 있었다.</strong> 그중 하나(<code>WorldCollide.HALF = 22</code>)는 그냥 숫자를 바꾸는 것으로 끝나지 않았다 — 22 를 두면 몸 44px 이 통로 32px 보다 <strong>넓어져</strong> 1칸 통로에 끼는데, 단위 검사 스무 개 남짓이 전부 손 계산한 48 기준 기대값이라 <strong>어느 것도 안 빨개진다.</strong> 그리고 실측 게이트 <code>measure_collide</code> 의 미끄럼 구간(1.2초)은 세로로 203.7px 를 가는데 곧은 해안 7줄이 336px 에서 <strong>224px 로 줄어</strong> 판정이 무너졌다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">고정값 하나가 <strong>자(尺)이자 게이트의 기대값이자 검사의 손 계산</strong>이라는 세 역할을 동시에 하고 있었다. 자를 바꾸면 나머지 둘이 따라와야 하는데, <strong>박힌 숫자는 안 따라온다.</strong> 게이트의 시간 상수(1.2초)는 한술 더 뜬다 — 픽셀이 아니라 <strong>초</strong>로 적혀 있어서 타일이 작아진 것과 상관없어 보이지만, 실제로 재는 것은 「몸이 해안 몇 줄을 지나가나」다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v">48 을 <strong><code>PlayerMotion.TILE</code> 한 군데만 숫자로</strong> 남겼다. <code>WorldCollide.HALF</code> 는 숫자가 아니라 식이다 — <code>TILE * 0.5 - 2.0</code> (22 → <strong>14</strong>). <code>world_view.gd</code> · <code>main.gd</code> · <code>scenes/main.tscn</code>(스폰 6168 → 4112) · <code>measure_window</code> · <code>measure_camera</code> · <code>measure_collide</code> · <code>measure_move</code> · <code>test_project_settings</code> · <code>test_player_motion</code> · <code>test_player_scene</code> · <code>test_world_view</code> · <code>test_world_collide</code>(손 계산 스무 개 전부 다시 계산) · <code>redteam.sh</code> 의 기대값. <code>test_visible_tiles_at_48px</code> 는 이름에서 48 을 떼고 <strong>30 × 16.875 를 강제</strong>한다 — 해상도와 타일 <strong>둘 중 아무거나</strong> 바뀌면 빨개진다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>고정값에서 따라 나오는 값은 숫자로 적지 않는다.</strong> 단, <strong>검사의 손 계산은 예외다</strong> — <code>test_world_collide.gd</code> 의 <code>T</code> 는 일부러 <code>PlayerMotion.TILE</code> 에서 안 가져왔다. 가져오면 타일을 바꿨을 때 기대값 스무 개가 <strong>소리 없이 틀린 채 초록</strong>이 된다. 대신 「T 와 TILE 이 어긋났나」를 <code>test_body_is_narrower_than_a_tile</code> 이 잰다. <strong>게이트를 화면과 같이 키운다</strong>: 칸 수가 273 → 558 로 늘면 「색 100개 이상」 같은 문턱은 가만두는 것이 곧 <strong>반으로 헐거워지는 것</strong>이다 (100 → 200 · <code>MAX_TILES</code> 400 → 700). - 잰 값 (<code>check.sh all</code> 한 판 · 씨앗 20260914 · 창 1920×1080 · 물리 60Hz): <code>VIEW 타일 32px · 보이는 칸 30.00 x 16.88 · 배율 2.00x</code> · <code>MOVE 239.72 px/s = 7.491 칸/s</code>(240 은 안 바뀌고 칸 표기만 5 → 7.5) · <code>COLLIDE 바다 면 7360.00 · 멈춘 자리 7345.99 = 7360 - 14 - 0.01 · 세로 169.60 px/s · 몸 반폭 14</code> · <code>CAMERA 스폰 (4112, 4112) · 최대 편차 0.0000 px</code> · <code>DRAW 그린 칸 527(최대 558) · 불일치 0 · 최대 색차 0.8/255 · 물 47.3% → 37.7%</code> · <code>TESTS 66 passed, 0 failed</code> · <code>PARSE 26개 실패 0</code> · <code>ALL GREEN</code>(기준 6개) · <code>SHOT 960x540 · 색 370개 · 가장 넓은 한 색 0.9%</code> · 한 화면 색 수 <strong>217 → 349개</strong>. <strong>대조군 한 판 </strong><code>REDTEAM 31 잡음, 0 놓침</code><strong> · </strong>7분 40초<strong> (바퀴 14 는 31개 · 7분 41초). </strong>타일을 바꾼 뒤에도 31개가 그대로 잡힌다<strong> — 그중 셋은 이 바퀴에 문턱을 만진 것들이다 (줌 <code>15 x 8.44</code> · 통째로 그리기 <code>558 → 65536</code> · 캐시 문턱). 첫 판은 <code>30 잡음, 1 놓침</code> 이었다 — 검사를 67개로 늘려서 바닥(66)이 딱 하나만큼 헐거워졌던 것이라, 접고 다시 돌렸다</strong></span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>[ASK] 계약 기준 4 의 글자가 아직 「48px 타일」이다.</strong> 무장돼 있어 세션이</span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 26개 스크립트, 실패 0 · 3 TESTS 66 passed, 0 failed · 4 TESTS 66 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  63/90줄 · 6 SHOT 960x540  색 370개  가장 넓은 한 색 0.9%  → /tmp/w.png</span><span>$55.5908 누적</span><span><code>5dd0a8a</code> 못 고친다 — 사람이 다시 무장할 때 고쳐야 한다(명령은 <code>check.sh tests</code> 라 채점은 맞다). <strong>그리는 네모(48×48 = 1.5칸)가 충돌 상자(28×28)보다 넓어서 벽에 붙으면 막힌 칸에 10px 걸쳐 보인다</strong> — 관례는 몸통 1칸 폭 · 상자는 발밑 반 칸이라 <strong>그림을 정하는 사람의 판단</strong>이다. BACKLOG P2 에 한 줄로 넘겼다. 그리기 비용이 1.83 → <strong>3.74 ms</strong>(프레임 예산의 22%)가 된 것도 남는다 — 나무·몹·UI 가 올라오기 전에 한 번 볼 자리다.</span></div>
+</article>
 <article class="entry ok">
   <div class="ehead">
     <span class="badge ">바퀴 14</span>
@@ -652,6 +666,10 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/5dd0a8a"><code>5dd0a8a</code></a><span class="cd">2026-09-14</span>바퀴 15 일지 · NUMBERS 1·6·7·8·9절을 타일 32 로 다시 쟀다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/ecf9c38"><code>ecf9c38</code></a><span class="cd">2026-09-14</span>검사 개수를 66 으로 되돌렸다 — 바닥이 딱 하나만큼 헐거웠다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/e140bbe"><code>e140bbe</code></a><span class="cd">2026-09-14</span>지형 타일 48 → 32px — 박힌 숫자를 한 군데로 모았다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/133991a"><code>133991a</code></a><span class="cd">2026-09-14</span>지형 타일 48 → 32px — 사람이 고정값을 바꿨다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/bef9da0"><code>bef9da0</code></a><span class="cd">2026-09-14</span>바퀴 14 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/acec96f"><code>acec96f</code></a><span class="cd">2026-09-14</span>바퀴 14 대조군 한 판 — REDTEAM 31 잡음, 0 놓침 · 7분 41초</li>
 <li><a href="https://github.com/kimtuna/naru/commit/47137ab"><code>47137ab</code></a><span class="cd">2026-09-14</span>창을 띄우는 게이트를 한 프로세스로 — 창 2번 → 1번, 뺏김 14 → 9</li>
@@ -660,10 +678,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/e264f13"><code>e264f13</code></a><span class="cd">2026-09-14</span>바퀴 12 일지를 증거에서 복원 · 백로그 [x]</li>
 <li><a href="https://github.com/kimtuna/naru/commit/ffc2355"><code>ffc2355</code></a><span class="cd">2026-09-14</span>바퀴 12 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/2bb1686"><code>2bb1686</code></a><span class="cd">2026-09-14</span>계약이 실측 게이트를 한 번만 돈다 — check.sh 에 unit 을 나눴다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/f24922f"><code>f24922f</code></a><span class="cd">2026-09-14</span>백로그 — 창을 띄우는 게이트가 포커스를 안 뺏는다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/9bf649b"><code>9bf649b</code></a><span class="cd">2026-09-14</span>바퀴 11 일지 · 대시보드 갱신</li>
-<li><a href="https://github.com/kimtuna/naru/commit/bcf276e"><code>bcf276e</code></a><span class="cd">2026-09-14</span>방향 게이트가 사람의 커서를 안 뺏는다 — 합성 입력 · 헤드리스</li>
-<li><a href="https://github.com/kimtuna/naru/commit/199ea63"><code>199ea63</code></a><span class="cd">2026-09-14</span>FACE 게이트를 P1 맨 앞으로 · 일지에 가짜 회귀 기록</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
