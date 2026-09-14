@@ -247,7 +247,7 @@ cp "$BAK/main.gd" scripts/main.gd
 
 # ── 바퀴 9 월드 그리기 ────────────────────────────────────────────────
 # 넷 다 **단위 검사 66개를 전부 초록으로 남긴다** — WorldView 의 순수 계산은 멀쩡하고
-# main.gd 가 그걸 쓰는 방식만 망가지기 때문이다. measure_draw.gd 만 잡는다.
+# main.gd 가 그걸 쓰는 방식만 망가지기 때문이다. measure_window.gd 의 DRAW 만 잡는다.
 
 # 그릴 칸 수도 273 그대로다 — **픽셀을 안 보면 못 잡는다.**
 python3 - <<'PYX'
@@ -284,7 +284,7 @@ expect 1 "월드를 통째로 그리면 잡는다 (273 → 65536 칸)"
 cp "$BAK/main.gd" scripts/main.gd
 
 # **서 있을 때는 완벽하게 멀쩡하다.** 걸어야 화면이 월드에서 미끄러진다 —
-# measure_draw.gd 가 두 번 재는 이유가 이 한 줄이다.
+# measure_window.gd 의 DRAW 가 두 번 재는 이유가 이 한 줄이다.
 python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()

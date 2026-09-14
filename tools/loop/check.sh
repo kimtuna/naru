@@ -48,7 +48,8 @@ step_unit() {
   [ $rc -eq 0 ]
 }
 
-# 실측 게이트 7종 (MOVE·VIEW·FACE·WORLD×2·COLLIDE·CAMERA·DRAW) — 엔진을 8번 띄운다.
+# 실측 게이트 7종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·VIEW+DRAW) — 엔진을 7번 띄운다.
+# **창을 띄우는 것은 마지막 하나뿐이다** — VIEW 와 DRAW 를 한 프로세스로 합쳤다 (바퀴 14).
 # 계약에서 가장 긴 구간이다. **여기를 두 번 돌리지 마라.**
 step_measure() {
   echo "== tests (실측) =="
@@ -58,16 +59,6 @@ step_measure() {
   mout="$("$G" 60 -- --headless --path "$ROOT" --script res://tools/tests/measure_move.gd 2>&1)"; mrc=$?
   printf '%s\n' "$mout" | grep -E '^MOVE' || { printf '%s\n' "$mout" | tail -5; echo "MOVE FAIL 측정이 아무것도 안 찍었다"; return 1; }
   [ $mrc -eq 0 ] || return 1
-  # 화면 실측: 논리 화면 · 창 · 배율 · 보이는 칸.
-  # project.godot 의 글자가 맞아도 카메라 줌이나 content_scale_factor 로
-  # 눈에 보이는 칸 수는 달라진다 — 그 구멍을 여기서 막는다.
-  # **--headless 를 쓰지 않는다** — 헤드리스 드라이버는 창 크기가 (0,0) 이라 배율을 못 잰다.
-  # `NARU_FOCUS_RESTORE=1`: 창이 사람의 포커스를 가져간다 — 막을 길이 없어서
-  # **끝나고 되돌려 준다** (바퀴 13 · NUMBERS 11절). 창을 띄우는 두 곳에만 건다.
-  local vout vrc
-  vout="$(NARU_FOCUS_RESTORE=1 "$G" 60 -- --path "$ROOT" --script res://tools/tests/measure_view.gd 2>&1)"; vrc=$?
-  printf '%s\n' "$vout" | grep -E '^VIEW ' || { printf '%s\n' "$vout" | tail -5; echo "VIEW FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $vrc -eq 0 ] || return 1
   # 방향 실측: 메인 씬을 **제 SubViewport 에** 세우고 합성 마우스 이벤트를 밀어 넣어
   # 어디를 보는지 잰다. PlayerFacing 이 맞아도 노드가 커서를 안 읽으면 게임은 앞만
   # 본다 — 그 구멍을 막는다. 카메라가 그 안에 있어 캔버스 변환도 그대로 탄다.
@@ -112,14 +103,25 @@ step_measure() {
   camout="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_camera.gd 2>&1)"; camrc=$?
   printf '%s\n' "$camout" | grep -E '^CAMERA' || { printf '%s\n' "$camout" | tail -5; echo "CAMERA FAIL 측정이 아무것도 안 찍었다"; return 1; }
   [ $camrc -eq 0 ] || return 1
-  # 그리기 실측: 해안에 세우고 **구운 픽셀을 그 자리의 월드 칸 색과 맞춰 본다.**
-  # WorldView 가 맞아도 main 이 안 그리거나 다른 씨앗으로 그리면 단위 검사는 전부 초록이다.
-  # **서서 한 번 · 걷고 한 번** 잰다 — 색 캐시는 걸어야 상한다.
-  # **--headless 를 쓰지 않는다** — 헤드리스는 렌더러가 더미라 뷰포트 텍스처가 빈다.
-  local dout drc
-  dout="$(NARU_FOCUS_RESTORE=1 "$G" 120 -- --path "$ROOT" --script res://tools/tests/measure_draw.gd 2>&1)"; drc=$?
-  printf '%s\n' "$dout" | grep -E '^DRAW (\[|ok|FAIL)' || { printf '%s\n' "$dout" | tail -5; echo "DRAW FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $drc -eq 0 ]
+  # 창 실측 (VIEW + DRAW) — **한 프로세스다** (바퀴 14). 실측 7종 중 창이 필요한 둘은
+  # 이것뿐이고, 둘 다 메인 씬을 세운다. 따로 돌리면 창이 두 번 뜬다.
+  # **창을 띄우면 macOS 가 앱을 맨 앞으로 올린다 — 막을 길이 없다** (바퀴 13 · NUMBERS 11절).
+  # 못 막으니 **횟수를 줄인다**: `NARU_FOCUS_RESTORE=1` 로 끝나고 되돌려 주는 것과 짝이다.
+  #   VIEW  논리 화면 · 창 · 배율 · 보이는 칸. project.godot 의 글자가 맞아도 카메라 줌이나
+  #         content_scale_factor 로 눈에 보이는 칸 수는 달라진다 — 그 구멍을 막는다.
+  #   DRAW  해안에 세우고 **구운 픽셀을 그 자리의 월드 칸 색과 맞춘다.** WorldView 가 맞아도
+  #         main 이 안 그리거나 다른 씨앗으로 그리면 단위 검사는 전부 초록이다.
+  #         **서서 한 번 · 걷고 한 번** — 색 캐시는 걸어야 상한다.
+  # **--headless 를 쓰지 않는다** — 헤드리스는 창 크기가 (0,0) 이고 렌더러가 더미라
+  # 배율도 뷰포트 텍스처도 안 나온다.
+  # **세 줄을 다 본다**: VIEW 와 DRAW 가 각각 찍었는지, 그리고 둘 다 돌았다는 WINGATE 까지.
+  # 한 프로세스라 앞이 죽으면 뒤가 통째로 안 돈다 — 그 침묵을 초록으로 보면 안 된다.
+  local wout wrc
+  wout="$(NARU_FOCUS_RESTORE=1 "$G" 120 -- --path "$ROOT" --script res://tools/tests/measure_window.gd 2>&1)"; wrc=$?
+  printf '%s\n' "$wout" | grep -E '^VIEW ' || { printf '%s\n' "$wout" | tail -5; echo "VIEW FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  printf '%s\n' "$wout" | grep -E '^DRAW (\[|ok|FAIL)' || { printf '%s\n' "$wout" | tail -5; echo "DRAW FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  printf '%s\n' "$wout" | grep -E '^WINGATE ' || { printf '%s\n' "$wout" | tail -5; echo "WINGATE FAIL 게이트가 끝까지 못 갔다"; return 1; }
+  [ $wrc -eq 0 ]
 }
 
 step_tests() { step_unit && step_measure; }

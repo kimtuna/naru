@@ -17,7 +17,7 @@
 - **`--headless` 로는 화면을 못 굽는다.** 렌더러가 더미라 뷰포트 텍스처가 빈다.
   `tools/loop/shot.sh` 는 그래서 창을 띄운다 (NUMBERS 3b절).
 - **`--headless` 는 창 크기가 `(0, 0)` 이다.** `DisplayServer.window_get_size()` 가 0 을 준다 —
-  **배율은 창을 띄워야 잰다.** `tools/tests/measure_view.gd` 가 `--headless` 없이 도는 이유다.
+  **배율은 창을 띄워야 잰다.** `tools/tests/measure_window.gd` 가 `--headless` 없이 도는 이유다.
 - **`scale_mode=integer` 에서 `content_scale_factor` 는 먹지 않는다.** 실행 중에 1.5 를 넣어도
   배율이 2.00 그대로다 (2026-09-14 실측) — 배율은 `get_final_transform()` 에서 잰다.
 - **정수 배율은 창이 논리 화면의 정확한 배수가 아니면 아래로 떨어진다.** 1600×900 창에서

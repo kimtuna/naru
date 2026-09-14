@@ -3,7 +3,7 @@ extends TestBase
 ## 월드 그리기의 순수 계산을 잰다. 값의 출처는 NUMBERS 9절.
 ##
 ## **여기는 「무엇을 그려야 하나」만 본다.** 「화면에 실제로 그렇게 그려졌나」는
-## tools/tests/measure_draw.gd 가 구운 픽셀을 월드 칸과 맞춰서 잰다 —
+## tools/tests/measure_window.gd 가 구운 픽셀을 월드 칸과 맞춰서 잰다 —
 ## main.gd 가 아예 안 그려도 이 파일은 전부 초록으로 남는다.
 
 const SEED := 20260914
