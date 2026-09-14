@@ -3,24 +3,24 @@
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
 
 [sub_resource type="RectangleShape2D" id="1_shape"]
-size = Vector2(28, 16)
+size = Vector2(12, 8)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_player")
 
 [node name="Body" type="ColorRect" parent="."]
 mouse_filter = 2
-offset_left = -16.0
-offset_top = -40.0
-offset_right = 16.0
-offset_bottom = 8.0
+offset_left = -8.0
+offset_top = -28.0
+offset_right = 8.0
+offset_bottom = 4.0
 color = Color(0.93, 0.42, 0.24, 1)
 
 [node name="Nose" type="ColorRect" parent="."]
 mouse_filter = 2
-offset_left = 8.0
-offset_top = -24.0
-offset_right = 24.0
+offset_left = 4.0
+offset_top = -16.0
+offset_right = 12.0
 offset_bottom = -8.0
 color = Color(0.99, 0.93, 0.78, 1)
 

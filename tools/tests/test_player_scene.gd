@@ -28,13 +28,13 @@ func test_player_scene_is_a_colored_square() -> void:
 	if body == null:
 		failures.append("색 네모(ColorRect 'Body')가 있어야 한다")
 	else:
-		# 몸통은 **1칸 폭 × 1.5칸 키** 다 (BACKLOG 고정값 · 코어 키퍼 비율).
+		# 몸통은 **1칸 폭 × 2칸 키** 다 (바퀴 17 · BACKLOG 고정값 — 키 32px = 타일 2칸).
 		# **원점이 발밑**이라(바퀴 16) 네모는 그 위로 선다: 아래끝이 발밑 상자의 아래끝과 같다.
-		eq(body.size, Vector2(t, t * 1.5), "색 네모 크기 (1칸 폭 × 1.5칸 키)")
-		eq(body.position, Vector2(-t * 0.5, WorldCollide.HALF.y - t * 1.5),
+		eq(body.size, Vector2(t, t * 2.0), "색 네모 크기 (1칸 폭 × 2칸 키)")
+		eq(body.position, Vector2(-t * 0.5, WorldCollide.HALF.y - t * 2.0),
 			"색 네모 오프셋 (가로 가운데 · 아래끝 = 발밑 상자 아래끝)")
 		# **셋으로 갈라져 있던 값이 여기서 만난다.** 몸통이 1칸보다 넓으면 벽에 붙었을 때
-		# 그만큼이 막힌 칸에 파묻혀 보인다 — 48px 이던 때가 한쪽에 10px 였다.
+		# 그만큼이 막힌 칸에 파묻혀 보인다 — 1.5칸이던 바퀴 15 까지가 한쪽에 10px 였다.
 		check(body.size.x <= t, "몸통 폭 — 잰 값 %.2f px · 기대 1칸(%.2f px) 이하" % [body.size.x, t])
 	# **충돌 상자는 발밑 반 칸이다.** 씬의 모양은 지금 아무도 안 읽지만
 	# (`move_and_slide` 를 안 쓴다 — WorldCollide 머리말) 값이 갈라지면 나중에 물리를

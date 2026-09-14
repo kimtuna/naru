@@ -27,19 +27,19 @@ func test_range_covers_every_corner_of_the_view() -> void:
 func test_visible_tiles_are_a_sliver_of_the_world() -> void:
 	var n := WorldView.tile_count(Rect2(Vector2(4112, 4112), SCREEN))
 	var whole := WorldGen.SIZE * WorldGen.SIZE
-	check(n <= 558, "보이는 칸 — 잰 값 %d · 기대 558 이하 (30x16.875 화면 + 경계 한 줄)" % n)
-	# **타일 48 → 32 로 240배가 117배가 됐다** (바퀴 15). 문턱은 그 실측을 따라 내렸다 —
-	# 여전히 두 자릿수 배율이라 「보이는 칸만 그린다」는 주장은 그대로다.
-	check(n * 100 < whole, "보이는 칸 %d 이 월드 %d 칸에 비해 안 작다 (%.0f배)" % [n, whole, float(whole) / n])
+	check(n <= 2135, "보이는 칸 — 잰 값 %d · 기대 2135 이하 (60x33.75 화면 + 경계 한 줄)" % n)
+	# **240배 → 117배 → 30배다** (타일 48 · 32 · 16). 문턱은 그 실측을 따라 내렸다 —
+	# 여전히 한 화면이 월드의 3%라 「보이는 칸만 그린다」는 주장은 그대로다.
+	check(n * 20 < whole, "보이는 칸 %d 이 월드 %d 칸에 비해 안 작다 (%.0f배)" % [n, whole, float(whole) / n])
 
-## 칸 경계에 딱 맞는 화면. 가로는 960/32 = 30 이 딱 떨어져서 오른쪽 끝이 다음 칸의
-## 첫 픽셀에 닿으므로 31 줄이고, 세로는 540/32 = 16.875 라 안 닿아서 17 줄이다.
-## **최대는 여기가 아니라 어긋난 화면이다** — 그때 31 x 18 = 558 이 된다.
+## 칸 경계에 딱 맞는 화면. 가로는 960/16 = 60 이 딱 떨어져서 오른쪽 끝이 다음 칸의
+## 첫 픽셀에 닿으므로 61 줄이고, 세로는 540/16 = 33.75 라 안 닿아서 34 줄이다.
+## **최대는 여기가 아니라 어긋난 화면이다** — 그때 61 x 35 = 2135 가 된다.
 func test_range_on_exact_tile_boundary() -> void:
 	var t := PlayerMotion.TILE
 	var r := WorldView.tile_range(Rect2(Vector2(10 * t, 4 * t), SCREEN))
 	eq(r.position, Vector2i(10, 4), "칸 경계에 맞춘 화면의 시작 칸")
-	eq(r.size, Vector2i(31, 17), "칸 경계에 맞춘 화면의 칸 수 (30+1 가로 · 16.875→17 세로)")
+	eq(r.size, Vector2i(61, 34), "칸 경계에 맞춘 화면의 칸 수 (60+1 가로 · 33.75→34 세로)")
 
 ## 음수 좌표에서 0 쪽으로 반올림하면 칸 하나가 통째로 어긋난다.
 func test_negative_coords_floor_not_truncate() -> void:
@@ -98,8 +98,8 @@ func test_a_screenful_is_not_flat() -> void:
 	var spawn := WorldGen.spawn_tile()
 	var counts := {}
 	var n := 0
-	for ty in range(spawn.y - 9, spawn.y + 9):
-		for tx in range(spawn.x - 15, spawn.x + 16):
+	for ty in range(spawn.y - 17, spawn.y + 17):
+		for tx in range(spawn.x - 30, spawn.x + 31):
 			var k := WorldView.color_at(SEED, tx, ty).to_html(false)
 			counts[k] = int(counts.get(k, 0)) + 1
 			n += 1
@@ -107,8 +107,10 @@ func test_a_screenful_is_not_flat() -> void:
 	for k in counts:
 		top = maxi(top, int(counts[k]))
 	var flat := 100.0 * top / n
-	# 문턱을 화면과 같이 올렸다 (바퀴 15): 273칸에 100개는 37% 였다 — 558칸이면 200개다.
-	# 안 올리면 칸만 늘고 게이트는 반으로 헐거워진다. 실측 349개.
-	check(counts.size() >= 200,
-		"스폰 한 화면의 색 수 — 잰 값 %d개 / %d칸 · 기대 200개 이상" % [counts.size(), n])
+	# **문턱을 화면과 같이 올린다** (바퀴 15 가 정한 것). 273칸에 100개 → 558칸에 200개 →
+	# 타일 16 의 한 화면 2074칸이면 같은 비율로 743개다. 세는 창도 화면을 따라 넓혔다 —
+	# 안 넓히면 화면만 3.8배가 되고 게이트는 그만큼 헐거워진다. 실측 **798개 / 2074칸**
+	# (칸 대비 38.5% — 558칸 349개의 62.5% 보다 낮다: 색이 포화한다).
+	check(counts.size() >= 743,
+		"스폰 한 화면의 색 수 — 잰 값 %d개 / %d칸 · 기대 743개 이상" % [counts.size(), n])
 	check(flat <= 10.0, "스폰 한 화면의 가장 넓은 한 색 — 잰 값 %.1f%% · 기대 10%% 이하" % flat)

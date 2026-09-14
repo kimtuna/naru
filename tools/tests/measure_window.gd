@@ -37,7 +37,7 @@ extends SceneTree
 const LOGICAL := Vector2(960.0, 540.0)
 const WINDOW := Vector2(1920.0, 1080.0)
 const SCALE := 2.0
-const TILES := Vector2(30.0, 16.875)       # 960/32 · 540/32 (BACKLOG 고정값)
+const TILES := Vector2(60.0, 33.75)        # 960/16 · 540/16 (BACKLOG 고정값 · 바퀴 17)
 
 # 창 크기가 붙고 씬의 _ready(월드 배선)가 돌 때까지 기다리는 프레임.
 # VIEW 는 5, DRAW 는 4가 필요했다 — 큰 쪽을 쓴다.
@@ -48,12 +48,12 @@ const LOGICAL_I := Vector2i(960, 540)
 const SETTLE := 4                  # 순간이동·걷기 뒤 카메라가 따라붙을 시간
 const STEP := 8                    # 표본 간격(px). 8 → 120 x 68 = 8160 점
 # 화면 중심(= 플레이어 발밑)에서 이만큼은 건너뛴다. **원점이 발밑이라 위아래가 다르다**
-# (바퀴 16): 몸통이 위로 40 · 아래로 8 이고, 위를 볼 때 코 끝이 48 까지 간다. 옆은 24 다.
-# 큰 쪽(48)에 여유를 얹은 값이라 네모가 표본에 안 섞인다.
-const SKIP_BOX := 56.0
+# (바퀴 16): 몸통이 위로 28 · 아래로 4 이고, 위를 볼 때 코 끝이 32 까지 간다. 옆은 12 다.
+# 큰 쪽(32)에 여유를 얹은 값이라 네모가 표본에 안 섞인다 (바퀴 17: 56 → 40).
+const SKIP_BOX := 40.0
 const TOL := 2.0 / 255.0           # 8비트로 두 칸. 렌더러가 반올림할 자리를 남긴다
 const MIN_SHARE := 0.15            # 물·땅이 각각 이만큼은 화면에 있어야 판정이 공허하지 않다
-const MAX_TILES := 700             # 31 x 18 = 558. 통째로 그리면 65536 이다
+const MAX_TILES := 2400            # 61 x 35 = 2135. 통째로 그리면 65536 이다
 const WALK := 3.0 * PlayerMotion.TILE   # 걷는 거리(px). 3칸이면 캐시가 반드시 한 번은 다시 찬다
 const WALK_FRAMES := 300           # 안전벨트. 막혀서 못 걸으면 여기서 끊는다
 
@@ -217,8 +217,10 @@ func _compare(img: Image, phase: String) -> void:
 
 	var wet := 100.0 * water / n
 	var drawn: int = _main.drawn_tiles
-	print("DRAW [%s] 표본 %d · 불일치 %d · 최대 색차 %.1f/255 · 물 %.1f%% · 땅 %.1f%% · 그린 칸 %d · 채운 횟수 %d" % [
-		phase, n, miss, worst * 255.0, wet, 100.0 - wet, drawn, _main.cache_fills])
+	# **채우는 데 걸린 시간을 같이 찍는다** (바퀴 17): 칸이 3.8배로 늘어 한 판이 프레임
+	# 예산(16667 µs)에 얼마나 가까운지가 눈이 아니라 숫자로만 보인다.
+	print("DRAW [%s] 표본 %d · 불일치 %d · 최대 색차 %.1f/255 · 물 %.1f%% · 땅 %.1f%% · 그린 칸 %d · 채운 횟수 %d · 마지막 채우기 %d µs" % [
+		phase, n, miss, worst * 255.0, wet, 100.0 - wet, drawn, _main.cache_fills, _main.fill_usec])
 
 	if miss > 0:
 		_draw_fail("화면이 월드와 다르다 [%s]" % phase, "%d / %d 점 (첫 어긋남: %s)" % [miss, n, first],

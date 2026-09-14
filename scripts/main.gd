@@ -28,12 +28,17 @@ var drawn_tiles := 0
 ## 색을 다시 채운 횟수. 같은 이유로 밖에 낸다 — 캐시는 눈에 안 보인다.
 var cache_fills := 0
 
+## 마지막으로 색을 채우는 데 걸린 시간(µs). **한 프레임 예산 16667 µs 와 견주는 값이다.**
+var fill_usec := 0
+
 ## **색은 프레임마다 다시 계산하지 않는다.** 한 칸이 6.71 µs (잡음을 두 번 돈다) 라
-## 558칸이면 3.74 ms — 60Hz 한 프레임 예산의 22% 다 (NUMBERS 9절). 타일이 48 → 32 로
-## 작아지면서 한 화면의 칸이 273 → 558 로 늘어 **두 배 비싸졌다.**
+## 한 화면이면 밀리초 단위다 (NUMBERS 9절). 타일이 32 → 16 으로 작아지면서 한 화면의
+## 칸이 558 → 2135 로 **3.8배 늘었다** — 한 판의 비용도 그만큼이다.
+## **그래서 채우는 데 걸린 시간을 재서 밖에 낸다** (`fill_usec`) — 사람 눈에는
+## 「걸을 때 가끔 끊긴다」로만 보이는 값이라 숫자로 안 내면 아무도 못 본다.
 ##
 ## **칸이 바뀌는 게 아니라 보이는 범위가 바뀔 때만** 다시 채운다. 240 px/s 로 걸으면
-## 한 축당 초당 7.5번이므로 평균 비용이 8배 내려간다.
+## 한 축당 초당 15번이므로 평균 비용이 4배 내려간다.
 ## 대가는 **상해도 눈에 안 보이는 것**이다. 캐시를 안 버리면 화면이 월드에서 미끄러지는데,
 ## measure_window.gd 의 DRAW 가 구운 픽셀을 월드 칸과 맞춰서 최대 색차 86.0/255 로 잡는다.
 var _cache_range := Rect2i()
@@ -84,6 +89,7 @@ func _draw() -> void:
 	drawn_tiles = i
 
 func _fill_cache(r: Rect2i) -> void:
+	var t0 := Time.get_ticks_usec()
 	_cache.resize(r.size.x * r.size.y)
 	var i := 0
 	for ty in range(r.position.y, r.position.y + r.size.y):
@@ -92,3 +98,4 @@ func _fill_cache(r: Rect2i) -> void:
 			i += 1
 	_cache_range = r
 	cache_fills += 1
+	fill_usec = Time.get_ticks_usec() - t0

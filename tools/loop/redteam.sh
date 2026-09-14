@@ -121,7 +121,7 @@ cp "$BAK/player.gd" scripts/player.gd
 # 덧붙여도 먼저 트리에 들어온 플레이어의 카메라가 화면을 잡는다(선착순) — 아무 일도
 # 안 일어나는 가짜 대조군이 된다. 그래서 **그 카메라의 줌을 직접** 건다.
 sed -i '' 's|^zoom = Vector2(1, 1)|zoom = Vector2(2, 2)|' scenes/player.tscn
-expect 1 "카메라 줌을 걸면 화면 실측이 잡는다 (보이는 칸 15 x 8.44)"
+expect 1 "카메라 줌을 걸면 화면 실측이 잡는다 (보이는 칸 30 x 16.88)"
 cp "$BAK/player.tscn" scenes/player.tscn
 
 python3 - <<'PYX'
@@ -249,7 +249,7 @@ cp "$BAK/main.gd" scripts/main.gd
 # 넷 다 **단위 검사 66개를 전부 초록으로 남긴다** — WorldView 의 순수 계산은 멀쩡하고
 # main.gd 가 그걸 쓰는 방식만 망가지기 때문이다. measure_window.gd 의 DRAW 만 잡는다.
 
-# 그릴 칸 수도 558 그대로다 — **픽셀을 안 보면 못 잡는다.**
+# 그릴 칸 수도 2135 그대로다 — **픽셀을 안 보면 못 잡는다.**
 python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
@@ -280,7 +280,7 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
     "\tvar r := WorldView.tile_range(visible_world_rect())",
     "\tvar r := Rect2i(0, 0, WorldGen.SIZE, WorldGen.SIZE)", 1))
 PYX
-expect 1 "월드를 통째로 그리면 잡는다 (558 → 65536 칸)"
+expect 1 "월드를 통째로 그리면 잡는다 (2135 → 65536 칸)"
 cp "$BAK/main.gd" scripts/main.gd
 
 # **서 있을 때는 완벽하게 멀쩡하다.** 걸어야 화면이 월드에서 미끄러진다 —
@@ -310,8 +310,8 @@ PYZ
 expect 1 "캐시를 두 칸마다 채우면 걷는 구간만 잡는다 (서서는 멀쩡하다)"
 cp "$BAK/main.gd" scripts/main.gd
 
-# ── 바퀴 16 몸통 1칸 · 발밑 상자 ──────────────────────────────────────
-# **첫째는 단위 검사 66개를 전부 초록으로 남긴다** — 씬의 글자(32 x 48)는 그대로고
+# ── 바퀴 16 몸통 1칸 · 발밑 상자 (바퀴 17 에 타일 16 으로 다시 잰다) ─────
+# **첫째는 단위 검사 66개를 전부 초록으로 남긴다** — 씬의 글자(16 x 32)는 그대로고
 # **실행 중의 네모**만 넓어지기 때문이다. 좌표 판정 ①②③ 도 전부 맞는다:
 # 멈추는 자리는 충돌 상자가 정하지 그리는 네모가 정하지 않는다.
 # 사람 눈에만 「몸이 바다에 잠긴 채 서 있다」로 보인다 — `COLLIDE` 의 ④ 만 잡는다.
@@ -320,15 +320,15 @@ import io
 p='scripts/player.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
     "func _ready() -> void:\n\t_place_nose()",
-    "func _ready() -> void:\n\t_body.size = Vector2(48, 48)\n\t_place_nose()", 1))
+    "func _ready() -> void:\n\t_body.size = Vector2(32, 32)\n\t_place_nose()", 1))
 PYX
-expect 1 "실행 중에 몸통을 1.5칸으로 넓히면 충돌 실측이 잡는다 (걸침 1.99 → 9.99 px)"
+expect 1 "실행 중에 몸통을 2칸 폭으로 넓히면 충돌 실측이 잡는다 (걸침 1.99 → 9.99 px)"
 cp "$BAK/player.gd" scripts/player.gd
 
 # 씬의 글자를 되돌리는 쪽. 이건 단위 검사가 잡아야 한다 — 안 잡으면 씬과 상수가
 # 다시 갈라지고, 갈라진 채로 초록인 것이 이 바퀴가 고친 상태다.
-sed -i '' 's|^offset_right = 16.0|offset_right = 32.0|' scenes/player.tscn
-expect 1 "몸통을 1.5칸 폭으로 되돌리면 tests 가 잡는다 (32 → 48px)"
+sed -i '' 's|^offset_right = 8.0|offset_right = 16.0|' scenes/player.tscn
+expect 1 "몸통을 2칸 폭으로 되돌리면 tests 가 잡는다 (16 → 32px)"
 cp "$BAK/player.tscn" scenes/player.tscn
 
 # 발밑 상자를 다시 네모로. 벽 앞에 서는 자리가 세로로 6px 어긋난다 —

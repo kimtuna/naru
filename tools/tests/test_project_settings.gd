@@ -30,9 +30,10 @@ func test_main_scene_exists() -> void:
 	check(ResourceLoader.exists(main), "메인 씬 파일이 실제로 있어야 한다: %s" % main)
 
 func test_visible_tiles() -> void:
-	# **이 값이 곧 시야다** — 스타듀 1080p 100% 줌과 같은 30 x 16.875 칸 (BACKLOG 고정값).
+	# **이 값이 곧 시야다** — 사람이 30 · 40 · 60 칸을 눈으로 보고 고른 **60 x 33.75 칸**
+	# (바퀴 17 · BACKLOG 고정값). 16px 은 스타듀·코어키퍼가 **아트를 그리는 해상도**다.
 	# 논리 해상도와 타일 크기 **둘 중 아무거나** 바뀌면 여기가 빨개진다.
 	var w: int = ProjectSettings.get_setting("display/window/size/viewport_width")
 	var h: int = ProjectSettings.get_setting("display/window/size/viewport_height")
-	eq(float(w) / PlayerMotion.TILE, 30.0, "가로로 보이는 타일 칸")
-	eq(float(h) / PlayerMotion.TILE, 16.875, "세로로 보이는 타일 칸")
+	eq(float(w) / PlayerMotion.TILE, 60.0, "가로로 보이는 타일 칸")
+	eq(float(h) / PlayerMotion.TILE, 33.75, "세로로 보이는 타일 칸")

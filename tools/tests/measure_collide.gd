@@ -16,16 +16,20 @@ extends SceneTree
 
 const RUN := 7             # 세로로 이만큼 곧은 해안을 찾는다 (미끄러지는 동안 옆이 계속 바다여야 한다)
 const RUNWAY := 3          # 해안 서쪽으로 이만큼 땅이 있어야 뛰어들 거리가 나온다
-const STRAIGHT := 1.0      # 바다로 곧장 걷는 시간(초). 240px = 7.5칸이라 활주로(97.99px)를 넘는다
-# 해안을 타는 시간(초). **타일이 32 로 작아지면서 1.2 → 0.9 로 줄였다** (바퀴 15):
-# 대각 한 축 169.71 × 0.9 = 152.7px 라 활주로는 넘기고, 상자 아래끝이
-# 16 + 152.7 + 8 = 176.7px 라 곧은 해안 7줄(224px) 안에 남는다. 1.2 였으면 227.7px 로 넘쳤다.
-# (상자가 발밑 반 칸이 되면서 여유가 6px 늘었다 — 바퀴 16. 0.9 는 안 바꿨다.)
-const SLIDE := 0.9
+const STRAIGHT := 1.0      # 바다로 곧장 걷는 시간(초). 240px = 15칸이라 활주로(49.99px)를 넘는다
+# 해안을 타는 **몫**. 초가 아니다 — `_slide_sec()` 가 기하에서 푼다.
+#
+# **초로 적었다가 두 바퀴를 잡아먹었다**: 1.2 → 0.9 (바퀴 15, 타일 32) 로 손으로 줄였는데
+# 타일이 또 반이 되면서 0.9 는 다시 틀린 값이 됐다 (대각 한 축 169.71 × 0.9 = 152.7px 라
+# 곧은 해안 7줄 = 112px 를 넘쳐 미끄럼이 해안 밖에서 끝난다).
+# **그 상수는 처음부터 「해안 몇 줄」이었다** — 그래서 이제 줄에서 시간을 푼다.
+# 남은 0.2 는 물리 틱 경계(한 틱 2.8px)와 해안이 딱 RUN 줄일 때의 여유다.
+const SLIDE_FILL := 0.8
 const TOL_POS := 0.05      # 벽에 붙는 자리는 계산이 정한다 — 틱 경계가 안 섞인다
-# **그리는 네모가 막힌 칸에 걸치는 몫의 상한(px).** 몸통이 1칸 폭(32)이고 상자 반폭이
-# 14 면 걸치는 것은 16 - 14 - 0.01 = **1.99px** 뿐이다 — 일부러 남긴 여유 그 자체다.
-# 1.5칸(48) 이던 바퀴 15 까지는 **10px** 였다: 좌표는 맞는데 사람 눈에는 벽에 파묻혔다.
+# **그리는 네모가 막힌 칸에 걸치는 몫의 상한(px).** 몸통이 1칸 폭(16)이고 상자 반폭이
+# 6 이면 걸치는 것은 8 - 6 - 0.01 = **1.99px** 뿐이다 — 일부러 남긴 여유 그 자체다.
+# **타일이 반이 돼도 1.99 는 그대로다**: `HALF` 의 2px 여유가 절대값이라 그렇다.
+# 몸통이 1.5칸이던 바퀴 15 까지는 **10px** 였다: 좌표는 맞는데 사람 눈에는 벽에 파묻혔다.
 const MAX_OVER := 2.5
 const TOL_RATE := 5.0      # 속력은 물리 틱 경계로 ±1틱(4px) 이 남는다 (measure_move 와 같다)
 const WARMUP := 3          # 씬의 _ready(월드 배선)는 첫 프레임 뒤에 돈다
@@ -62,11 +66,19 @@ func _setup() -> bool:
 		return _finish()
 	_phases = [
 		{"name": "바다로 직진", "keys": ["move_right"], "sec": STRAIGHT, "rate_y": 0.0},
-		{"name": "해안 미끄럼", "keys": ["move_right", "move_down"], "sec": SLIDE,
+		{"name": "해안 미끄럼", "keys": ["move_right", "move_down"], "sec": _slide_sec(),
 			"rate_y": PlayerMotion.SPEED / sqrt(2.0)},
 	]
 	_start_phase()
 	return false
+
+## 해안을 타는 시간(초). **곧은 해안 RUN 줄 안에서 끝나야 한다** — 넘치면 미끄럼이
+## 해안 밖에서 끝나서 「벽 앞에 선 자리」가 딴 칸의 값이 된다.
+## 시작은 첫 줄 한가운데(TILE × 0.5)이고 상자 아래끝이 HALF.y 만큼 더 내려가므로
+## 내려갈 수 있는 거리는 `(RUN - 0.5) × TILE - HALF.y` 다. 그중 SLIDE_FILL 만 쓴다.
+func _slide_sec() -> float:
+	var room := (RUN - 0.5) * PlayerMotion.TILE - WorldCollide.HALF.y
+	return room * SLIDE_FILL / (PlayerMotion.SPEED / sqrt(2.0))
 
 ## 곧은 남북 해안을 찾는다: 땅 %d칸 × 활주로 옆으로, 그 오른쪽은 전부 바다.
 ## 스폰에서 가장 가까운 것을 고른다 — 플레이어가 실제로 처음 만나는 해안이다.
@@ -189,8 +201,9 @@ func _query_cost() -> void:
 
 func _finish() -> bool:
 	_query_cost()
-	print("COLLIDE %s (구간 %d · 상자 반크기 %.0f x %.0f · 네모 반폭 %.0f · 틈 %.2f · 물리 %d Hz)" % [
+	print("COLLIDE %s (구간 %d · 타일 %.0f · 미끄럼 %.3f s · 상자 반크기 %.0f x %.0f · 네모 반폭 %.0f · 틈 %.2f · 물리 %d Hz)" % [
 		"ok" if _bad == 0 else "FAIL %d개" % _bad, _phases.size(),
+		PlayerMotion.TILE, _slide_sec(),
 		WorldCollide.HALF.x, WorldCollide.HALF.y, _body_half_x(),
 		WorldCollide.EPS, Engine.physics_ticks_per_second])
 	quit(1 if _bad > 0 else 0)

@@ -16,8 +16,8 @@ extends SceneTree
 ## 이름이 test_ 로 시작하지 않는다 — run_tests.gd 는 이 파일을 안 집는다.
 
 const LOGICAL := Vector2(960.0, 540.0)     # NUMBERS 1절
-const TILES := Vector2(30.0, 16.875)       # 960/32 · 540/32 — 줌이 1 일 때만 이 값이다
-const SEC := 0.5                           # 한 방향으로 걷는 시간. 240px/s → 120px = 3.75칸
+const TILES := Vector2(60.0, 33.75)        # 960/16 · 540/16 — 줌이 1 일 때만 이 값이다
+const SEC := 0.5                           # 한 방향으로 걷는 시간. 240px/s → 120px = 7.5칸
 const TOL_CENTER := 0.5                    # px. 카메라는 계산이라 틱 경계가 안 섞인다
 const MIN_PATH := 200.0                    # 전 구간 합. 안 걸으면 판정이 공허하다
 const WARMUP := 3                          # 씬의 _ready(월드 배선)는 첫 프레임 뒤에 돈다

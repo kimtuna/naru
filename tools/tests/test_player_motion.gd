@@ -1,6 +1,6 @@
 extends TestBase
 
-## 이동 계산을 잰다. 값의 출처는 NUMBERS 1절 (타일 32 · 속도 240).
+## 이동 계산을 잰다. 값의 출처는 NUMBERS 1절 (타일 16 · 속도 240).
 ##
 ## **여기는 순수 계산만 본다.** 노드가 이걸 실제로 쓰는지는 헤드리스로 씬을 돌려서
 ## 재는 tools/tests/measure_move.gd 가 본다 — 둘 다 있어야 게이트가 닫힌다.
@@ -13,9 +13,9 @@ const AXES := {
 }
 
 func test_constants() -> void:
-	eq(PlayerMotion.TILE, 32.0, "타일 크기")
+	eq(PlayerMotion.TILE, 16.0, "타일 크기")
 	eq(PlayerMotion.SPEED, 240.0, "이동 속도")
-	eq(PlayerMotion.SPEED / PlayerMotion.TILE, 7.5, "초당 타일 칸")
+	eq(PlayerMotion.SPEED / PlayerMotion.TILE, 15.0, "초당 타일 칸")
 
 func test_four_axes_are_exact() -> void:
 	for name in AXES:
@@ -33,16 +33,16 @@ func test_no_input_is_no_motion() -> void:
 	# 반대 키를 같이 누르면 서로 지워진다 (get_vector 가 합을 준다).
 	eq(PlayerMotion.velocity(Vector2(1, 0) + Vector2(-1, 0)), Vector2.ZERO, "좌우 동시")
 
-func test_one_second_is_seven_and_a_half_tiles() -> void:
+func test_one_second_is_fifteen_tiles() -> void:
 	# 60프레임을 실제로 적분한다. delta 를 빼먹은 구현은 여기서 터진다.
 	var pos := Vector2.ZERO
 	for i in 60:
 		pos += PlayerMotion.step(Vector2(1, 0), 1.0 / 60.0)
 	check(is_equal_approx(pos.x, 240.0), "1초 이동 거리 — 잰 값 %.4f px · 기대 240.0000" % pos.x)
-	check(is_equal_approx(pos.x / PlayerMotion.TILE, 7.5),
-		"1초 이동 칸 — 잰 값 %.4f 칸 · 기대 7.5000" % (pos.x / PlayerMotion.TILE))
+	check(is_equal_approx(pos.x / PlayerMotion.TILE, 15.0),
+		"1초 이동 칸 — 잰 값 %.4f 칸 · 기대 15.0000" % (pos.x / PlayerMotion.TILE))
 	eq(pos.y, 0.0, "가로 이동 중 세로 흔들림")
 
 func test_tile_center() -> void:
-	eq(PlayerMotion.tile_center(0, 0), Vector2(16, 16), "타일 (0,0) 중심")
-	eq(PlayerMotion.tile_center(10, 5), Vector2(336, 176), "타일 (10,5) 중심")
+	eq(PlayerMotion.tile_center(0, 0), Vector2(8, 8), "타일 (0,0) 중심")
+	eq(PlayerMotion.tile_center(10, 5), Vector2(168, 88), "타일 (10,5) 중심")
