@@ -134,6 +134,11 @@ h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
 .commits li{display:flex;gap:12px;align-items:baseline;padding:6px 0;font-size:13px;
   border-bottom:1px dotted var(--line);color:var(--dim)}
 .commits .cd{font-size:11px;color:var(--faint);font-family:ui-monospace,monospace;flex:none}
+#fresh{position:fixed;right:16px;bottom:16px;z-index:9;font:inherit;font-size:13px;
+  font-weight:600;padding:10px 16px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--ok);background:var(--okbg);color:var(--ok);
+  box-shadow:0 3px 14px rgba(0,0,0,.18)}
+#fresh:hover{filter:brightness(1.05)}
 footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   font-size:11.5px;color:var(--faint)}
 @media(max-width:560px){
@@ -147,7 +152,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 2026-09-14 10:40</p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 10:53:02</span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
@@ -484,6 +489,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/6c6a4b9"><code>6c6a4b9</code></a><span class="cd">2026-09-14</span>바퀴 6 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/5d50661"><code>5d50661</code></a><span class="cd">2026-09-14</span>테스트 바닥 26 → 35</li>
 <li><a href="https://github.com/kimtuna/naru/commit/42e15ec"><code>42e15ec</code></a><span class="cd">2026-09-14</span>바퀴 6 일지 · 백로그 · NUMBERS 6절 — 대조군 18 잡음, 1 놓침</li>
 <li><a href="https://github.com/kimtuna/naru/commit/0fa774c"><code>0fa774c</code></a><span class="cd">2026-09-14</span>시드 기반 월드 256×256 — 땅/바다 2종, 같은 씨앗 = 같은 월드</li>
@@ -495,7 +501,22 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/ed8fa54"><code>ed8fa54</code></a><span class="cd">2026-09-14</span>대시보드를 못 구우면 루프가 멈춘다 · 일지에 이번 수정 기록</li>
 <li><a href="https://github.com/kimtuna/naru/commit/f4f5c97"><code>f4f5c97</code></a><span class="cd">2026-09-14</span>report.py 문법 깨진 것 되돌림</li>
 <li><a href="https://github.com/kimtuna/naru/commit/dcd70b4"><code>dcd70b4</code></a><span class="cd">2026-09-14</span>초록으로 닫힌 바퀴만 푸시한다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/0bf4a5b"><code>0bf4a5b</code></a><span class="cd">2026-09-14</span>일지·대시보드 버그 셋 — 바퀴 4 가 드러냈다</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
+<button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
+<script>
+(function(){
+  var el=document.getElementById('fresh'),
+      me=(document.getElementById('baked')||{}).textContent||'';
+  if(!me) return;
+  el.addEventListener('click',function(){location.reload();});
+  setInterval(function(){
+    fetch(location.href,{cache:'no-store'}).then(function(r){return r.text();})
+      .then(function(t){
+        var m=t.match(/id="baked">([^<]+)</);
+        if(m && m[1]!==me) el.hidden=false;
+      }).catch(function(){});
+  },60000);
+})();
+</script>
 </div></body></html>

@@ -158,7 +158,7 @@ def render():
     A(f'''<header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 {esc(datetime.now().strftime("%Y-%m-%d %H:%M"))}</p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">{esc(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))}</span></p></div>
   </div>
   <nav><a href="{REPO}/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>''')
@@ -305,9 +305,29 @@ def render():
       '아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 '
       '바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 '
       '굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>')
+    A(FRESH)
     A('</div></body></html>')
     return "\n".join(P)
 
+
+# 정적 페이지라 저절로 안 바뀐다. 그렇다고 읽는 중에 갈아치우면 그게 더 나쁘다 —
+# **바뀐 걸 알리기만 하고, 새로고침은 사람이 누른다.**
+FRESH = """<button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
+<script>
+(function(){
+  var el=document.getElementById('fresh'),
+      me=(document.getElementById('baked')||{}).textContent||'';
+  if(!me) return;
+  el.addEventListener('click',function(){location.reload();});
+  setInterval(function(){
+    fetch(location.href,{cache:'no-store'}).then(function(r){return r.text();})
+      .then(function(t){
+        var m=t.match(/id="baked">([^<]+)</);
+        if(m && m[1]!==me) el.hidden=false;
+      }).catch(function(){});
+  },60000);
+})();
+</script>"""
 
 DOCS = [
     ("CLAUDE.md", ("fix", "고정"), "매 바퀴 · 자동 로드",
@@ -462,6 +482,11 @@ h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
 .commits li{display:flex;gap:12px;align-items:baseline;padding:6px 0;font-size:13px;
   border-bottom:1px dotted var(--line);color:var(--dim)}
 .commits .cd{font-size:11px;color:var(--faint);font-family:ui-monospace,monospace;flex:none}
+#fresh{position:fixed;right:16px;bottom:16px;z-index:9;font:inherit;font-size:13px;
+  font-weight:600;padding:10px 16px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--ok);background:var(--okbg);color:var(--ok);
+  box-shadow:0 3px 14px rgba(0,0,0,.18)}
+#fresh:hover{filter:brightness(1.05)}
 footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   font-size:11.5px;color:var(--faint)}
 @media(max-width:560px){
