@@ -127,8 +127,11 @@ def render():
     total = sum(len(p["items"]) for p in phases)
     spend = read(".loop/spend.txt", "0").strip() or "0"
     stopped = read(".loop/STOPPED").strip()
-    pid = read(".loop/loop.pid").strip()
-    running = _alive(pid)
+    # **「지금 돌고 있나」는 구운 페이지가 알 수 없다.** 드라이버가 이 스크립트를
+    # 부르는 시점엔 드라이버 자신이 살아 있어서 늘 「돌고 있다」로 굳었고,
+    # 바로 뒤에 루프가 끝나도 페이지는 영영 그대로였다. 잰 것만 적는다 —
+    # **마지막 바퀴가 몇 번이고 어떻게 끝났나.**
+    last = next((e for e in entries if not e["human"]), None)
 
     all_green = res.get("all_green") if res else None
     graded_at = res.get("ts", "") if res else ""
@@ -138,12 +141,13 @@ def render():
     nxt_phase = next((p["id"] for p in phases for i in p["items"]
                       if not i["done"] and i is nxt), "")
 
-    if running:
-        st_cls, st_txt = "run", "돌고 있다"
-    elif stopped:
-        st_cls, st_txt = "halt", "멈춰 있다"
+    if last:
+        lr = last["f"].get("결과", "")
+        st_cls = {"초록": "run", "빨강": "halt"}.get(lr, "idle")
+        st_txt = f'바퀴 {last["n"]}'
+        st_note = f'{lr or "—"} · {last["f"].get("날짜", "")}'
     else:
-        st_cls, st_txt = "idle", "안 돌고 있다"
+        st_cls, st_txt, st_note = "idle", "—", "아직 없다"
 
     P = []
     A = P.append
@@ -163,8 +167,9 @@ def render():
     green_txt = "—" if all_green is None else ("ALL GREEN" if all_green else "빨강")
     green_cls = "muted" if all_green is None else ("ok" if all_green else "bad")
     A('<section class="strip">')
-    A(f'<div class="tile"><span class="k">루프</span>'
-      f'<span class="v"><i class="dot {st_cls}"></i>{esc(st_txt)}</span></div>')
+    A(f'<div class="tile"><span class="k">마지막 바퀴</span>'
+      f'<span class="v"><i class="dot {st_cls}"></i>{esc(st_txt)}</span>'
+      f'<span class="note">{esc(st_note)}</span></div>')
     A(f'<div class="tile"><span class="k">계약</span>'
       f'<span class="v {green_cls}">{esc(green_txt)}</span>'
       f'<span class="note">{esc(graded_at[:16].replace("T", " "))}</span></div>')
@@ -295,20 +300,12 @@ def render():
               f'<code>{esc(h)}</code></a><span class="cd">{esc(d)}</span>{inline(s)}</li>')
         A('</ul>')
 
-    A('<footer>이 페이지는 <code>tools/loop/report.py</code> 가 굽는다. '
-      '값은 페이지에 구워져 있다 — 아무것도 fetch 하지 않는다.</footer>')
+    A('<footer><strong>이 페이지는 스냅샷이다.</strong> '
+      '<code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 '
+      '아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 '
+      '바깥에서 읽을 방법이 없다. 드라이버가 매 바퀴 끝에 굽고 커밋한다.</footer>')
     A('</div></body></html>')
     return "\n".join(P)
-
-
-def _alive(pid):
-    if not pid.isdigit():
-        return False
-    try:
-        os.kill(int(pid), 0)
-        return True
-    except Exception:
-        return False
 
 
 DOCS = [

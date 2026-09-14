@@ -84,12 +84,19 @@ if not head.search(text):
 
 m = re.search(r"(^## 바퀴 %s(?: |·).*?$)(.*?)(?=^## |\Z)" % re.escape(n), text, re.M | re.S)
 body = m.group(2)
+# 세션이 절 끝에 `---` 를 덧붙이는 일이 있다. 그냥 이어 붙이면 드라이버 줄이
+# 그 구분선 **아래**로 떨어져 절 밖으로 나간다 — 바퀴 4 에서 실제로 그랬다.
+# 그래서 **마지막 `- 무엇:` 줄 바로 뒤**에 끼운다.
+lines = body.split("\n")
 for k, v in fields.items():
     line = f"- {k}: {v}"
-    if re.search(r"^- %s:" % re.escape(k), body, re.M):
-        body = re.sub(r"^- %s:.*$" % re.escape(k), line.replace("\\", "\\\\"), body, count=1, flags=re.M)
+    hit = next((i for i, L in enumerate(lines) if re.match(r"^- %s:" % re.escape(k), L)), None)
+    if hit is not None:
+        lines[hit] = line
     else:
-        body = body.rstrip("\n") + "\n" + line + "\n"
+        last = max((i for i, L in enumerate(lines) if re.match(r"^- \S", L)), default=-1)
+        lines.insert(last + 1, line)
+body = "\n".join(lines)
 text = text[:m.start(2)] + body + text[m.end(2):]
 open(path, "w", encoding="utf-8").write(text)
 print(f"JOURNAL 바퀴 {n} 찍음 — {result}")

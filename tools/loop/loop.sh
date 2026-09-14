@@ -106,9 +106,11 @@ roll_state() {
 # 세션은 「문제·원인·고친 것·남긴 것」을 쓰고, 여기서 「날짜·결과·채점·비용·커밋」을 찍는다.
 # **줄의 주인을 갈라 놓지 않으면** 세션이 결과 칸에 「됐습니다」를 쓰고, 일지가 증거가
 # 아니라 자기 보고가 된다. 채점 칸에는 `results.json` — 채점자가 쓴 것 — 만 들어간다.
-finish_journal() {                        # finish_journal <바퀴> <항목> <결과>
+finish_journal() {                        # finish_journal <바퀴> <항목> <결과> <커밋>
   [ "$DRY" = "1" ] && return 0
-  bash tools/loop/journal.sh stamp "$1" "$2" "$3" "$(git rev-parse --short HEAD)" | sed 's/^/    /'
+  # 찍히는 커밋은 **항목을 만든 커밋**이다. 이 함수는 roll_state 뒤에 도는데
+  # 그 사이 부기 커밋(기준 승격 · 바닥 올림 · 롤링)이 끼면 그게 찍힌다.
+  bash tools/loop/journal.sh stamp "$1" "$2" "$3" "${4:-$(git rev-parse --short HEAD)}" | sed 's/^/    /'
   python3 tools/loop/report.py | sed 's/^/    /'
   if [ -n "$(git status --porcelain docs/JOURNAL.md docs/index.html 2>/dev/null)" ]; then
     git add docs/JOURNAL.md docs/index.html docs/.nojekyll 2>/dev/null || true
@@ -272,7 +274,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     promote "$(desc_of "$item")" "$vcmd"
     bump_mintests
     roll_state
-    finish_journal "$turn" "$item" "초록"
+    finish_journal "$turn" "$item" "초록" "$(git rev-parse --short "$head_after")"
     if [ "$DRY" = "0" ] && ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
       stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 바퀴 $turn)"
     fi
@@ -290,7 +292,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     git checkout -- . 2>/dev/null || true
     git clean -fdq -e '.loop/' -e '.godot-home/' 2>/dev/null || true
     [ -s "$jsave" ] && cp "$jsave" docs/JOURNAL.md; rm -f "$jsave"
-    finish_journal "$turn" "$item" "빨강"
+    finish_journal "$turn" "$item" "빨강" "$(git rev-parse --short HEAD)"
   fi
 done
 
