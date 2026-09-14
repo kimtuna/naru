@@ -32,7 +32,7 @@ stop() {                                  # stop <사유>
 }
 
 # ── 백로그에서 다음 미완료 항목 한 줄 ──────────────────────────────
-next_item() { grep -n -m1 '^- \[ \] ' BACKLOG.md || true; }
+next_item() { grep -n -m1 '^- \[ \] ' docs/BACKLOG.md || true; }
 
 # 항목 줄에서 설명과 verify 명령을 가른다.
 desc_of()   { printf '%s' "${1%%| verify:*}" | sed 's/^- \[[ x]\] *//; s/[[:space:]]*$//'; }
@@ -101,6 +101,22 @@ roll_state() {
   fi
 }
 
+# ── 일지를 닫고 대시보드를 굽는다 ────────────────────────────────────
+#
+# 세션은 「문제·원인·고친 것·남긴 것」을 쓰고, 여기서 「날짜·결과·채점·비용·커밋」을 찍는다.
+# **줄의 주인을 갈라 놓지 않으면** 세션이 결과 칸에 「됐습니다」를 쓰고, 일지가 증거가
+# 아니라 자기 보고가 된다. 채점 칸에는 `results.json` — 채점자가 쓴 것 — 만 들어간다.
+finish_journal() {                        # finish_journal <바퀴> <항목> <결과>
+  [ "$DRY" = "1" ] && return 0
+  bash tools/loop/journal.sh stamp "$1" "$2" "$3" "$(git rev-parse --short HEAD)" | sed 's/^/    /'
+  python3 tools/loop/report.py | sed 's/^/    /'
+  if [ -n "$(git status --porcelain docs/JOURNAL.md docs/index.html 2>/dev/null)" ]; then
+    git add docs/JOURNAL.md docs/index.html docs/.nojekyll 2>/dev/null || true
+    git -c user.name=loop -c user.email=loop@local commit -q \
+      -m "바퀴 $1 일지 · 대시보드 갱신" || true
+  fi
+}
+
 # ── 회귀 감지: 지난번 초록이던 기준이 지금 빨강인가 ─────────────────
 regressed() {
   [ -f "$PREV" ] || return 1
@@ -141,7 +157,7 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
 
   # 3) [ASK] 는 세션을 열지 않는다 — 답을 아는 주체가 세션이 아니다
   case "$item" in
-    *"[ASK]"*) stop "[ASK] 항목이다. 사람이 답해야 한다 (BACKLOG.md:$lineno)" ;;
+    *"[ASK]"*) stop "[ASK] 항목이다. 사람이 답해야 한다 (docs/BACKLOG.md:$lineno)" ;;
   esac
 
   # 4) 같은 항목 연속 실패
@@ -160,12 +176,30 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
   RD="$RUNS/$(printf '%03d' "$cycle")"; mkdir -p "$RD"
   head_before="$(git rev-parse HEAD)"
 
+  # 일지의 바퀴 번호는 **이 실행이 아니라 프로젝트 전체의 몇 번째 바퀴인가**다.
+  # loop.sh 를 다시 부를 때마다 1 로 돌아가면 일지가 겹쳐 쓰인다.
+  turn="$(bash tools/loop/journal.sh next)"
+  say "일지 바퀴 $turn"
+
   # 6) 세션
   # 문맥은 **드라이버가 조립한다** — 세션이 파일을 여는 횟수를 줄이는 것이
   # 바퀴 비용을 줄이는 가장 큰 자리다. state.md 는 자라므로 꼬리만 넣는다.
   {
     cat PROMPT.md
-    printf '\n\n---\n\n## 이번 바퀴 (%d/%d)\n\n%s\n' "$cycle" "$MAX_CYCLES" "$item"
+    printf '\n\n---\n\n## 이번 바퀴 — 일지 번호 %s (이 실행의 %d/%d)\n\n%s\n' \
+      "$turn" "$cycle" "$MAX_CYCLES" "$item"
+    printf '\n### 끝나면 일지를 적는다 — docs/JOURNAL.md\n\n'
+    printf '맨 위 `---` 바로 아래에 절을 하나 덧붙인다. **이 파일을 통째로 읽지 마라** — 형식은 이게 전부다.\n\n'
+    printf '```markdown\n## 바퀴 %s · %s\n' "$turn" "$(desc_of "$item")"
+    printf -- '- 문제: <이번 바퀴에 실제로 막힌 것. 없으면 「없음」>\n'
+    printf -- '- 원인: <왜 그랬나. 증상이 아니라 이유>\n'
+    printf -- '- 고친 것: <무엇을 어떻게 바꿨나. 파일 이름을 적는다>\n'
+    printf -- '- 바꾼 결정: <설계·규칙이 바뀌었으면. 없으면 「없음」>\n'
+    printf -- '- 잰 값: <숫자 + 조건>\n'
+    printf -- '- 남긴 것: <다음으로 넘긴 것 / 사람이 정할 것. 없으면 「없음」>\n```\n'
+    printf '\n`날짜`·`결과`·`채점`·`비용`·`커밋` 은 **드라이버가 찍는다. 쓰지 마라.**\n'
+    printf '`문제`·`원인`·`고친 것`·`남긴 것` 이 비어 있으면 **초록이어도 루프가 멈춘다.**\n'
+    printf '막힌 게 없었으면 `문제: 없음` 이라고 적는다 — 빈 바퀴와 안 적은 바퀴는 다르다.\n' 
     printf '\n### 최근 바퀴 (state.md 를 열지 마라 — 이게 전부다)\n\n'
     python3 tools/loop/state.py tail 2
     printf '\n### 지금 계약\n\n```\n'
@@ -238,17 +272,25 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     promote "$(desc_of "$item")" "$vcmd"
     bump_mintests
     roll_state
+    finish_journal "$turn" "$item" "초록"
+    if ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
+      stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 바퀴 $turn)"
+    fi
     fails=0
   else
     fails=$((fails+1))
     say "✘ 빨강 (연속 $fails)"
-    # 초록이 아닌데 커밋했으면 되돌린다 — 빨간 것을 역사에 남기지 않는다
+    # 빨간 작업은 역사에 안 남긴다. **일지는 예외다** — 왜 빨갰는지가 제일 비싼 기록이라
+    # 되돌리기 전에 빼뒀다가 도로 넣는다.
+    jsave="$(mktemp)"; cp docs/JOURNAL.md "$jsave" 2>/dev/null || true
     if [ "$head_after" != "$head_before" ]; then
       say "빨간 상태로 커밋했다. 되돌린다."
       git reset --hard "$head_before" >/dev/null
     fi
     git checkout -- . 2>/dev/null || true
     git clean -fdq -e '.loop/' -e '.godot-home/' 2>/dev/null || true
+    [ -s "$jsave" ] && cp "$jsave" docs/JOURNAL.md; rm -f "$jsave"
+    finish_journal "$turn" "$item" "빨강"
   fi
 done
 

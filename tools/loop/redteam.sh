@@ -21,14 +21,14 @@ BAK="$(mktemp -d)"
 cp project.godot "$BAK/" 2>/dev/null || true
 cp .loop/criteria.tsv "$BAK/" 2>/dev/null || true
 cp tools/tests/test_isolation.gd "$BAK/" 2>/dev/null || true
-cp PROMPT.md "$BAK/" 2>/dev/null || true
+cp docs/PROMPT.md "$BAK/" 2>/dev/null || true
 cp scripts/player_motion.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
   cp "$BAK/test_isolation.gd" tools/tests/test_isolation.gd 2>/dev/null || true
-  cp "$BAK/PROMPT.md" PROMPT.md 2>/dev/null || true
+  cp "$BAK/PROMPT.md" docs/PROMPT.md 2>/dev/null || true
   cp "$BAK/player_motion.gd" scripts/player_motion.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
@@ -89,9 +89,9 @@ sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events":
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
 cp "$BAK/project.godot" project.godot
 
-for i in $(seq 1 40); do echo "부풀리는 줄 $i" >> PROMPT.md; done
+for i in $(seq 1 40); do echo "부풀리는 줄 $i" >> docs/PROMPT.md; done
 expect 1 "매 바퀴 읽는 문서를 부풀리면 잡는다"
-cp "$BAK/PROMPT.md" PROMPT.md
+cp "$BAK/PROMPT.md" docs/PROMPT.md
 
 expect 0 "원복하면 다시 초록이다"
 

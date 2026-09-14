@@ -5,12 +5,15 @@
 
 ## 무엇을 읽나
 
+**md 는 전부 `docs/` 에 있다.** 이 파일만 루트다 — Claude Code 가 루트만 자동으로 읽는다.
+
 | 파일 | 무엇 | 언제 |
 |---|---|---|
-| `BACKLOG.md` | **할 일. 한 줄 = 한 바퀴** | 매 바퀴 — 번호가 가장 작은 미완료 항목 하나만 |
-| `NUMBERS.md` | **실측값. 진실의 출처** | 값을 쓰거나 고칠 때 |
-| `GOTCHAS.md` | 엔진·셸의 함정 | **에러가 났을 때 먼저 grep** |
-| `GDD.md` | 게임 기획서 — 「왜」 | 그 영역을 처음 만들 때만. **매 바퀴 읽지 마라** |
+| `docs/BACKLOG.md` | **할 일. 한 줄 = 한 바퀴** | 매 바퀴 — 번호가 가장 작은 미완료 항목 하나만 |
+| `docs/NUMBERS.md` | **실측값. 진실의 출처** | 값을 쓰거나 고칠 때 |
+| `docs/GOTCHAS.md` | 엔진·셸의 함정 | **에러가 났을 때 먼저 grep** |
+| `docs/GDD.md` | 게임 기획서 — 「왜」 | 그 영역을 처음 만들 때만. **매 바퀴 읽지 마라** |
+| `docs/JOURNAL.md` | 바퀴 일지 | **읽지 않는다. 바퀴 끝에 절을 하나 덧붙이기만 한다** |
 
 **통째로 읽는 파일은 없다.** 절 목차나 grep 으로 필요한 만큼만 연다.
 
@@ -22,6 +25,7 @@ tools/loop/check.sh import|parse|tests
 tools/loop/godot.sh <초> -- <인자>  # Godot 의 유일한 입구
 tools/loop/godot.sh 5 -- --path .  # 사람이 직접 띄워 보기
 tools/loop/shot.sh <out.png> [씬] [프레임] [--max-flat N]   # 화면을 PNG 로 굽는다
+tools/loop/ctl.sh start [바퀴수] | stop | status | report   # 루프 · 대시보드
 ```
 
 ## 규칙
@@ -32,4 +36,6 @@ tools/loop/shot.sh <out.png> [씬] [프레임] [--max-flat N]   # 화면을 PNG 
 - **`[ASK]` 항목은 세션을 열지 않는다.** 사람이 답해야 하는 것이다.
 - **잰 값은 `NUMBERS.md` 에 조건과 함께 적는다.** 「passed」는 증거가 아니다.
 - **`git add -A` 금지.** 경로를 지정해서 커밋한다.
+- **바퀴 끝에 `docs/JOURNAL.md` 에 절을 덧붙인다** — 막힌 것 · 왜 · 그래서 무엇을 바꿨나.
+  안 적으면 초록이어도 드라이버가 멈춘다.
 - **`*.gd.uid` 와 `*.import` 는 커밋한다.** 스크립트를 지우면 짝도 같이 지운다.

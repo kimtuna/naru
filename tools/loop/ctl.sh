@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 루프를 백그라운드로 켜고 끄고 본다.
-#   ctl.sh start [바퀴수] | stop | status | logs
+#   ctl.sh start [바퀴수] | stop | status | report | logs
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"; cd "$ROOT"
 PIDF="$ROOT/.loop/loop.pid"; LOG="$ROOT/.loop/loop.log"
@@ -26,8 +26,12 @@ case "${1:-status}" in
     alive && echo "● 돌고 있다 (pid $(cat "$PIDF"))" || echo "○ 안 돌고 있다"
     [ -f "$ROOT/.loop/STOPPED" ] && { echo "--- 멈춘 사유 ---"; cat "$ROOT/.loop/STOPPED"; }
     echo "--- 누적 비용 ---"; cat "$ROOT/.loop/spend.txt" 2>/dev/null || echo 0
-    echo "--- 남은 항목 ---"; grep -c '^- \[ \] ' BACKLOG.md
+    echo "--- 남은 항목 ---"; grep -c '^- \[ \] ' docs/BACKLOG.md
+    ;;
+  report)
+    python3 "$ROOT/tools/loop/report.py"
+    echo "열어보기: open docs/index.html"
     ;;
   logs) tail -f "$LOG" ;;
-  *) echo "사용법: ctl.sh start [바퀴수] | stop | status | logs" >&2; exit 2 ;;
+  *) echo "사용법: ctl.sh start [바퀴수] | stop | status | report | logs" >&2; exit 2 ;;
 esac

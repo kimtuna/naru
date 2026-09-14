@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>나루 · 루프 대시보드</title>
+<style>
+:root{
+  --bg:#faf9f7; --panel:#fff; --line:#e6e2db; --ink:#1c1a17; --dim:#6b655c;
+  --faint:#948d82; --ok:#2f7d4f; --okbg:#e9f5ee; --bad:#b3402c; --badbg:#fbebe7;
+  --halt:#9a6b12; --haltbg:#fbf2df; --accent:#3b6ea5; --code:#f2efe9;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#14130f; --panel:#1c1a16; --line:#2f2c26; --ink:#eae5dc; --dim:#a09889;
+  --faint:#7a7266; --ok:#6bbd8a; --okbg:#16281d; --bad:#e08a75; --badbg:#2b1a15;
+  --halt:#d6ad5c; --haltbg:#2a2114; --accent:#7fb0e0; --code:#24211b;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.65 -apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo",
+  "Noto Sans KR",Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;
+  background:var(--code);padding:.1em .38em;border-radius:4px;word-break:break-word}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+header{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;
+  padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:26px}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{font-size:34px;line-height:1}
+h1{margin:0;font-size:23px;letter-spacing:-.3px}
+.sub{margin:2px 0 0;color:var(--faint);font-size:12.5px}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav a{font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--dim)}
+h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
+  align-items:baseline;gap:10px;flex-wrap:wrap}
+.hash{font-size:11px;color:var(--faint);font-family:ui-monospace,monospace;font-weight:400}
+.lede{margin:0 0 16px;color:var(--dim);font-size:13.5px}
+
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.tile .k{display:block;font-size:11.5px;color:var(--faint);letter-spacing:.3px}
+.tile .v{display:flex;align-items:center;gap:7px;font-size:19px;font-weight:650;margin-top:3px}
+.tile .v small{font-size:13px;font-weight:400;color:var(--faint)}
+.tile .note{display:block;font-size:11px;color:var(--faint);margin-top:2px}
+.ok{color:var(--ok)} .bad{color:var(--bad)} .muted{color:var(--faint)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.dot.run{background:var(--ok);box-shadow:0 0 0 3px var(--okbg)}
+.dot.halt{background:var(--halt);box-shadow:0 0 0 3px var(--haltbg)}
+.dot.idle{background:var(--faint)}
+
+.alert{margin-top:12px;padding:12px 15px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel);font-size:13.5px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.alert.bad{border-color:var(--bad);background:var(--badbg)}
+.alert.halt{border-color:var(--halt);background:var(--haltbg)}
+.alert.next{border-style:dashed}
+.alert .k{font-size:11.5px;color:var(--faint);letter-spacing:.3px}
+.alert .note{margin-left:auto;font-size:11px;color:var(--faint);font-family:ui-monospace,monospace}
+.pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;
+  background:var(--code);color:var(--dim)}
+.pill.ask{background:var(--haltbg);color:var(--halt)}
+
+.phases{display:flex;flex-direction:column;gap:8px}
+.phase{background:var(--panel);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.phase summary{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;
+  padding:12px 15px;cursor:pointer;list-style:none}
+.phase summary::-webkit-details-marker{display:none}
+.pid{font-weight:800;font-size:12.5px;color:var(--faint);font-family:ui-monospace,monospace}
+.ptitle{font-size:14px;font-weight:600}
+.pcount{font-size:12px;color:var(--faint);font-family:ui-monospace,monospace}
+.bar{grid-column:1/-1;height:4px;background:var(--code);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:3px}
+.phase.none .bar i{background:var(--faint)}
+.items{margin:0;padding:2px 15px 14px 15px;list-style:none;border-top:1px solid var(--line)}
+.items li{display:flex;gap:10px;padding:6px 0;font-size:13.5px;color:var(--dim);
+  border-bottom:1px dotted var(--line)}
+.items li:last-child{border-bottom:0}
+.items .box{width:16px;flex:none;text-align:center;font-size:11.5px;color:var(--faint)}
+.items li.done{color:var(--ink)}
+.items li.done .box{color:var(--ok)}
+.items li.ask .box{color:var(--halt);font-weight:800}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-left-width:3px;
+  border-radius:10px;padding:12px 14px}
+.card.ok{border-left-color:var(--ok)}
+.card.bad{border-left-color:var(--bad);background:var(--badbg)}
+.card.muted{border-left-color:var(--faint)}
+.chead{display:flex;gap:9px;align-items:baseline}
+.cid{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--faint);font-weight:700}
+.cwhat{flex:1;font-size:13.5px;font-weight:600;line-height:1.45}
+.cmark{font-size:11.5px;font-weight:700}
+.card.ok .cmark{color:var(--ok)} .card.bad .cmark{color:var(--bad)}
+.cmd{display:block;margin:8px 0 0;font-size:11.5px;color:var(--dim);background:transparent;padding:0}
+.ev{margin:7px 0 0;padding:7px 0 0 0;list-style:none;border-top:1px dotted var(--line)}
+.ev li{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--dim);padding:1px 0}
+
+.log{display:flex;flex-direction:column;gap:12px}
+.entry{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.entry.bad{border-color:var(--bad)}
+.ehead{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}
+.badge{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;padding:3px 9px;
+  border-radius:999px;background:var(--code);color:var(--dim);flex:none}
+.badge.human{background:var(--haltbg);color:var(--halt)}
+.ehead h3{margin:0;font-size:14.5px;font-weight:650;flex:1;min-width:180px;line-height:1.45}
+.edate{font-size:11px;color:var(--faint);font-family:ui-monospace,monospace}
+.eres{font-size:11.5px;font-weight:700}
+.eres.ok{color:var(--ok)} .eres.bad{color:var(--bad)} .eres.halt{color:var(--halt)}
+.row{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:5px 0;font-size:13.5px;
+  border-top:1px dotted var(--line)}
+.row .k{font-size:11.5px;color:var(--faint);padding-top:3px;letter-spacing:.2px}
+.row.prob .k{color:var(--bad)}
+.row.fix .k{color:var(--ok)}
+.row.decide .k{color:var(--halt)}
+.row.none .v{color:var(--faint)}
+.row.meas .v{font-family:ui-monospace,monospace;font-size:11.8px;color:var(--dim);line-height:1.7}
+.efoot{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);display:flex;
+  gap:14px;flex-wrap:wrap;font-size:11px;color:var(--faint);font-family:ui-monospace,monospace}
+.efoot .grade{flex:1;min-width:200px}
+
+.docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.doc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+  display:grid;gap:3px;color:inherit}
+.doc:hover{border-color:var(--accent);text-decoration:none}
+.dname{font-family:ui-monospace,monospace;font-size:13px;font-weight:700;color:var(--accent)}
+.dlayer{justify-self:start;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;
+  background:var(--code);color:var(--dim)}
+.dlayer.l-f{background:var(--badbg);color:var(--bad)}
+.dlayer.l-i{background:var(--okbg);color:var(--ok)}
+.dlayer.l-c{background:var(--haltbg);color:var(--halt)}
+.dwhen{font-size:11px;color:var(--faint);font-family:ui-monospace,monospace}
+.dwhy{font-size:12.5px;color:var(--dim);line-height:1.55;margin-top:2px}
+
+.commits{list-style:none;margin:0;padding:0}
+.commits li{display:flex;gap:12px;align-items:baseline;padding:6px 0;font-size:13px;
+  border-bottom:1px dotted var(--line);color:var(--dim)}
+.commits .cd{font-size:11px;color:var(--faint);font-family:ui-monospace,monospace;flex:none}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--faint)}
+@media(max-width:560px){
+  .wrap{padding:22px 16px 60px}
+  .row{grid-template-columns:1fr;gap:1px}
+  .phase summary{grid-template-columns:28px 1fr auto}
+  .commits li{flex-wrap:wrap;gap:8px}
+}
+</style></head>
+<body><div class="wrap">
+<header>
+  <div class="brand"><span class="logo">🌾</span>
+    <div><h1>나루 · Naru</h1>
+      <p class="sub">루프 대시보드 — 굽힌 시각 2026-09-14 09:35</p></div>
+  </div>
+  <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
+</header>
+<section class="strip">
+<div class="tile"><span class="k">루프</span><span class="v"><i class="dot halt"></i>멈춰 있다</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-13 16:24</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">8 <small>/ 42</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$2.7869</span></div>
+</section>
+<div class="alert halt"><strong>멈춘 사유</strong> — 최대 바퀴 수 1 소진<span class="note">2026-09-13 16:24:14</span></div>
+<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</div>
+<h2>진행 — 한 줄 = 한 바퀴</h2>
+<div class="phases">
+<details class="phase full">
+  <summary><span class="pid">P0</span>
+    <span class="ptitle">하네스: 게임보다 검사가 먼저 선다</span>
+    <span class="pcount">7/7</span>
+    <span class="bar"><i style="width:100%"></i></span></summary>
+  <ul class="items">
+<li class="done"><span class="box">✔</span>Godot 4.7 프로젝트 뼈대 + 헤드리스 테스트 러너 + <strong>프로젝트 로컬 격리</strong></li>
+<li class="done"><span class="box">✔</span><code>check.sh</code> 3단계 — <strong>import → parse → tests 순서</strong> (<code>class_name</code> 캐시를 임포트가 만든다)</li>
+<li class="done"><span class="box">✔</span>계약 배선 — <code>criteria.tsv</code> + <code>run-contract.sh</code>, 증거가 <code>results.json</code> 에 기계로 쓰인다</li>
+<li class="done"><span class="box">✔</span><strong>세션 지시서 <code>PROMPT.md</code></strong> — 읽기 → 만들기 → 자체 QA → 커밋, 정지 규칙과 red lines</li>
+<li class="done"><span class="box">✔</span><strong>대조군 절차를 스크립트로 만든다</strong> — 검사를 하나 일부러 깨뜨렸을 때 빨개지는지 확인</li>
+<li class="done"><span class="box">✔</span><strong>화면 QA — <code>tools/loop/shot.sh</code></strong> — Godot 자신의 프레임버퍼를 PNG 로 굽는다.</li>
+<li class="done"><span class="box">✔</span><strong>드라이버 <code>loop.sh</code> · <code>ctl.sh</code></strong> — 백로그 한 줄 뽑기 → 세션 → 계약 → 초록이면 다음.</li>
+</ul></details>
+<details class="phase part" open>
+  <summary><span class="pid">P1</span>
+    <span class="ptitle">걸어다니는 세계</span>
+    <span class="pcount">1/6</span>
+    <span class="bar"><i style="width:17%"></i></span></summary>
+  <ul class="items">
+<li class="done"><span class="box">✔</span>색 네모 플레이어가 48px 타일 위를 속도 240 으로 <strong>8방향</strong> 이동 (대각선 정규화)</li>
+<li class="todo"><span class="box"></span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</li>
+<li class="todo"><span class="box"></span><strong>마우스가 방향을 정한다</strong> — 이동 방향과 별개. 4방향 스냅 + 히스테리시스</li>
+<li class="todo"><span class="box"></span>시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드</li>
+<li class="todo"><span class="box"></span>이동 충돌 — 바다에 못 들어가고, 해안에 비스듬히 붙으면 미끄러진다</li>
+<li class="todo"><span class="box"></span>카메라가 플레이어를 따라간다. <strong>줌 없음</strong> (해상도가 시야 이득이 되면 안 된다)</li>
+</ul></details>
+<details class="phase none">
+  <summary><span class="pid">P2</span>
+    <span class="ptitle">손: 인벤토리와 도구</span>
+    <span class="pcount">0/7</span>
+    <span class="bar"><i style="width:0%"></i></span></summary>
+  <ul class="items">
+<li class="todo"><span class="box"></span>인벤토리 코어 (순수 클래스) — 일반 18칸, <strong>꽉 찼을 때 넘치는 몫이 안 사라진다</strong></li>
+<li class="todo"><span class="box"></span>화면 아래 상시 핫바 9칸 + 숫자키로 손에 들기</li>
+<li class="todo"><span class="box"></span>좌클릭 = 손에 든 것의 동작. <strong>대상이 없어도 사용 모션이 나온다</strong></li>
+<li class="todo"><span class="box"></span>월드 오브젝트 배치 — 나무 · 돌 · 광물 1종을 시드로 놓는다</li>
+<li class="todo"><span class="box"></span><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</li>
+<li class="todo"><span class="box"></span><strong>채광</strong> — 곡괭이로 돌/광물을 캔다</li>
+<li class="todo"><span class="box"></span>바닥 드롭 + 걸어가서 줍기. 인벤토리가 꽉 차면 바닥에 남는다</li>
+</ul></details>
+<details class="phase none">
+  <summary><span class="pid">P3</span>
+    <span class="ptitle">만드는 것</span>
+    <span class="pcount">0/5</span>
+    <span class="bar"><i style="width:0%"></i></span></summary>
+  <ul class="items">
+<li class="todo"><span class="box"></span>제작대 1개 + <strong>레시피를 데이터로</strong> (<code>{inputs, output, amount}</code>)</li>
+<li class="todo"><span class="box"></span><strong>수량 지정 → 재료 선소모 → 타이머 → 출력 버퍼 → 수동 수령</strong></li>
+<li class="todo"><span class="box"></span>수령 시 인벤토리가 모자라면 <strong>들어가는 만큼만 들어가고 나머지는 버퍼에 남는다</strong></li>
+<li class="todo"><span class="box"></span>도구 3종을 실제로 제작한다 — 도끼 · 곡괭이 · 총</li>
+<li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>제작 타이머 기본값</strong> — 임시로 1개당 5초. 실제로 돌려보고 사람이 정한다</li>
+</ul></details>
+<details class="phase none">
+  <summary><span class="pid">P4</span>
+    <span class="ptitle">기르는 것</span>
+    <span class="pcount">0/5</span>
+    <span class="bar"><i style="width:0%"></i></span></summary>
+  <ul class="items">
+<li class="todo"><span class="box"></span>게임 내 시계 — 하루 20분(낮 10 + 밤 10), 화면이 밤에 어두워진다</li>
+<li class="todo"><span class="box"></span>밭 일구기 / 심기 / 물주기 / 수확. <strong>간 밭을 다시 치면 흙으로 돌아간다</strong></li>
+<li class="todo"><span class="box"></span><strong>물 준 날에만 한 단계 자란다. 안 주면 안 자랄 뿐 죽지 않는다</strong></li>
+<li class="todo"><span class="box"></span>조리 → <strong>버프 음식 1종</strong>. 먹으면 실제로 스탯이 오르고 시간이 지나면 풀린다</li>
+<li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>작물 성장 단계 수와 하루당 진행량</strong> — 임시값으로 만들고 사람이 플레이해서 정한다</li>
+</ul></details>
+<details class="phase none">
+  <summary><span class="pid">P5</span>
+    <span class="ptitle">나가는 것: 침몰한 마을 (축소판)</span>
+    <span class="pcount">0/8</span>
+    <span class="bar"><i style="width:0%"></i></span></summary>
+  <ul class="items">
+<li class="todo"><span class="box"></span>선착장 — 올라타면 원정 맵으로 넘어가고, 끝나면 내 섬으로 돌아온다</li>
+<li class="todo"><span class="box"></span>원정 맵 생성 — 좁은 실내, 잔해로 막힌 통로</li>
+<li class="todo"><span class="box"></span><strong>잔해를 곡괭이·도끼로 뚫어 길과 보물을 찾는다</strong></li>
+<li class="todo"><span class="box"></span><strong>몰려오는 적</strong> — 웨이브로 밀려오고 좁은 통로에서 막힌다</li>
+<li class="todo"><span class="box"></span>총으로 적을 처치한다. 체력 · 죽음</li>
+<li class="todo"><span class="box"></span><strong>끝나는 조건</strong> — 버티기를 완료하면 탈출로가 열린다. <strong>한 판에 걸린 시간을 로그로 남긴다</strong></li>
+<li class="todo"><span class="box"></span>원정 산출물 1종(상위 금속)이 드롭된다</li>
+<li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>웨이브 수와 잔해 채굴 시간의 비율</strong> — 「막으면서 캐야 한다」가 성립하는 값. <strong>눈으로만 정할 수 있다</strong></li>
+</ul></details>
+<details class="phase none">
+  <summary><span class="pid">P6</span>
+    <span class="ptitle">한 바퀴가 닫힌다</span>
+    <span class="pcount">0/4</span>
+    <span class="bar"><i style="width:0%"></i></span></summary>
+  <ul class="items">
+<li class="todo"><span class="box"></span>원정 산출물로 <strong>더 좋은 도구 1종</strong>을 만든다</li>
+<li class="todo"><span class="box"></span>그 도구로 원정이 실제로 쉬워지는지 잰다 (잔해 채굴 시간 · 클리어 시간)</li>
+<li class="todo"><span class="box"></span>버프 음식을 먹고 간 판과 안 먹고 간 판의 차이를 잰다 — <strong>「보급」이 실제로 듣는가</strong></li>
+<li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>사람이 직접 끝까지 플레이한다.</strong> 한 바퀴가 재미있는가? — <strong>이 판정만이 프로토타입의 결론이다</strong></li>
+</ul></details>
+</div>
+<h2>계약 — 기계가 채점한다 <span class="hash">무장 2dd6e28595c2</span></h2>
+<p class="lede">세션에게 「검사를 약하게 하지 마세요」라고 부탁하지 않는다. <code>criteria.tsv</code> 는 해시로 잠겨 있고, 고치면 채점자가 <code>exit 77</code> 로 죽는다.</p>
+<div class="cards">
+<div class="card ok">
+  <div class="chead"><span class="cid">1</span>
+    <span class="cwhat">임포트 게이트가 깨끗하다 (전역 클래스 캐시를 만든다)</span>
+    <span class="cmark">초록</span></div>
+  <code class="cmd">tools/loop/check.sh import</code>
+<ul class="ev"><li>IMPORT ok</li></ul>
+</div>
+<div class="card ok">
+  <div class="chead"><span class="cid">2</span>
+    <span class="cwhat">모든 GDScript 가 파스된다</span>
+    <span class="cmark">초록</span></div>
+  <code class="cmd">tools/loop/check.sh parse</code>
+<ul class="ev"><li>PARSE 11개 스크립트, 실패 0</li></ul>
+</div>
+<div class="card ok">
+  <div class="chead"><span class="cid">3</span>
+    <span class="cwhat">단위 테스트가 통과하고 개수가 줄지 않는다</span>
+    <span class="cmark">초록</span></div>
+  <code class="cmd">bash tools/loop/mintests.sh 18</code>
+<ul class="ev"><li>TESTS 18 passed, 0 failed</li></ul>
+</div>
+<div class="card ok">
+  <div class="chead"><span class="cid">4</span>
+    <span class="cwhat">색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</span>
+    <span class="cmark">초록</span></div>
+  <code class="cmd">tools/loop/check.sh tests</code>
+<ul class="ev"><li>TESTS 18 passed, 0 failed</li></ul>
+</div>
+<div class="card ok">
+  <div class="chead"><span class="cid">5</span>
+    <span class="cwhat">매 바퀴 읽는 문서가 부풀지 않았다</span>
+    <span class="cmark">초록</span></div>
+  <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
+<ul class="ev"><li>DOCLEN CLAUDE.md  35/45줄</li><li>DOCLEN PROMPT.md  57/70줄</li><li>DOCLEN .loop/state.md  59/90줄</li></ul>
+</div>
+</div>
+<h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
+<p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
+<div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge human">사람</span>
+    <h3>문서 구조 세분화 (매 바퀴 읽는 비용을 고정으로)</h3>
+    <span class="edate">2026-09-13</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">매 바퀴 읽는 문서가 <strong>바퀴마다 비싸졌다.</strong> <code>.loop/state.md</code> 가 3바퀴에 59줄인데 이 기울기면 34바퀴 뒤 ~600줄 ≈ 24,000 토큰이 된다. <strong>1판을 죽인 것이 이 기울기였다.</strong> 그리고 중복이 하나 — 드라이버가 <code>prompt.txt</code> 에 <code>PROMPT.md</code> 를 통째로 넣는데 그 <code>PROMPT.md</code> 가 다시 "PROMPT.md 를 봐라" 라고 시켜서 두 번 들어갔다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">문서를 「층」으로 나누지 않고 전부 매 바퀴 읽게 뒀다. 고정 비용이 아니라 <strong>기울기</strong>가 문제인데, 절대량만 보고 있어서 안 보였다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v">문서를 <strong>고정 / 주입 / 조건부 / 롤링</strong> 네 층으로 갈랐다. <code>GOTCHAS.md</code> 를 신설해 함정을 <code>NUMBERS.md</code> 에서 떼냈고(에러 났을 때만 grep), <code>PROMPT.md</code> 맨 위에 "드라이버가 넣어준다, 다시 열지 마라" 를 박아 중복을 없앴다. <strong>얇음을 게이트로 만들었다</strong> — <code>tools/loop/doclen.sh</code> 를 계약 기준 5로 올려서 세션이 문서를 부풀리면 그 자리에서 빨개진다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong><code>.loop/state.md</code> 는 세션이 열지 않는다.</strong> 드라이버가 최근 2바퀴만 조립해 넣고, 3바퀴가 넘으면 <code>.loop/archive/</code> 로 뺀다.</span></div>
+<div class="row none"><span class="k">남긴 것</span><span class="v">없음</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v">고정 문서 <code>5,019 → 3,281 토큰</code> · 34바퀴 뒤 <code>state.md</code> <code>~24,000 → ~2,000 토큰으로 고정</code> · <code>REDTEAM 11 잡음, 0 놓침</code> · 게이트가 만들자마자 <code>PROMPT.md 72줄 &gt; 상한 70</code> 을 잡아서 57줄로 줄였다</span></div>
+<div class="efoot"><span><code>71f9b89</code></span></div>
+</article>
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge human">사람</span>
+    <h3>8방향 확정 · 화면 QA 도구</h3>
+    <span class="edate">2026-09-13</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">바퀴 3 이 「4방향 이동」 항목을 하면서 대각선을 정규화해 <strong>사실상 8방향</strong>을 만들었고, 이건 사람이 판정할 것이라 세션이 스스로 확정할 수 없었다. 그리고 화면을 눈으로 못 봤다 — <code>screencapture</code> 가 macOS 화면 기록 권한에 막힌다(<code>could not create image from display</code>).</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">WASD 두 개를 동시에 누를 수 있는 이상 대각선은 생긴다. 막느냐 정규화하느냐는 <strong>게임 감각의 문제</strong>라 검사로 정할 수 없다. 캡처 쪽은 무인 루프가 권한 대화상자를 넘길 방법이 없다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><code>tools/qa/shot.gd</code> + <code>tools/loop/shot.sh</code> 로 <strong>Godot 자신의 프레임버퍼</strong>를 PNG 로 굽는다. 권한이 필요 없고, 화면에 보이는 것이 아니라 게임이 그린 것을 읽으므로 창이 겹쳐도 상관없다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>8방향으로 확정</strong> (사람). 코어 키퍼(GDD A-4)도 8방향이고, 속력은 어느 방향이든 240 이다.</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v">「저장됨」은 증거가 아니라서 크기·색 수·가장 넓은 한 색 비율을 같이 찍게 했다. <strong>그림이 맞는지는 여전히 사람 몫이다.</strong></span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v"><code>SHOT 960x540 색 3개 가장 넓은 한 색 50.0%</code> · 헤드리스로는 텍스처가 비어 출력 없음(3b절) · 대조군 <code>상한 40% → 빈 씬(50%) 잡힘</code> / <code>없는 씬 → SHOT ERROR</code></span></div>
+<div class="efoot"><span><code>a56666b</code></span></div>
+</article>
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 3</span>
+    <h3>P1-1 색 네모 플레이어 · 48px 타일 · 240 px/s · WASD</h3>
+    <span class="edate">2026-09-13</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v"><strong>단위 검사 18개가 전부 초록인데 게임이 틀린 경우가 실제로 나왔다.</strong> 대조군으로 노드가 속도를 절반으로 만들게 했더니 검사는 하나도 안 빨개졌다. 그리고 대조군 자동화가 <code>REDTEAM 9 잡음, 1 놓침</code> 을 냈다 — 「검사를 지우면 테스트 바닥이 잡는다」가 놓쳤다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">순수 계산(<code>PlayerMotion</code>)만 검사하면 <strong>노드가 그 값을 실제로 쓰는지는 아무도 안 본다.</strong> 놓침 쪽은 검사가 8 → 18 로 늘었는데 계약의 바닥은 아직 <code>mintests.sh 8</code> 이라, 하나 지워 17 이 돼도 바닥 위였다. <strong>가짜 게이트가 된 건 아니고 헐거워졌다.</strong></span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><strong>실측 게이트 <code>tools/tests/measure_move.gd</code></strong> 를 만들어 <code>check.sh tests</code> 가 단위 검사 뒤에 부르게 했다 — 실제로 1초 걸어서 이동 거리를 잰다. 바닥 문제는 드라이버의 <code>bump_mintests</code> (loop.sh) 가 초록 뒤에 <code>8 → 18</code> 로 올리고 다시 무장한다. <strong>세션은 <code>.loop/criteria.tsv</code> 에 손대지 않았다</strong> (red line).</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v">대각선 정규화로 사실상 8방향이 됐다 — <strong>사람이 확정할 때까지 되돌릴 수 있게 적어 뒀다.</strong></span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>화면을 눈으로 못 봤다</strong> — <code>screencapture</code> 권한 문제. 다음 사람 세션에서 해결. P1-2 는 <code>test_project_settings.gd</code> 가 이미 강제 중이라 거의 끝나 있다 — 확인부터 한다.</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v"><code>TESTS 18 passed, 0 failed</code> (바닥 8) · <code>PARSE 9개 실패 0</code> · <code>IMPORT ok</code> · <code>ALL GREEN</code> · 실측(헤드리스 · 물리 60Hz · 1초) <code>가로 238.97 px/s · 4.979칸/s</code> <code>대각 239.91 px/s · 4.998칸/s</code> (둘 다 실제 이동 240.00 px, 기대 240 ±5) · 대조군 <code>정규화 제거 → 339.41 잡음</code> · <code>속도 절반 → 단위 18개 전부 초록, 실측만 잡음(119.36)</code></span></div>
+<div class="efoot"><span><code>440359e</code></span></div>
+</article>
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 2</span>
+    <h3>P0-3 계약 배선 (증거를 기계가 쓴다)</h3>
+    <span class="edate">2026-09-13</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v"><code>results.json</code> 의 증거가 <strong>한 줄로 뭉쳐 있었다.</strong> 그리고 「공허한 계약」 게이트가 진짜로 도는 코드인지 확인할 수 없었다 — 무장 중에는 변조(77)가 먼저 걸려서 78 을 못 본다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v"><strong>BSD <code>tr</code> 은 <code>\x1f</code> 를 못 읽는다.</strong> 구분자가 문자 <code>x</code> 가 되어 증거 줄이 안 갈렸다. macOS 의 <code>tr</code> 은 8진수만 받는다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v">구분자를 <code>\037</code> 로 바꿨다. 공허 게이트는 <strong>무장을 풀고 다시 재서</strong> 죽은 코드가 아님을 확인했다. 그리고 <code>contract.md</code> 를 따로 두지 않고 정지 규칙·red lines 를 <code>PROMPT.md</code> 에 합쳤다 — 매 바퀴 읽는 문서 수를 하나라도 줄이는 쪽이 낫다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>판정은 세션이 아니라 <code>run-contract.sh</code> 가 한다.</strong> 이것만이 <code>results.json</code> 을 쓴다.</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v">P0-4 대조군을 스크립트로 (<code>redteam.sh</code>) → 그다음 드라이버</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v"><code>ALL GREEN</code> (기준 3개) · 대조군 5종 <code>정상 0 / 기준 실패 1 / 변조 77 / 공허 78 / 파일 없음 78</code></span></div>
+<div class="efoot"><span><code>6e135c8</code></span></div>
+</article>
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 1</span>
+    <h3>P0-1 · P0-2 Godot 뼈대 + 헤드리스 러너 + 프로젝트 로컬 격리</h3>
+    <span class="edate">2026-09-13</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v"><strong>격리했다고 믿었는데 안 돼 있었다.</strong> <code>XDG_DATA_HOME</code> 등을 설정해두고 넘어갈 뻔했다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">**macOS Godot 은 <code>XDG_*</code> 를 무시한다.<strong> <code>~/Library/Application Support/Godot</code> 에 그대로 쓴다. 재보니 홈의 Godot 디렉터리 mtime 이 실행 시각으로 갱신되고 있었다. 설정해두고 「됐다」고 믿는 것이 </strong>정확히 가짜 게이트다.**</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><code>tools/loop/godot.sh</code> 가 <strong><code>HOME</code> 자체를 프로젝트 안으로 돌린다.</strong> 그리고 격리 자체를 검사로 박았다 (<code>tools/tests/test_isolation.gd</code>) — <code>godot.sh</code> 를 우회한 실행은 그 자리에서 빨개진다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>Godot 의 입구는 <code>godot.sh</code> 하나다.</strong> 다른 데서 직접 부르지 않는다. 그리고 <code>check.sh</code> 는 <strong>import → parse → tests 순서</strong>다 — <code>class_name</code> 전역 클래스가 임포트가 만드는 캐시에 들어가서, 순서를 바꾸면 멀쩡한 코드가 빨개진다.</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>두 항목을 한 바퀴에 넣었다</strong> — P0-1 의 verify 가 <code>check.sh all</code> 이라 P0-2 없이는 검증 자체가 성립하지 않는다. 「한 바퀴 한 항목」에서 벗어난 것이라 적어 둔다.</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v"><code>IMPORT ok</code> · <code>PARSE 5개 실패 0</code> · <code>TESTS 8 passed, 0 failed</code> · 실제 창 <code>VIEWPORT 960x540 · WINDOW 1920x1080 · SCALE 2.00x</code> · 대조군 5종 전부 빨개짐 → 원복 후 초록</span></div>
+<div class="efoot"><span><code>908f5aa</code></span></div>
+</article>
+</div>
+<h2>문서 — 누가 언제 읽나</h2>
+<div class="docs">
+<a class="doc" href="https://github.com/kimtuna/naru/blob/master/CLAUDE.md">
+  <span class="dname">CLAUDE.md</span>
+  <span class="dlayer l-fix">고정</span>
+  <span class="dwhen">매 바퀴 · 자동 로드</span>
+  <span class="dwhy">이 기계에서 <strong>무엇을 어떤 명령으로</strong> 돌리는가만. 부풀면 문맥이 오염된다</span></a>
+<a class="doc" href="https://github.com/kimtuna/naru/blob/master/docs/PROMPT.md">
+  <span class="dname">PROMPT.md</span>
+  <span class="dlayer l-inj">주입</span>
+  <span class="dwhen">매 바퀴 · 드라이버가 넣는다</span>
+  <span class="dwhy">한 바퀴 4단계 · 정지 규칙 6개 · red lines. <strong>세션은 이 파일을 열지 않는다</strong></span></a>
+<a class="doc" href="https://github.com/kimtuna/naru/blob/master/docs/BACKLOG.md">
+  <span class="dname">BACKLOG.md</span>
+  <span class="dlayer l-inj">주입</span>
+  <span class="dwhen">매 바퀴 · 한 줄만</span>
+  <span class="dwhy">할 일. <strong>한 줄 = 한 바퀴.</strong> 순서는 종속성이지 중요도가 아니다</span></a>
+<a class="doc" href="https://github.com/kimtuna/naru/blob/master/docs/NUMBERS.md">
+  <span class="dname">NUMBERS.md</span>
+  <span class="dlayer l-cond">조건부</span>
+  <span class="dwhen">값을 쓸 때 · 그 절만</span>
+  <span class="dwhy">실측값. <strong>잰 조건을 같이 적는다</strong> — 「passed」는 증거가 아니다</span></a>
+<a class="doc" href="https://github.com/kimtuna/naru/blob/master/docs/GOTCHAS.md">
+  <span class="dname">GOTCHAS.md</span>
+  <span class="dlayer l-cond">조건부</span>
+  <span class="dwhen">에러가 났을 때만 · grep</span>
+  <span class="dwhy">엔진·셸의 함정. 조건부라서 <strong>의도적으로 계속 쌓는다</strong></span></a>
+<a class="doc" href="https://github.com/kimtuna/naru/blob/master/docs/GDD.md">
+  <span class="dname">GDD.md</span>
+  <span class="dlayer l-cond">조건부</span>
+  <span class="dwhen">그 영역을 처음 만들 때만</span>
+  <span class="dwhy">게임 기획서 — 「왜」. <strong>매 바퀴 읽지 않는다.</strong> 세션이 못 고친다</span></a>
+<a class="doc" href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">
+  <span class="dname">JOURNAL.md</span>
+  <span class="dlayer l-roll">사람</span>
+  <span class="dwhen">세션은 안 읽는다</span>
+  <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
+</div>
+<h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/71f9b89"><code>71f9b89</code></a><span class="cd">2026-09-13</span>문서 구조 세분화 — 매 바퀴 읽는 것을 줄이고 얇음을 게이트로 박는다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/a56666b"><code>a56666b</code></a><span class="cd">2026-09-13</span>화면 QA 도구 + 이동 8방향 확정 (사람 결정)</li>
+<li><a href="https://github.com/kimtuna/naru/commit/239469a"><code>239469a</code></a><span class="cd">2026-09-13</span>테스트 바닥 8 → 18</li>
+<li><a href="https://github.com/kimtuna/naru/commit/aa0234c"><code>aa0234c</code></a><span class="cd">2026-09-13</span>계약에 기준 4 추가 — 색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</li>
+<li><a href="https://github.com/kimtuna/naru/commit/f9ae231"><code>f9ae231</code></a><span class="cd">2026-09-13</span>바퀴 3 기록 — 대조군 자동화 결과와 테스트 바닥 문제</li>
+<li><a href="https://github.com/kimtuna/naru/commit/440359e"><code>440359e</code></a><span class="cd">2026-09-13</span>P1-1 — 색 네모 플레이어 · 48px 타일 · 240 px/s WASD 이동</li>
+<li><a href="https://github.com/kimtuna/naru/commit/38b7779"><code>38b7779</code></a><span class="cd">2026-09-13</span>드라이버 보강 — 항목 verify 실행 · 기준 승격 · 테스트 바닥</li>
+<li><a href="https://github.com/kimtuna/naru/commit/aa33092"><code>aa33092</code></a><span class="cd">2026-09-13</span>P0-5 — 무인 드라이버 (loop.sh · ctl.sh)</li>
+<li><a href="https://github.com/kimtuna/naru/commit/3482691"><code>3482691</code></a><span class="cd">2026-09-13</span>P0-4 — 대조군을 스크립트로 (redteam.sh)</li>
+<li><a href="https://github.com/kimtuna/naru/commit/6e135c8"><code>6e135c8</code></a><span class="cd">2026-09-13</span>P0-3 — 계약 배선: 증거를 기계가 쓴다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/908f5aa"><code>908f5aa</code></a><span class="cd">2026-09-13</span>P0-1 · P0-2 — Godot 뼈대 + 헤드리스 러너 + 프로젝트 로컬 격리</li>
+</ul>
+<footer>이 페이지는 <code>tools/loop/report.py</code> 가 굽는다. 값은 페이지에 구워져 있다 — 아무것도 fetch 하지 않는다.</footer>
+</div></body></html>
