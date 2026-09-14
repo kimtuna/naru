@@ -45,7 +45,15 @@ step_tests() {
   local mout mrc
   mout="$("$G" 60 -- --headless --path "$ROOT" --script res://tools/tests/measure_move.gd 2>&1)"; mrc=$?
   printf '%s\n' "$mout" | grep -E '^MOVE' || { printf '%s\n' "$mout" | tail -5; echo "MOVE FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $mrc -eq 0 ]
+  [ $mrc -eq 0 ] || return 1
+  # 화면 실측: 논리 화면 · 창 · 배율 · 보이는 칸.
+  # project.godot 의 글자가 맞아도 카메라 줌이나 content_scale_factor 로
+  # 눈에 보이는 칸 수는 달라진다 — 그 구멍을 여기서 막는다.
+  # **--headless 를 쓰지 않는다** — 헤드리스 드라이버는 창 크기가 (0,0) 이라 배율을 못 잰다.
+  local vout vrc
+  vout="$("$G" 60 -- --path "$ROOT" --script res://tools/tests/measure_view.gd 2>&1)"; vrc=$?
+  printf '%s\n' "$vout" | grep -E '^VIEW ' || { printf '%s\n' "$vout" | tail -5; echo "VIEW FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  [ $vrc -eq 0 ]
 }
 
 case "$WHAT" in

@@ -24,6 +24,8 @@ cp tools/tests/test_isolation.gd "$BAK/" 2>/dev/null || true
 cp docs/PROMPT.md "$BAK/" 2>/dev/null || true
 cp scripts/player_motion.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
+cp scripts/main.gd "$BAK/" 2>/dev/null || true
+cp scenes/main.tscn "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
@@ -31,6 +33,8 @@ restore() {
   cp "$BAK/PROMPT.md" docs/PROMPT.md 2>/dev/null || true
   cp "$BAK/player_motion.gd" scripts/player_motion.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
+  cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
+  cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
 }
@@ -84,6 +88,23 @@ cp "$BAK/player_motion.gd" scripts/player_motion.gd
 sed -i '' 's|velocity = PlayerMotion.velocity(input)|velocity = PlayerMotion.velocity(input) * 0.5|' scripts/player.gd
 expect 1 "노드가 속도를 제 맘대로 바꾸면 실측이 잡는다 (120 px/s)"
 cp "$BAK/player.gd" scripts/player.gd
+
+# ── P1-2 화면 ────────────────────────────────────────────────────────
+# 구조가 P1-1 과 같다: **project.godot 의 글자는 그대로라** 단위 검사 18개는
+# 전부 초록으로 남고 measure_view.gd 만 잡는다 (2026-09-14 실측).
+printf '\n[node name="Cam" type="Camera2D" parent="."]\nzoom = Vector2(2, 2)\n' >> scenes/main.tscn
+expect 1 "카메라 줌을 걸면 화면 실측이 잡는다 (보이는 칸 10 x 5.62)"
+cp "$BAK/main.tscn" scenes/main.tscn
+
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "func _ready() -> void:\n",
+    "func _ready() -> void:\n\tDisplayServer.window_set_size(Vector2i(1600, 900))\n", 1))
+PYX
+expect 1 "창을 실행 중에 줄이면 화면 실측이 잡는다 (배율 2 → 1)"
+cp "$BAK/main.gd" scripts/main.gd
 
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
