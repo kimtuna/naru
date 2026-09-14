@@ -152,7 +152,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 17:32:02</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 17:36:53</span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
@@ -201,14 +201,12 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P2</span>
     <span class="ptitle">손: 인벤토리와 도구</span>
-    <span class="pcount">2/12</span>
-    <span class="bar"><i style="width:17%"></i></span></summary>
+    <span class="pcount">2/10</span>
+    <span class="bar"><i style="width:20%"></i></span></summary>
   <ul class="items">
 <li class="done"><span class="box">✔</span><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</li>
 <li class="done"><span class="box">✔</span><strong>캐릭터 네모를 1칸 폭으로 · 충돌 상자를 발밑에</strong> — 지금 그리는 네모는 48×48(1.5칸 ×</li>
 <li class="todo"><span class="box"></span><strong>지형 타일 32 → 16px · 캐릭터 48 → 32px</strong> — 고정값이 또 바뀌었다(위 표).</li>
-<li class="todo"><span class="box"></span><strong>창을 논리 해상도의 정수배로 맞춘다 — 검은 띠 0</strong> — 지금은 <code>window_override</code></li>
-<li class="todo"><span class="box"></span><strong>「사람이 띄운 창에 띠가 없다」를 게이트로 박는다</strong> — 이번 건은 **게이트가 볼 수 없는</li>
 <li class="todo"><span class="box"></span>인벤토리 코어 (순수 클래스) — 일반 18칸, <strong>꽉 찼을 때 넘치는 몫이 안 사라진다</strong></li>
 <li class="todo"><span class="box"></span>화면 아래 상시 핫바 9칸 + 숫자키로 손에 들기</li>
 <li class="todo"><span class="box"></span>좌클릭 = 손에 든 것의 동작. <strong>대상이 없어도 사용 모션이 나온다</strong></li>
@@ -259,13 +257,15 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase none">
   <summary><span class="pid">P6</span>
     <span class="ptitle">한 바퀴가 닫힌다</span>
-    <span class="pcount">0/4</span>
+    <span class="pcount">0/6</span>
     <span class="bar"><i style="width:0%"></i></span></summary>
   <ul class="items">
 <li class="todo"><span class="box"></span>원정 산출물로 <strong>더 좋은 도구 1종</strong>을 만든다</li>
 <li class="todo"><span class="box"></span>그 도구로 원정이 실제로 쉬워지는지 잰다 (잔해 채굴 시간 · 클리어 시간)</li>
 <li class="todo"><span class="box"></span>버프 음식을 먹고 간 판과 안 먹고 간 판의 차이를 잰다 — <strong>「보급」이 실제로 듣는가</strong></li>
 <li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>사람이 직접 끝까지 플레이한다.</strong> 한 바퀴가 재미있는가? — <strong>이 판정만이 프로토타입의 결론이다</strong></li>
+<li class="todo"><span class="box"></span><strong>창을 논리 해상도의 정수배로 맞춘다 — 검은 띠 0</strong> — 지금은 <code>window_override</code></li>
+<li class="todo"><span class="box"></span><strong>「사람이 띄운 창에 띠가 없다」를 게이트로 박는다</strong> — 이번 건은 **게이트가 볼 수 없는</li>
 </ul></details>
 </div>
 <h2>계약 — 기계가 채점한다 <span class="hash">무장 cff70e4b73ac</span></h2>
@@ -683,6 +683,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/d376e16"><code>d376e16</code></a><span class="cd">2026-09-14</span>타일 32 → 16px · 캐릭터 2칸 — 사람이 눈으로 골랐다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/aaeb55d"><code>aaeb55d</code></a><span class="cd">2026-09-14</span>캐릭터 몸통을 1칸 폭으로 · 충돌 상자를 발밑 반 칸으로</li>
 <li><a href="https://github.com/kimtuna/naru/commit/de884f8"><code>de884f8</code></a><span class="cd">2026-09-14</span>창을 논리 해상도의 정수배로 · 사람이 띄운 창을 게이트가 본다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/32fda4d"><code>32fda4d</code></a><span class="cd">2026-09-14</span>바퀴 15 일지 · 대시보드 갱신</li>
@@ -694,7 +695,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/acec96f"><code>acec96f</code></a><span class="cd">2026-09-14</span>바퀴 14 대조군 한 판 — REDTEAM 31 잡음, 0 놓침 · 7분 41초</li>
 <li><a href="https://github.com/kimtuna/naru/commit/47137ab"><code>47137ab</code></a><span class="cd">2026-09-14</span>창을 띄우는 게이트를 한 프로세스로 — 창 2번 → 1번, 뺏김 14 → 9</li>
 <li><a href="https://github.com/kimtuna/naru/commit/a22c4ce"><code>a22c4ce</code></a><span class="cd">2026-09-14</span>바퀴 13 일지 · 대시보드 갱신</li>
-<li><a href="https://github.com/kimtuna/naru/commit/5174b4d"><code>5174b4d</code></a><span class="cd">2026-09-14</span>창의 포커스는 못 막는다 — 재서 6가지를 떨어뜨리고, 끝나고 되돌려 준다</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
