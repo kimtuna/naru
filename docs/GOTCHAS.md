@@ -27,6 +27,12 @@
   `tools/tests/measure_facing.gd` 가 그렇게 잰다.
 - **`Input.warp_mouse()` 는 창 좌표를 받는다.** 월드 좌표를 넣으면 배율만큼 어긋난다 —
   `world * root.get_final_transform().get_scale().x` 로 바꿔서 넣는다 (배율 2.00x 실측).
+- **`root.add_child()` 로 붙인 씬의 `_ready` 는 `_initialize()` 안에서 아직 안 돌았다.**
+  거기서 배선(`player.solid` 같은 것)을 읽으면 늘 비어 있다 — **몇 프레임 기다렸다가**
+  `_process` 에서 본다 (`measure_collide.gd` 의 `WARMUP`).
+- **`measure_facing.gd` 는 사람이 마우스를 만지면 빨개진다.** 진짜 커서를 뺏는 게이트라
+  그렇다 — `FACE FAIL 커서 각 … 잰 값 14.93°` 처럼 **커서 각부터 어긋난다**(2026-09-14 실측).
+  코드 문제가 아니다. 마우스에서 손을 떼고 다시 돌린다.
 - **타입 추론이 안 되는 대입은 파스 에러다.** `var s := load(...).instantiate()` 는
   실패한다 — `var s: Node = packed.instantiate()` 처럼 타입을 적는다.
 
