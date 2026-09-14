@@ -185,7 +185,7 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
   # 문맥은 **드라이버가 조립한다** — 세션이 파일을 여는 횟수를 줄이는 것이
   # 바퀴 비용을 줄이는 가장 큰 자리다. state.md 는 자라므로 꼬리만 넣는다.
   {
-    cat PROMPT.md
+    cat docs/PROMPT.md
     printf '\n\n---\n\n## 이번 바퀴 — 일지 번호 %s (이 실행의 %d/%d)\n\n%s\n' \
       "$turn" "$cycle" "$MAX_CYCLES" "$item"
     printf '\n### 끝나면 일지를 적는다 — docs/JOURNAL.md\n\n'
@@ -273,7 +273,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     bump_mintests
     roll_state
     finish_journal "$turn" "$item" "초록"
-    if ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
+    if [ "$DRY" = "0" ] && ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
       stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 바퀴 $turn)"
     fi
     fails=0
