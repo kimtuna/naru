@@ -34,12 +34,24 @@ step_parse() {
   [ "$bad" -eq 0 ]
 }
 
-step_tests() {
-  echo "== tests =="
+# 단위 검사만 — `run_tests.gd` 하나. 실측 게이트는 안 부른다.
+#
+# **왜 따로 있나** (바퀴 12): 계약 기준 3 은 「개수가 줄지 않는다」를 물을 뿐인데
+# `mintests.sh` 가 `tests` 를 부르는 바람에 기준 4 와 **같은 실측 7종을 두 번** 돌았다.
+# 한 판이 두 배로 길고 **흔들릴 기회도 두 배**였다. 기준 3 은 이제 이걸 부른다 —
+# 실측이 깨지면 기준 4 가 여전히 빨개지므로 계약이 잡는 범위는 그대로다.
+step_unit() {
+  echo "== tests (단위) =="
   local out rc
   out="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/run_tests.gd 2>&1)"; rc=$?
   printf '%s\n' "$out" | grep -E '^\s*(ok|FAIL)|^TESTS'
-  [ $rc -eq 0 ] || return 1
+  [ $rc -eq 0 ]
+}
+
+# 실측 게이트 7종 (MOVE·VIEW·FACE·WORLD×2·COLLIDE·CAMERA·DRAW) — 엔진을 8번 띄운다.
+# 계약에서 가장 긴 구간이다. **여기를 두 번 돌리지 마라.**
+step_measure() {
+  echo "== tests (실측) =="
   # 실측: 실제 씬을 물리로 돌려 초당 몇 px 움직이는지 잰다.
   # 순수 계산이 맞아도 노드가 그걸 안 쓰면 여기서만 빨개진다.
   local mout mrc
@@ -108,10 +120,13 @@ step_tests() {
   [ $drc -eq 0 ]
 }
 
+step_tests() { step_unit && step_measure; }
+
 case "$WHAT" in
   import) step_import ;;
   parse)  step_parse ;;
+  unit)   step_unit ;;
   tests)  step_tests ;;
   all)    step_import && step_parse && step_tests ;;
-  *) echo "사용법: check.sh [import|parse|tests|all]" >&2; exit 2 ;;
+  *) echo "사용법: check.sh [import|parse|unit|tests|all]" >&2; exit 2 ;;
 esac

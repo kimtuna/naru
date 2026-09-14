@@ -75,7 +75,8 @@ promote() {                               # promote <설명> <verify 명령>
 bump_mintests() {
   [ "$DRY" = "1" ] && return 0
   local now cur
-  now="$(bash tools/loop/check.sh tests 2>&1 | sed -n 's/^TESTS \([0-9]*\) passed.*/\1/p' | tail -1)"
+  # `unit` 이다 — 여기서 필요한 건 개수 한 줄뿐인데 `tests` 는 실측 7종을 달고 온다.
+  now="$(bash tools/loop/check.sh unit 2>&1 | sed -n 's/^TESTS \([0-9]*\) passed.*/\1/p' | tail -1)"
   [ -z "$now" ] && return 0
   cur="$(sed -n 's/.*mintests\.sh \([0-9]*\).*/\1/p' .loop/criteria.tsv | tail -1)"
   [ -z "$cur" ] && return 0
