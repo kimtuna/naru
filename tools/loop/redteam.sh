@@ -121,7 +121,7 @@ cp "$BAK/player.gd" scripts/player.gd
 # 덧붙여도 먼저 트리에 들어온 플레이어의 카메라가 화면을 잡는다(선착순) — 아무 일도
 # 안 일어나는 가짜 대조군이 된다. 그래서 **그 카메라의 줌을 직접** 건다.
 sed -i '' 's|^zoom = Vector2(1, 1)|zoom = Vector2(2, 2)|' scenes/player.tscn
-expect 1 "카메라 줌을 걸면 화면 실측이 잡는다 (보이는 칸 10 x 5.62)"
+expect 1 "카메라 줌을 걸면 화면 실측이 잡는다 (보이는 칸 15 x 8.44)"
 cp "$BAK/player.tscn" scenes/player.tscn
 
 python3 - <<'PYX'
@@ -249,7 +249,7 @@ cp "$BAK/main.gd" scripts/main.gd
 # 넷 다 **단위 검사 66개를 전부 초록으로 남긴다** — WorldView 의 순수 계산은 멀쩡하고
 # main.gd 가 그걸 쓰는 방식만 망가지기 때문이다. measure_window.gd 의 DRAW 만 잡는다.
 
-# 그릴 칸 수도 273 그대로다 — **픽셀을 안 보면 못 잡는다.**
+# 그릴 칸 수도 558 그대로다 — **픽셀을 안 보면 못 잡는다.**
 python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
@@ -280,7 +280,7 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
     "\tvar r := WorldView.tile_range(visible_world_rect())",
     "\tvar r := Rect2i(0, 0, WorldGen.SIZE, WorldGen.SIZE)", 1))
 PYX
-expect 1 "월드를 통째로 그리면 잡는다 (273 → 65536 칸)"
+expect 1 "월드를 통째로 그리면 잡는다 (558 → 65536 칸)"
 cp "$BAK/main.gd" scripts/main.gd
 
 # **서 있을 때는 완벽하게 멀쩡하다.** 걸어야 화면이 월드에서 미끄러진다 —

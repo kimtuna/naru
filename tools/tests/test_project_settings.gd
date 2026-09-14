@@ -29,9 +29,10 @@ func test_main_scene_exists() -> void:
 	eq(main, "res://scenes/main.tscn", "메인 씬 경로")
 	check(ResourceLoader.exists(main), "메인 씬 파일이 실제로 있어야 한다: %s" % main)
 
-func test_visible_tiles_at_48px() -> void:
-	# 타일 48px 기준 보이는 칸. 이 값이 곧 시야다.
+func test_visible_tiles() -> void:
+	# **이 값이 곧 시야다** — 스타듀 1080p 100% 줌과 같은 30 x 16.875 칸 (BACKLOG 고정값).
+	# 논리 해상도와 타일 크기 **둘 중 아무거나** 바뀌면 여기가 빨개진다.
 	var w: int = ProjectSettings.get_setting("display/window/size/viewport_width")
 	var h: int = ProjectSettings.get_setting("display/window/size/viewport_height")
-	eq(float(w) / 48.0, 20.0, "가로로 보이는 타일 칸")
-	eq(float(h) / 48.0, 11.25, "세로로 보이는 타일 칸")
+	eq(float(w) / PlayerMotion.TILE, 30.0, "가로로 보이는 타일 칸")
+	eq(float(h) / PlayerMotion.TILE, 16.875, "세로로 보이는 타일 칸")

@@ -47,7 +47,7 @@ func _process(delta: float) -> bool:
 	if not ok:
 		_bad += 1
 	print("MOVE %s  %.2f px/s · %.3f 칸/s  (%.2f px in %.4f s, 방향 %s)  %s" % [
-		_phases[_i]["name"], per_sec, per_sec / 48.0, moved.length(), _t,
+		_phases[_i]["name"], per_sec, per_sec / PlayerMotion.TILE, moved.length(), _t,
 		moved.normalized(), "ok" if ok else "FAIL 기대 %.0f ±%.0f px/s" % [EXPECT, TOL]])
 	_i += 1
 	if _i < _phases.size():

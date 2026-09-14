@@ -37,7 +37,7 @@ extends SceneTree
 const LOGICAL := Vector2(960.0, 540.0)
 const WINDOW := Vector2(1920.0, 1080.0)
 const SCALE := 2.0
-const TILES := Vector2(20.0, 11.25)        # 960/48 · 540/48
+const TILES := Vector2(30.0, 16.875)       # 960/32 · 540/32 (BACKLOG 고정값)
 
 # 창 크기가 붙고 씬의 _ready(월드 배선)가 돌 때까지 기다리는 프레임.
 # VIEW 는 5, DRAW 는 4가 필요했다 — 큰 쪽을 쓴다.
@@ -50,8 +50,8 @@ const STEP := 8                    # 표본 간격(px). 8 → 120 x 68 = 8160 �
 const SKIP_BOX := 56.0             # 화면 중심에서 이만큼은 건너뛴다 (몸 24 · 코 36)
 const TOL := 2.0 / 255.0           # 8비트로 두 칸. 렌더러가 반올림할 자리를 남긴다
 const MIN_SHARE := 0.15            # 물·땅이 각각 이만큼은 화면에 있어야 판정이 공허하지 않다
-const MAX_TILES := 400             # 21 x 13 = 273. 통째로 그리면 65536 이다
-const WALK := 3.0 * 48.0           # 걷는 거리(px). 3칸이면 캐시가 반드시 한 번은 다시 찬다
+const MAX_TILES := 700             # 31 x 18 = 558. 통째로 그리면 65536 이다
+const WALK := 3.0 * PlayerMotion.TILE   # 걷는 거리(px). 3칸이면 캐시가 반드시 한 번은 다시 찬다
 const WALK_FRAMES := 300           # 안전벨트. 막혀서 못 걸으면 여기서 끊는다
 
 var _view_bad := 0

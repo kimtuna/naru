@@ -27,7 +27,8 @@ func test_player_scene_is_a_colored_square() -> void:
 	if body == null:
 		failures.append("색 네모(ColorRect 'Body')가 있어야 한다")
 	else:
-		# 캐릭터 키 = 타일 1칸 (NUMBERS 1절). 중심이 노드 원점에 오게 반 칸씩 밀려 있다.
+		# 캐릭터 키 48px = 타일 **1.5칸** (BACKLOG 고정값). 중심이 노드 원점에 오게 24px 씩 밀려 있다.
+		# **그리는 네모이지 충돌 상자가 아니다** — 충돌 상자는 타일을 따라 내려갔다 (WorldCollide.HALF = 14).
 		eq(body.size, Vector2(48, 48), "색 네모 크기")
 		eq(body.position, Vector2(-24, -24), "색 네모 오프셋(중심 맞춤)")
 	p.free()
