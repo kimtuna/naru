@@ -504,23 +504,35 @@ cp "$BAK/hand_swing.gd" scripts/hand_swing.gd
 
 # ── 회차 22 일지를 세션의 마지막 답변에서 뽑는다 ─────────────────────
 #
-# **이 여덟은 상태 검사가 아니라 `journal.sh selftest` 을 겨눈다.** 뽑기 게이트는
-# 아직 기준으로 승격되기 전이다 — 항목의 `verify` 가 백로그의 **이어지는 줄**에 있어서
-# 이번 회차의 드라이버가 못 봤다. 승격은 다음 회차 몫이지만, 게이트가 살아 있는지는
-# **지금** 재야 한다. 안 재면 「아무것도 안 잡는 검사」가 그대로 쌓인다.
 # 여기가 겨누는 것은 하나다: **일지가 조용히 비는 길.** 회차 12 · 21 이 그 길로 갔다.
+#
+# **재는 자리가 승격을 따라 옮겨 간다** (회차 23): 뽑기 게이트가 무장된 기준에 올라가 있으면
+# `journal-selftest.sh` 를 직접 부르지 않고 **상태 검사로** 잰다 — 진짜 질문은 「검사가
+# 빨개지나」가 아니라 「**무장된 채점자가** 빨개지나」이기 때문이다. 직접 부르는 동안에는
+# 기준에서 그 줄이 빠져도 대조군은 여전히 초록이라 아무도 모른다.
+# 아직 승격 전이면(첫 회차) 예전처럼 직접 부르고, 그렇다고 말한다.
+if bash tools/loop/journal.sh promoted >/dev/null 2>&1; then
+  VIA_CONTRACT=1; echo "  (뽑기 게이트는 무장된 기준이다 — 상태 검사로 잰다)"
+else
+  VIA_CONTRACT=0; echo "  (뽑기 게이트가 아직 기준이 아니다 — journal-selftest.sh 를 직접 부른다)"
+fi
+
 expect_journal() {  # expect_journal <기대 exit> <이름>
   local want="$1" name="$2" rc; N=$((N+1))
   if [ "$want" -ne 0 ] && [ -z "$(git status --porcelain)" ]; then
     printf '  \033[33m헛돌았다\033[0m  %s  — 워킹트리가 그대로다. 대조군이 아무것도 안 깨뜨렸다\n' "$name"
     MISS=$((MISS+1)); return
   fi
-  bash tools/loop/journal-selftest.sh >"$EV/journal.txt" 2>&1; rc=$?
+  if [ "$VIA_CONTRACT" = "1" ]; then
+    bash tools/loop/run-contract.sh >"$EV/journal.txt" 2>&1; rc=$?
+  else
+    bash tools/loop/journal-selftest.sh >"$EV/journal.txt" 2>&1; rc=$?
+  fi
   if [ "$rc" -eq "$want" ]; then
     printf '  \033[32m잡았다\033[0m  %s  (exit %d)\n' "$name" "$rc"; PASS=$((PASS+1))
   else
     printf '  \033[31m놓쳤다\033[0m  %s  (기대 exit %d · 잰 값 %d)\n' "$name" "$want" "$rc"; MISS=$((MISS+1))
-    grep -E '^  FAIL|^JOURNAL SELFTEST' "$EV/journal.txt" | sed 's/^/      /'
+    grep -E '^  FAIL|^JOURNAL SELFTEST|빨강' "$EV/journal.txt" | sed 's/^/      /'
   fi
 }
 
@@ -601,6 +613,17 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
 PYX
 expect_journal 1 "뽑기 검사를 지우면 검사 바닥이 잡는다"
 cp "$BAK/journal-selftest.sh" tools/loop/journal-selftest.sh
+
+# **승격을 안 하고 「올렸다」고 말하는 길** (회차 23). `promoted` 가 늘 초록이면
+# 기준에서 줄이 빠져도 아무도 모른다 — 게이트는 있는데 아무도 안 돌리는 상태가 굳는다.
+python3 - <<'PYX'
+import io
+p='tools/loop/journal.sh'; s=io.open(p,encoding='utf-8').read()
+i=s.index('  promoted)\n')
+io.open(p,'w',encoding='utf-8').write(s[:i] + '  promoted)\n    exit 0\n' + s[i+len('  promoted)\n'):])
+PYX
+expect_journal 1 "승격 확인이 늘 초록이면 잡는다 (안 올리고 올렸다고 한다)"
+cp "$BAK/journal.sh" tools/loop/journal.sh
 
 expect_journal 0 "원복하면 뽑기도 다시 초록이다"
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot

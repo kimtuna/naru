@@ -8,6 +8,7 @@
 #                                   기계가 아는 것만 찍는다 — 날짜 · 결과 · 채점 · 비용 · 커밋.
 #                                   절이 없으면 만들어 둔다 (사람 판단 줄은 비운 채로).
 #   journal.sh selftest             뽑기·찍기가 도는지. 대조군이 겨누는 자리다.
+#   journal.sh promoted             이 게이트가 무장된 상태 검사 안에 있나.
 #
 # **줄의 주인이 갈려 있다.** 세션은 「문제·원인·고친 것·바꾼 결정·잰 값·남긴 것」을 쓰고,
 # 드라이버는 「날짜·결과·채점·비용·커밋」을 쓴다. 세션의 「됐습니다」가 결과 칸에 들어가면
@@ -224,5 +225,45 @@ PY
 
   selftest) exec bash "$ROOT/tools/loop/journal-selftest.sh" ;;
 
-  *) echo "사용법: journal.sh next | extract <n> <파일> | check <n> | stamp <n> <항목> <결과> [커밋] | selftest" >&2; exit 2 ;;
+  # 이 게이트가 **무장된** 상태 검사 안에 있나. 회차 23 이 넣은 자리다.
+  #
+  # **승격은 조용히 빠진다.** 드라이버의 `promote` 는 verify 를 못 찾으면 그냥 return 0 이고
+  # 항목은 `- [x]` 로 닫힌다 — 게이트를 만든 회차는 초록이고, 그 게이트를 아무도 안 돌리는
+  # 상태가 영원히 간다. 회차 22 가 정확히 그렇게 끝났다. 그래서 「올렸다」를 말이 아니라
+  # 파일로 묻는다. 줄만 있고 재무장이 안 됐으면 상태 검사가 exit 77 로 죽으므로
+  # **무장 해시까지 같이** 본다.
+  promoted)
+    python3 - "${NARU_CRITERIA:-$ROOT/.loop/criteria.tsv}" "${NARU_ARMED:-$ROOT/.loop/armed.sha256}" <<'PJ'
+import hashlib, io, os, sys
+crit, armed = sys.argv[1:3]
+NEEDLE = "journal.sh selftest"
+
+if not os.path.exists(crit):
+    print(f"상태 검사 파일이 없다: {crit}"); sys.exit(1)
+raw = io.open(crit, "rb").read()
+
+hit = None
+for line in raw.decode("utf-8", "replace").splitlines():
+    if not line.strip() or line.lstrip().startswith("#"):
+        continue
+    f = line.split("\t")
+    if len(f) >= 3 and NEEDLE in "\t".join(f[2:]):
+        hit = f[0].strip(); break
+if hit is None:
+    print("일지 뽑기 게이트가 상태 검사 기준에 없다 — 승격이 조용히 빠졌다"); sys.exit(1)
+
+if not os.path.exists(armed):
+    print(f"기준 {hit} 은 있는데 무장 파일이 없다: {armed}"); sys.exit(1)
+cur = hashlib.sha256(raw).hexdigest()
+want = io.open(armed, encoding="utf-8").read().strip()
+if cur != want:
+    print(f"기준 {hit} 은 있는데 무장 해시가 어긋난다 — 재무장이 안 됐다 (상태 검사가 exit 77 로 죽는다)")
+    print(f"  무장: {want}")
+    print(f"  현재: {cur}")
+    sys.exit(1)
+print(f"JOURNAL PROMOTED 기준 {hit} · 무장 {cur[:12]}")
+PJ
+    ;;
+
+  *) echo "사용법: journal.sh next | extract <n> <파일> | check <n> | stamp <n> <항목> <결과> [커밋] | selftest | promoted" >&2; exit 2 ;;
 esac

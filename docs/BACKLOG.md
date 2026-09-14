@@ -251,10 +251,17 @@ P0 의 전부다** — 이게 없으면 매 회차가 사람 시간에 묶인다
   > **이번 회차엔 기준 승격이 안 됐다**: `verify` 가 이 항목의 **둘째 줄 아래**에 있는데
   > 드라이버의 `next_item` 이 한 줄만 뽑아서 못 봤다. `loop.sh` 에 `verify_in_block` 을 넣어
   > 고쳤지만 **돌고 있던 드라이버는 이미 파스된 뒤**라 다음 실행부터 먹는다 → 아래 항목.
-- [ ] **일지 뽑기 게이트를 상태 검사 기준으로 올린다** — 회차 22 가 만든
+- [x] **일지 뽑기 게이트를 상태 검사 기준으로 올린다** — 회차 22 가 만든
       `journal.sh selftest` 이 아직 무장된 기준에 없다. 승격되면 회귀도 자동으로 잡힌다.
       **작은 항목이다** — 초록으로 닫히면 드라이버의 `promote` 가 제가 올린다
       | verify: `bash tools/loop/journal.sh selftest`
+  > 회차 23. 승격은 드라이버의 `promote` 가 한다 — 세션은 `criteria.tsv` 를 못 고친다(무장).
+  > 세션이 한 것은 **승격이 조용히 빠지는 길을 막은 것**이다: `journal.sh promoted` 가
+  > 「이 게이트가 무장된 기준에 있나」를 파일에 묻고(줄 + 무장 해시), `promote` 는 줄을
+  > 넣은 뒤 제 손으로 확인해 안 들어갔으면 멈춘다. verify 가 빈 항목도 이제 로그에 남는다.
+  > `redteam.sh` 의 뽑기 대조군 8종은 승격된 뒤에는 **상태 검사로** 잰다 — 무장된 채점자가
+  > 빨개지는지가 진짜 질문이라서다. `JOURNAL SELFTEST 34 passed, 0 failed (바닥 34)`.
+- [ ] **승격이 진짜 들어갔는지 확인한다** — 회차 23 이 올린 일지 뽑기 게이트가 무장된 기준에 있나. 빨가면 `promote` 가 또 조용히 빠진 것이다 | verify: `bash tools/loop/journal.sh promoted`
 - [ ] 월드 오브젝트 배치 — 나무 · 돌 · 광물 1종을 시드로 놓는다 | verify: `tools/loop/check.sh tests`
 - [ ] **벌목** — 도끼로 나무를 베면 목재가 바닥에 떨어진다 | verify: `tools/loop/check.sh tests`
 - [ ] **채광** — 곡괭이로 돌/광물을 캔다 | verify: `tools/loop/check.sh tests`

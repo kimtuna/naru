@@ -162,10 +162,47 @@ has   "session.json 의 문제가 들어간다" "- 문제: 세션이 일지를 �
 # ── 10) 세션 파일이 없으면 죽지 말고 빨개진다 ─────────────────────
 rc_is "없는 파일은 exit 1" 1 $JSH extract 22 "$TMP/없다.json"
 
+# ── 11) **올렸다고 말하는 것과 올라간 것은 다르다** (회차 23) ──────
+#
+# 드라이버의 `promote` 는 verify 를 못 찾으면 조용히 return 0 하고 항목은 닫힌다.
+# 그러면 게이트는 있는데 **아무도 안 돌리는** 상태가 영원히 간다 — 회차 22 가 그랬다.
+# 줄만 넣고 재무장을 안 해도 마찬가지로 못 쓴다 (상태 검사가 exit 77 로 죽는다).
+# 진짜 `.loop/` 는 안 본다 — 이 검사가 승격 전후로 답을 바꾸면 안 되기 때문이다.
+crit_fixture() {                           # crit_fixture <파일> <줄...>
+  local f="$1"; shift
+  printf '# 상태 검사 기준\n' > "$f"
+  printf '1\t임포트\ttools/loop/check.sh import\n' >> "$f"
+  for l in "$@"; do printf '%s\n' "$l" >> "$f"; done
+}
+export NARU_CRITERIA="$TMP/crit.tsv" NARU_ARMED="$TMP/armed.sha256"
+
+crit_fixture "$NARU_CRITERIA" "$(printf '7\t일지 뽑기\tbash tools/loop/journal.sh selftest')"
+shasum -a 256 "$NARU_CRITERIA" | awk '{print $1}' > "$NARU_ARMED"
+rc_is "무장된 기준에 있으면 exit 0" 0 $JSH promoted
+
+crit_fixture "$NARU_CRITERIA"
+shasum -a 256 "$NARU_CRITERIA" | awk '{print $1}' > "$NARU_ARMED"
+rc_is "기준에 없으면 exit 1" 1 $JSH promoted
+
+# 줄은 넣었는데 `arm-contract.sh` 를 안 돌린 경우 — 상태 검사가 통째로 죽는다.
+crit_fixture "$NARU_CRITERIA" "$(printf '7\t일지 뽑기\tbash tools/loop/journal.sh selftest')"
+printf '%s\n' "0000000000000000000000000000000000000000000000000000000000000000" > "$NARU_ARMED"
+rc_is "재무장이 안 됐으면 exit 1" 1 $JSH promoted
+
+# 주석으로 적어 놓고 「올렸다」고 하면 안 된다.
+crit_fixture "$NARU_CRITERIA" "# 7	일지 뽑기	bash tools/loop/journal.sh selftest"
+shasum -a 256 "$NARU_CRITERIA" | awk '{print $1}' > "$NARU_ARMED"
+rc_is "주석 줄은 기준이 아니다" 1 $JSH promoted
+
+crit_fixture "$NARU_CRITERIA" "$(printf '7\t일지 뽑기\tbash tools/loop/journal.sh selftest')"
+rm -f "$NARU_ARMED"
+rc_is "무장 파일이 없으면 exit 1" 1 $JSH promoted
+unset NARU_CRITERIA NARU_ARMED
+
 echo
 # **바닥이 없으면 검사를 지워서 초록에 갈 수 있다.** 통과 개수가 줄어도 실패가 0 이면
 # 그냥 초록이기 때문이다 — 단위 검사에 `mintests.sh` 가 있는 것과 같은 자리다.
-FLOOR=29
+FLOOR=34
 if [ "$F" -ne 0 ]; then echo "JOURNAL SELFTEST $P passed, $F failed"; exit 1; fi
 if [ "$P" -lt "$FLOOR" ]; then
   echo "JOURNAL SELFTEST $P passed, 0 failed — 바닥 $FLOOR 아래다. 검사가 지워졌다"; exit 1

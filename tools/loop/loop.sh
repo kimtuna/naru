@@ -60,7 +60,9 @@ verify_in_block() {                       # verify_in_block <백로그 줄번호
 promote() {                               # promote <설명> <verify 명령>
   [ "$DRY" = "1" ] && return 0
   local d="$1" v="$2"
-  [ -z "$v" ] && return 0
+  # **조용히 빠지는 자리였다.** 회차 22 는 verify 를 못 찾아 승격 없이 초록으로 닫혔고
+  # 로그엔 아무 줄도 안 남았다 — 게이트를 만들었는데 아무도 안 돌리는 상태가 그렇게 굳는다.
+  [ -z "$v" ] && { say "기준 승격 없음 — 이 항목엔 verify 가 없다: $d"; return 0; }
   # **재귀 차단.** 상태 검사 자신을 부르는 verify 를 기준으로 올리면 무한히 겹쳐 돈다
   # (redteam.sh 는 상태 검사를 6번 부른다).
   case "$v" in
@@ -71,6 +73,11 @@ promote() {                               # promote <설명> <verify 명령>
   id="$(( $(grep -cv '^[[:space:]]*#' .loop/criteria.tsv) + 1 ))"
   printf '%s\t%s\t%s\n' "$id" "$d" "$v" >> .loop/criteria.tsv
   bash tools/loop/arm-contract.sh >/dev/null
+  # **올렸다고 말하지 말고 파일에 묻는다** — 줄이 들어갔나 · 그 판본으로 무장됐나.
+  grep -qF "	$v" .loop/criteria.tsv \
+    || stop "기준 승격이 조용히 빠졌다 — criteria.tsv 에 줄이 안 들어갔다: $v"
+  [ "$(shasum -a 256 .loop/criteria.tsv | awk '{print $1}')" = "$(cat .loop/armed.sha256)" ] \
+    || stop "기준 $id 을 올리고 재무장이 안 됐다 — 다음 상태 검사가 exit 77 로 죽는다"
   git add .loop/criteria.tsv .loop/armed.sha256
   git -c user.name=loop -c user.email=loop@local commit -q \
     -m "상태 검사에 기준 $id 추가 — $d" || true
