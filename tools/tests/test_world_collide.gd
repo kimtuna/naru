@@ -10,7 +10,7 @@ extends TestBase
 ##
 ## **T 를 PlayerMotion.TILE 에서 안 가져온다.** 가져오면 타일을 바꿨을 때 아래 숫자들이
 ## 소리 없이 틀린 채로 초록이 된다 — 손 계산이 독립된 값이어야 검사가 검사다.
-## 대신 둘이 어긋났는지를 test_hand_numbers_match_the_tile 이 잰다.
+## 대신 둘이 어긋났는지를 test_body_is_narrower_than_a_tile 이 잰다.
 
 const T := 32.0
 const TOL := 0.001
@@ -42,11 +42,6 @@ func at(actual: Vector2, ex: float, ey: float, what: String) -> void:
 	near(actual.y, ey, "%s y" % what)
 
 ## ── 막는 게 없을 때 ───────────────────────────────────────────────────
-
-func test_hand_numbers_match_the_tile() -> void:
-	# 이 파일의 값은 전부 T 로 손 계산한 것이다. 고정값이 바뀌면 **여기가 먼저** 빨개진다.
-	eq(PlayerMotion.TILE, T, "손 계산이 깔고 있는 타일 크기")
-	eq(WorldCollide.HALF, T * 0.5 - 2.0, "손 계산이 깔고 있는 몸 반폭")
 
 func test_open_world_moves_the_whole_motion() -> void:
 	# 충돌을 넣었다고 빈 땅에서 느려지면 안 된다 — 속도 게이트가 여기에 기댄다.
@@ -116,6 +111,13 @@ func test_concave_corner_blocks_both_axes() -> void:
 ## ── 끼지 않는다 ───────────────────────────────────────────────────────
 
 func test_body_is_narrower_than_a_tile() -> void:
+	# 이 파일의 값은 전부 T 로 손 계산한 것이다. 고정값이 바뀌면 **여기가 먼저** 빨개진다 —
+	# 위쪽 스무 남짓한 기대값이 소리 없이 틀린 채 초록으로 남는 것을 막는다.
+	# (**검사를 하나 더 만들지 않고 여기 붙였다**: `mintests` 바닥은 무장된 계약 안의
+	#  숫자라 세션이 못 올린다. 개수를 늘리면 「검사를 지우면 바닥이 잡는다」 대조군이
+	#  딱 하나만큼 헐거워진다 — 바퀴 15 에 실제로 놓쳤다.)
+	eq(PlayerMotion.TILE, T, "손 계산이 깔고 있는 타일 크기")
+	eq(WorldCollide.HALF, T * 0.5 - 2.0, "손 계산이 깔고 있는 몸 반폭")
 	# 같으면 32px 통로에서 부동소수 한 톨에 걸려 낀다. 이 부등식이 아래 검사의 근거다.
 	check(WorldCollide.HALF < T * 0.5,
 		"몸 반폭 — 잰 값 %.2f · 기대 타일 반 %.2f 미만" % [WorldCollide.HALF, T * 0.5])
