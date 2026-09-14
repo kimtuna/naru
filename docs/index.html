@@ -53,6 +53,10 @@ h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
 .alert.bad{border-color:var(--bad);background:var(--badbg)}
 .alert.halt{border-color:var(--halt);background:var(--haltbg)}
 .alert.info{border-color:var(--line);background:var(--panel);color:var(--dim)}
+.alert.wait{border-color:var(--halt);background:var(--haltbg)}
+.dot.wait{background:var(--halt);box-shadow:0 0 0 3px var(--haltbg);
+  animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .alert.past{border-color:var(--line);background:var(--panel);color:var(--faint)}
 .alert.past strong,.alert.info strong{font-weight:600}
 .alert.next{border-style:dashed}
@@ -167,17 +171,18 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 01:06:00</span><span id="ago"></span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 01:20:32</span><span id="ago"></span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
 <div class="tile"><span class="k">마지막 회차</span><span class="v"><i class="dot run"></i>회차 23</span><span class="note">초록 · 2026-09-15</span></div>
-<div class="tile"><span class="k">상태</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-15 01:05</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">28 <small>/ 58</small></span><span class="note">백로그 항목</span></div>
-<div class="tile"><span class="k">누적 비용</span><span class="v">$78.112</span></div>
+<div class="tile"><span class="k">상태</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-15 01:18</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">29 <small>/ 63</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$78.7041</span></div>
 </section>
-<div class="alert next"><span class="k">백로그 다음 줄</span><span class="pill">P2</span><strong>승격이 진짜 들어갔는지 확인한다</strong> — 회차 23 이 올린 일지 뽑기 게이트가 무장된 기준에 있나. 빨가면 <code>promote</code> 가 또 조용히 빠진 것이다</div>
+<div class="alert halt"><strong>멈췄다 — 사람이 볼 것</strong> 워킹트리가 더럽다 — 이전 회차가 커밋 없이 끝났다<span class="note">2026-09-15 01:19:51</span></div>
+<div class="alert next"><span class="k">백로그 다음 줄</span><span class="pill">P2</span>월드 오브젝트 배치 — 나무 · 돌 · 광물 1종을 시드로 놓는다</div>
 <h2>진행 — 한 줄 = 한 회차</h2>
 <div class="phases">
 <details class="phase full">
@@ -216,8 +221,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P2</span>
     <span class="ptitle">손: 인벤토리와 도구</span>
-    <span class="pcount">9/15</span>
-    <span class="bar"><i style="width:60%"></i></span></summary>
+    <span class="pcount">10/20</span>
+    <span class="bar"><i style="width:50%"></i></span></summary>
   <ul class="items">
 <li class="done" id="i15" ><a class="turn" href="#t15" title="15회차 일지로">15회차</a><span class="box">✔</span><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</li>
 <li class="done" id="i16" ><a class="turn" href="#t16" title="16회차 일지로">16회차</a><span class="box">✔</span><strong>캐릭터 네모를 1칸 폭으로 · 충돌 상자를 발밑에</strong> — 지금 그리는 네모는 48×48(1.5칸 ×</li>
@@ -228,12 +233,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done" id="i21" ><a class="turn" href="#t21" title="21회차 일지로">21회차</a><span class="box">✔</span>좌클릭 = 손에 든 것의 동작. <strong>대상이 없어도 사용 모션이 나온다</strong></li>
 <li class="done" id="i22" ><a class="turn" href="#t22" title="22회차 일지로">22회차</a><span class="box">✔</span><strong>일지를 세션의 마지막 답변에서 뽑는다</strong> — 세션이 <code>docs/JOURNAL.md</code> 에 직접 쓰게</li>
 <li class="done" id="i23" ><a class="turn" href="#t23" title="23회차 일지로">23회차</a><span class="box">✔</span><strong>일지 뽑기 게이트를 상태 검사 기준으로 올린다</strong> — 회차 22 가 만든</li>
-<li class="todo"><span class="box"></span><strong>승격이 진짜 들어갔는지 확인한다</strong> — 회차 23 이 올린 일지 뽑기 게이트가 무장된 기준에 있나. 빨가면 <code>promote</code> 가 또 조용히 빠진 것이다</li>
 <li class="todo"><span class="box"></span>월드 오브젝트 배치 — 나무 · 돌 · 광물 1종을 시드로 놓는다</li>
+<li class="done"><span class="box">✔</span><strong>승격이 진짜 들어갔는지 확인한다</strong> — 회차 23 이 올린 일지 뽑기 게이트가 무장된 기준에 있나. 빨가면 <code>promote</code> 가 또 조용히 빠진 것이다</li>
 <li class="todo"><span class="box"></span><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</li>
 <li class="todo"><span class="box"></span><strong>채광</strong> — 곡괭이로 돌/광물을 캔다</li>
 <li class="todo"><span class="box"></span>바닥 드롭 + 걸어가서 줍기. 인벤토리가 꽉 차면 바닥에 남는다</li>
 <li class="todo"><span class="box"></span><strong>색 캐시를 스크롤한다 — 한 판 13.0 ms 가 프레임 예산의 78% 다</strong> (회차 17 실측).</li>
+<li class="todo"><span class="box"></span><strong>게임 화면을 <code>scenes/world.tscn</code> 으로 떼어낸다</strong> — 지금 <code>main.tscn</code> 이 곧 게임이라</li>
+<li class="todo"><span class="box"></span><strong>저장을 캐릭터와 월드로 가른다</strong> — <code>user://chars/&lt;id&gt;.json</code> 과 <code>user://worlds/&lt;id&gt;.json</code>.</li>
+<li class="todo"><span class="box"></span><strong>캐릭터 만들기 화면 — 이름 + 색</strong> — 색 네모 단계라 <strong>고르는 것은 색</strong>이다</li>
+<li class="todo"><span class="box"></span><strong>캐릭터 고르기 → 월드 고르기 → 게임</strong> — 세 화면을 잇는다. 각 화면에서 만들기도 된다.</li>
+<li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>고를 수 있는 색을 몇 개로 할까</strong> — 임시로 8개. 자유 색상환은 색 네모 단계에서</li>
 </ul></details>
 <details class="phase none">
   <summary><span class="pid">P3</span>
@@ -324,7 +334,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">매 회차 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  88/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  58/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
@@ -333,11 +343,12 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <code class="cmd">tools/loop/shot.sh /tmp/w.png</code>
 <ul class="ev"><li>SHOT 960x540  색 865개  가장 넓은 한 색 1.4%  → /tmp/w.png</li></ul>
 </div>
-<div class="card muted">
+<div class="card ok">
   <div class="chead"><span class="cid">7</span>
     <span class="cwhat"><strong>일지 뽑기 게이트를 상태 검사 기준으로 올린다</strong> — 회차 22 가 만든</span>
-    <span class="cmark">—</span></div>
+    <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/journal.sh selftest</code>
+<ul class="ev"><li>  ok   무장 파일이 없으면 exit 1</li><li>JOURNAL SELFTEST 34 passed, 0 failed (바닥 34)</li></ul>
 </div>
 </div>
 <h2>회차 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
@@ -813,6 +824,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">회차 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/3eedc95"><code>3eedc95</code></a><span class="cd">2026-09-15</span>회차 23 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/e54c0e9"><code>e54c0e9</code></a><span class="cd">2026-09-15</span>회차 기록 롤링</li>
 <li><a href="https://github.com/kimtuna/naru/commit/e8f6c10"><code>e8f6c10</code></a><span class="cd">2026-09-15</span>상태 검사에 기준 7 추가 — <strong>일지 뽑기 게이트를 상태 검사 기준으로 올린다</strong> — 회차 22 가 만든</li>
 <li><a href="https://github.com/kimtuna/naru/commit/0fa23a9"><code>0fa23a9</code></a><span class="cd">2026-09-15</span>회차 23 기록 — 승격 확인 게이트 · REDTEAM 57 잡음, 0 놓침</li>
@@ -824,7 +836,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/2f85a0e"><code>2f85a0e</code></a><span class="cd">2026-09-14</span>바퀴 → 회차 · 계약 → 상태 검사 · 진행 줄에서 일지로 점프</li>
 <li><a href="https://github.com/kimtuna/naru/commit/d3a4e50"><code>d3a4e50</code></a><span class="cd">2026-09-14</span>바퀴 21 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/405027e"><code>405027e</code></a><span class="cd">2026-09-14</span>테스트 바닥 90 → 100</li>
-<li><a href="https://github.com/kimtuna/naru/commit/145b102"><code>145b102</code></a><span class="cd">2026-09-14</span>바퀴 21 · 좌클릭 = 손에 든 것의 동작 (대상이 없어도 모션이 나온다)</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 회차</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 회차가 올라왔다 — 새로고침</button>

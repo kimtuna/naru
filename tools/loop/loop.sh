@@ -22,6 +22,8 @@ DRY=0
 RUNS="$ROOT/.loop/runs"; mkdir -p "$RUNS"
 SPEND="$ROOT/.loop/spend.txt"; [ -f "$SPEND" ] || echo 0 > "$SPEND"
 STOPPED="$ROOT/.loop/STOPPED"; rm -f "$STOPPED"
+WAITING="$ROOT/.loop/WAITING"; rm -f "$WAITING"
+RETRY_N=0
 PREV="$ROOT/.loop/results.prev.json"
 
 say() { printf '%s  %s\n' "$(date '+%H:%M:%S')" "$*"; }
@@ -138,6 +140,36 @@ finish_journal() {                        # finish_journal <회차> <항목> <�
     git -c user.name=loop -c user.email=loop@local commit -q \
       -m "회차 $1 일지 · 대시보드 갱신" || true
   fi
+}
+
+# ── 한도·과부하에 걸리면 기다렸다 같은 항목을 다시 건다 ─────────────
+#
+# **이걸 「세션 실패」로 세면 안 된다.** 세면 같은 항목을 STUCK_LIMIT 번 더 태우고
+# 「같은 항목이 연속 실패했다」로 멈춘다 — 사유도 틀리고 돈도 버린다.
+# 기다리는 동안 무엇을 기다리는지 `.loop/WAITING` 에 적고 대시보드를 구워 밀어 둔다.
+wait_and_retry() {                        # wait_and_retry <초> <사유>
+  local secs="$1" why="$2" until_at
+  until_at="$(python3 -c "
+import time; print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()+$secs)))")"
+  printf '%s\n%s\n%s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$why" "$until_at" > "$WAITING"
+  say "■ 기다린다 — $why (다시 걸 시각 $until_at)"
+  if [ "$PUSH" != "0" ]; then
+    python3 tools/loop/report.py >/dev/null 2>&1 || true
+    if [ -n "$(git status --porcelain docs/index.html 2>/dev/null)" ]; then
+      git add docs/index.html
+      git -c user.name=loop -c user.email=loop@local commit -q -m "기다리는 중 — $why" || true
+      git push -q origin HEAD 2>/dev/null || true
+    fi
+  fi
+  # **짧게 끊어 잔다** — ctl.sh stop 이 프로세스 무리를 죽일 때 바로 깨어나야 한다.
+  local left="$secs"
+  while [ "$left" -gt 0 ]; do
+    [ -f "$STOPPED" ] && break
+    sleep $(( left > 30 ? 30 : left )); left=$(( left - 30 ))
+  done
+  rm -f "$WAITING"
+  say "다시 건다 — $why"
+  python3 tools/loop/report.py >/dev/null 2>&1 || true
 }
 
 # ── 초록으로 닫힌 회차만 바깥으로 내보낸다 ──────────────────────────
@@ -275,6 +307,27 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     if [ "$src" -ne 0 ]; then
       say "세션이 비정상 종료했다:"; tail -5 "$RD/session.err" | sed 's/^/    /'
     fi
+
+    # **왜 끝났나를 가른다.** 한도·과부하는 실패가 아니라 「나중에 다시」다.
+    kind="$(bash tools/loop/session-class.sh "$RD/session.json" "$RD/session.err" "$src")"
+    case "$kind" in
+      limit*)
+        epoch="$(printf '%s' "$kind" | cut -d" " -f2)"
+        why="$(printf '%s' "$kind" | cut -d" " -f3-)"
+        secs="$(python3 -c "
+import time
+e = int('${epoch}' or 0)
+print(max(60, min(int(e - time.time()) + 60, $MAX_WAIT_SEC)) if e > 0 else $LIMIT_WAIT_SEC)")"
+        wait_and_retry "$secs" "토큰 한도 — $why"
+        cycle=$((cycle-1)); continue ;;
+      retry*)
+        RETRY_N=$((RETRY_N+1))
+        [ "$RETRY_N" -gt "$MAX_RETRIES" ] && stop "일시적인 오류가 ${RETRY_N}번 이어졌다 — ${kind#retry }"
+        secs=$(( 60 * (1 << (RETRY_N - 1)) )); [ "$secs" -gt 900 ] && secs=900
+        wait_and_retry "$secs" "일시적인 오류 (${RETRY_N}번째) — ${kind#retry }"
+        cycle=$((cycle-1)); continue ;;
+      *) RETRY_N=0 ;;
+    esac
   fi
 
   # 6b) 일지를 **드라이버가 쓴다.** 세션은 마지막 답변에 블록을 적을 뿐 파일을 안 연다.
@@ -331,8 +384,14 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
   head_after="$(git rev-parse HEAD)"
   [ "$vrc" -ne 0 ] && crc=1
   if [ "$crc" -eq 0 ]; then
+    # 커밋이 없는 데는 두 가지가 있다. **워킹트리가 더러우면** 작업이 떠 있는 것이고,
+    # **깨끗하면** 정말로 할 일이 없었던 것이다 — 「확인만 하는 항목」이 그렇다
+    # (회차 24 가 여기서 잘못 멈췄다). 앞은 사고고 뒤는 정상이다.
     if [ "$head_after" = "$head_before" ] && [ "$DRY" = "0" ]; then
-      stop "초록인데 세션이 커밋하지 않았다 — 작업이 워킹트리에 떠 있다"
+      if [ -n "$(git status --porcelain)" ]; then
+        stop "초록인데 세션이 커밋하지 않았다 — 작업이 워킹트리에 떠 있다"
+      fi
+      say "커밋 없음 — 워킹트리가 깨끗하다 (확인만 한 항목이다)"
     fi
     say "✔ 초록"
     promote "$(desc_of "$item")" "$vcmd"

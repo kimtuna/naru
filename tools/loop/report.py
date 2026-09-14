@@ -153,6 +153,9 @@ def render():
     # **멈춤은 두 종류다.** 「시킨 회차를 다 돌았다」는 정상 종료고,
     # 「일지를 안 적었다」는 사고다. 그리고 **이미 지나간 멈춤**이 있다 —
     # 그 뒤에 채점이 다시 돌아 초록이 났으면 그건 해결된 일이라 경고로 두면 안 된다.
+    # 기다리는 중이면 그게 지금 상태다 — 멈춘 것보다 먼저 보여준다.
+    waiting = read(".loop/WAITING").strip()
+    wt = waiting.splitlines() if waiting else []
     stopped = read(".loop/STOPPED").strip()
     st_when, st_why, st_kind = "", "", ""
     if stopped:
@@ -182,7 +185,10 @@ def render():
     nxt_phase = next((p["id"] for p in phases for i in p["items"]
                       if not i["done"] and i is nxt), "")
 
-    if last:
+    if waiting:
+        st_cls, st_txt = "wait", "기다리는 중"
+        st_note = (wt[1][:24] if len(wt) > 1 else "")
+    elif last:
         lr = last["f"].get("결과", "")
         st_cls = {"초록": "run", "빨강": "halt"}.get(lr, "idle")
         st_txt = f'회차 {last["n"]}'
@@ -224,7 +230,11 @@ def render():
     if tampered:
         A('<div class="alert bad"><strong>상태 검사가 무장 뒤에 변조됐다.</strong> '
           '채점자가 <code>exit 77</code> 로 죽는다 — red line 이다.</div>')
-    if stopped:
+    if waiting:
+        A(f'<div class="alert wait"><strong>기다리는 중</strong> '
+          f'{inline(wt[1] if len(wt) > 1 else "")}'
+          f'<span class="note">다시 걸 시각 {esc(wt[2] if len(wt) > 2 else "?")}</span></div>')
+    if stopped and not waiting:
         label = {"done": "여기서 멈췄다 — 시킨 만큼 다 돌았다",
                  "past": "지난 멈춤 — 그 뒤에 다시 초록이 났다",
                  "halt": "멈췄다 — 사람이 볼 것"}[st_kind]
@@ -460,6 +470,10 @@ h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
 .alert.bad{border-color:var(--bad);background:var(--badbg)}
 .alert.halt{border-color:var(--halt);background:var(--haltbg)}
 .alert.info{border-color:var(--line);background:var(--panel);color:var(--dim)}
+.alert.wait{border-color:var(--halt);background:var(--haltbg)}
+.dot.wait{background:var(--halt);box-shadow:0 0 0 3px var(--haltbg);
+  animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .alert.past{border-color:var(--line);background:var(--panel);color:var(--faint)}
 .alert.past strong,.alert.info strong{font-weight:600}
 .alert.next{border-style:dashed}
