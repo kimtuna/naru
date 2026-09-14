@@ -31,7 +31,7 @@ func test_main_scene_exists() -> void:
 
 func test_visible_tiles() -> void:
 	# **이 값이 곧 시야다** — 사람이 30 · 40 · 60 칸을 눈으로 보고 고른 **60 x 33.75 칸**
-	# (바퀴 17 · BACKLOG 고정값). 16px 은 스타듀·코어키퍼가 **아트를 그리는 해상도**다.
+	# (회차 17 · BACKLOG 고정값). 16px 은 스타듀·코어키퍼가 **아트를 그리는 해상도**다.
 	# 논리 해상도와 타일 크기 **둘 중 아무거나** 바뀌면 여기가 빨개진다.
 	var w: int = ProjectSettings.get_setting("display/window/size/viewport_width")
 	var h: int = ProjectSettings.get_setting("display/window/size/viewport_height")

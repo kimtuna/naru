@@ -20,7 +20,7 @@ func test_camera_rides_the_player() -> void:
 	if cam == null:
 		failures.append("플레이어 씬에 Camera2D 'Camera' 가 있어야 한다")
 	else:
-		# 원점은 **발밑**이다 (바퀴 16) — 카메라가 비추는 것도 그 점이다.
+		# 원점은 **발밑**이다 (회차 16) — 카메라가 비추는 것도 그 점이다.
 		eq(cam.position, Vector2.ZERO, "카메라가 플레이어 원점(발밑)에 있어야 한다")
 	p.free()
 

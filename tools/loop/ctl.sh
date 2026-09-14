@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 루프를 백그라운드로 켜고 끄고 본다.
-#   ctl.sh start [바퀴수] | stop | status | report | logs
+#   ctl.sh start [회차수] | stop | status | report | logs
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"; cd "$ROOT"
 PIDF="$ROOT/.loop/loop.pid"; LOG="$ROOT/.loop/loop.log"
@@ -33,5 +33,5 @@ case "${1:-status}" in
     echo "열어보기: open docs/index.html"
     ;;
   logs) tail -f "$LOG" ;;
-  *) echo "사용법: ctl.sh start [바퀴수] | stop | status | report | logs" >&2; exit 2 ;;
+  *) echo "사용법: ctl.sh start [회차수] | stop | status | report | logs" >&2; exit 2 ;;
 esac

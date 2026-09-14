@@ -7,7 +7,7 @@
 STOPPED)은 gitignore 라 GitHub 에 안 올라간다. 그래서 이 스크립트가 **값을 페이지에
 구워 넣는다** — 페이지는 아무것도 fetch 하지 않는다. 열면 그냥 보인다.
 
-드라이버가 매 바퀴 끝에 부르고 커밋한다. 사람이 직접 불러도 된다.
+드라이버가 매 회차 끝에 부르고 커밋한다. 사람이 직접 불러도 된다.
 """
 import html, json, os, re, subprocess, sys
 from datetime import datetime
@@ -64,7 +64,7 @@ def backlog():
     return phases
 
 
-# ── 계약 ─────────────────────────────────────────────────────────────
+# ── 상태 검사 ─────────────────────────────────────────────────────────────
 def contract():
     rows, res = [], None
     try:
@@ -111,10 +111,33 @@ def journal():
                 val = " ".join(x.strip() for x in v.group(1).splitlines()).strip()
                 if val:
                     f[k] = val
-        n = re.match(r"바퀴 (\d+)", title)
+        n = re.match(r"회차 (\d+)", title)
         out.append({"title": title, "n": int(n.group(1)) if n else None,
                     "human": n is None, "f": f})
     return out
+
+
+# ── 백로그 줄 ↔ 일지 절 ──────────────────────────────────────────────
+#
+# 드라이버가 일지 제목을 **백로그 줄 그대로** 찍는다(`## 회차 N · <항목>`).
+# 그래서 글자를 다듬어 맞추면 「이 줄은 몇 회차에 됐나」가 나온다.
+# 못 맞추면 그냥 안 잇는다 — 사람이 한 것과 문구가 바뀐 것이 있다.
+def _key(text):
+    t = re.sub(r"\s*\|\s*verify:.*$", "", text)
+    t = re.sub(r"[`*_>]", "", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t[:40]
+
+
+def link_turns(phases, entries):
+    by_key = {}
+    for e in entries:
+        if e["human"] or e["n"] is None:
+            continue
+        by_key.setdefault(_key(re.sub(r"^회차 \d+\s*·\s*", "", e["title"])), e["n"])
+    for p in phases:
+        for i in p["items"]:
+            i["turn"] = by_key.get(_key(i["desc"]))
 
 
 # ── 렌더 ─────────────────────────────────────────────────────────────
@@ -122,6 +145,7 @@ def render():
     phases = backlog()
     rows, res, armed, tampered = contract()
     entries = journal()
+    link_turns(phases, entries)
 
     done = sum(1 for p in phases for i in p["items"] if i["done"])
     total = sum(len(p["items"]) for p in phases)
@@ -130,7 +154,7 @@ def render():
     # **「지금 돌고 있나」는 구운 페이지가 알 수 없다.** 드라이버가 이 스크립트를
     # 부르는 시점엔 드라이버 자신이 살아 있어서 늘 「돌고 있다」로 굳었고,
     # 바로 뒤에 루프가 끝나도 페이지는 영영 그대로였다. 잰 것만 적는다 —
-    # **마지막 바퀴가 몇 번이고 어떻게 끝났나.**
+    # **마지막 회차가 몇 번이고 어떻게 끝났나.**
     last = next((e for e in entries if not e["human"]), None)
 
     all_green = res.get("all_green") if res else None
@@ -144,7 +168,7 @@ def render():
     if last:
         lr = last["f"].get("결과", "")
         st_cls = {"초록": "run", "빨강": "halt"}.get(lr, "idle")
-        st_txt = f'바퀴 {last["n"]}'
+        st_txt = f'회차 {last["n"]}'
         st_note = f'{lr or "—"} · {last["f"].get("날짜", "")}'
     else:
         st_cls, st_txt, st_note = "idle", "—", "아직 없다"
@@ -167,10 +191,10 @@ def render():
     green_txt = "—" if all_green is None else ("ALL GREEN" if all_green else "빨강")
     green_cls = "muted" if all_green is None else ("ok" if all_green else "bad")
     A('<section class="strip">')
-    A(f'<div class="tile"><span class="k">마지막 바퀴</span>'
+    A(f'<div class="tile"><span class="k">마지막 회차</span>'
       f'<span class="v"><i class="dot {st_cls}"></i>{esc(st_txt)}</span>'
       f'<span class="note">{esc(st_note)}</span></div>')
-    A(f'<div class="tile"><span class="k">계약</span>'
+    A(f'<div class="tile"><span class="k">상태</span>'
       f'<span class="v {green_cls}">{esc(green_txt)}</span>'
       f'<span class="note">{esc(graded_at[:16].replace("T", " "))}</span></div>')
     A(f'<div class="tile"><span class="k">진행</span>'
@@ -181,7 +205,7 @@ def render():
     A('</section>')
 
     if tampered:
-        A('<div class="alert bad"><strong>계약이 무장 뒤에 변조됐다.</strong> '
+        A('<div class="alert bad"><strong>상태 검사가 무장 뒤에 변조됐다.</strong> '
           '채점자가 <code>exit 77</code> 로 죽는다 — red line 이다.</div>')
     if stopped:
         parts = stopped.splitlines()
@@ -195,7 +219,7 @@ def render():
         A(f'<div class="alert next"><span class="k">다음 항목</span>{tag}{inline(nxt["desc"])}</div>')
 
     # ── 진행 ──
-    A('<h2>진행 — 한 줄 = 한 바퀴</h2>')
+    A('<h2>진행 — 한 줄 = 한 회차</h2>')
     A('<div class="phases">')
     for p in phases:
         d = sum(1 for i in p["items"] if i["done"])
@@ -211,12 +235,17 @@ def render():
         for i in p["items"]:
             mk = "done" if i["done"] else ("ask" if i["ask"] else "todo")
             box = "✔" if i["done"] else ("?" if i["ask"] else "")
-            A(f'<li class="{mk}"><span class="box">{box}</span>{inline(i["desc"])}</li>')
+            n = i.get("turn")
+            badge = (f'<a class="turn" href="#t{n}" title="{n}회차 일지로">{n}회차</a>'
+                     if n else "")
+            A(f'<li class="{mk}" id="i{n}" >{badge}<span class="box">{box}</span>'
+              f'{inline(i["desc"])}</li>' if n else
+              f'<li class="{mk}"><span class="box">{box}</span>{inline(i["desc"])}</li>')
         A('</ul></details>')
     A('</div>')
 
-    # ── 계약 ──
-    A(f'<h2>계약 — 기계가 채점한다 <span class="hash">무장 {esc(armed)}</span></h2>')
+    # ── 상태 검사 ──
+    A(f'<h2>상태 검사 — 기계가 채점한다 <span class="hash">무장 {esc(armed)}</span></h2>')
     A('<p class="lede">세션에게 「검사를 약하게 하지 마세요」라고 부탁하지 않는다. '
       '<code>criteria.tsv</code> 는 해시로 잠겨 있고, 고치면 채점자가 <code>exit 77</code> 로 죽는다.</p>')
     A('<div class="cards">')
@@ -234,7 +263,7 @@ def render():
     A('</div>')
 
     # ── 일지 ──
-    A('<h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>')
+    A('<h2>회차 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>')
     A(f'<p class="lede">전체는 <a href="{REPO}/docs/JOURNAL.md">JOURNAL.md</a>. '
       '아래는 그 파일을 그대로 읽어 온 것이다.</p>')
     A('<div class="log">')
@@ -242,17 +271,21 @@ def render():
         f = e["f"]
         res_txt = f.get("결과", "")
         rcls = {"초록": "ok", "빨강": "bad", "멈춤": "halt"}.get(res_txt, "muted")
-        badge = "사람" if e["human"] else f'바퀴 {e["n"]}'
-        title = re.sub(r"^(바퀴 \d+|사람)\s*·\s*", "", e["title"])
-        A(f'''<article class="entry {rcls}">
+        badge = "사람" if e["human"] else f'회차 {e["n"]}'
+        title = re.sub(r"^(회차 \d+|사람)\s*·\s*", "", e["title"])
+        anchor = f' id="t{e["n"]}"' if not e["human"] and e["n"] else ""
+        back = (f'<a class="badge" href="#i{e["n"]}" title="진행 목록으로">{esc(badge)}</a>'
+                if not e["human"] and e["n"] else
+                f'<span class="badge human">{esc(badge)}</span>')
+        A(f'''<article class="entry {rcls}"{anchor}>
   <div class="ehead">
-    <span class="badge {"human" if e["human"] else ""}">{esc(badge)}</span>
-    <h3>{inline(title)}</h3>
+    {back}
+<h3>{inline(title)}</h3>
     <span class="edate">{esc(f.get("날짜", ""))}</span>
     <span class="eres {rcls}">{esc(res_txt or "—")}</span>
   </div>''')
         if not e["human"] and not any(f.get(k) for k in ("문제", "원인", "고친 것")):
-            # 빈 절을 조용히 넘기면 「문제 없는 바퀴」와 구별이 안 된다.
+            # 빈 절을 조용히 넘기면 「문제 없는 회차」와 구별이 안 된다.
             A('<div class="row prob"><span class="k">일지</span>'
               '<span class="v"><strong>세션이 안 적었다.</strong> '
               '드라이버가 스텁만 찍었다 — 무엇이 막혔는지 남은 게 없다.</span></div>')
@@ -303,7 +336,7 @@ def render():
     A('<footer><strong>이 페이지는 스냅샷이다.</strong> '
       '<code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 '
       '아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 '
-      '바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 '
+      '바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 회차</strong>마다 '
       '굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>')
     A(FRESH)
     A('</div></body></html>')
@@ -312,7 +345,7 @@ def render():
 
 # 정적 페이지라 저절로 안 바뀐다. 그렇다고 읽는 중에 갈아치우면 그게 더 나쁘다 —
 # **바뀐 걸 알리기만 하고, 새로고침은 사람이 누른다.**
-FRESH = """<button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
+FRESH = """<button id="fresh" hidden>새 회차가 올라왔다 — 새로고침</button>
 <script>
 (function(){
   var el=document.getElementById('fresh'),
@@ -330,20 +363,20 @@ FRESH = """<button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침
 </script>"""
 
 DOCS = [
-    ("CLAUDE.md", ("fix", "고정"), "매 바퀴 · 자동 로드",
+    ("CLAUDE.md", ("fix", "고정"), "매 회차 · 자동 로드",
      "이 기계에서 **무엇을 어떤 명령으로** 돌리는가만. 부풀면 문맥이 오염된다"),
-    ("docs/PROMPT.md", ("inj", "주입"), "매 바퀴 · 드라이버가 넣는다",
-     "한 바퀴 4단계 · 정지 규칙 6개 · red lines. **세션은 이 파일을 열지 않는다**"),
-    ("docs/BACKLOG.md", ("inj", "주입"), "매 바퀴 · 한 줄만",
-     "할 일. **한 줄 = 한 바퀴.** 순서는 종속성이지 중요도가 아니다"),
+    ("docs/PROMPT.md", ("inj", "주입"), "매 회차 · 드라이버가 넣는다",
+     "한 회차 4단계 · 정지 규칙 6개 · red lines. **세션은 이 파일을 열지 않는다**"),
+    ("docs/BACKLOG.md", ("inj", "주입"), "매 회차 · 한 줄만",
+     "할 일. **한 줄 = 한 회차.** 순서는 종속성이지 중요도가 아니다"),
     ("docs/NUMBERS.md", ("cond", "조건부"), "값을 쓸 때 · 그 절만",
      "실측값. **잰 조건을 같이 적는다** — 「passed」는 증거가 아니다"),
     ("docs/GOTCHAS.md", ("cond", "조건부"), "에러가 났을 때만 · grep",
      "엔진·셸의 함정. 조건부라서 **의도적으로 계속 쌓는다**"),
     ("docs/GDD.md", ("cond", "조건부"), "그 영역을 처음 만들 때만",
-     "게임 기획서 — 「왜」. **매 바퀴 읽지 않는다.** 세션이 못 고친다"),
+     "게임 기획서 — 「왜」. **매 회차 읽지 않는다.** 세션이 못 고친다"),
     ("docs/JOURNAL.md", ("roll", "사람"), "세션은 안 읽는다",
-     "바퀴 일지. **무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나**"),
+     "회차 일지. **무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나**"),
 ]
 
 HEAD = """<!doctype html>
@@ -482,6 +515,17 @@ h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
 .commits li{display:flex;gap:12px;align-items:baseline;padding:6px 0;font-size:13px;
   border-bottom:1px dotted var(--line);color:var(--dim)}
 .commits .cd{font-size:11px;color:var(--faint);font-family:ui-monospace,monospace;flex:none}
+.turn{float:right;margin-left:10px;font-family:ui-monospace,monospace;font-size:10.5px;
+  font-weight:700;padding:1px 7px;border-radius:999px;background:var(--code);
+  color:var(--accent);text-decoration:none;flex:none}
+.turn:hover{background:var(--accent);color:var(--panel);text-decoration:none}
+.items li{position:relative}
+.items li:target,.entry:target{animation:flash 1.6s ease-out}
+@keyframes flash{0%,45%{background:var(--okbg);box-shadow:0 0 0 6px var(--okbg)}100%{}}
+a.badge{text-decoration:none}
+a.badge:hover{background:var(--accent);color:var(--panel);text-decoration:none}
+.entry{scroll-margin-top:16px}
+.items li{scroll-margin-top:16px}
 #fresh{position:fixed;right:16px;bottom:16px;z-index:9;font:inherit;font-size:13px;
   font-weight:600;padding:10px 16px;border-radius:999px;cursor:pointer;
   border:1px solid var(--ok);background:var(--okbg);color:var(--ok);

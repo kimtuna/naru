@@ -1,31 +1,31 @@
 #!/usr/bin/env bash
-# 계약을 실행한다. **이것만이 .loop/results.json 을 쓴다 — 유일한 증거다.**
+# 상태 검사를 실행한다. **이것만이 .loop/results.json 을 쓴다 — 유일한 증거다.**
 #
 # 종료 코드
 #   0  ALL GREEN
 #   1  기준 하나 이상 빨강
-#   77 무장 뒤 계약이 변조됨   ← 세션이 검사를 고쳐서 통과하려 한 경우
-#   78 계약 파일이 없음 / 비어 있음
+#   77 무장 뒤 상태 검사가 변조됨   ← 세션이 검사를 고쳐서 통과하려 한 경우
+#   78 상태 검사 파일이 없음 / 비어 있음
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CRIT="$ROOT/.loop/criteria.tsv"
 ARMED="$ROOT/.loop/armed.sha256"
 OUT="$ROOT/.loop/results.json"
 
-# 중첩 방지 — 기준 안에서 계약을 다시 부르면 무한히 겹쳐 돈다.
+# 중첩 방지 — 기준 안에서 상태 검사를 다시 부르면 무한히 겹쳐 돈다.
 if [ "${IN_CONTRACT:-0}" = "1" ]; then
-  echo "계약이 계약 안에서 다시 불렸다 — 기준에 run-contract 를 넣지 마라." >&2
+  echo "상태 검사가 상태 검사 안에서 다시 불렸다 — 기준에 run-contract 를 넣지 마라." >&2
   exit 79
 fi
 export IN_CONTRACT=1
 
-[ -f "$CRIT" ] || { echo "계약 파일이 없다: $CRIT" >&2; exit 78; }
+[ -f "$CRIT" ] || { echo "상태 검사 파일이 없다: $CRIT" >&2; exit 78; }
 CUR="$(shasum -a 256 "$CRIT" | awk '{print $1}')"
 
 if [ -f "$ARMED" ]; then
   WANT="$(cat "$ARMED")"
   if [ "$CUR" != "$WANT" ]; then
-    echo "계약이 무장 뒤에 바뀌었다 — 검사를 고쳐서 통과하려는 것은 red line 이다." >&2
+    echo "상태 검사가 무장 뒤에 바뀌었다 — 검사를 고쳐서 통과하려는 것은 red line 이다." >&2
     echo "  무장: $WANT" >&2
     echo "  현재: $CUR" >&2
     exit 77
@@ -34,19 +34,19 @@ else
   WANT=""
 fi
 
-# 주석과 빈 줄을 뺀 기준만 센다. 전부 주석이면 「공허한 계약」이라 실패다.
+# 주석과 빈 줄을 뺀 기준만 센다. 전부 주석이면 「공허한 상태 검사」이라 실패다.
 # macOS 는 bash 3.2 라 mapfile 이 없다. while-read 로 읽는다.
 ROWS=()
 while IFS= read -r l; do ROWS+=("$l"); done \
   < <(grep -v '^[[:space:]]*#' "$CRIT" | grep -v '^[[:space:]]*$')
 if [ "${#ROWS[@]}" -eq 0 ]; then
-  echo "공허한 계약 — 기준이 하나도 없다." >&2
+  echo "공허한 상태 검사 — 기준이 하나도 없다." >&2
   exit 78
 fi
 
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 FAILED=0; IDX=0
-echo "== 계약 실행 (기준 ${#ROWS[@]}개) =="
+echo "== 상태 검사 실행 (기준 ${#ROWS[@]}개) =="
 for row in "${ROWS[@]}"; do
   IDX=$((IDX+1))
   id="$(printf '%s' "$row" | cut -f1)"

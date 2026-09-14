@@ -3,7 +3,7 @@ extends TestBase
 ## 손을 잰다 — **순수 계산과 화면 자리의 기하**. 픽셀에 정말 그려졌는지와
 ## 숫자키가 정말 손을 옮기는지는 `measure_window.gd` 의 HOTBAR 가 잰다.
 ##
-## **숫자를 글자로 박는다** (바퀴 19 의 교훈): 9칸도 화면 아래도 사람이 정한 값이라
+## **숫자를 글자로 박는다** (회차 19 의 교훈): 9칸도 화면 아래도 사람이 정한 값이라
 ## `Hotbar.SLOTS` 라는 **이름**으로만 쓰면 8칸으로 줄여도 한 줄이 안 빨개진다.
 
 const WOOD := &"wood"
@@ -68,7 +68,7 @@ func test_empty_slot_is_an_empty_hand() -> void:
 	eq(h.held_amount(), 0, "맨손의 개수")
 
 func test_hotbar_slot_holds_the_same_stack_as_the_bag() -> void:
-	# 한 칸 999 (바퀴 19 · 사람이 정했다). 손과 가방이 다른 상한을 쓰면
+	# 한 칸 999 (회차 19 · 사람이 정했다). 손과 가방이 다른 상한을 쓰면
 	# 가방에서 손으로 옮기는 순간 개수가 사라진다.
 	var h := Hotbar.new()
 	eq(h.items.add(WOOD, 999), 0, "한 칸에 999개가 들어가야 한다")

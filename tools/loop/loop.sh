@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# 드라이버 — 무인으로 바퀴를 돈다.
+# 드라이버 — 무인으로 회차를 돈다.
 #
-#   백로그 한 줄 뽑기 → 세션 열기 → 계약 실행 → 초록이면 다음 → 정지 규칙에 걸리면 멈춘다
+#   백로그 한 줄 뽑기 → 세션 열기 → 상태 검사 실행 → 초록이면 다음 → 정지 규칙에 걸리면 멈춘다
 #
 # 세션에게 「검사를 약하게 하지 마세요」라고 부탁하지 않는다. 구조로 막는다:
-#   · 계약은 해시로 잠겨 있고, 고치면 exit 77 로 죽는다
+#   · 상태 검사는 해시로 잠겨 있고, 고치면 exit 77 로 죽는다
 #   · 판정은 세션이 아니라 run-contract.sh 가 한다
 #   · 사람만 답할 수 있는 항목([ASK])은 **세션을 아예 열지 않는다**
 #
-# 사용법: loop.sh [--dry-run] [바퀴수]
+# 사용법: loop.sh [--dry-run] [회차수]
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -42,20 +42,20 @@ verify_of() {
   printf '%s' "$v" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s/^`//; s/`$//'
 }
 
-# ── 초록으로 끝난 항목의 verify 를 계약에 영구 기준으로 승격한다 ──────
+# ── 초록으로 끝난 항목의 verify 를 상태 검사에 영구 기준으로 승격한다 ──────
 #
-# **이게 없으면 항목 일을 하나도 안 해도 초록이 나온다** — 계약이
+# **이게 없으면 항목 일을 하나도 안 해도 초록이 나온다** — 상태 검사가
 # import/parse/tests 셋뿐이라 그 항목과 무관하게 통과하기 때문이다.
 # 승격한 뒤 다시 무장하므로 세션은 그 기준을 건드릴 수 없고,
-# 다음 바퀴부터 회귀도 자동으로 잡힌다.
+# 다음 회차부터 회귀도 자동으로 잡힌다.
 promote() {                               # promote <설명> <verify 명령>
   [ "$DRY" = "1" ] && return 0
   local d="$1" v="$2"
   [ -z "$v" ] && return 0
-  # **재귀 차단.** 계약 자신을 부르는 verify 를 기준으로 올리면 무한히 겹쳐 돈다
-  # (redteam.sh 는 계약을 6번 부른다).
+  # **재귀 차단.** 상태 검사 자신을 부르는 verify 를 기준으로 올리면 무한히 겹쳐 돈다
+  # (redteam.sh 는 상태 검사를 6번 부른다).
   case "$v" in
-    *run-contract*|*redteam*|*loop.sh*) say "기준 승격 건너뜀 (계약을 다시 부른다): $v"; return 0 ;;
+    *run-contract*|*redteam*|*loop.sh*) say "기준 승격 건너뜀 (상태 검사를 다시 부른다): $v"; return 0 ;;
   esac
   grep -qF "	$v" .loop/criteria.tsv && return 0     # 이미 있다
   local id
@@ -64,14 +64,14 @@ promote() {                               # promote <설명> <verify 명령>
   bash tools/loop/arm-contract.sh >/dev/null
   git add .loop/criteria.tsv .loop/armed.sha256
   git -c user.name=loop -c user.email=loop@local commit -q \
-    -m "계약에 기준 $id 추가 — $d" || true
+    -m "상태 검사에 기준 $id 추가 — $d" || true
   say "기준 $id 승격: $v"
 }
 
 # ── 테스트 개수 바닥을 지금 개수로 올린다 ────────────────────────────
 #
-# 계약 안에 인자로 박혀 있고 계약은 무장돼 있으므로 세션이 못 낮춘다.
-# 다음 바퀴에 검사를 지우면 그 자리에서 빨개진다.
+# 상태 검사 안에 인자로 박혀 있고 상태 검사는 무장돼 있으므로 세션이 못 낮춘다.
+# 다음 회차에 검사를 지우면 그 자리에서 빨개진다.
 bump_mintests() {
   [ "$DRY" = "1" ] && return 0
   local now cur
@@ -89,16 +89,16 @@ bump_mintests() {
   say "테스트 바닥 $cur → $now"
 }
 
-# ── 바퀴 기록을 잘라낸다 ─────────────────────────────────────────────
-# state.md 는 바퀴마다 자란다. 통째로 읽게 두면 바퀴 비용이 계속 는다
-# (1판은 매 바퀴 읽는 문서가 758+1012+826 줄까지 갔다).
+# ── 회차 기록을 잘라낸다 ─────────────────────────────────────────────
+# state.md 는 회차마다 자란다. 통째로 읽게 두면 회차 비용이 계속 는다
+# (1판은 매 회차 읽는 문서가 758+1012+826 줄까지 갔다).
 roll_state() {
   [ "$DRY" = "1" ] && return 0
   local out; out="$(python3 tools/loop/state.py roll 3)"
   say "$out"
   if [ -n "$(git status --porcelain .loop/state.md .loop/archive 2>/dev/null)" ]; then
     git add .loop/state.md .loop/archive 2>/dev/null || true
-    git -c user.name=loop -c user.email=loop@local commit -q -m "바퀴 기록 롤링" || true
+    git -c user.name=loop -c user.email=loop@local commit -q -m "회차 기록 롤링" || true
   fi
 }
 
@@ -107,7 +107,7 @@ roll_state() {
 # 세션은 「문제·원인·고친 것·남긴 것」을 쓰고, 여기서 「날짜·결과·채점·비용·커밋」을 찍는다.
 # **줄의 주인을 갈라 놓지 않으면** 세션이 결과 칸에 「됐습니다」를 쓰고, 일지가 증거가
 # 아니라 자기 보고가 된다. 채점 칸에는 `results.json` — 채점자가 쓴 것 — 만 들어간다.
-finish_journal() {                        # finish_journal <바퀴> <항목> <결과> <커밋>
+finish_journal() {                        # finish_journal <회차> <항목> <결과> <커밋>
   [ "$DRY" = "1" ] && return 0
   # 찍히는 커밋은 **항목을 만든 커밋**이다. 이 함수는 roll_state 뒤에 도는데
   # 그 사이 부기 커밋(기준 승격 · 바닥 올림 · 롤링)이 끼면 그게 찍힌다.
@@ -115,18 +115,18 @@ finish_journal() {                        # finish_journal <바퀴> <항목> <�
   # **대시보드가 안 구워지면 멈춘다.** 바깥에서 볼 수 있는 유일한 창인데
   # 조용히 실패하면 페이지가 낡은 채로 며칠을 간다 — 실제로 문법 하나가 깨져서 그랬다.
   if ! python3 tools/loop/report.py | sed 's/^/    /'; then
-    stop "대시보드를 못 구웠다 — tools/loop/report.py (바퀴 $1)"
+    stop "대시보드를 못 구웠다 — tools/loop/report.py (회차 $1)"
   fi
   if [ -n "$(git status --porcelain docs/JOURNAL.md docs/index.html 2>/dev/null)" ]; then
     git add docs/JOURNAL.md docs/index.html docs/.nojekyll 2>/dev/null || true
     git -c user.name=loop -c user.email=loop@local commit -q \
-      -m "바퀴 $1 일지 · 대시보드 갱신" || true
+      -m "회차 $1 일지 · 대시보드 갱신" || true
   fi
 }
 
-# ── 초록으로 닫힌 바퀴만 바깥으로 내보낸다 ──────────────────────────
+# ── 초록으로 닫힌 회차만 바깥으로 내보낸다 ──────────────────────────
 #
-# **빨간 것은 안 나간다.** 계약도 항목 verify 도 일지도 다 통과한 뒤에만 부른다.
+# **빨간 것은 안 나간다.** 상태 검사도 항목 verify 도 일지도 다 통과한 뒤에만 부른다.
 # 대시보드가 GitHub Pages 라, 커밋만 하고 안 밀면 페이지가 낡은 채로 남는다.
 # 푸시가 실패해도 루프는 계속 돈다 — 네트워크는 이 루프의 판정 대상이 아니다.
 push_state() {
@@ -141,9 +141,9 @@ push_state() {
 }
 
 # ── 회귀 감지: 지난번 초록이던 기준이 지금 빨강인가 ─────────────────
-# **항목의 verify 가 계약을 다시 부를 수 있다** — `redteam.sh` 는 30번 부른다.
+# **항목의 verify 가 상태 검사를 다시 부를 수 있다** — `redteam.sh` 는 30번 부른다.
 # 그러면 `.loop/results.json` 이 verify 안쪽의 마지막 판으로 덮여서, 회귀 감지가
-# 「계약이 깬 것」이 아니라 「대조군이 일부러 깬 것」을 보고 멈춘다. 실제로 그랬다.
+# 「상태 검사가 깬 것」이 아니라 「대조군이 일부러 깬 것」을 보고 멈춘다. 실제로 그랬다.
 # 그래서 채점 직후의 판본을 따로 떠 두고 그것과 비교한다.
 regressed() {
   [ -f "$PREV" ] || return 1
@@ -168,12 +168,12 @@ fails=0
 
 while [ "$cycle" -lt "$MAX_CYCLES" ]; do
   cycle=$((cycle+1))
-  say "───────── 바퀴 $cycle / $MAX_CYCLES ─────────"
+  say "───────── 회차 $cycle / $MAX_CYCLES ─────────"
 
-  # 1) 워킹트리 — 이전 바퀴가 안 끝났으면 여기서 멈춘다
+  # 1) 워킹트리 — 이전 회차가 안 끝났으면 여기서 멈춘다
   if [ -n "$(git status --porcelain)" ]; then
     git status --short
-    stop "워킹트리가 더럽다 — 이전 바퀴가 커밋 없이 끝났다"
+    stop "워킹트리가 더럽다 — 이전 회차가 커밋 없이 끝났다"
   fi
 
   # 2) 다음 항목
@@ -190,7 +190,7 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
 
   # 4) 같은 항목 연속 실패
   if [ "$item" = "$last_item" ] && [ "$fails" -ge "$STUCK_LIMIT" ]; then
-    stop "같은 항목이 ${fails}바퀴 연속 실패했다 — 고치는 게 아니라 찍고 있다"
+    stop "같은 항목이 ${fails}회차 연속 실패했다 — 고치는 게 아니라 찍고 있다"
   fi
   [ "$item" != "$last_item" ] && fails=0
   last_item="$item"
@@ -204,22 +204,22 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
   RD="$RUNS/$(printf '%03d' "$cycle")"; mkdir -p "$RD"
   head_before="$(git rev-parse HEAD)"
 
-  # 일지의 바퀴 번호는 **이 실행이 아니라 프로젝트 전체의 몇 번째 바퀴인가**다.
+  # 일지의 회차 번호는 **이 실행이 아니라 프로젝트 전체의 몇 번째 회차인가**다.
   # loop.sh 를 다시 부를 때마다 1 로 돌아가면 일지가 겹쳐 쓰인다.
   turn="$(bash tools/loop/journal.sh next)"
-  say "일지 바퀴 $turn"
+  say "일지 회차 $turn"
 
   # 6) 세션
   # 문맥은 **드라이버가 조립한다** — 세션이 파일을 여는 횟수를 줄이는 것이
-  # 바퀴 비용을 줄이는 가장 큰 자리다. state.md 는 자라므로 꼬리만 넣는다.
+  # 회차 비용을 줄이는 가장 큰 자리다. state.md 는 자라므로 꼬리만 넣는다.
   {
     cat docs/PROMPT.md
-    printf '\n\n---\n\n## 이번 바퀴 — 일지 번호 %s (이 실행의 %d/%d)\n\n%s\n' \
+    printf '\n\n---\n\n## 이번 회차 — 일지 번호 %s (이 실행의 %d/%d)\n\n%s\n' \
       "$turn" "$cycle" "$MAX_CYCLES" "$item"
     printf '\n### 끝나면 일지를 적는다 — docs/JOURNAL.md\n\n'
     printf '맨 위 `---` 바로 아래에 절을 하나 덧붙인다. **이 파일을 통째로 읽지 마라** — 형식은 이게 전부다.\n\n'
-    printf '```markdown\n## 바퀴 %s · %s\n' "$turn" "$(desc_of "$item")"
-    printf -- '- 문제: <이번 바퀴에 실제로 막힌 것. 없으면 「없음」>\n'
+    printf '```markdown\n## 회차 %s · %s\n' "$turn" "$(desc_of "$item")"
+    printf -- '- 문제: <이번 회차에 실제로 막힌 것. 없으면 「없음」>\n'
     printf -- '- 원인: <왜 그랬나. 증상이 아니라 이유>\n'
     printf -- '- 고친 것: <무엇을 어떻게 바꿨나. 파일 이름을 적는다>\n'
     printf -- '- 바꾼 결정: <설계·규칙이 바뀌었으면. 없으면 「없음」>\n'
@@ -227,10 +227,10 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
     printf -- '- 남긴 것: <다음으로 넘긴 것 / 사람이 정할 것. 없으면 「없음」>\n```\n'
     printf '\n`날짜`·`결과`·`채점`·`비용`·`커밋` 은 **드라이버가 찍는다. 쓰지 마라.**\n'
     printf '`문제`·`원인`·`고친 것`·`남긴 것` 이 비어 있으면 **초록이어도 루프가 멈춘다.**\n'
-    printf '막힌 게 없었으면 `문제: 없음` 이라고 적는다 — 빈 바퀴와 안 적은 바퀴는 다르다.\n' 
-    printf '\n### 최근 바퀴 (state.md 를 열지 마라 — 이게 전부다)\n\n'
+    printf '막힌 게 없었으면 `문제: 없음` 이라고 적는다 — 빈 회차와 안 적은 회차는 다르다.\n' 
+    printf '\n### 최근 회차 (state.md 를 열지 마라 — 이게 전부다)\n\n'
     python3 tools/loop/state.py tail 2
-    printf '\n### 지금 계약\n\n```\n'
+    printf '\n### 지금 상태 검사\n\n```\n'
     grep -v '^[[:space:]]*#' .loop/criteria.tsv | cut -f1,2
     printf '```\n'
   } > "$RD/prompt.txt"
@@ -264,15 +264,15 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
   bash tools/loop/run-contract.sh > "$RD/contract.txt" 2>&1
   crc=$?
   sed 's/^/    /' "$RD/contract.txt"
-  # 채점 직후의 판본. verify 가 계약을 다시 불러 results.json 을 덮어도 이건 산다.
+  # 채점 직후의 판본. verify 가 상태 검사를 다시 불러 results.json 을 덮어도 이건 산다.
   GRADED="$RD/results.json"
   cp "$ROOT/.loop/results.json" "$GRADED" 2>/dev/null || true
 
-  # red line — 계약을 고쳐서 통과하려 했다
-  [ "$crc" -eq 77 ] && stop "계약이 무장 뒤에 변조됐다 (red line) — 바퀴 $cycle"
-  [ "$crc" -eq 78 ] && stop "계약 파일이 없거나 공허하다 — 바퀴 $cycle"
+  # red line — 상태 검사를 고쳐서 통과하려 했다
+  [ "$crc" -eq 77 ] && stop "상태 검사가 무장 뒤에 변조됐다 (red line) — 회차 $cycle"
+  [ "$crc" -eq 78 ] && stop "상태 검사 파일이 없거나 공허하다 — 회차 $cycle"
 
-  # 7b) 이 항목 자신의 verify 도 돌린다. 계약만으로는 항목을 안 해도 초록이 난다.
+  # 7b) 이 항목 자신의 verify 도 돌린다. 상태 검사만으로는 항목을 안 해도 초록이 난다.
   vcmd="$(verify_of "$item")"
   vrc=0
   if [ -n "$vcmd" ]; then
@@ -287,7 +287,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     fi
   fi
 
-  # verify 가 계약을 다시 불렀으면 증거를 채점 시점으로 되돌린다 —
+  # verify 가 상태 검사를 다시 불렀으면 증거를 채점 시점으로 되돌린다 —
   # 일지의 「채점」과 대시보드가 대조군의 빨강을 물려받으면 안 된다.
   cp "$GRADED" "$ROOT/.loop/results.json" 2>/dev/null || true
 
@@ -308,7 +308,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     roll_state
     finish_journal "$turn" "$item" "초록" "$(git rev-parse --short "$head_after")"
     if [ "$DRY" = "0" ] && ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
-      stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 바퀴 $turn)"
+      stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 회차 $turn)"
     fi
     push_state
     fails=0
@@ -329,5 +329,5 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
   fi
 done
 
-say "───────── 바퀴 소진 ($MAX_CYCLES) ─────────"
-stop "최대 바퀴 수 $MAX_CYCLES 소진"
+say "───────── 회차 소진 ($MAX_CYCLES) ─────────"
+stop "최대 회차 수 $MAX_CYCLES 소진"
