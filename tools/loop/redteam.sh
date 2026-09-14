@@ -287,6 +287,21 @@ PYX
 expect 1 "색 캐시를 안 버리면 잡는다 (걸으면 땅이 어긋난다)"
 cp "$BAK/main.gd" scripts/main.gd
 
+# **`[서서]` 는 한 점도 안 어긋난다 — `[걷고]` 만 잡는다.** 앞의 ④(캐시를 안 버린다)는
+# 해안까지의 순간이동이 이미 캐시를 상하게 해서 `[서서]` 에서 먼저 빨개졌다.
+# 여기는 **두 칸 넘게 움직였을 때만** 다시 채운다 — 순간이동(101칸)은 멀쩡히 채우고,
+# 한 칸씩 걷는 동안만 한 칸 뒤처진다. **걷는 구간의 존재 이유가 이 한 줄이다.**
+python3 - <<'PYZ'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tif r != _cache_range:\n\t\t_fill_cache(r)",
+    "\tif r.size != _cache_range.size or (r.position - _cache_range.position).length() >= 2.0:"
+    "\n\t\t_fill_cache(r)", 1))
+PYZ
+expect 1 "캐시를 두 칸마다 채우면 걷는 구간만 잡는다 (서서는 멀쩡하다)"
+cp "$BAK/main.gd" scripts/main.gd
+
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
 cp "$BAK/project.godot" project.godot
