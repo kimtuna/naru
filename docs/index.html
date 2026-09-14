@@ -147,18 +147,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 2026-09-14 09:39</p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 2026-09-14 09:54</p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">루프</span><span class="v"><i class="dot halt"></i>멈춰 있다</span></div>
-<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 09:38</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">8 <small>/ 42</small></span><span class="note">백로그 항목</span></div>
-<div class="tile"><span class="k">누적 비용</span><span class="v">$2.7869</span></div>
+<div class="tile"><span class="k">루프</span><span class="v"><i class="dot run"></i>돌고 있다</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 09:54</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">9 <small>/ 42</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$5.1658</span></div>
 </section>
-<div class="alert halt"><strong>멈춘 사유</strong> — 최대 바퀴 수 1 소진<span class="note">2026-09-14 09:38:25</span></div>
-<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</div>
+<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span><strong>마우스가 방향을 정한다</strong> — 이동 방향과 별개. 4방향 스냅 + 히스테리시스</div>
 <h2>진행 — 한 줄 = 한 바퀴</h2>
 <div class="phases">
 <details class="phase full">
@@ -178,11 +177,11 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P1</span>
     <span class="ptitle">걸어다니는 세계</span>
-    <span class="pcount">1/6</span>
-    <span class="bar"><i style="width:17%"></i></span></summary>
+    <span class="pcount">2/6</span>
+    <span class="bar"><i style="width:33%"></i></span></summary>
   <ul class="items">
 <li class="done"><span class="box">✔</span>색 네모 플레이어가 48px 타일 위를 속도 240 으로 <strong>8방향</strong> 이동 (대각선 정규화)</li>
-<li class="todo"><span class="box"></span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</li>
+<li class="done"><span class="box">✔</span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</li>
 <li class="todo"><span class="box"></span><strong>마우스가 방향을 정한다</strong> — 이동 방향과 별개. 4방향 스냅 + 히스테리시스</li>
 <li class="todo"><span class="box"></span>시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드</li>
 <li class="todo"><span class="box"></span>이동 충돌 — 바다에 못 들어가고, 해안에 비스듬히 붙으면 미끄러진다</li>
@@ -268,7 +267,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">모든 GDScript 가 파스된다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh parse</code>
-<ul class="ev"><li>PARSE 11개 스크립트, 실패 0</li></ul>
+<ul class="ev"><li>PARSE 12개 스크립트, 실패 0</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">3</span>
@@ -289,12 +288,27 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">매 바퀴 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  59/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  79/90줄</li></ul>
 </div>
 </div>
 <h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 4</span>
+    <h3>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</h3>
+    <span class="edate">2026-09-14</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">항목이 이미 끝나 있었다. <code>test_project_settings.gd</code> 가 960×540·1920×1080· integer·20×11.25 를 전부 강제하고 있어서 손댈 것이 없었다 — <strong>그런데 그게 재는 것은 <code>project.godot</code> 의 글자뿐이다.</strong> 바퀴 3 에서 이미 같은 모양의 구멍을 봤다 (단위 검사 18개가 전부 초록인데 노드가 속도를 반으로 줄여도 안 잡혔다).</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">설정 값을 읽는 검사는 <strong>실행 중에 값이 덮이는 것</strong>을 못 본다. 카메라 줌 한 줄, <code>window_set_size</code> 한 줄이면 눈에 보이는 칸이 달라지는데 <code>ProjectSettings.get_setting()</code> 은 여전히 960 을 준다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><strong>실측 게이트 <code>tools/tests/measure_view.gd</code></strong> 를 만들었다 — 실제 창을 띄워 메인 씬을 5프레임 돌리고 논리 화면·창·배율·카메라 배율·보이는 칸을 잰다. 배율은 나눗셈이 아니라 <code>root.get_final_transform()</code>, 보이는 칸은 <code>get_canvas_transform()</code> 으로 월드 좌표로 환산해서 잰다. <code>tools/loop/check.sh</code> 의 <code>tests</code> 단계가 <code>MOVE</code> 뒤에 <strong><code>--headless</code> 없이</strong> 부른다. 대조군 2종을 <code>tools/loop/redteam.sh</code> 에 박았고 <code>docs/NUMBERS.md</code> 1절· <code>docs/GOTCHAS.md</code> 에 잰 값과 함정을 적었다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v">없음. 다만 <strong>카메라 줌 = 1 을 지금부터 게이트가 강제한다</strong> — BACKLOG P1 의 「줌 없음」이 나중 항목이 아니라 이미 잠겼다.</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v">헤드리스로는 배율을 못 잰다(창 크기가 <code>(0,0)</code>). 그래서 계약의 기준 4 가 <strong>GUI 세션을 필요로 한다</strong> — 화면 없는 기계에서 루프를 돌리려면 이 게이트를 분리해야 한다. <strong>사람이 볼 것</strong>: 20×11.25 칸이 실제로 답답하지 않은지는 숫자가 아니라 눈이 정한다 (바퀴 3 의 <code>screencapture</code> 권한 문제가 그대로 남아 있다).  ---</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v"><code>VIEW 논리 960x540 · 창 1920x1080 · 배율 2.00x · 카메라 1.00x · 타일 48px · 보이는 칸 20.00 x 11.25</code> (드라이버 macOS · 5프레임 뒤) · <code>TESTS 18 passed, 0 failed</code> · <code>MOVE 가로 238.41 px/s · 대각 238.35 px/s</code> (실이동 240.00 px) · <code>PARSE 12개 실패 0</code> · <code>ALL GREEN</code> (기준 5개). <strong>대조군: 카메라 zoom=(2,2) → 보이는 칸 10.00 x 5.62 · 실행 중 창 1600×900 → 배율 1.00x. 둘 다 단위 검사 18개는 전부 초록으로 남았다</strong> — 새 게이트만 잡았다. 전체 대조군: <strong><code>REDTEAM 13 잡음, 0 놓침</code>.</strong> 바퀴 3 이 놓친 「검사를 지우면 테스트 바닥이 잡는다」도 이제 잡는다 — 사람이 <code>mintests</code> 바닥을 8 → 18 로 올려 놨기 때문이다.</span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 12개 스크립트, 실패 0 · 3 TESTS 18 passed, 0 failed · 4 TESTS 18 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  79/90줄</span><span>$5.1658 누적</span><span><code>83ad8df</code></span></div>
+</article>
 <article class="entry ok">
   <div class="ehead">
     <span class="badge human">사람</span>
@@ -425,6 +439,10 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/83ad8df"><code>83ad8df</code></a><span class="cd">2026-09-14</span>바퀴 기록 롤링</li>
+<li><a href="https://github.com/kimtuna/naru/commit/eebde9b"><code>eebde9b</code></a><span class="cd">2026-09-14</span>P1-2 화면 실측 게이트 — 설정 글자가 아니라 실제 창을 잰다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/db1d512"><code>db1d512</code></a><span class="cd">2026-09-14</span>README — 대시보드와 루프 구조</li>
+<li><a href="https://github.com/kimtuna/naru/commit/35c068d"><code>35c068d</code></a><span class="cd">2026-09-14</span>일지에 이번 사람 세션 기록 · 빈 절을 대시보드가 드러낸다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/5b8df73"><code>5b8df73</code></a><span class="cd">2026-09-14</span>드라이버 경로 두 곳 — dry-run 이 잡았다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/7533cb0"><code>7533cb0</code></a><span class="cd">2026-09-14</span>문서를 docs/ 한 곳으로 · 바퀴 일지 · GitHub Pages 대시보드</li>
 <li><a href="https://github.com/kimtuna/naru/commit/71f9b89"><code>71f9b89</code></a><span class="cd">2026-09-13</span>문서 구조 세분화 — 매 바퀴 읽는 것을 줄이고 얇음을 게이트로 박는다</li>
@@ -433,10 +451,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/aa0234c"><code>aa0234c</code></a><span class="cd">2026-09-13</span>계약에 기준 4 추가 — 색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</li>
 <li><a href="https://github.com/kimtuna/naru/commit/f9ae231"><code>f9ae231</code></a><span class="cd">2026-09-13</span>바퀴 3 기록 — 대조군 자동화 결과와 테스트 바닥 문제</li>
 <li><a href="https://github.com/kimtuna/naru/commit/440359e"><code>440359e</code></a><span class="cd">2026-09-13</span>P1-1 — 색 네모 플레이어 · 48px 타일 · 240 px/s WASD 이동</li>
-<li><a href="https://github.com/kimtuna/naru/commit/38b7779"><code>38b7779</code></a><span class="cd">2026-09-13</span>드라이버 보강 — 항목 verify 실행 · 기준 승격 · 테스트 바닥</li>
-<li><a href="https://github.com/kimtuna/naru/commit/aa33092"><code>aa33092</code></a><span class="cd">2026-09-13</span>P0-5 — 무인 드라이버 (loop.sh · ctl.sh)</li>
-<li><a href="https://github.com/kimtuna/naru/commit/3482691"><code>3482691</code></a><span class="cd">2026-09-13</span>P0-4 — 대조군을 스크립트로 (redteam.sh)</li>
-<li><a href="https://github.com/kimtuna/naru/commit/6e135c8"><code>6e135c8</code></a><span class="cd">2026-09-13</span>P0-3 — 계약 배선: 증거를 기계가 쓴다</li>
 </ul>
 <footer>이 페이지는 <code>tools/loop/report.py</code> 가 굽는다. 값은 페이지에 구워져 있다 — 아무것도 fetch 하지 않는다.</footer>
 </div></body></html>
