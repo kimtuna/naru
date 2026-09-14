@@ -152,18 +152,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 14:01:53</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 14:16:31</span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 10</span><span class="note">초록 · 2026-09-14</span></div>
-<div class="tile"><span class="k">계약</span><span class="v bad">빨강</span><span class="note">2026-09-14 14:00</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">15 <small>/ 46</small></span><span class="note">백로그 항목</span></div>
-<div class="tile"><span class="k">누적 비용</span><span class="v">$30.9994</span></div>
+<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 11</span><span class="note">초록 · 2026-09-14</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 14:16</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">16 <small>/ 46</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$34.8262</span></div>
 </section>
-<div class="alert halt"><strong>멈춘 사유</strong> — 회귀 — 통과하던 기준이 깨졌다: 3<span class="note">2026-09-14 13:46:23</span></div>
-<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span><strong><code>measure_facing.gd</code> 가 사람의 마우스에 안 흔들리게 한다</strong> — 진짜 커서를 뺏어 재는</div>
+<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span><strong>계약이 <code>check.sh tests</code> 를 두 번 돈다</strong> — 기준 3(<code>mintests.sh</code>)과 기준 4 가</div>
 <h2>진행 — 한 줄 = 한 바퀴</h2>
 <div class="phases">
 <details class="phase full">
@@ -183,8 +182,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P1</span>
     <span class="ptitle">걸어다니는 세계</span>
-    <span class="pcount">8/10</span>
-    <span class="bar"><i style="width:80%"></i></span></summary>
+    <span class="pcount">9/10</span>
+    <span class="bar"><i style="width:90%"></i></span></summary>
   <ul class="items">
 <li class="done"><span class="box">✔</span>색 네모 플레이어가 48px 타일 위를 속도 240 으로 <strong>8방향</strong> 이동 (대각선 정규화)</li>
 <li class="done"><span class="box">✔</span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</li>
@@ -194,7 +193,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done"><span class="box">✔</span>카메라가 플레이어를 따라간다. <strong>줌 없음</strong> (해상도가 시야 이득이 되면 안 된다)</li>
 <li class="done"><span class="box">✔</span><strong>월드를 화면에 그린다</strong> — 보이는 칸만. <code>main.gd</code> 의 임시 격자를 걷어낸다</li>
 <li class="done"><span class="box">✔</span><code>measure_draw.gd</code> 의 <strong>걷는 구간에 대조군을 붙이거나 그 구간을 뺀다</strong></li>
-<li class="todo"><span class="box"></span><strong><code>measure_facing.gd</code> 가 사람의 마우스에 안 흔들리게 한다</strong> — 진짜 커서를 뺏어 재는</li>
+<li class="done"><span class="box">✔</span><strong><code>measure_facing.gd</code> 가 사람의 마우스에 안 흔들리게 한다</strong> — 진짜 커서를 뺏어 재는</li>
 <li class="todo"><span class="box"></span><strong>계약이 <code>check.sh tests</code> 를 두 번 돈다</strong> — 기준 3(<code>mintests.sh</code>)과 기준 4 가</li>
 </ul></details>
 <details class="phase none">
@@ -272,12 +271,12 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <code class="cmd">tools/loop/check.sh import</code>
 <ul class="ev"><li>IMPORT ok</li></ul>
 </div>
-<div class="card bad">
+<div class="card ok">
   <div class="chead"><span class="cid">2</span>
     <span class="cwhat">모든 GDScript 가 파스된다</span>
-    <span class="cmark">빨강</span></div>
+    <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh parse</code>
-<ul class="ev"><li>  FAIL ./scripts/_redteam.gd</li><li>PARSE 28개 스크립트, 실패 1</li></ul>
+<ul class="ev"><li>PARSE 27개 스크립트, 실패 0</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">3</span>
@@ -286,19 +285,19 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <code class="cmd">bash tools/loop/mintests.sh 66</code>
 <ul class="ev"><li>TESTS 66 passed, 0 failed</li></ul>
 </div>
-<div class="card bad">
+<div class="card ok">
   <div class="chead"><span class="cid">4</span>
     <span class="cwhat">색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</span>
-    <span class="cmark">빨강</span></div>
+    <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh tests</code>
-<ul class="ev"><li>FACE FAIL 커서 각 아래 — 잰 값 87.15° · 기대 90.00°</li><li>FACE FAIL 커서 각 왼쪽 — 잰 값 177.60° · 기대 180.00°</li><li>FACE FAIL 커서 각 위 — 잰 값 -88.26° · 기대 -90.00°</li><li>FACE FAIL 커서 각 46°-붙잡음 — 잰 값 48.12° · 기대 46.00°</li><li>FACE FAIL 커서 각 60°-놓음 — 잰 값 61.74° · 기대 60.00°</li><li>FACE FAIL 6개 (구간 7 · 거리 200 px · 스냅 45° · 히스테리시스 10°)</li></ul>
+<ul class="ev"><li>TESTS 66 passed, 0 failed</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">5</span>
     <span class="cwhat">매 바퀴 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  85/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  88/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
@@ -311,6 +310,21 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 11</span>
+    <h3><strong><code>measure_facing.gd</code> 가 사람의 마우스에 안 흔들리게 한다</strong> — 진짜 커서를 뺏어 재는</h3>
+    <span class="edate">2026-09-14</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">게이트가 <code>Input.warp_mouse</code> 로 <strong>진짜 커서를 뺏어</strong> 쟀다. 사람이(또는 아무 프로세스가) 마우스를 건드리면 튄다 — 바퀴 8 · 사람 세션 · 바퀴 9 · 바퀴 10 <strong>네 번</strong>. 재현을 못 해서 네 바퀴 동안 「사람 탓」으로만 적고 넘겼다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v"><strong>루트 뷰포트의 <code>get_mouse_position()</code> 은 매번 OS 커서를 되묻는다.</strong> 그래서 warp 해 놓은 값이 사람의 손에 언제든 덮인다 — 게이트가 기계 전체와 커서 하나를 놓고 경합하고 있었다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><code>tools/tests/measure_facing.gd</code> — 메인 씬을 루트가 아니라 <strong>제 <code>SubViewport</code> 에</strong> 세우고 합성 <code>InputEventMouseMotion</code> 을 <code>push_input</code> 으로 밀어 넣는다. SubViewport 는 <strong>밀어 넣은 이벤트만</strong> 본다(<code>warp_mouse</code> 를 해도 안 흔들린다 — 쟀다). 창이 필요 없어져 <code>tools/loop/check.sh</code> 가 <strong><code>--headless</code> 로 부른다</strong>. <code>tools/loop/redteam.sh</code> 에 <strong>FACE 대조군 ④ 캔버스 변환</strong>을 넣었다(30 → 31개).</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>재현할 수 없는 흔들림은 방해를 직접 만들어서 재현한다.</strong> 두 번째 Godot 을 띄워 매 프레임 커서를 휘젓는 방해 프로세스를 썼더니 네 바퀴짜리 흔들림이 <strong>한 판에 재현됐다</strong>(옛 게이트 <code>FAIL 13개 · 7구간 전부</code>). 「사람 탓」은 원인이 아니라 <strong>아직 안 겨눈 조건</strong>이었다. 그리고 그 방해가 <strong>숨어 있던 둘째 버그</strong>를 끌어냈다 — 게이트는 <code>facing</code> 을 정하는 <code>_physics_process</code> 를 기다리면서 <strong>유휴 프레임</strong>을 세고 있었다. 부하가 걸리면 유휴 4프레임이 물리 한 틱도 못 품는다. <code>Engine.get_physics_frames()</code> 로 <strong>물리 틱</strong>을 센다(<code>SETTLE_TICKS = 2</code>).</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><code>redteam.sh</code> 한 판은 <strong>여전히 10분</strong>이다 — 줄어든 것은 「그동안 마우스를 못</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v">방해를 건 채 — 옛 게이트 <strong><code>FAIL 13개 · 7구간 전부</code></strong>(커서 각 <code>-155.5°</code>·<code>-137.3°</code>· <code>-158.2°</code>, 기대 0°·90°·180°), 새 게이트 <strong>헤드리스 7구간 전부 ok · 오차 0</strong> (<code>0.0°</code>·<code>90.0°</code>·<code>180.0°</code>·<code>-90.0°</code>·<code>46.0°</code>·<code>60.0°</code>) · <strong>창 띄운 채 15/15 초록</strong>. 둘째 버그: 마우스 안 건드리고 <strong>부하만</strong> — 유휴 프레임 셀 때 <strong>12회 중 1회 빨강</strong> (<code>커서 0.0°</code> 인데 <code>방향 (-1,0)</code>, 기대 <code>(1,0)</code>) → 물리 틱 셀 때 <strong>15회 중 0회</strong>. FACE 대조군 4종 전부 잡음 — ① 커서 안 읽음 <code>FAIL 4개</code> · ② 히스테리시스 건너뜀 <code>FAIL 1개</code> · ③ 코 안 돎 <code>FAIL 4개</code> · ④ <strong>캔버스 변환 빼먹음 <code>FAIL 6개</code></strong>(새로 넣었다). <code>TESTS 66 passed, 0 failed</code> · <code>PARSE 27개 실패 0</code> · <code>IMPORT ok</code> · <code>ALL GREEN</code>(기준 6개 · <strong>32.81s</strong>). <strong>새 게임 코드는 없다 — 게이트만 건드린 바퀴다.</strong></span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 27개 스크립트, 실패 0 · 3 TESTS 66 passed, 0 failed · 4 TESTS 66 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  88/90줄 · 6 SHOT 960x540  색 217개  가장 넓은 한 색 1.3%  → /tmp/w.png</span><span>$34.8262 누적</span><span><code>bcf276e</code> 쓴다」쪽이다(이제 <code>check.sh tests</code> 어디에서도 <code>warp_mouse</code> 를 안 부른다. 창을 띄우는 게이트는 <code>measure_view.gd</code> · <code>measure_draw.gd</code> 둘뿐이고 커서는 안 건드린다). 길이 자체는 BACKLOG 의 <strong>「계약이 <code>check.sh tests</code> 를 두 번 돈다」</strong>가 남아 있다. <strong>사람이 정할 것</strong>: 이번 바퀴에 새 대조군을 <strong>게이트 단위로만</strong> 돌려 4/4 를 확인했다 — 계약 단위 <code>redteam.sh</code> 한 판(10분)은 커밋 뒤에 돌린다.</span></div>
+</article>
 <article class="entry ok">
   <div class="ehead">
     <span class="badge human">사람</span>
@@ -589,7 +603,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
-<li><a href="https://github.com/kimtuna/naru/commit/0b56f70"><code>0b56f70</code></a><span class="cd">2026-09-14</span>FACE 게이트를 P1 맨 앞으로 · 일지에 가짜 회귀 기록</li>
+<li><a href="https://github.com/kimtuna/naru/commit/bcf276e"><code>bcf276e</code></a><span class="cd">2026-09-14</span>방향 게이트가 사람의 커서를 안 뺏는다 — 합성 입력 · 헤드리스</li>
+<li><a href="https://github.com/kimtuna/naru/commit/199ea63"><code>199ea63</code></a><span class="cd">2026-09-14</span>FACE 게이트를 P1 맨 앞으로 · 일지에 가짜 회귀 기록</li>
 <li><a href="https://github.com/kimtuna/naru/commit/7bad570"><code>7bad570</code></a><span class="cd">2026-09-14</span>가짜 회귀로 멈췄다 — 항목 verify 가 계약 증거를 덮었다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/1d08d2b"><code>1d08d2b</code></a><span class="cd">2026-09-14</span>바퀴 10 일지 · 백로그 · NUMBERS 9절 — 대조군 29 잡음, 1 놓침</li>
 <li><a href="https://github.com/kimtuna/naru/commit/a409c6a"><code>a409c6a</code></a><span class="cd">2026-09-14</span>걷는 구간에만 걸리는 대조군 ⑤ — 캐시를 두 칸마다 채운다</li>
@@ -600,7 +615,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/388b80f"><code>388b80f</code></a><span class="cd">2026-09-14</span>바퀴 9 일지 · 백로그 · NUMBERS 9절 — 대조군 28 잡음, 1 놓침</li>
 <li><a href="https://github.com/kimtuna/naru/commit/508a27a"><code>508a27a</code></a><span class="cd">2026-09-14</span>월드를 화면에 그린다 — 보이는 칸만</li>
 <li><a href="https://github.com/kimtuna/naru/commit/61f43ec"><code>61f43ec</code></a><span class="cd">2026-09-14</span>일지 — 대조군 한 판이 빨갰는데 재현이 안 됐다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/511db34"><code>511db34</code></a><span class="cd">2026-09-14</span>redteam 이 놓친 대조군의 증거를 남긴다</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>

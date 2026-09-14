@@ -65,6 +65,11 @@
   `TESTS 66 passed, 0 failed` · `PARSE 27개 실패 0` · `IMPORT ok` ·
   `ALL GREEN`(기준 6개 · **32.81s**). **새 게임 코드는 없다 — 게이트만 건드린 바퀴다.**
 - 남긴 것: `redteam.sh` 한 판은 **여전히 10분**이다 — 줄어든 것은 「그동안 마우스를 못
+- 날짜: 2026-09-14
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 27개 스크립트, 실패 0 · 3 TESTS 66 passed, 0 failed · 4 TESTS 66 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  88/90줄 · 6 SHOT 960x540  색 217개  가장 넓은 한 색 1.3%  → /tmp/w.png
+- 비용: $34.8262 누적
+- 커밋: `bcf276e`
   쓴다」쪽이다(이제 `check.sh tests` 어디에서도 `warp_mouse` 를 안 부른다. 창을 띄우는
   게이트는 `measure_view.gd` · `measure_draw.gd` 둘뿐이고 커서는 안 건드린다).
   길이 자체는 BACKLOG 의 **「계약이 `check.sh tests` 를 두 번 돈다」**가 남아 있다.
