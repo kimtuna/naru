@@ -57,7 +57,10 @@ P0 의 전부다** — 이게 없으면 매 바퀴가 사람 시간에 묶인다
 - [x] 논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25 | verify: `tools/loop/check.sh tests`
   > 설정 강제(`test_project_settings.gd`)는 이미 있었다. 이번 바퀴가 더한 것은
   > **실제 창을 띄워 재는 게이트** `tools/tests/measure_view.gd` 다 (NUMBERS 1절).
-- [ ] **마우스가 방향을 정한다** — 이동 방향과 별개. 4방향 스냅 + 히스테리시스 | verify: `tools/loop/check.sh tests`
+- [x] **마우스가 방향을 정한다** — 이동 방향과 별개. 4방향 스냅 + 히스테리시스 | verify: `tools/loop/check.sh tests`
+  > 스냅 반각 45° · **히스테리시스 10°**(잡는 45° / 놓는 55°) · 데드존 8px.
+  > 실측 게이트 `tools/tests/measure_facing.gd` 가 **진짜 커서를 창에 옮겨** 잰다.
+  > **10° 가 실제로 편한 값인지는 사람이 걸어 보고 정한다** — 지금은 추정이다.
 - [ ] 시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드 | verify: `tools/loop/check.sh tests`
 - [ ] 이동 충돌 — 바다에 못 들어가고, 해안에 비스듬히 붙으면 미끄러진다 | verify: `tools/loop/check.sh tests`
 - [ ] 카메라가 플레이어를 따라간다. **줌 없음** (해상도가 시야 이득이 되면 안 된다) | verify: `tools/loop/check.sh tests`

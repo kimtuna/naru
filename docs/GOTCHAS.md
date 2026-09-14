@@ -22,6 +22,11 @@
   배율이 2.00 그대로다 (2026-09-14 실측) — 배율은 `get_final_transform()` 에서 잰다.
 - **정수 배율은 창이 논리 화면의 정확한 배수가 아니면 아래로 떨어진다.** 1600×900 창에서
   960×540 은 배율 **1**(1.66 이 아니다)이 되고 화면 절반이 여백이 된다 (2026-09-14 실측).
+- **`Input.parse_input_event(InputEventMouseMotion)` 로는 커서 위치가 안 움직인다.**
+  `get_mouse_position()` 이 그대로다 (2026-09-14 실측) — **`Input.warp_mouse()` 를 쓴다.**
+  `tools/tests/measure_facing.gd` 가 그렇게 잰다.
+- **`Input.warp_mouse()` 는 창 좌표를 받는다.** 월드 좌표를 넣으면 배율만큼 어긋난다 —
+  `world * root.get_final_transform().get_scale().x` 로 바꿔서 넣는다 (배율 2.00x 실측).
 - **타입 추론이 안 되는 대입은 파스 에러다.** `var s := load(...).instantiate()` 는
   실패한다 — `var s: Node = packed.instantiate()` 처럼 타입을 적는다.
 
