@@ -66,6 +66,11 @@
   `REDTEAM 20 잡음, 2 놓침` — 새 대조군 3종은 전부 잡았고, 앞의 둘은
   **단위 검사 53개를 초록으로 남긴 채 `COLLIDE` 만** 잡았다.
 - 남긴 것: 놓친 둘은 게이트가 아니라 환경과 바닥이다 — 「검사를 지우면 바닥이 잡는다」
+- 날짜: 2026-09-14
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 22개 스크립트, 실패 0 · 3 TESTS 53 passed, 0 failed · 4 TESTS 53 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  74/90줄
+- 비용: $17.3197 누적
+- 커밋: `4490f4a`
   (검사 53 · `mintests` 바닥 35, 무장된 `criteria.tsv` 안이라 안 건드렸다)와
   「원복하면 다시 초록이다」(`FACE` 가 마우스로 한 번 튐. 같은 트리에서 다시 돌린 계약은
   `ALL GREEN`). **사람이 정할 것: 몸 반폭 22 는 「폭 1칸 통로를 지난다」로 고른 값이라
