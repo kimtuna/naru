@@ -29,22 +29,39 @@ try:
 except Exception:
     d = {}
 
+# **정상으로 끝났으면 거기서 끝이다.** 아래 낱말 찾기를 JSON 전체에 돌리면
+# session_id 나 비용 숫자에 우연히 든 「503」 같은 것이 걸린다 — 실제로 걸렸다
+# (2026-09-15: stop_reason end_turn · exit 0 인 회차를 retry 로 잘못 봤다).
+if rc == 0 and isinstance(d, dict) and d and not d.get("is_error"):
+    print("ok"); sys.exit(0)
+
+# 낱말은 **stderr 와 오류 필드에서만** 찾는다. 성공한 JSON 본문은 안 본다.
+blob = read(err)
+if isinstance(d, dict):
+    for k in ("error", "result", "message", "subtype"):
+        v = d.get(k)
+        if isinstance(v, str):
+            blob += "\n" + v
+        elif v is not None:
+            blob += "\n" + json.dumps(v, ensure_ascii=False)
 low = blob.lower()
 
 # 한도 — 「언제 풀리나」가 같이 오는 경우가 있다 (Claude AI usage limit reached|<에폭>)
 LIMIT = ("usage limit", "rate limit", "rate_limit", "quota", "insufficient_quota",
-         "credit balance", "too many requests", "429")
-if any(k in low for k in LIMIT):
+         "credit balance", "too many requests")
+if any(k in low for k in LIMIT) or re.search(r"(?:status|code|http|error)\D{0,8}429", blob, re.I):
     m = re.search(r"usage limit reached\|(\d{9,})", blob, re.I)
     epoch = m.group(1) if m else "0"
     m2 = re.search(r"[^\n]*(?:usage limit|rate limit|quota|credit balance)[^\n]*", blob, re.I)
     print("limit", epoch, (m2.group(0).strip()[:120] if m2 else "사용량 한도"))
     sys.exit(0)
 
-TRANSIENT = ("overloaded", "529", "502", "503", "504", "econnreset", "etimedout",
-             "fetch failed", "socket hang up", "network error", "internal server error")
-if any(k in low for k in TRANSIENT):
-    m = re.search(r"[^\n]*(?:overloaded|529|50[234]|econnreset|etimedout|fetch failed)[^\n]*",
+# **맨 숫자로 판단하지 않는다.** 앞에 상태·오류를 뜻하는 말이 붙어야 한다.
+CODE = r"(?:status|code|http|error|오류)\D{0,8}(?:429|5\d\d)"
+WORDS = ("overloaded", "econnreset", "etimedout", "fetch failed", "socket hang up",
+         "network error", "internal server error", "service unavailable", "bad gateway")
+if any(k in low for k in WORDS) or re.search(CODE, blob, re.I):
+    m = re.search(r"[^\n]*(?:overloaded|econnreset|etimedout|fetch failed|" + CODE + r")[^\n]*",
                   blob, re.I)
     print("retry", (m.group(0).strip()[:120] if m else "일시적인 오류"))
     sys.exit(0)

@@ -308,26 +308,6 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
       say "세션이 비정상 종료했다:"; tail -5 "$RD/session.err" | sed 's/^/    /'
     fi
 
-    # **왜 끝났나를 가른다.** 한도·과부하는 실패가 아니라 「나중에 다시」다.
-    kind="$(bash tools/loop/session-class.sh "$RD/session.json" "$RD/session.err" "$src")"
-    case "$kind" in
-      limit*)
-        epoch="$(printf '%s' "$kind" | cut -d" " -f2)"
-        why="$(printf '%s' "$kind" | cut -d" " -f3-)"
-        secs="$(python3 -c "
-import time
-e = int('${epoch}' or 0)
-print(max(60, min(int(e - time.time()) + 60, $MAX_WAIT_SEC)) if e > 0 else $LIMIT_WAIT_SEC)")"
-        wait_and_retry "$secs" "토큰 한도 — $why"
-        cycle=$((cycle-1)); continue ;;
-      retry*)
-        RETRY_N=$((RETRY_N+1))
-        [ "$RETRY_N" -gt "$MAX_RETRIES" ] && stop "일시적인 오류가 ${RETRY_N}번 이어졌다 — ${kind#retry }"
-        secs=$(( 60 * (1 << (RETRY_N - 1)) )); [ "$secs" -gt 900 ] && secs=900
-        wait_and_retry "$secs" "일시적인 오류 (${RETRY_N}번째) — ${kind#retry }"
-        cycle=$((cycle-1)); continue ;;
-      *) RETRY_N=0 ;;
-    esac
   fi
 
   # 6b) 일지를 **드라이버가 쓴다.** 세션은 마지막 답변에 블록을 적을 뿐 파일을 안 연다.
@@ -341,6 +321,31 @@ print(max(60, min(int(e - time.time()) + 60, $MAX_WAIT_SEC)) if e > 0 else $LIMI
     else
       say "일지를 답변에서 못 뽑았다 — $jx"
     fi
+  fi
+
+  # **왜 끝났나를 가른다** — 일지를 뽑은 **뒤**에 한다. 잘못 분류해서 다시 걸더라도
+  # 세션이 적어 보낸 일지는 잃지 않는다 (2026-09-15: session_id 에 우연히 든 숫자를
+  # 5xx 로 잘못 보고 정상 회차를 retry 로 돌렸다 — 그때 일지가 통째로 날아갔다).
+  if [ "$DRY" = "0" ]; then
+      kind="$(bash tools/loop/session-class.sh "$RD/session.json" "$RD/session.err" "$src")"
+      case "$kind" in
+        limit*)
+          epoch="$(printf '%s' "$kind" | cut -d" " -f2)"
+          why="$(printf '%s' "$kind" | cut -d" " -f3-)"
+          secs="$(python3 -c "
+  import time
+  e = int('${epoch}' or 0)
+  print(max(60, min(int(e - time.time()) + 60, $MAX_WAIT_SEC)) if e > 0 else $LIMIT_WAIT_SEC)")"
+          wait_and_retry "$secs" "토큰 한도 — $why"
+          cycle=$((cycle-1)); continue ;;
+        retry*)
+          RETRY_N=$((RETRY_N+1))
+          [ "$RETRY_N" -gt "$MAX_RETRIES" ] && stop "일시적인 오류가 ${RETRY_N}번 이어졌다 — ${kind#retry }"
+          secs=$(( 60 * (1 << (RETRY_N - 1)) )); [ "$secs" -gt 900 ] && secs=900
+          wait_and_retry "$secs" "일시적인 오류 (${RETRY_N}번째) — ${kind#retry }"
+          cycle=$((cycle-1)); continue ;;
+        *) RETRY_N=0 ;;
+      esac
   fi
 
   # 7) 판정 — 세션이 아니라 채점자가 한다
