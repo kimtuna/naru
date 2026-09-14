@@ -152,17 +152,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 14:42:54</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 15:02:35</span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 13</span><span class="note">초록 · 2026-09-14</span></div>
-<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 14:42</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">18 <small>/ 48</small></span><span class="note">백로그 항목</span></div>
-<div class="tile"><span class="k">누적 비용</span><span class="v">$40.9262</span></div>
+<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 14</span><span class="note">초록 · 2026-09-14</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 15:02</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">19 <small>/ 48</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$44.4715</span></div>
 </section>
-<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span><strong>창을 띄우는 게이트를 한 프로세스로 합친다</strong> — <code>measure_view</code> 와 <code>measure_draw</code> 는</div>
+<div class="alert next"><span class="k">다음 항목</span><span class="pill">P2</span>인벤토리 코어 (순수 클래스) — 일반 18칸, <strong>꽉 찼을 때 넘치는 몫이 안 사라진다</strong></div>
 <h2>진행 — 한 줄 = 한 바퀴</h2>
 <div class="phases">
 <details class="phase full">
@@ -179,11 +179,11 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done"><span class="box">✔</span><strong>화면 QA — <code>tools/loop/shot.sh</code></strong> — Godot 자신의 프레임버퍼를 PNG 로 굽는다.</li>
 <li class="done"><span class="box">✔</span><strong>드라이버 <code>loop.sh</code> · <code>ctl.sh</code></strong> — 백로그 한 줄 뽑기 → 세션 → 계약 → 초록이면 다음.</li>
 </ul></details>
-<details class="phase part" open>
+<details class="phase full">
   <summary><span class="pid">P1</span>
     <span class="ptitle">걸어다니는 세계</span>
-    <span class="pcount">11/12</span>
-    <span class="bar"><i style="width:92%"></i></span></summary>
+    <span class="pcount">12/12</span>
+    <span class="bar"><i style="width:100%"></i></span></summary>
   <ul class="items">
 <li class="done"><span class="box">✔</span>색 네모 플레이어가 48px 타일 위를 속도 240 으로 <strong>8방향</strong> 이동 (대각선 정규화)</li>
 <li class="done"><span class="box">✔</span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</li>
@@ -196,7 +196,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done"><span class="box">✔</span><strong><code>measure_facing.gd</code> 가 사람의 마우스에 안 흔들리게 한다</strong> — 진짜 커서를 뺏어 재는</li>
 <li class="done"><span class="box">✔</span><strong>계약이 <code>check.sh tests</code> 를 두 번 돈다</strong> — 기준 3(<code>mintests.sh</code>)과 기준 4 가</li>
 <li class="done"><span class="box">✔</span><strong>창을 띄우는 게이트가 포커스를 안 뺏는다</strong> — <strong>못 막는다. 항목이 시킨 대로 닫는다</strong></li>
-<li class="todo"><span class="box"></span><strong>창을 띄우는 게이트를 한 프로세스로 합친다</strong> — <code>measure_view</code> 와 <code>measure_draw</code> 는</li>
+<li class="done"><span class="box">✔</span><strong>창을 띄우는 게이트를 한 프로세스로 합친다</strong> — <code>tools/tests/measure_window.gd</code></li>
 </ul></details>
 <details class="phase none">
   <summary><span class="pid">P2</span>
@@ -278,7 +278,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">모든 GDScript 가 파스된다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh parse</code>
-<ul class="ev"><li>PARSE 27개 스크립트, 실패 0</li></ul>
+<ul class="ev"><li>PARSE 26개 스크립트, 실패 0</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">3</span>
@@ -299,7 +299,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">매 바퀴 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  74/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  70/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
@@ -312,6 +312,21 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 14</span>
+    <h3><strong>창을 띄우는 게이트를 한 프로세스로 합친다</strong> — <code>measure_view</code> 와 <code>measure_draw</code> 는</h3>
+    <span class="edate">2026-09-14</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">합치고 나니 <strong>따로 돌 때는 없던 구멍</strong>이 하나 생겼다 — 한 프로세스가 반쪽만 돌고 죽으면 <code>check.sh</code> 가 그걸 <strong>초록으로 본다</strong>. 창 게이트를 일부러 1초에 끊어 보니 <code>^VIEW </code> 와 <code>^DRAW \[</code> 두 grep 이 <strong>둘 다 맞았다</strong>(VIEW 2줄 · <code>DRAW [서서]</code> 까지 찍고 죽는다). 이름도 한 번 걸렸다: 요약 줄을 <code>WINDOW</code> 로 찍었더니 <code>main.gd</code> 가 시작할 때 찍는 배너 <code>WINDOW   1920 x 1080</code> 과 같은 prefix 라 <strong>게이트가 침묵해도 grep 이 걸렸다</strong></span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">따로 돌 때는 게이트 하나 = 프로세스 하나라 <strong>죽으면 그 게이트가 통째로 침묵</strong>했고, 「아무것도 안 찍었다」 검사가 그걸 잡았다. 합치면 그 성질이 깨진다 — <strong>앞 절반이 찍은 줄이 뒤 절반의 침묵을 가려 준다.</strong> 게이트를 합치는 값은 창 횟수고, 치르는 값이 이거다</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><code>tools/tests/measure_window.gd</code> 를 새로 만들었다 — 메인 씬을 한 번 세우고 5프레임 뒤 <strong>VIEW 를 먼저</strong> 재고(DRAW 가 플레이어를 해안으로 101칸 순간이동시키므로 순서가 뒤집히면 VIEW 가 「걷다 만 화면」을 잰다), 이어서 DRAW 를 <code>[서서]</code>·<code>[걷고]</code> 두 번 잰다. 실패 수는 <strong>따로 센다</strong> — <code>VIEW ok</code> · <code>DRAW ok</code> 두 줄이 예전 그대로 나온다. 끝에 <code>WINGATE ok (VIEW 0 · DRAW 0 · 창 한 번)</code> 한 줄을 더 찍고 <code>tools/loop/check.sh</code> 가 <strong>세 줄을 다 본다</strong>. <code>tools/tests/measure_view.gd</code> · <code>measure_draw.gd</code> 와 짝 <code>.uid</code> 는 지웠다. 딸린 참조(<code>measure_camera.gd</code> · <code>test_world_view.gd</code> · <code>redteam.sh</code> 주석 · <code>docs/GOTCHAS.md</code>)도 새 이름으로 고쳤다</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>게이트를 합칠 때는 「둘 다 돌았다」를 찍는 줄을 같이 만든다.</strong> 합치기는 공짜가 아니다 — 프로세스 경계가 하던 일(죽으면 침묵한다)을 <strong>줄 하나로 대신 사야 한다</strong></span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>뺏김이 0 이 되지는 않는다.</strong> 계약 한 판에 창은 아직 2번 뜬다 — 남은 하나는</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v">(씨앗 20260914 · 창 1920x1080 · 논리 960x540 · 줌 1 · macOS 25.6 · 표본 간격 100ms) <code>check.sh tests</code> 한 판 <strong>표본 102 · 뺏김 9</strong>(바퀴 13: 110 · 14) · 계약 한 판 <strong>166 · 12</strong> (183 · 13) · 둘 다 시작 앞 = 끝 앞 <code>iTerm2</code> · <strong>창 여는 횟수 <code>tests</code> 2 → 1 · 계약 3 → 2</strong> · 게이트 자체 <strong>VIEW 0.58s + DRAW 1.25s = 1.83s → 1.29s</strong> · 계약 한 판 <strong>21.86s → 20.28s</strong> · <code>ALL GREEN</code>(기준 6개) · <code>TESTS 66 passed, 0 failed</code> · <code>PARSE 26개 스크립트, 실패 0</code>. <strong>잰 값은 글자 하나 안 달라졌다</strong>: <code>VIEW 논리 960x540 · 창 1920x1080 · 배율 2.00x · 보이는 칸 20.00 x 11.25</code> · <code>DRAW [서서] 표본 7844 · 불일치 0 · 물 45.9% · 그린 칸 273</code> · <code>DRAW [걷고 144 px] 표본 7844 · 불일치 0 · 물 31.0%</code>. <strong>대조군 7/7</strong> (게이트 단위 · 손 안 댄 판은 초록): 줌 → <code>보이는 칸 10.00 x 5.62</code> · 창 축소 → <code>창 1600x900 · 배율 1.00x</code> · 안 그림 → <code>7844/7844</code> · 다른 씨앗 → <code>7844/7844</code> · 통째로 → <code>65536 칸</code> · 캐시 안 버림 → <code>[서서]</code> 부터 <code>7844/7844</code> · 두 칸 문턱 → <strong><code>[걷고]</code> 만 <code>6982/7844</code></strong>. <strong>창 축소 대조군이 <code>VIEW FAIL 2개</code> 인데 <code>DRAW ok</code> 로 끝난다</strong> — 앞 절반이 빨개도 뒤 절반이 끝까지 돈다는 증거다. 잘린 판 대조군(1초에 끊기)은 <code>WINGATE FAIL 게이트가 끝까지 못 갔다</code> 로 잡혔다 — <strong>그 줄이 없었으면 초록이었다</strong> <strong>계약 단위 한 판도 커밋 뒤에 돌렸다</strong>(바퀴 11 이 남긴 숙제다): <code>REDTEAM 31 잡음, 0 놓침</code> · <strong>7분 41초</strong> — 바퀴 10 의 30개 · 10분 03초 · 1 놓침에서 줄었다. 그 한 판의 창은 93번 → <strong>62번</strong>이다</span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 26개 스크립트, 실패 0 · 3 TESTS 66 passed, 0 failed · 4 TESTS 66 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  70/90줄 · 6 SHOT 960x540  색 217개  가장 넓은 한 색 1.3%  → /tmp/w.png</span><span>$44.4715 누적</span><span><code>acec96f</code> 기준 6 의 <code>shot.sh</code> 다. 그걸 또 어디에 합칠지는 <strong>사람이 정할 것</strong>이다(게이트가 아니라 산출물을 굽는 명령이라 성격이 다르다). <code>redteam.sh</code> 한 판의 창은 93번 → <strong>62번</strong>이다  ---</span></div>
+</article>
 <article class="entry ok">
   <div class="ehead">
     <span class="badge ">바퀴 13</span>
@@ -635,6 +650,9 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/acec96f"><code>acec96f</code></a><span class="cd">2026-09-14</span>바퀴 14 대조군 한 판 — REDTEAM 31 잡음, 0 놓침 · 7분 41초</li>
+<li><a href="https://github.com/kimtuna/naru/commit/47137ab"><code>47137ab</code></a><span class="cd">2026-09-14</span>창을 띄우는 게이트를 한 프로세스로 — 창 2번 → 1번, 뺏김 14 → 9</li>
+<li><a href="https://github.com/kimtuna/naru/commit/a22c4ce"><code>a22c4ce</code></a><span class="cd">2026-09-14</span>바퀴 13 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/5174b4d"><code>5174b4d</code></a><span class="cd">2026-09-14</span>창의 포커스는 못 막는다 — 재서 6가지를 떨어뜨리고, 끝나고 되돌려 준다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/e264f13"><code>e264f13</code></a><span class="cd">2026-09-14</span>바퀴 12 일지를 증거에서 복원 · 백로그 [x]</li>
 <li><a href="https://github.com/kimtuna/naru/commit/ffc2355"><code>ffc2355</code></a><span class="cd">2026-09-14</span>바퀴 12 일지 · 대시보드 갱신</li>
@@ -644,9 +662,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/bcf276e"><code>bcf276e</code></a><span class="cd">2026-09-14</span>방향 게이트가 사람의 커서를 안 뺏는다 — 합성 입력 · 헤드리스</li>
 <li><a href="https://github.com/kimtuna/naru/commit/199ea63"><code>199ea63</code></a><span class="cd">2026-09-14</span>FACE 게이트를 P1 맨 앞으로 · 일지에 가짜 회귀 기록</li>
 <li><a href="https://github.com/kimtuna/naru/commit/7bad570"><code>7bad570</code></a><span class="cd">2026-09-14</span>가짜 회귀로 멈췄다 — 항목 verify 가 계약 증거를 덮었다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/1d08d2b"><code>1d08d2b</code></a><span class="cd">2026-09-14</span>바퀴 10 일지 · 백로그 · NUMBERS 9절 — 대조군 29 잡음, 1 놓침</li>
-<li><a href="https://github.com/kimtuna/naru/commit/a409c6a"><code>a409c6a</code></a><span class="cd">2026-09-14</span>걷는 구간에만 걸리는 대조군 ⑤ — 캐시를 두 칸마다 채운다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/4a9ae02"><code>4a9ae02</code></a><span class="cd">2026-09-14</span>FACE 게이트가 사람 마우스에 흔들린다 — 세 번째라 백로그에 올린다</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
