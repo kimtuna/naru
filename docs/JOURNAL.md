@@ -39,6 +39,19 @@
 
 ---
 
+## 회차 23 · **일지 뽑기 게이트를 상태 검사 기준으로 올린다** — 회차 22 가 만든
+- 문제: 승격을 세션이 직접 할 수 없다. `criteria.tsv` 는 무장돼 있어 고치면 `exit 77` 이고, 올리는 것은 드라이버의 `promote` 다 — 그런데 그 `promote` 가 **실패해도 조용하다.** 회차 22 가 그렇게 끝났다: verify 를 못 찾아 `return 0`, 로그 한 줄 없음, 항목은 `[x]`.
+- 원인: 「올렸다」를 아무도 파일에 묻지 않았다. `promote` 는 verify 가 비면 그냥 return, 줄을 넣은 뒤에도 들어갔는지 확인하지 않는다. 대조군도 `journal-selftest.sh` 를 **직접** 불러서, 기준에서 그 줄이 빠져도 여전히 초록이었다 — 게이트는 있는데 아무도 안 돌리는 상태가 굳는 자리가 셋이었다.
+- 고친 것: `tools/loop/journal.sh` 에 `promoted` — 기준 줄 + 무장 해시를 같이 본다(`NARU_CRITERIA` 로 진짜 `.loop/` 는 안 본다). `tools/loop/journal-selftest.sh` 에 그 5종(바닥 29 → 34). `tools/loop/loop.sh` 의 `promote` 가 줄을 넣은 뒤 `grep` 과 해시로 확인하고 아니면 `stop`, verify 가 빈 항목도 `say` 로 남긴다. `tools/loop/redteam.sh` 는 승격 뒤엔 뽑기 대조군을 **상태 검사**로 재고, 대조군 1종(`promoted` 가 늘 초록이면 잡히나)을 더했다. `docs/BACKLOG.md` 에 승격 확인 항목 한 줄.
+- 바꾼 결정: **재는 자리가 승격을 따라 옮겨 간다.** 「검사가 빨개지나」가 아니라 「**무장된 채점자가** 빨개지나」가 진짜 질문이라, 기준에 오른 게이트의 대조군은 상태 검사를 부른다.
+- 잰 값: `JOURNAL SELFTEST 34 passed, 0 failed (바닥 29 → 34)` · `REDTEAM 57 잡음, 0 놓침`(49 → 57) · 대조군 예행 `30 passed, 4 failed` · `ALL GREEN` 6/6 · 상태 검사 20.8s · 뽑기 게이트 0.37s · `journal.sh promoted` = exit 1 (승격 전이라 맞다)
+- 남긴 것: 승격이 진짜 들어갔는지는 **다음 회차**가 `journal.sh promoted` 로 확인한다(백로그 맨 위). `loop.sh` 의 새 확인은 돌고 있는 드라이버가 이미 파스한 뒤라 **다음 실행부터** 먹는다. **[ASK] 상태 검사 기준 4 의 글자가 아직 48px 타일이다**
+- 날짜: 2026-09-15
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 33개 스크립트, 실패 0 · 3 TESTS 100 passed, 0 failed · 4 TESTS 100 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  88/90줄 · 6 SHOT 960x540  색 865개  가장 넓은 한 색 1.4%  → /tmp/w.png
+- 비용: $78.112 누적
+- 커밋: `0fa23a9`
+
 ## 회차 22 · **일지를 세션의 마지막 답변에서 뽑는다** — 세션이 `docs/JOURNAL.md` 에 직접 쓰게
 - 문제: 일지를 **쓰라고 시키는 것으로는 안 된다.** 회차 12 · 21 이 일을 끝내고 커밋까지
   하고도 일지만 빼먹었다. 그리고 이번 회차엔 둘째 문제가 겹쳤다 — **항목의 `verify` 가
