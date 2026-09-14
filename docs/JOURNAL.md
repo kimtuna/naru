@@ -72,6 +72,11 @@
   `SHOT 960x540 색 867개 · 가장 넓은 한 색 0.8%` · `TESTS 66 passed, 0 failed` ·
   `PARSE 26개 실패 0` · `ALL GREEN`(기준 6개 · 19.31s)
 - 남긴 것: **캐시 한 판이 12986 µs 다 — 60Hz 한 프레임 예산의 78%.** 칸이 558 → 2135 로
+- 날짜: 2026-09-14
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 26개 스크립트, 실패 0 · 3 TESTS 66 passed, 0 failed · 4 TESTS 66 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  83/90줄 · 6 SHOT 960x540  색 867개  가장 넓은 한 색 0.8%  → /tmp/w.png
+- 비용: $63.8633 누적
+- 커밋: `5669be7`
   3.8배가 됐고 걸으면 한 축당 **초당 15번** 찬다. 사람 눈에는 「걸을 때 끊긴다」로 보인다.
   「덜 자주 채우기」는 답이 아니다(화면이 월드에서 미끄러진다 — 대조군 ⑤ 가 그것이다) —
   **범위가 한 줄 밀리면 그 줄만 채우는 것**이 답이다. BACKLOG P2 끝에 넘겼다.

@@ -152,17 +152,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 17:36:53</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 18:04:07</span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot idle"></i>바퀴 16</span><span class="note">— · </span></div>
-<div class="tile"><span class="k">계약</span><span class="v bad">빨강</span><span class="note">2026-09-14 17:18</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">21 <small>/ 53</small></span><span class="note">백로그 항목</span></div>
-<div class="tile"><span class="k">누적 비용</span><span class="v">$55.5908</span></div>
+<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 17</span><span class="note">초록 · 2026-09-14</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 18:04</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">22 <small>/ 54</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$63.8633</span></div>
 </section>
-<div class="alert next"><span class="k">다음 항목</span><span class="pill">P2</span><strong>지형 타일 32 → 16px · 캐릭터 48 → 32px</strong> — 고정값이 또 바뀌었다(위 표).</div>
+<div class="alert next"><span class="k">다음 항목</span><span class="pill">P2</span>인벤토리 코어 (순수 클래스) — 일반 18칸, <strong>꽉 찼을 때 넘치는 몫이 안 사라진다</strong></div>
 <h2>진행 — 한 줄 = 한 바퀴</h2>
 <div class="phases">
 <details class="phase full">
@@ -201,12 +201,12 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P2</span>
     <span class="ptitle">손: 인벤토리와 도구</span>
-    <span class="pcount">2/10</span>
-    <span class="bar"><i style="width:20%"></i></span></summary>
+    <span class="pcount">3/11</span>
+    <span class="bar"><i style="width:27%"></i></span></summary>
   <ul class="items">
 <li class="done"><span class="box">✔</span><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</li>
 <li class="done"><span class="box">✔</span><strong>캐릭터 네모를 1칸 폭으로 · 충돌 상자를 발밑에</strong> — 지금 그리는 네모는 48×48(1.5칸 ×</li>
-<li class="todo"><span class="box"></span><strong>지형 타일 32 → 16px · 캐릭터 48 → 32px</strong> — 고정값이 또 바뀌었다(위 표).</li>
+<li class="done"><span class="box">✔</span><strong>지형 타일 32 → 16px · 캐릭터 48 → 32px</strong> — 고정값이 또 바뀌었다(위 표).</li>
 <li class="todo"><span class="box"></span>인벤토리 코어 (순수 클래스) — 일반 18칸, <strong>꽉 찼을 때 넘치는 몫이 안 사라진다</strong></li>
 <li class="todo"><span class="box"></span>화면 아래 상시 핫바 9칸 + 숫자키로 손에 들기</li>
 <li class="todo"><span class="box"></span>좌클릭 = 손에 든 것의 동작. <strong>대상이 없어도 사용 모션이 나온다</strong></li>
@@ -214,6 +214,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="todo"><span class="box"></span><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</li>
 <li class="todo"><span class="box"></span><strong>채광</strong> — 곡괭이로 돌/광물을 캔다</li>
 <li class="todo"><span class="box"></span>바닥 드롭 + 걸어가서 줍기. 인벤토리가 꽉 차면 바닥에 남는다</li>
+<li class="todo"><span class="box"></span><strong>색 캐시를 스크롤한다 — 한 판 13.0 ms 가 프레임 예산의 78% 다</strong> (바퀴 17 실측).</li>
 </ul></details>
 <details class="phase none">
   <summary><span class="pid">P3</span>
@@ -292,31 +293,46 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <code class="cmd">bash tools/loop/mintests.sh 66</code>
 <ul class="ev"><li>TESTS 66 passed, 0 failed</li></ul>
 </div>
-<div class="card bad">
+<div class="card ok">
   <div class="chead"><span class="cid">4</span>
     <span class="cwhat">색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</span>
-    <span class="cmark">빨강</span></div>
+    <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh tests</code>
-<ul class="ev"><li>TESTS 66 passed, 0 failed</li><li>DRAW FAIL 화면이 월드와 다르다 [서서] — 잰 값 7844 / 7844 점 (첫 어긋남: 화면 (4,4) → 칸 (214,120) · 잰 값 4c4c4c · 기대 617a3d) · 기대 전부 일치 (허용 색차 2.0/255)</li><li>DRAW FAIL 화면이 월드와 다르다 [걷고 96 px] — 잰 값 7844 / 7844 점 (첫 어긋남: 화면 (4,4) → 칸 (211,120) · 잰 값 4c4c4c · 기대 5c793b) · 기대 전부 일치 (허용 색차 2.0/255)</li><li>DRAW FAIL 2개 (표본 간격 8 px · 중심 56 px 제외 · 서서 + 걷고 두 번)</li><li>WINGATE FAIL 2개 (VIEW 0 · DRAW 2 · 창 한 번)</li></ul>
+<ul class="ev"><li>TESTS 66 passed, 0 failed</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">5</span>
     <span class="cwhat">매 바퀴 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  63/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  83/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
     <span class="cwhat"><strong>월드를 화면에 그린다</strong> — 보이는 칸만. <code>main.gd</code> 의 임시 격자를 걷어낸다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/shot.sh /tmp/w.png</code>
-<ul class="ev"><li>SHOT 960x540  색 3개  가장 넓은 한 색 99.7%  → /tmp/w.png</li></ul>
+<ul class="ev"><li>SHOT 960x540  색 867개  가장 넓은 한 색 0.8%  → /tmp/w.png</li></ul>
 </div>
 </div>
 <h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 17</span>
+    <h3><strong>지형 타일 32 → 16px · 캐릭터 48 → 32px</strong> — 고정값이 또 바뀌었다(위 표).</h3>
+    <span class="edate">2026-09-14</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">단위 검사가 <strong>하나 빨개졌다</strong> — <code>main.tscn</code> 의 플레이어 스폰 좌표 <code>(4112, 4112)</code> 다. 바퀴 15·16 이 「타일에서 따라 나오게」 모아 둔 자리는 전부 그대로 따라왔는데(<code>HALF</code> · 몸통 · 씬의 상자 · 보이는 칸 · 걷는 거리), <strong>씬 파일의 좌표 한 줄만 글자로 남아 있었다.</strong> <code>tile_center(128,128)</code> 이 4112 → 2056 으로 바뀌었으니 플레이어가 칸 한가운데가 아니라 <strong>칸 (257,257) 근처의 아무 자리</strong>에 서 있었다. 화면으로는 멀쩡해 보인다 — 섬 한가운데는 어디를 서도 풀밭이다. <code>test_player_scene.gd</code> 가 잡았다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v"><strong>씬(<code>.tscn</code>)은 코드가 아니라 데이터라 상수를 못 읽는다.</strong> 바퀴 16 이 몸통·상자를 「검사로 <code>TILE</code> 에 묶는」 방식으로 풀었는데, 스폰 좌표는 그 묶음에 안 들어 있었다. 묶여 있던 것은 「타일 중심인가」(fmod)와 「스폰 칸의 중심인가」 두 검사인데 — <strong>둘 다 바퀴 17 에 실제로 빨개졌다.</strong> 구멍이 아니라 설계대로 잡힌 것이다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><code>scripts/player_motion.gd</code> 의 <code>TILE</code> <strong>32 → 16</strong> 하나. 거기서 따라 나온 것: <code>WorldCollide.HALF</code> (14,8) → <strong>(6,4)</strong> · 보이는 칸 30×16.88 → <strong>60×33.75</strong> · <code>WALK</code>(3칸) 96 → 48px. 글자로 고친 곳은 <strong>넷뿐이다</strong>: <code>scenes/player.tscn</code> (몸통 16×32 · 상자 12×8 · 코 8×8) · <code>scenes/main.tscn</code> (스폰 2056) · 손 계산 검사 (<code>test_world_collide.gd</code> 의 <code>T</code> 와 기대값 스무 개 — 전부 정확히 반이 됐다) · 게이트의 기대값(<code>measure_window.gd</code> <code>TILES</code>·<code>MAX_TILES</code> 700 → <strong>2400</strong>·<code>SKIP_BOX</code> 56 → <strong>40</strong> · <code>measure_camera.gd</code> <code>TILES</code> · <code>test_project_settings.gd</code> · <code>test_world_view.gd</code>). <code>main.gd</code> 에 <strong><code>fill_usec</code></strong> 을 넣어 캐시 한 판의 시간을 밖에 냈다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>초로 적힌 게이트 상수는 기하에서 푼다.</strong> <code>measure_collide</code> 의 미끄럼은 바퀴 15 가 1.2 → 0.9 로 손으로 줄인 값인데, 타일이 또 반이 되자 0.9 는 다시 틀렸다 (169.71 × 0.9 = 152.7px &gt; 곧은 해안 7줄 = 112px). 그 상수는 처음부터 <strong>「해안 몇 줄」</strong> 이었다 — 이제 <code>_slide_sec()</code> 가 <code>(RUN - 0.5) × TILE - HALF.y</code> 의 80% 로 푼다(<strong>0.471s</strong>). 같은 이유로 <code>test_world_view</code> 의 「색 수」 검사는 <strong>세는 창을 화면과 같이 넓혔다</strong> (31×18 → 61×34칸 · 문턱 200 → <strong>743개</strong>). 안 넓히면 화면만 3.8배가 되고 게이트는 그만큼 헐거워진다 — 바퀴 15 가 정한 「게이트를 화면과 같이 키운다」의 두 번째 적용이다.</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>캐시 한 판이 12986 µs 다 — 60Hz 한 프레임 예산의 78%.</strong> 칸이 558 → 2135 로</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v"><strong>대조군 한 판 <code>REDTEAM 34 잡음, 0 놓침</code> · 8분 09초</strong> (바퀴 15 는 31종 · 7분 40초). 문턱·기대값을 만진 여섯(줌 <code>30 x 16.88</code> · <code>2135 → 65536</code> · 캐시 둘 · 몸통 <code>16 → 32px</code> · 상자 네모)이 <strong>전부 그대로 잡힌다.</strong> 검사 수는 66 그대로다 — 바퀴 15 의 교훈대로 새 검사를 안 늘려서 「검사를 지우면 바닥이 잡는다」 대조군이 안 헐거워졌다. <code>VIEW 타일 16px · 보이는 칸 60.00 x 33.75</code> · <code>MOVE 239.24 px/s = 14.953 칸/s</code> · <code>COLLIDE 바다 면 3680.00 · 멈춤 3673.99 · 상자 반크기 6 x 4 · 걸침 1.99 px · 미끄럼 0.471 s</code> · <code>CAMERA 스폰 (2056,2056) · 편차 0.0000 px</code> · <code>DRAW 그린 칸 2135 · 불일치 0 · 표본 7940</code> · <code>SHOT 960x540 색 867개 · 가장 넓은 한 색 0.8%</code> · <code>TESTS 66 passed, 0 failed</code> · <code>PARSE 26개 실패 0</code> · <code>ALL GREEN</code>(기준 6개 · 19.31s)</span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 26개 스크립트, 실패 0 · 3 TESTS 66 passed, 0 failed · 4 TESTS 66 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  83/90줄 · 6 SHOT 960x540  색 867개  가장 넓은 한 색 0.8%  → /tmp/w.png</span><span>$63.8633 누적</span><span><code>5669be7</code> 3.8배가 됐고 걸으면 한 축당 <strong>초당 15번</strong> 찬다. 사람 눈에는 「걸을 때 끊긴다」로 보인다. 「덜 자주 채우기」는 답이 아니다(화면이 월드에서 미끄러진다 — 대조군 ⑤ 가 그것이다) — <strong>범위가 한 줄 밀리면 그 줄만 채우는 것</strong>이 답이다. BACKLOG P2 끝에 넘겼다. <strong>사람이 앞으로 당길지 정할 것이다</strong> — 지금은 걸어 다니는 모든 눈 검사에 섞인다. <strong>[ASK] 계약 기준 4 의 글자가 아직 「48px 타일」이다</strong>(무장됨 · 바퀴 15 부터 밀림). 화면은 구워서 봤다: 캐릭터가 세로 32px = 화면 높이의 1/17 이다(전 바퀴는 1/11). <strong>빈 벌판에서 고른 값이라 나무·돌이 놓이면 사람이 다시 볼 것이다</strong>(고정값 표의 「잠정」).</span></div>
+</article>
 <article class="entry muted">
   <div class="ehead">
     <span class="badge ">바퀴 16</span>
@@ -683,6 +699,9 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/810f794"><code>810f794</code></a><span class="cd">2026-09-14</span>바퀴 기록 롤링</li>
+<li><a href="https://github.com/kimtuna/naru/commit/5669be7"><code>5669be7</code></a><span class="cd">2026-09-14</span>타일 32 → 16px · 캐릭터 2칸(32px) — 사람이 고른 60칸을 코드에 내렸다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/6f5903d"><code>6f5903d</code></a><span class="cd">2026-09-14</span>창 띠 두 항목을 「프로토타입 범위 밖」으로 미룬다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/d376e16"><code>d376e16</code></a><span class="cd">2026-09-14</span>타일 32 → 16px · 캐릭터 2칸 — 사람이 눈으로 골랐다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/aaeb55d"><code>aaeb55d</code></a><span class="cd">2026-09-14</span>캐릭터 몸통을 1칸 폭으로 · 충돌 상자를 발밑 반 칸으로</li>
 <li><a href="https://github.com/kimtuna/naru/commit/de884f8"><code>de884f8</code></a><span class="cd">2026-09-14</span>창을 논리 해상도의 정수배로 · 사람이 띄운 창을 게이트가 본다</li>
@@ -692,9 +711,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/e140bbe"><code>e140bbe</code></a><span class="cd">2026-09-14</span>지형 타일 48 → 32px — 박힌 숫자를 한 군데로 모았다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/133991a"><code>133991a</code></a><span class="cd">2026-09-14</span>지형 타일 48 → 32px — 사람이 고정값을 바꿨다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/bef9da0"><code>bef9da0</code></a><span class="cd">2026-09-14</span>바퀴 14 일지 · 대시보드 갱신</li>
-<li><a href="https://github.com/kimtuna/naru/commit/acec96f"><code>acec96f</code></a><span class="cd">2026-09-14</span>바퀴 14 대조군 한 판 — REDTEAM 31 잡음, 0 놓침 · 7분 41초</li>
-<li><a href="https://github.com/kimtuna/naru/commit/47137ab"><code>47137ab</code></a><span class="cd">2026-09-14</span>창을 띄우는 게이트를 한 프로세스로 — 창 2번 → 1번, 뺏김 14 → 9</li>
-<li><a href="https://github.com/kimtuna/naru/commit/a22c4ce"><code>a22c4ce</code></a><span class="cd">2026-09-14</span>바퀴 13 일지 · 대시보드 갱신</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
