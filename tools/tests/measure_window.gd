@@ -31,6 +31,17 @@ extends SceneTree
 ## 그리나」를 한 픽셀도 못 잰다. 스폰에서 +x 로 걸어 첫 바다를 찾아 그 경계에 세운다.
 ## **헤드리스는 렌더러가 더미라 뷰포트 텍스처가 빈다** (NUMBERS 3b절).
 ##
+## ── HOTBAR: 화면 아래 9칸이 **정말 거기 그려졌나** · 숫자키가 손을 옮기나 ──────
+## 왜 단위 검사로 부족한가: `test_hotbar.gd` 는 「9칸 자리의 기하」를 재고
+## `test_player_scene.gd` 는 「씬에 달렸나 · 키가 묶였나」를 잰다. 셋 다 초록인 채로
+## **핫바를 숨기거나**(`visible = false`) **숫자키를 안 읽거나**(`_poll_hotbar` 를 안 부른다)
+## **손에 든 칸을 똑같이 그려도** 한 줄이 안 빨개진다 — 전부 실행 중의 픽셀이기 때문이다.
+## 그래서 여기서 **칸마다 두 점**(테두리 · 바탕)을 구운 픽셀에서 읽고,
+## **숫자키를 눌러 강조가 옮겨 가는지**까지 다시 굽는다.
+##
+## **DRAW 는 핫바가 덮은 자리를 건너뛴다.** 안 그러면 「월드를 그렸나」가 핫바 때문에
+## 통째로 빨개진다 — 건너뛴 만큼은 HOTBAR 가 대신 판정한다. 그래서 둘은 짝이다.
+##
 ## 이름이 test_ 로 시작하지 않는다 — run_tests.gd 는 이 파일을 안 집는다.
 
 # ── VIEW 기대값 (NUMBERS 1절) ────────────────────────────────────────
@@ -57,8 +68,18 @@ const MAX_TILES := 2400            # 61 x 35 = 2135. 통째로 그리면 65536 �
 const WALK := 3.0 * PlayerMotion.TILE   # 걷는 거리(px). 3칸이면 캐시가 반드시 한 번은 다시 찬다
 const WALK_FRAMES := 300           # 안전벨트. 막혀서 못 걸으면 여기서 끊는다
 
+# ── HOTBAR 기대값 ────────────────────────────────────────────────────
+# 칸 안에서 읽는 두 점(칸의 왼쪽 위 모서리로부터). **자리가 겹치면 안 된다**:
+#   테두리 — 칸 위쪽 변 한가운데. 두께 2px 안이다
+#   바탕   — 테두리 밖 · 아이템 네모(안쪽 6px) 밖. 칸이 비든 차든 늘 바탕색이다
+const HB_EDGE_PROBE := Vector2(HotbarView.SLOT * 0.5, 1.0)
+const HB_BG_PROBE := Vector2(4.0, 4.0)
+const HB_KEY := 3                  # 눌러 볼 숫자키. 처음 든 1번 칸과 달라야 옮겨간 것이 보인다
+const HB_BOTTOM_GAP := 16.0        # 화면 아래 끝에서 이보다 멀면 「상시 핫바」가 아니다
+
 var _view_bad := 0
 var _draw_bad := 0
+var _hb_bad := 0
 var _frames := 0
 var _main: Node2D
 var _player: Node2D
@@ -74,6 +95,7 @@ func _initialize() -> void:
 
 	_measure_view()
 	await _measure_draw()
+	await _measure_hotbar()
 	_finish()
 
 # ── VIEW ─────────────────────────────────────────────────────────────
@@ -188,6 +210,8 @@ func _draw_measure(phase: String) -> void:
 func _compare(img: Image, phase: String) -> void:
 	var inv := root.get_canvas_transform().affine_inverse()
 	var center := Vector2(LOGICAL_I) * 0.5
+	# **핫바가 덮은 자리는 월드가 아니다.** 건너뛴 만큼은 아래 HOTBAR 가 판정한다.
+	var bar := HotbarView.bar_rect(Vector2(LOGICAL_I)).grow(1.0)
 	var n := 0
 	var miss := 0
 	var water := 0
@@ -198,6 +222,8 @@ func _compare(img: Image, phase: String) -> void:
 			var screen := Vector2(sx, sy)
 			if absf(screen.x - center.x) < SKIP_BOX and absf(screen.y - center.y) < SKIP_BOX:
 				continue                      # 플레이어 네모가 덮은 자리
+			if bar.has_point(screen):
+				continue                      # 핫바가 덮은 자리 (HOTBAR 가 본다)
 			var w: Vector2 = inv * (screen + Vector2(0.5, 0.5))
 			var tx := WorldCollide.tile_of(w.x)
 			var ty := WorldCollide.tile_of(w.y)
@@ -236,16 +262,124 @@ func _draw_fail(what: String, actual: String, expected: String) -> void:
 	_draw_bad += 1
 	print("DRAW FAIL %s — 잰 값 %s · 기대 %s" % [what, actual, expected])
 
+# ── HOTBAR ───────────────────────────────────────────────────────────
+## 화면 아래 9칸을 **구운 픽셀에서** 읽고, 숫자키를 눌러 손이 옮겨 가는지 다시 굽는다.
+##
+## DRAW 가 이 자리를 건너뛰므로 **여기가 그 자리의 유일한 판정**이다.
+## 「핫바가 있다」로는 부족하다 — 숨겨도 · 안 그려도 · 다 같은 색으로 그려도
+## 씬과 단위 검사는 전부 초록이다.
+func _measure_hotbar() -> void:
+	var view: Control = _main.get_node_or_null("UI/Hotbar") as Control
+	if view == null:
+		_hb_fail("핫바", "Main/UI/Hotbar 가 없다", "메인 씬에 HotbarView")
+		_hb_report()
+		return
+	var hotbar = _main.hotbar
+	var screen := Vector2(LOGICAL_I)
+	var bar := HotbarView.bar_rect(screen)
+
+	# ① **화면에 못 박혀 있다.** 걷고 난 뒤인데도 자리가 그대로여야 한다 —
+	#    CanvasLayer 를 벗기면 카메라를 타고 흘러가서 여기서 잡힌다.
+	var got := Rect2(view.global_position, view.size)
+	if not (got.position.is_equal_approx(bar.position) and got.size.is_equal_approx(bar.size)):
+		_hb_fail("핫바 자리 (걷고 난 뒤)", str(got), str(bar))
+	if not view.visible:
+		_hb_fail("핫바", "안 보인다 (visible = false)", "상시 표시")
+	if screen.y - bar.end.y > HB_BOTTOM_GAP or bar.end.y > screen.y:
+		_hb_fail("핫바가 화면 아래에 안 붙었다", "아래 여백 %.1f px" % (screen.y - bar.end.y),
+			"0 .. %.0f px" % HB_BOTTOM_GAP)
+
+	# ② **9칸이 정말 그려져 있다.** 칸마다 두 점을 읽는다.
+	await _settle()
+	var img := _bake()
+	if img == null:
+		_hb_report()
+		return
+	_hb_pixels(img, "처음", hotbar.selected)
+
+	# ③ **숫자키가 손을 옮긴다.** 상태(`selected`)와 픽셀(강조 테두리)을 둘 다 본다 —
+	#    상태만 보면 「손은 옮겼는데 화면이 그대로」를, 픽셀만 보면 계산을 못 잡는다.
+	var before: int = hotbar.selected
+	await _press(Hotbar.action_for(HB_KEY - 1))
+	if hotbar.selected != HB_KEY - 1:
+		_hb_fail("숫자키 %d 를 눌렀는데 손이 안 옮겨갔다" % HB_KEY,
+			"%d번 칸" % (hotbar.selected + 1), "%d번 칸 (누르기 전 %d번)" % [HB_KEY, before + 1])
+	await _settle()
+	var img2 := _bake()
+	if img2 != null:
+		_hb_pixels(img2, "숫자키 %d" % HB_KEY, HB_KEY - 1)
+	_hb_report()
+
+## 지금 화면을 굽는다. 비면 그 자리에서 실패로 적고 null 을 준다.
+func _bake() -> Image:
+	var tex: ViewportTexture = root.get_texture()
+	var img: Image = tex.get_image() if tex != null else null
+	if img == null or img.get_width() != LOGICAL_I.x or img.get_height() != LOGICAL_I.y:
+		_hb_fail("화면", "텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
+		return null
+	return img
+
+## 9칸의 테두리·바탕 픽셀을 전부 읽는다. **든 칸 하나만 테두리 색이 달라야 한다.**
+func _hb_pixels(img: Image, phase: String, held: int) -> void:
+	var screen := Vector2(LOGICAL_I)
+	var bad := 0
+	var lit := 0
+	var first := ""
+	for i in Hotbar.SLOTS:
+		var r := HotbarView.slot_rect(i, screen)
+		var edge := img.get_pixel(int(r.position.x + HB_EDGE_PROBE.x), int(r.position.y + HB_EDGE_PROBE.y))
+		var bg := img.get_pixel(int(r.position.x + HB_BG_PROBE.x), int(r.position.y + HB_BG_PROBE.y))
+		var want: Color = HotbarView.EDGE_HELD if i == held else HotbarView.EDGE
+		if _near(edge, HotbarView.EDGE_HELD):
+			lit += 1
+		if not _near(edge, want):
+			bad += 1
+			if first == "":
+				first = "%d번 칸 테두리 · 잰 값 %s · 기대 %s" % [i + 1, edge.to_html(false), want.to_html(false)]
+		if not _near(bg, HotbarView.BG):
+			bad += 1
+			if first == "":
+				first = "%d번 칸 바탕 · 잰 값 %s · 기대 %s" % [i + 1, bg.to_html(false), HotbarView.BG.to_html(false)]
+	print("HOTBAR [%s] 칸 %d · 어긋남 %d · 강조된 칸 %d · 손 %d번 · 줄 %s" % [
+		phase, Hotbar.SLOTS, bad, lit, held + 1, HotbarView.bar_rect(screen)])
+	if bad > 0:
+		_hb_fail("핫바가 화면에 없거나 다르게 그려졌다 [%s]" % phase,
+			"%d / %d 점 (첫 어긋남: %s)" % [bad, Hotbar.SLOTS * 2, first],
+			"9칸 전부 일치 (허용 색차 %.1f/255)" % (TOL * 255.0))
+	# **강조는 정확히 하나다.** 전부 켜지거나 전부 꺼지면 숫자키가 화면에 안 보인다.
+	if lit != 1:
+		_hb_fail("손에 든 칸 표시 [%s]" % phase, "%d칸이 강조됐다" % lit, "정확히 1칸")
+
+## 숫자키를 **몇 프레임 눌러 둔다.** `Input.action_press` 는 이벤트를 안 흘려보내고
+## 상태만 바꾸므로, 받는 쪽이 `_process` 에서 폴링해야 한다 (main.gd `_poll_hotbar`).
+func _press(action: StringName) -> void:
+	Input.action_press(action)
+	for i in SETTLE:
+		await process_frame
+	Input.action_release(action)
+	await process_frame
+
+func _near(a: Color, b: Color) -> bool:
+	return absf(a.r - b.r) <= TOL and absf(a.g - b.g) <= TOL and absf(a.b - b.b) <= TOL
+
+func _hb_fail(what: String, actual: String, expected: String) -> void:
+	_hb_bad += 1
+	print("HOTBAR FAIL %s — 잰 값 %s · 기대 %s" % [what, actual, expected])
+
+func _hb_report() -> void:
+	print("HOTBAR %s (9칸 × 두 점 · 숫자키 %d 를 눌러 다시 굽는다)" % [
+		"ok" if _hb_bad == 0 else "FAIL %d개" % _hb_bad, HB_KEY])
+
 # ── 끝 ───────────────────────────────────────────────────────────────
-## **둘 중 하나만 빨개도 이 프로세스는 빨갛다.** 합치기 전에도 계약은 둘 다 봤다.
+## **셋 중 하나만 빨개도 이 프로세스는 빨갛다.** 합치기 전에도 계약은 전부 봤다.
 func _finish() -> void:
 	print("DRAW %s (표본 간격 %d px · 중심 %.0f px 제외 · 서서 + 걷고 두 번)" % [
 		"ok" if _draw_bad == 0 else "FAIL %d개" % _draw_bad, STEP, SKIP_BOX])
 	# 이름이 `WINGATE` 인 이유: `main.gd` 가 시작할 때 `WINDOW   1920 x 1080` 을 찍는다 —
 	# `WINDOW` 로 시작하면 check.sh 의 grep 이 게이트가 죽어도 그 줄을 잡아 초록으로 본다.
-	print("WINGATE %s (VIEW %d · DRAW %d · 창 한 번)" % [
-		"ok" if _view_bad + _draw_bad == 0 else "FAIL %d개" % (_view_bad + _draw_bad),
-		_view_bad, _draw_bad])
+	var bad := _view_bad + _draw_bad + _hb_bad
+	print("WINGATE %s (VIEW %d · DRAW %d · HOTBAR %d · 창 한 번)" % [
+		"ok" if bad == 0 else "FAIL %d개" % bad, _view_bad, _draw_bad, _hb_bad])
 	if _main != null:
 		_main.queue_free()
-	quit(1 if _view_bad + _draw_bad > 0 else 0)
+	quit(1 if bad > 0 else 0)

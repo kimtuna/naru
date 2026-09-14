@@ -27,6 +27,8 @@ cp scripts/player_facing.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_gen.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_collide.gd "$BAK/" 2>/dev/null || true
 cp scripts/inventory.gd "$BAK/" 2>/dev/null || true
+cp scripts/hotbar.gd "$BAK/" 2>/dev/null || true
+cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
@@ -41,6 +43,8 @@ restore() {
   cp "$BAK/world_gen.gd" scripts/world_gen.gd 2>/dev/null || true
   cp "$BAK/world_collide.gd" scripts/world_collide.gd 2>/dev/null || true
   cp "$BAK/inventory.gd" scripts/inventory.gd 2>/dev/null || true
+  cp "$BAK/hotbar.gd" scripts/hotbar.gd 2>/dev/null || true
+  cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
@@ -376,6 +380,63 @@ cp "$BAK/inventory.gd" scripts/inventory.gd
 sed -i '' 's|^const STACK_MAX := 999|const STACK_MAX := 99|' scripts/inventory.gd
 expect 1 "스택 상한을 99 로 되돌리면 tests 가 잡는다 (사람이 정한 999)"
 cp "$BAK/inventory.gd" scripts/inventory.gd
+
+# ── 바퀴 20 핫바 ─────────────────────────────────────────────────────
+# **앞의 셋은 단위 검사 90개를 전부 초록으로 남긴다** — 순수 계산도 씬의 글자도
+# 입력 배선도 멀쩡하고 **실행 중의 픽셀만** 달라지기 때문이다.
+# `measure_window.gd` 의 HOTBAR 만 잡는다. 사람 눈에는 「핫바가 없다 / 숫자를 눌러도
+# 아무 일이 없다 / 어느 칸을 들었는지 모르겠다」로만 보인다.
+
+# 씬에도 있고 자리도 맞는데 **안 보인다.** DRAW 는 그 자리를 건너뛰므로
+# 「월드가 다 잘 그려졌다」로 초록이다 — HOTBAR 가 없으면 아무도 못 잡는다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t_hotbar_view.hotbar = hotbar\n",
+    "\t_hotbar_view.hotbar = hotbar\n\t_hotbar_view.visible = false\n", 1))
+PYX
+expect 1 "핫바를 숨기면 실측이 잡는다 (씬에는 그대로 달려 있다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# **이 하나가 「숫자키로 손에 들기」의 게이트다.** 액션은 묶여 있고 `Hotbar.select` 도
+# 멀쩡하다 — 아무도 키를 안 읽을 뿐이다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t_poll_hotbar()\n\tqueue_redraw()", "\tqueue_redraw()", 1))
+PYX
+expect 1 "숫자키를 안 읽으면 실측이 잡는다 (손이 1번 칸에 굳는다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# 손은 옮겨 가는데 **화면이 안 변한다.** 상태만 보는 검사로는 못 잡는다 —
+# 9칸이 늘 똑같이 보여서 사람은 무엇을 들었는지 모른다.
+python3 - <<'PYX'
+import io
+p='scripts/hotbar_view.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "const EDGE_HELD := Color(0.99, 0.93, 0.78)",
+    "const EDGE_HELD := Color(0.35, 0.37, 0.42)", 1))
+PYX
+expect 1 "손에 든 칸을 똑같이 그리면 잡는다 (강조된 칸 1 → 9)"
+cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd
+
+# **사람이 정한 값은 숫자로 묶여 있어야 한다** (바퀴 19 와 같은 자리).
+# 9칸은 숫자키 1..9 한 줄이라서 9 다 — 8칸이 되면 키 9 가 갈 곳이 없다.
+sed -i '' 's|^const SLOTS := 9|const SLOTS := 8|' scripts/hotbar.gd
+expect 1 "핫바를 8칸으로 줄이면 tests 가 잡는다 (숫자키 9 가 갈 곳이 없다)"
+cp "$BAK/hotbar.gd" scripts/hotbar.gd
+
+# 「화면 **아래** 상시」다. 위로 올리면 캐릭터 머리 위를 덮는다.
+python3 - <<'PYX'
+import io
+p='scripts/hotbar_view.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "screen.y - MARGIN - SLOT, w, SLOT)", "MARGIN, w, SLOT)", 1))
+PYX
+expect 1 "핫바를 화면 위로 올리면 잡는다 (아래 여백 8 → 500px)"
+cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd
 
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"

@@ -72,3 +72,35 @@ func test_main_scene_places_player_on_the_spawn_tile() -> void:
 	eq(p.position, PlayerMotion.tile_center(spawn.x, spawn.y),
 		"플레이어 시작 위치 = 스폰 칸 %s 의 중심" % spawn)
 	m.free()
+
+func test_number_keys_are_bound_to_the_hotbar() -> void:
+	# 숫자키 1..9 (GDD D-2c). **물리 키코드다** — WASD 와 같은 이유로 자판 배열을 안 탄다.
+	# 액션 이름은 `Hotbar.action_for` 가 만든다: 여기서 글자를 다시 적으면
+	# 「배선은 맞는데 코드가 다른 이름을 부른다」를 못 잡는다.
+	for i in Hotbar.SLOTS:
+		var action := Hotbar.action_for(i)
+		if not InputMap.has_action(action):
+			failures.append("입력 액션이 없다: %s" % action)
+			continue
+		var want := KEY_1 + i
+		var found := false
+		for e in InputMap.action_get_events(action):
+			if e is InputEventKey and e.physical_keycode == want:
+				found = true
+		check(found, "%s 가 물리 키 %s 에 묶여야 한다" % [action, OS.get_keycode_string(want)])
+	# 10번째 키는 없다 — 핫바가 9칸이기 때문이다.
+	check(not InputMap.has_action(&"hotbar_10"), "hotbar_10 은 있으면 안 된다 (9칸이다)")
+
+func test_main_scene_has_the_hotbar_on_a_canvas_layer() -> void:
+	# **카메라를 타면 안 된다.** Node2D 밑에 그냥 달면 걸을 때 핫바가 같이 흘러간다 —
+	# 픽셀로는 measure_window 의 HOTBAR 가 잡지만, 배선은 여기서 막는다.
+	var m: Node = load(MAIN).instantiate()
+	var layer := m.get_node_or_null("UI") as CanvasLayer
+	if layer == null:
+		failures.append("메인 씬에 CanvasLayer 'UI' 가 있어야 한다")
+		m.free()
+		return
+	var view := layer.get_node_or_null("Hotbar")
+	if view == null or not (view is HotbarView):
+		failures.append("UI 밑에 HotbarView 'Hotbar' 가 있어야 한다 — 잰 값 %s" % view)
+	m.free()

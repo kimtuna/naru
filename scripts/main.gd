@@ -15,11 +15,25 @@ extends Node2D
 ##
 ## **보이는 칸만 그린다.** 그릴 범위는 `visible_world_rect()` 가 준다 —
 ## 카메라의 위치·줌이 전부 그 안에 들어 있다.
+##
+## **핫바는 화면에 못 박혀 있다** (GDD D-2c): `UI` 는 `CanvasLayer` 라 카메라를 안 탄다.
+## 숫자키를 읽어 손을 옮기는 것도 여기서 한다 — `Hotbar` 는 순수 계산이라
+## 엔진 입력을 안 본다.
 
 ## 이 판의 씨앗. 저장·불러오기가 생기면 세이브에서 온다 (GDD D-1).
 const WORLD_SEED := 20260914
 
 @onready var _player: Player = $Player
+@onready var _hotbar_view: HotbarView = $UI/Hotbar
+
+## 손. 화면 아래 9칸 + 지금 든 칸 (GDD D-2c).
+var hotbar := Hotbar.new()
+
+## 숫자키의 **직전 프레임 상태**. 눌린 순간에만 손이 움직인다.
+## **`is_action_just_pressed` 를 안 쓴다**: 「눌린 프레임」이 딱 한 번뿐이라
+## `_process` 가 그 프레임을 비껴가면 아무 일도 안 일어난다 — 실측 게이트는
+## `Input.action_press` 로 키를 몇 프레임 눌러 두므로 그 창에 걸린다.
+var _key_down := PackedByteArray()
 
 ## 지난 프레임에 실제로 그린 칸 수. **`measure_window.gd` 의 DRAW 가 이 수를 읽는다** —
 ## 월드를 통째로 그려도 화면 픽셀은 똑같아서 그림만 봐서는 못 잡는다.
@@ -46,6 +60,9 @@ var _cache := PackedColorArray()
 
 func _ready() -> void:
 	_link_world()
+	_key_down.resize(Hotbar.SLOTS)
+	_hotbar_view.hotbar = hotbar
+	_hotbar_view.queue_redraw()
 	var vis := get_viewport().get_visible_rect().size
 	var win := DisplayServer.window_get_size()
 	print("VIEWPORT %d x %d" % [int(vis.x), int(vis.y)])
@@ -69,7 +86,18 @@ func _link_world() -> void:
 ## 카메라가 움직이면 보이는 월드 범위가 달라진다 — 타일은 월드에 고정돼 있으므로
 ## 다시 그려야 한다.
 func _process(_delta: float) -> void:
+	_poll_hotbar()
 	queue_redraw()
+
+## 숫자키 1..9 → 손. 액션 이름은 `Hotbar` 가 만든다 — 여기서 글자를 다시 적으면
+## project.godot 의 배선과 갈라진다.
+func _poll_hotbar() -> void:
+	for i in Hotbar.SLOTS:
+		var down: int = 1 if Input.is_action_pressed(Hotbar.action_for(i)) else 0
+		if down == 1 and _key_down[i] == 0:
+			hotbar.select(i)
+			_hotbar_view.queue_redraw()
+		_key_down[i] = down
 
 ## 지금 화면에 걸리는 월드 범위(픽셀). 카메라의 위치·줌이 전부 여기 들어 있다.
 func visible_world_rect() -> Rect2:
