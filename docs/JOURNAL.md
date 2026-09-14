@@ -60,6 +60,11 @@
   `MOVE 가로 239.71 / 대각 238.72 px/s` · `VIEW 보이는 칸 20.00 x 11.25` ·
   `FACE 구간 7 ok` · `ALL GREEN`(기준 5개) · `REDTEAM 18 잡음, 1 놓침`
 - 남긴 것: **대조군 1종이 여전히 헐겁다** — 「검사를 지우면 바닥이 잡는다」가 또 놓쳤다.
+- 날짜: 2026-09-14
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 19개 스크립트, 실패 0 · 3 TESTS 35 passed, 0 failed · 4 TESTS 35 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  69/90줄
+- 비용: $11.4401 누적
+- 커밋: `42e15ec`
   검사가 35개인데 `mintests` 바닥은 26 이라 하나쯤 지워도 초록이다. 고치는 자리는 무장된
   `criteria.tsv` 라 세션은 안 건드렸다(`bump_mintests` 가 올린다). 바퀴 3·5 와 같은 줄이다.
   **사람이 정할 것**: 잡음 상수 넷(`BASE_CELLS`·`CONTRAST`·`OCTAVES`·`FALLOFF_POW`)은

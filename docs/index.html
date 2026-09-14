@@ -147,17 +147,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 2026-09-14 10:24</p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 2026-09-14 10:40</p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 5</span><span class="note">초록 · 2026-09-14</span></div>
-<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 10:24</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">10 <small>/ 42</small></span><span class="note">백로그 항목</span></div>
-<div class="tile"><span class="k">누적 비용</span><span class="v">$8.1299</span></div>
+<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 6</span><span class="note">초록 · 2026-09-14</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 10:40</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">11 <small>/ 43</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$11.4401</span></div>
 </section>
-<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span>시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드</div>
+<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span>이동 충돌 — 바다에 못 들어가고, 해안에 비스듬히 붙으면 미끄러진다</div>
 <h2>진행 — 한 줄 = 한 바퀴</h2>
 <div class="phases">
 <details class="phase full">
@@ -177,15 +177,16 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P1</span>
     <span class="ptitle">걸어다니는 세계</span>
-    <span class="pcount">3/6</span>
-    <span class="bar"><i style="width:50%"></i></span></summary>
+    <span class="pcount">4/7</span>
+    <span class="bar"><i style="width:57%"></i></span></summary>
   <ul class="items">
 <li class="done"><span class="box">✔</span>색 네모 플레이어가 48px 타일 위를 속도 240 으로 <strong>8방향</strong> 이동 (대각선 정규화)</li>
 <li class="done"><span class="box">✔</span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</li>
 <li class="done"><span class="box">✔</span><strong>마우스가 방향을 정한다</strong> — 이동 방향과 별개. 4방향 스냅 + 히스테리시스</li>
-<li class="todo"><span class="box"></span>시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드</li>
+<li class="done"><span class="box">✔</span>시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드</li>
 <li class="todo"><span class="box"></span>이동 충돌 — 바다에 못 들어가고, 해안에 비스듬히 붙으면 미끄러진다</li>
 <li class="todo"><span class="box"></span>카메라가 플레이어를 따라간다. <strong>줌 없음</strong> (해상도가 시야 이득이 되면 안 된다)</li>
+<li class="todo"><span class="box"></span><strong>월드를 화면에 그린다</strong> — 보이는 칸만. <code>main.gd</code> 의 임시 격자를 걷어낸다</li>
 </ul></details>
 <details class="phase none">
   <summary><span class="pid">P2</span>
@@ -252,7 +253,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>사람이 직접 끝까지 플레이한다.</strong> 한 바퀴가 재미있는가? — <strong>이 판정만이 프로토타입의 결론이다</strong></li>
 </ul></details>
 </div>
-<h2>계약 — 기계가 채점한다 <span class="hash">무장 6dc6f8d01cc2</span></h2>
+<h2>계약 — 기계가 채점한다 <span class="hash">무장 5b54dad90e2a</span></h2>
 <p class="lede">세션에게 「검사를 약하게 하지 마세요」라고 부탁하지 않는다. <code>criteria.tsv</code> 는 해시로 잠겨 있고, 고치면 채점자가 <code>exit 77</code> 로 죽는다.</p>
 <div class="cards">
 <div class="card ok">
@@ -267,33 +268,48 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">모든 GDScript 가 파스된다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh parse</code>
-<ul class="ev"><li>PARSE 15개 스크립트, 실패 0</li></ul>
+<ul class="ev"><li>PARSE 19개 스크립트, 실패 0</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">3</span>
     <span class="cwhat">단위 테스트가 통과하고 개수가 줄지 않는다</span>
     <span class="cmark">초록</span></div>
-  <code class="cmd">bash tools/loop/mintests.sh 26</code>
-<ul class="ev"><li>TESTS 26 passed, 0 failed</li></ul>
+  <code class="cmd">bash tools/loop/mintests.sh 35</code>
+<ul class="ev"><li>TESTS 35 passed, 0 failed</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">4</span>
     <span class="cwhat">색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh tests</code>
-<ul class="ev"><li>TESTS 26 passed, 0 failed</li></ul>
+<ul class="ev"><li>TESTS 35 passed, 0 failed</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">5</span>
     <span class="cwhat">매 바퀴 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  89/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  69/90줄</li></ul>
 </div>
 </div>
 <h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 6</span>
+    <h3>시드 기반 월드 생성 256×256, 땅/바다 2종, 같은 시드 = 같은 월드</h3>
+    <span class="edate">2026-09-14</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">첫 구현이 <strong>섬이 아니라 동그란 덩어리</strong>였다. 숫자는 전부 맞았다 — 테두리는 물, 땅 33~37%, 체크섬도 재현됐다. 그런데 PNG 를 구워 보니 <strong>씨앗을 바꿔도 거의 같은 원</strong>이었다. 「같은 시드 = 같은 월드」는 통과하는데 「다른 시드 = 다른 월드」가 눈으로는 거짓이었다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v">잡음의 진폭이 감쇠보다 작았다. fBm 4옥타브는 평균 0.5 언저리에 몰려 있어서 폭이 ±0.15 쯤인데, 가장자리 감쇠는 0 → 1.25 로 훑는다. <strong>해안선의 위치를 잡음이 아니라 거리가 정한다</strong> — 그래서 반지름이 고정된 원이 나온다.</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><code>scripts/world_gen.gd</code> 에 <code>CONTRAST 2.5</code> 를 넣어 잡음을 평균에서 벌렸다 (<code>(n-0.5)*2.5+0.5</code> 를 0..1 로 자른다). 덩어리 크기도 <code>BASE_CELLS 6.0 → 3.5</code> 로 키웠다. <strong>부등식 두 줄은 그대로 산다</strong> — 자른 값이 여전히 0..1 이라 테두리 물 · 한가운데 땅이 깨지지 않는다. 그리고 이걸 보려고 <code>tools/qa/world_png.gd</code>(월드를 PNG 로 굽는다)를 만들었다.</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>월드 난수는 RandomNumberGenerator 를 안 쓴다.</strong> 그건 「몇 번째로 뽑았나」에 값이 달려 있어서, 나중에 청크를 따로 만들거나 타일 하나만 다시 물으면 월드가 달라진다. 좌표를 넣으면 값이 나오는 해시로 갔다 — 순서가 없으니 부분 생성도 같은 답을 준다 (<code>test_tile_query_matches_the_whole_map</code> 이 이걸 지킨다). 그리고 <strong>월드를 화면에 그리는 일은 카메라 뒤로 미뤘다</strong> — 섬이 (128,128) 에 있는데 시점은 원점이라, 지금 그리면 화면이 통째로 바다다. 백로그에 한 줄로 넘겼다.</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>대조군 1종이 여전히 헐겁다</strong> — 「검사를 지우면 바닥이 잡는다」가 또 놓쳤다.</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v"><code>TESTS 35 passed, 0 failed</code> (26 → 35) · <code>PARSE 19개 실패 0</code> · <code>IMPORT ok</code> · <code>WORLD 256x256 · 씨앗 1 땅 38.07% 0x22a64c62 / 42 땅 39.01% 0x4d412265 / -20260914 땅 28.31% 0xb5650262</code> · 한 장 <strong>190 ms</strong>(3장 569 ms · 헤드리스) · 씨앗 12개 땅 비율 <strong>28.00% ~ 40.97%</strong> · <code>MOVE 가로 239.71 / 대각 238.72 px/s</code> · <code>VIEW 보이는 칸 20.00 x 11.25</code> · <code>FACE 구간 7 ok</code> · <code>ALL GREEN</code>(기준 5개) · <code>REDTEAM 18 잡음, 1 놓침</code></span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 19개 스크립트, 실패 0 · 3 TESTS 35 passed, 0 failed · 4 TESTS 35 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  69/90줄</span><span>$11.4401 누적</span><span><code>42e15ec</code> 검사가 35개인데 <code>mintests</code> 바닥은 26 이라 하나쯤 지워도 초록이다. 고치는 자리는 무장된 <code>criteria.tsv</code> 라 세션은 안 건드렸다(<code>bump_mintests</code> 가 올린다). 바퀴 3·5 와 같은 줄이다. <strong>사람이 정할 것</strong>: 잡음 상수 넷(<code>BASE_CELLS</code>·<code>CONTRAST</code>·<code>OCTAVES</code>·<code>FALLOFF_POW</code>)은 재서 얻은 값이 아니라 <strong>PNG 를 보고 고른 값</strong>이다. 땅 38% 는 「섬처럼 생겼나」를 말해 주지 않는다 — 같은 38% 가 도넛일 수도 점 100개일 수도 있다. <code>tools/qa/world_png.gd</code> 로 몇 장 구워 보고 「내 섬」의 느낌이 맞는지 봐야 한다. 씨앗 7 에는 작은 딸린 섬이 하나 붙는데, 그게 좋은 건지 GDD 의 「섬 하나」에 어긋나는 건지도 사람이 정할 일이다.  ---</span></div>
+</article>
 <article class="entry ok">
   <div class="ehead">
     <span class="badge ">바퀴 5</span>
@@ -468,6 +484,10 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/5d50661"><code>5d50661</code></a><span class="cd">2026-09-14</span>테스트 바닥 26 → 35</li>
+<li><a href="https://github.com/kimtuna/naru/commit/42e15ec"><code>42e15ec</code></a><span class="cd">2026-09-14</span>바퀴 6 일지 · 백로그 · NUMBERS 6절 — 대조군 18 잡음, 1 놓침</li>
+<li><a href="https://github.com/kimtuna/naru/commit/0fa774c"><code>0fa774c</code></a><span class="cd">2026-09-14</span>시드 기반 월드 256×256 — 땅/바다 2종, 같은 씨앗 = 같은 월드</li>
+<li><a href="https://github.com/kimtuna/naru/commit/9e2376d"><code>9e2376d</code></a><span class="cd">2026-09-14</span>바퀴 5 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/2929b63"><code>2929b63</code></a><span class="cd">2026-09-14</span>바퀴 기록 롤링</li>
 <li><a href="https://github.com/kimtuna/naru/commit/e8fc775"><code>e8fc775</code></a><span class="cd">2026-09-14</span>테스트 바닥 18 → 26</li>
 <li><a href="https://github.com/kimtuna/naru/commit/7128769"><code>7128769</code></a><span class="cd">2026-09-14</span>바퀴 5 일지 · 백로그 · 상태 — 대조군 15 잡음, 1 놓침</li>
@@ -476,10 +496,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/f4f5c97"><code>f4f5c97</code></a><span class="cd">2026-09-14</span>report.py 문법 깨진 것 되돌림</li>
 <li><a href="https://github.com/kimtuna/naru/commit/dcd70b4"><code>dcd70b4</code></a><span class="cd">2026-09-14</span>초록으로 닫힌 바퀴만 푸시한다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/0bf4a5b"><code>0bf4a5b</code></a><span class="cd">2026-09-14</span>일지·대시보드 버그 셋 — 바퀴 4 가 드러냈다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/c8ac9c0"><code>c8ac9c0</code></a><span class="cd">2026-09-14</span>바퀴 4 일지 · 대시보드 갱신</li>
-<li><a href="https://github.com/kimtuna/naru/commit/83ad8df"><code>83ad8df</code></a><span class="cd">2026-09-14</span>바퀴 기록 롤링</li>
-<li><a href="https://github.com/kimtuna/naru/commit/eebde9b"><code>eebde9b</code></a><span class="cd">2026-09-14</span>P1-2 화면 실측 게이트 — 설정 글자가 아니라 실제 창을 잰다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/db1d512"><code>db1d512</code></a><span class="cd">2026-09-14</span>README — 대시보드와 루프 구조</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 </div></body></html>
