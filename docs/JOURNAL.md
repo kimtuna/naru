@@ -36,6 +36,19 @@
 
 ---
 
+## 바퀴 12 · **계약이 `check.sh tests` 를 두 번 돈다** — 기준 3(`mintests.sh`)과 기준 4 가
+- 날짜: 2026-09-14
+- 결과: 초록
+- 문제: 
+- 원인: 
+- 고친 것: 
+- 바꾼 결정: 
+- 잰 값: 
+- 남긴 것: 
+- 채점: 1 IMPORT ok · 2 PARSE 27개 스크립트, 실패 0 · 3 TESTS 66 passed, 0 failed · 4 TESTS 66 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  88/90줄 · 6 SHOT 960x540  색 217개  가장 넓은 한 색 1.3%  → /tmp/w.png
+- 비용: $36.3796 누적
+- 커밋: `2bb1686`
+
 ## 바퀴 11 · **`measure_facing.gd` 가 사람의 마우스에 안 흔들리게 한다** — 진짜 커서를 뺏어 재는
 - 문제: 게이트가 `Input.warp_mouse` 로 **진짜 커서를 뺏어** 쟀다. 사람이(또는 아무
   프로세스가) 마우스를 건드리면 튄다 — 바퀴 8 · 사람 세션 · 바퀴 9 · 바퀴 10 **네 번**.
