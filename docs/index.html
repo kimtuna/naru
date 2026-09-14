@@ -152,16 +152,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 11:25:54</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 12:43:53</span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
 <div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 8</span><span class="note">초록 · 2026-09-14</span></div>
-<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 11:25</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 12:43</span></div>
 <div class="tile"><span class="k">진행</span><span class="v">13 <small>/ 43</small></span><span class="note">백로그 항목</span></div>
 <div class="tile"><span class="k">누적 비용</span><span class="v">$22.1329</span></div>
 </section>
+<div class="alert halt"><strong>멈춘 사유</strong> — 최대 바퀴 수 4 소진<span class="note">2026-09-14 11:25:56</span></div>
 <div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span><strong>월드를 화면에 그린다</strong> — 보이는 칸만. <code>main.gd</code> 의 임시 격자를 걷어낸다</div>
 <h2>진행 — 한 줄 = 한 바퀴</h2>
 <div class="phases">
@@ -300,6 +301,21 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge human">사람</span>
+    <h3>대조군 한 판이 빨갰는데 재현이 안 됐다</h3>
+    <span class="edate">2026-09-14</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v">P1 을 다 돌린 뒤 <code>redteam.sh</code> 를 돌렸더니 <strong><code>REDTEAM 24 잡음, 1 놓침</code></strong> 이 나왔다. 놓친 것이 하필 <strong>마지막 「원복하면 다시 초록이다」</strong>(기대 exit 0 · 잰 값 1) 였다 — 대조군이 헐거운 게 아니라 <strong>원복 뒤에도 빨갛다</strong>는 뜻이라 훨씬 나쁜 신호였다. 그런데 바로 잰 워킹트리는 깨끗했고 계약은 <code>ALL GREEN</code> 이었다.</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v"><strong>모른다. 재현이 안 됐다.</strong> <code>expect()</code> 가 계약 출력을 <code>&gt;/dev/null 2&gt;&amp;1</code> 로 통째로 버려서 <strong>무엇이 왜 빨갰는지 증거가 하나도 안 남았다.</strong> 그 사이 내가 계약을 다시 돌려 <code>.loop/results.json</code> 까지 덮었다. 실측 게이트(MOVE·VIEW·FACE·CAMERA·COLLIDE)는 진짜 창을 띄우므로 Godot 을 25번 연달아 띄운 끝에 한 번 흔들렸을 수 있지만 <strong>증거가 없다.</strong></span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v"><code>redteam.sh</code> 의 <code>expect()</code> 가 <strong>놓친 판의 증거를 남긴다</strong> — 빨간 기준과 증거를 그 자리에서 찍고, 계약 출력 · <code>results.json</code> · 워킹트리 상태를 <code>.loop/redteam/&lt;번호&gt;-*</code> 로 떨군다. 다음에 같은 일이 나면 10분을 다시 태우지 않아도 된다.</span></div>
+<div class="row none"><span class="k">바꾼 결정</span><span class="v">없음</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>한 번 빨갰고 원인을 모른다.</strong> 재현이 안 됐다고 없던 일이 아니다 — 다음 <code>REDTEAM</code> 에서 「원복하면 다시 초록이다」가 또 빨개지면 <code>.loop/redteam/</code> 을 먼저 본다. 그리고 이 한 판이 알려준 게 하나 있다: <strong>증거를 안 남기는 검사는 빨개져도 쓸모가 적다.</strong> <code>expect()</code> 말고도 출력을 버리는 자리가 더 있는지 볼 만하다.</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v">재현 시도 — <code>check.sh tests</code> 3회 연속 <code>TESTS 57 passed, 0 failed</code> · <code>MOVE 가로 239.14 / 239.48 / 239.46</code> <code>대각 240.00 / 238.72 / 239.88</code> (기대 240 ±5) · <code>CAMERA 최대 편차 0.0000 px</code> (허용 0.50) · <code>COLLIDE 해안 미끄럼 세로 171.11 / 169.61 / 169.56 px/s</code> · <code>FACE 46°-붙잡음 / 60°-놓음</code> 셋 다 동일. <strong>흔들리는 값은 못 찾았다.</strong> 다시 돌린 대조군 — <strong><code>REDTEAM 25 잡음, 0 놓침</code>.</strong></span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 25개 스크립트, 실패 0 · 3 TESTS 57 passed, 0 failed · 4 TESTS 57 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  62/90줄</span><span>$22.1329 누적 (사람 세션 — 루프 예산 밖)</span><span><code>511db34</code></span></div>
+</article>
 <article class="entry ok">
   <div class="ehead">
     <span class="badge ">바퀴 8</span>
@@ -519,6 +535,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/511db34"><code>511db34</code></a><span class="cd">2026-09-14</span>redteam 이 놓친 대조군의 증거를 남긴다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/7e8799f"><code>7e8799f</code></a><span class="cd">2026-09-14</span>바퀴 8 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/c6e8351"><code>c6e8351</code></a><span class="cd">2026-09-14</span>테스트 바닥 53 → 57</li>
 <li><a href="https://github.com/kimtuna/naru/commit/620f65d"><code>620f65d</code></a><span class="cd">2026-09-14</span>바퀴 8 일지 · 백로그 · NUMBERS 1·7·8절 — 대조군 24 잡음, 1 놓침</li>
 <li><a href="https://github.com/kimtuna/naru/commit/97a3b92"><code>97a3b92</code></a><span class="cd">2026-09-14</span>카메라가 플레이어를 따라간다 — 줌 없음</li>
@@ -529,8 +547,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/5defe51"><code>5defe51</code></a><span class="cd">2026-09-14</span>대시보드가 새 바퀴를 알린다 — 새로고침은 사람이 누른다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/6c6a4b9"><code>6c6a4b9</code></a><span class="cd">2026-09-14</span>바퀴 6 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/5d50661"><code>5d50661</code></a><span class="cd">2026-09-14</span>테스트 바닥 26 → 35</li>
-<li><a href="https://github.com/kimtuna/naru/commit/42e15ec"><code>42e15ec</code></a><span class="cd">2026-09-14</span>바퀴 6 일지 · 백로그 · NUMBERS 6절 — 대조군 18 잡음, 1 놓침</li>
-<li><a href="https://github.com/kimtuna/naru/commit/0fa774c"><code>0fa774c</code></a><span class="cd">2026-09-14</span>시드 기반 월드 256×256 — 땅/바다 2종, 같은 씨앗 = 같은 월드</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
