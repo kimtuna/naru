@@ -4,18 +4,6 @@
 
 ## 바퀴
 
-### 바퀴 2 — P0-3 계약 배선 (증거를 기계가 쓴다)
-- 만든 것: `PROMPT.md`(세션 지시서) · `.loop/criteria.tsv`(기준 3) ·
-  `tools/loop/arm-contract.sh`(해시 잠금) · `tools/loop/run-contract.sh`(유일한 증거) ·
-  `.loop/state.md`
-- **`contract.md` 를 따로 두지 않았다** — 정지 규칙·red lines 를 `PROMPT.md` 에 합쳤다.
-  매 바퀴 읽는 문서 수를 하나라도 줄이는 쪽이 낫다.
-- 검사: `ALL GREEN` (기준 3개)
-- 대조군 5종: 정상 0 / 기준 실패 1 / 변조 **77** / 공허 **78** / 파일 없음 **78**
-- **고친 것 둘**: BSD `tr` 이 `\x1f` 를 못 읽어 증거가 한 줄로 뭉쳤다(→ `\037`).
-  「공허한 계약」 게이트가 죽은 코드인지 확인하려고 무장을 풀고 다시 쟀다.
-- 다음: P0-4 대조군을 스크립트로 (`redteam.sh`) → 그다음 **드라이버**
-
 ### 바퀴 3 — P1-1 (색 네모 플레이어 · 48px 타일 · 240 px/s · WASD)
 - 만든 것: `scripts/player_motion.gd`(순수 계산 · `class_name PlayerMotion`) ·
   `scripts/player.gd` + `scenes/player.tscn`(CharacterBody2D + 48x48 ColorRect) ·
