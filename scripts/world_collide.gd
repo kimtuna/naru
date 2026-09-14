@@ -28,10 +28,10 @@ const EPS := 0.01
 ## ── 쓰는 자리 ────────────────────────────────────────────────────────
 
 ## 씨앗 하나로 「이 칸이 막나」를 묻는 Callable 을 만든다.
-## `tile_offset` 은 **화면 칸 → 월드 칸** 이동량이다. 카메라가 오면 (0,0) 이 된다 (P1-6).
-static func solid_from_seed(world_seed: int, tile_offset := Vector2i.ZERO) -> Callable:
+## **칸 좌표는 월드 칸이다** — 카메라가 오면서(P1-6) 화면 칸과 갈라질 일이 없어졌다.
+static func solid_from_seed(world_seed: int) -> Callable:
 	return func(tx: int, ty: int) -> bool:
-		return WorldGen.tile_at(world_seed, tx + tile_offset.x, ty + tile_offset.y) == WorldGen.WATER
+		return WorldGen.tile_at(world_seed, tx, ty) == WorldGen.WATER
 
 ## `pos` 에서 `motion` 만큼 가려다 막히면 벽 앞에 멈춘 자리를 준다.
 ## `solid` 가 비어 있으면 아무것도 안 막는다 — 월드 없이 띄운 씬이 그대로 움직인다.

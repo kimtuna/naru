@@ -3,26 +3,23 @@ extends Node2D
 ## 화면 뼈대 + 48px 격자 + 플레이어.
 ## 「숫자가 옳은지는 화면을 봐야 안다」 — 그 화면을 띄우는 자리다.
 ##
-## 격자는 아직 **임시**다. 월드(`WorldGen`)는 P1-4 에서 생겼지만 화면에 안 그린다 —
-## 섬은 (128,128) 에 있는데 시점은 원점이라 지금 그리면 통째로 바다다.
-## **카메라가 플레이어를 따라간 뒤에** 이 격자를 걷어내고 진짜 타일을 그린다 (백로그 P1).
-## 그때까지는 걸을 때 칸이 지나가는 것을 눈으로 세는 용도다 —
-## 240px/s 가 5칸/초로 보이는지는 숫자가 아니라 이걸로 확인한다.
+## **카메라가 플레이어를 따라간다** (P1-6). 카메라는 플레이어 씬 안에 있다 —
+## 코드가 매 프레임 따라 붙이는 것이 아니라 **부모-자식이라 공짜로 따라간다.**
+## 그래서 바퀴 7 의 `tile_offset` 이 사라졌다: 플레이어는 스폰 칸(128,128)의
+## 한가운데에 그냥 서 있고 카메라가 거기를 비춘다. **화면 칸 = 월드 칸**이다.
 ##
-## **월드는 이미 여기 붙어 있다** (P1-5): 플레이어는 진짜 섬의 바다에 못 들어간다.
-## 다만 카메라가 없어서(P1-6) 플레이어는 화면 안에 있어야 하고, 섬은 월드 한가운데에 있다 —
-## 그래서 **화면 칸을 월드 칸으로 옮기는 `tile_offset`** 을 둔다.
-## 플레이어의 시작 칸이 섬의 스폰 칸(128,128)에 겹치도록 맞춘 값이고,
-## **카메라가 오면 0 이 되어 사라진다.** 눈에 보이는 격자는 아직 이 지형이 아니다.
+## **줌은 1 이다** (BACKLOG P1): 줌이 곧 시야라서, 1 이 아니면 창이 큰 사람이 더 멀리 본다.
+##
+## 격자는 아직 **임시**다 — 진짜 타일은 다음 항목에서 그린다.
+## 다만 격자는 이제 **월드에 고정**된다. 화면에 고정돼 있으면 카메라가 따라가는지
+## 사람 눈에 안 보인다 (플레이어가 격자 위에서 얼어붙은 것처럼 보인다).
+## 걸으면 칸이 지나간다 — 240px/s 가 5칸/초로 보이는지는 숫자가 아니라 이걸로 확인한다.
 
 const GRID_A := Color(0.15, 0.17, 0.20)
 const GRID_B := Color(0.19, 0.22, 0.26)
 
 ## 이 판의 씨앗. 저장·불러오기가 생기면 세이브에서 온다 (GDD D-1).
 const WORLD_SEED := 20260914
-
-## 화면 칸 + 이 값 = 월드 칸. 카메라(P1-6)가 오면 (0,0) 이 된다.
-var tile_offset := Vector2i.ZERO
 
 @onready var _player: Player = $Player
 
@@ -37,27 +34,33 @@ func _ready() -> void:
 		int(PlayerMotion.TILE), vis.x / PlayerMotion.TILE, vis.y / PlayerMotion.TILE])
 	print("SPEED    %d px/s = %.1f 칸/s" % [
 		int(PlayerMotion.SPEED), PlayerMotion.SPEED / PlayerMotion.TILE])
-	print("WORLD    씨앗 %d · %dx%d 칸 · 스폰 %s · 화면→월드 %s" % [
-		WORLD_SEED, WorldGen.SIZE, WorldGen.SIZE, WorldGen.spawn_tile(), tile_offset])
+	print("WORLD    씨앗 %d · %dx%d 칸 · 스폰 %s · 시작 %s" % [
+		WORLD_SEED, WorldGen.SIZE, WorldGen.SIZE, WorldGen.spawn_tile(), _player.position])
+	print("CAM      줌 %s · 보이는 월드 %s" % [
+		get_viewport().get_canvas_transform().get_scale(), visible_world_rect()])
 
-## 플레이어를 월드에 꽂는다. **이 세 줄이 없으면 바다 위를 걸어다닌다.**
+## 플레이어를 월드에 꽂는다. **이 줄이 없으면 바다 위를 걸어다닌다.**
 func _link_world() -> void:
-	var start := Vector2i(WorldCollide.tile_of(_player.position.x),
-			WorldCollide.tile_of(_player.position.y))
-	tile_offset = WorldGen.spawn_tile() - start
-	_player.solid = WorldCollide.solid_from_seed(WORLD_SEED, tile_offset)
+	_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)
 
-## 월드 칸의 한가운데가 화면 어디인가. 실측 게이트와 다음 바퀴의 그리기가 쓴다.
-func screen_of(world_tile: Vector2i) -> Vector2:
-	var t := world_tile - tile_offset
-	return PlayerMotion.tile_center(t.x, t.y)
+## 카메라가 움직이면 보이는 월드 범위가 달라진다 — 격자는 월드에 고정돼 있으므로
+## 다시 그려야 한다. 다음 항목의 진짜 타일 그리기도 같은 자리에 얹힌다.
+func _process(_delta: float) -> void:
+	queue_redraw()
+
+## 지금 화면에 걸리는 월드 범위(픽셀). 카메라의 위치·줌이 전부 여기 들어 있다.
+func visible_world_rect() -> Rect2:
+	var vp := get_viewport()
+	return vp.get_canvas_transform().affine_inverse() * Rect2(Vector2.ZERO, vp.get_visible_rect().size)
 
 func _draw() -> void:
 	var t := PlayerMotion.TILE
-	var vis := get_viewport().get_visible_rect().size
-	var cols := int(ceil(vis.x / t))
-	var rows := int(ceil(vis.y / t))
-	for y in rows:
-		for x in cols:
-			var c: Color = GRID_A if (x + y) % 2 == 0 else GRID_B
-			draw_rect(Rect2(x * t, y * t, t, t), c)
+	var view := visible_world_rect()
+	var x0 := floori(view.position.x / t)
+	var y0 := floori(view.position.y / t)
+	var x1 := floori((view.position.x + view.size.x) / t)
+	var y1 := floori((view.position.y + view.size.y) / t)
+	for ty in range(y0, y1 + 1):
+		for tx in range(x0, x1 + 1):
+			var c: Color = GRID_A if posmod(tx + ty, 2) == 0 else GRID_B
+			draw_rect(Rect2(tx * t, ty * t, t, t), c)

@@ -142,17 +142,6 @@ func test_seed_world_blocks_water_only() -> void:
 				bad += 1
 	eq(bad, 0, "막는 칸과 바다가 어긋난 칸 수")
 
-func test_tile_offset_shifts_the_world() -> void:
-	# 카메라가 없는 동안 화면 칸과 월드 칸이 어긋나 있다 (main.gd). 그 이동량을 잰다.
-	var off := Vector2i(118, 123)
-	var solid := WorldCollide.solid_from_seed(1, off)
-	var bad := 0
-	for p in [Vector2i(0, 0), Vector2i(10, 5), Vector2i(-118, -123), Vector2i(60, 60)]:
-		var want := WorldGen.tile_at(1, p.x + off.x, p.y + off.y) == WorldGen.WATER
-		if solid.call(p.x, p.y) != want:
-			bad += 1
-	eq(bad, 0, "이동량 %s 를 안 따른 칸 수" % off)
-
 func test_overlaps_sees_the_body_corners() -> void:
 	var m := _map(COAST)
 	check(not WorldCollide.overlaps(Vector2(72, 72), m), "빈 칸 한가운데는 안 겹친다")

@@ -88,7 +88,14 @@ step_tests() {
   local cout crc
   cout="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_collide.gd 2>&1)"; crc=$?
   printf '%s\n' "$cout" | grep -E '^COLLIDE' || { printf '%s\n' "$cout" | tail -5; echo "COLLIDE FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $crc -eq 0 ]
+  [ $crc -eq 0 ] || return 1
+  # 카메라 실측: 네 방향으로 걸으면서 **매 프레임** 플레이어가 화면 한가운데에 있는지,
+  # 캔버스 변환의 줌이 1 인지 잰다. 씬에 zoom=1 이 박혀 있어도 실행 중에 코드가
+  # 줌을 걸거나 카메라를 꺼 버리면 단위 검사는 전부 초록으로 남는다 — 그 구멍을 막는다.
+  local camout camrc
+  camout="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_camera.gd 2>&1)"; camrc=$?
+  printf '%s\n' "$camout" | grep -E '^CAMERA' || { printf '%s\n' "$camout" | tail -5; echo "CAMERA FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  [ $camrc -eq 0 ]
 }
 
 case "$WHAT" in

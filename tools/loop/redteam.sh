@@ -29,6 +29,7 @@ cp scripts/world_collide.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
+cp scenes/player.tscn "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
@@ -41,6 +42,7 @@ restore() {
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
+  cp "$BAK/player.tscn" scenes/player.tscn 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
 }
@@ -96,11 +98,12 @@ expect 1 "노드가 속도를 제 맘대로 바꾸면 실측이 잡는다 (120 p
 cp "$BAK/player.gd" scripts/player.gd
 
 # ── P1-2 화면 ────────────────────────────────────────────────────────
-# 구조가 P1-1 과 같다: **project.godot 의 글자는 그대로라** 단위 검사 18개는
-# 전부 초록으로 남고 measure_view.gd 만 잡는다 (2026-09-14 실측).
-printf '\n[node name="Cam" type="Camera2D" parent="."]\nzoom = Vector2(2, 2)\n' >> scenes/main.tscn
+# **바퀴 8 에서 겨눌 곳이 바뀌었다**: 진짜 카메라가 생겼으므로 씬에 카메라를 하나 더
+# 덧붙여도 먼저 트리에 들어온 플레이어의 카메라가 화면을 잡는다(선착순) — 아무 일도
+# 안 일어나는 가짜 대조군이 된다. 그래서 **그 카메라의 줌을 직접** 건다.
+sed -i '' 's|^zoom = Vector2(1, 1)|zoom = Vector2(2, 2)|' scenes/player.tscn
 expect 1 "카메라 줌을 걸면 화면 실측이 잡는다 (보이는 칸 10 x 5.62)"
-cp "$BAK/main.tscn" scenes/main.tscn
+cp "$BAK/player.tscn" scenes/player.tscn
 
 python3 - <<'PYX'
 import io
@@ -169,7 +172,7 @@ python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    "\t_player.solid = WorldCollide.solid_from_seed(WORLD_SEED, tile_offset)", "\tpass", 1))
+    "\t_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)", "\tpass", 1))
 PYX
 expect 1 "main 이 월드를 안 꽂으면 실측이 잡는다 (막는 칸이 하나도 없다)"
 cp "$BAK/main.gd" scripts/main.gd
@@ -185,6 +188,35 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
 PYX
 expect 1 "벽에 닿을 때 통째로 멈추면 잡는다 (해안에서 안 미끄러진다)"
 cp "$BAK/world_collide.gd" scripts/world_collide.gd
+
+# ── P1-6 카메라 ──────────────────────────────────────────────────────
+# 셋 다 **단위 검사 57개를 전부 초록으로 남긴다** — 씬에 박힌 글자(zoom = 1,
+# 부드럽게 따라가기 끔)는 그대로고 **실행 중의 화면**만 달라지기 때문이다.
+printf 'enabled = false\n' >> scenes/player.tscn
+expect 1 "카메라를 꺼 버리면 카메라 실측이 잡는다 (화면이 원점을 비춘다)"
+cp "$BAK/player.tscn" scenes/player.tscn
+
+python3 - <<'PYX'
+import io
+p='scripts/player.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "func _ready() -> void:\n\t_place_nose()",
+    "func _ready() -> void:\n\t_place_nose()\n\t$Camera.zoom = Vector2(2, 2)", 1))
+PYX
+expect 1 "실행 중에 줌을 걸면 실측이 잡는다 (씬의 글자는 1 인 채 시야만 2배)"
+cp "$BAK/player.gd" scripts/player.gd
+
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)",
+    "\t_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)\n"
+    "\tvar cam: Camera2D = _player.get_node(\"Camera\")\n"
+    "\tcam.position_smoothing_enabled = true\n\tcam.position_smoothing_speed = 2.0", 1))
+PYX
+expect 1 "카메라가 부드럽게 끌려오면 실측이 잡는다 (걷는 동안 중심에서 밀린다)"
+cp "$BAK/main.gd" scripts/main.gd
 
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"

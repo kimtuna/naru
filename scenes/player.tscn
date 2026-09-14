@@ -26,3 +26,10 @@ color = Color(0.99, 0.93, 0.78, 1)
 
 [node name="Shape" type="CollisionShape2D" parent="."]
 shape = SubResource("1_shape")
+
+[node name="Camera" type="Camera2D" parent="."]
+zoom = Vector2(1, 1)
+position_smoothing_enabled = false
+rotation_smoothing_enabled = false
+drag_horizontal_enabled = false
+drag_vertical_enabled = false

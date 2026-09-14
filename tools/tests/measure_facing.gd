@@ -66,16 +66,19 @@ func _setup() -> bool:
 	if _player == null:
 		_fail("플레이어", "Main/Player 가 없다", "메인 씬에 플레이어")
 		return _finish()
-	# 창 좌표 = 월드 좌표 × 최종 배율. warp_mouse 는 창 좌표를 받는다.
+	# 창 좌표 = 화면 좌표 × 최종 배율. warp_mouse 는 창 좌표를 받는다.
 	_scale = root.get_final_transform().get_scale().x
 	_home = root.get_mouse_position() * _scale
 	_aim(_phases[0]["deg"])
 	return false
 
 ## 플레이어 중심에서 deg 방향 DIST px 떨어진 **월드** 점으로 진짜 커서를 옮긴다.
+## **카메라가 생겨서(P1-6) 월드 좌표 ≠ 창 좌표다** — 캔버스 변환으로 화면에 찍고,
+## 화면을 창 배율로 늘린다. 플레이어는 화면 한가운데라 DIST 200 은 창 안에 떨어진다.
 func _aim(deg: float) -> void:
 	var target: Vector2 = _player.global_position + Vector2.RIGHT.rotated(deg_to_rad(deg)) * DIST
-	Input.warp_mouse(target * _scale)
+	var screen: Vector2 = root.get_canvas_transform() * target
+	Input.warp_mouse(screen * _scale)
 	_wait = SETTLE
 
 func _check_phase() -> void:

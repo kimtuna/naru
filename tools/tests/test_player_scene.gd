@@ -38,7 +38,7 @@ func test_player_uses_the_motion_class() -> void:
 	check(src.contains("PlayerMotion."), "player.gd 는 PlayerMotion 을 써야 한다")
 	check(not src.contains("240"), "속도 숫자를 player.gd 에 다시 적으면 안 된다 (출처는 PlayerMotion)")
 
-func test_main_scene_places_player_on_a_tile_center() -> void:
+func test_main_scene_places_player_on_the_spawn_tile() -> void:
 	var m: Node = load(MAIN).instantiate()
 	var p := m.get_node_or_null("Player") as Node2D
 	if p == null:
@@ -48,8 +48,9 @@ func test_main_scene_places_player_on_a_tile_center() -> void:
 	var t := PlayerMotion.TILE
 	eq(Vector2(fmod(p.position.x, t), fmod(p.position.y, t)), Vector2(t * 0.5, t * 0.5),
 		"플레이어 시작 위치가 타일 중심이어야 한다 (잰 값 %s)" % p.position)
-	# 카메라가 아직 없다 (P1-6). 시작할 때 화면 안에 있어야 보인다.
-	var vw: int = ProjectSettings.get_setting("display/window/size/viewport_width")
-	var vh: int = ProjectSettings.get_setting("display/window/size/viewport_height")
-	check(Rect2(0, 0, vw, vh).has_point(p.position), "시작 위치가 화면 안 — 잰 값 %s" % p.position)
+	# **카메라가 생겼으므로**(P1-6) 화면 안일 필요가 없다 — 화면이 플레이어를 따라온다.
+	# 대신 섬의 스폰 칸에 정확히 서야 한다. 바퀴 7 의 `tile_offset` 이 사라진 자리다.
+	var spawn := WorldGen.spawn_tile()
+	eq(p.position, PlayerMotion.tile_center(spawn.x, spawn.y),
+		"플레이어 시작 위치 = 스폰 칸 %s 의 중심" % spawn)
 	m.free()

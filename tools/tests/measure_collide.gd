@@ -90,8 +90,9 @@ func _find_coast() -> bool:
 		_fail("해안", "씨앗 %d 에 곧은 해안(땅 %d×%d + 바다)이 없다" % [world_seed, RUNWAY + 1, RUN],
 			"한 군데 이상")
 		return false
-	_start = _main.screen_of(Vector2i(_coast.x - RUNWAY, _coast.y))
-	_wall = _main.screen_of(Vector2i(_coast.x + 1, _coast.y)).x - PlayerMotion.TILE * 0.5
+	# **화면 칸 = 월드 칸이다** (P1-6). 카메라가 오면서 main.gd 의 `tile_offset` 이 사라졌다.
+	_start = PlayerMotion.tile_center(_coast.x - RUNWAY, _coast.y)
+	_wall = float(_coast.x + 1) * PlayerMotion.TILE
 	print("COLLIDE 해안 월드칸 %s · 스폰에서 %.1f칸 · 활주로 %d칸 · 바다 면 %.2f px" % [
 		_coast, best, RUNWAY, _wall])
 	return true
@@ -154,11 +155,10 @@ func _query_cost() -> void:
 	if not _player.solid.is_valid():
 		return
 	var n := 100000
-	var off: Vector2i = _main.tile_offset      # 월드 칸을 화면 칸으로 되돌려 묻는다
 	var t0 := Time.get_ticks_usec()
 	var hit := 0
 	for i in n:
-		if _player.solid.call(i % WorldGen.SIZE - off.x, (i / WorldGen.SIZE) % WorldGen.SIZE - off.y):
+		if _player.solid.call(i % WorldGen.SIZE, (i / WorldGen.SIZE) % WorldGen.SIZE):
 			hit += 1
 	var us := Time.get_ticks_usec() - t0
 	print("COLLIDE 질의 %d회 %.1f ms (1회 %.3f µs · 막힘 %.1f%%)" % [
