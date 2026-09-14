@@ -24,6 +24,7 @@ cp tools/tests/test_isolation.gd "$BAK/" 2>/dev/null || true
 cp docs/PROMPT.md "$BAK/" 2>/dev/null || true
 cp scripts/player_motion.gd "$BAK/" 2>/dev/null || true
 cp scripts/player_facing.gd "$BAK/" 2>/dev/null || true
+cp scripts/world_gen.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
@@ -34,6 +35,7 @@ restore() {
   cp "$BAK/PROMPT.md" docs/PROMPT.md 2>/dev/null || true
   cp "$BAK/player_motion.gd" scripts/player_motion.gd 2>/dev/null || true
   cp "$BAK/player_facing.gd" scripts/player_facing.gd 2>/dev/null || true
+  cp "$BAK/world_gen.gd" scripts/world_gen.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
@@ -128,6 +130,30 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
 PYX
 expect 1 "방향은 맞는데 코가 안 돌면 방향 실측이 잡는다 (사람 눈엔 안 보인다)"
 cp "$BAK/player.gd" scripts/player.gd
+
+# ── P1-4 월드 생성 ────────────────────────────────────────────────────
+# **이 하나가 프로세스 간 게이트의 존재 이유다.** 정적 변수는 프로세스마다 한 번만
+# 초기화되므로 **한 프로세스 안에서는 늘 같은 월드**다 — 단위 검사 35개는 전부 초록으로
+# 남고 measure_world.gd 만 잡는다. 사람 눈에는 「어제 만든 섬이 오늘 다르다」로만 보인다.
+python3 - <<'PYX'
+import io
+p='scripts/world_gen.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tvar h := world_seed & 0xFFFFFFFF",
+    "\tvar h := (world_seed + _drift) & 0xFFFFFFFF", 1).replace(
+    "const SIZE := 256",
+    "static var _drift := int(Time.get_unix_time_from_system() * 1000.0)\nconst SIZE := 256", 1))
+PYX
+expect 1 "씨앗에 시간을 섞으면 프로세스 간 실측이 잡는다 (어제 섬 ≠ 오늘 섬)"
+cp "$BAK/world_gen.gd" scripts/world_gen.gd
+
+sed -i '' 's|	return FALLOFF_GAIN \* pow(minf(d, 1.0), FALLOFF_POW)|	return 0.0|' scripts/world_gen.gd
+expect 1 "가장자리 감쇠를 빼면 tests 가 잡는다 (테두리가 땅이 된다)"
+cp "$BAK/world_gen.gd" scripts/world_gen.gd
+
+sed -i '' 's|^const SIZE := 256|const SIZE := 128|' scripts/world_gen.gd
+expect 1 "월드를 256 → 128 로 줄이면 tests 가 잡는다"
+cp "$BAK/world_gen.gd" scripts/world_gen.gd
 
 
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot

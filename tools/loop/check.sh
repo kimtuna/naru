@@ -61,7 +61,27 @@ step_tests() {
   local fout frc
   fout="$("$G" 60 -- --path "$ROOT" --script res://tools/tests/measure_facing.gd 2>&1)"; frc=$?
   printf '%s\n' "$fout" | grep -E '^FACE ' || { printf '%s\n' "$fout" | tail -5; echo "FACE FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $frc -eq 0 ]
+  [ $frc -eq 0 ] || return 1
+  # 월드 실측: **엔진을 두 번 띄워** 같은 씨앗이 같은 월드를 주는지 본다.
+  # 한 프로세스 안의 단위 검사로는 못 잡는다 — 정적 변수에 시간을 한 번 섞어 두면
+  # 그 프로세스 안에서는 늘 같은 값이 나온다 (measure_world.gd 머리말).
+  local w1 w2 g1 g2 w1rc w2rc
+  w1="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_world.gd 2>&1)"; w1rc=$?
+  w2="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_world.gd 2>&1)"; w2rc=$?
+  g1="$(printf '%s\n' "$w1" | grep -E '^WORLD ')"
+  g2="$(printf '%s\n' "$w2" | grep -E '^WORLD ')"
+  if [ -z "$g1" ] || [ -z "$g2" ]; then
+    printf '%s\n' "$w1" | tail -5; echo "WORLD FAIL 측정이 아무것도 안 찍었다"; return 1
+  fi
+  printf '%s\n' "$g1"
+  printf '%s\n' "$w1" | grep -E '^WORLDGEN '
+  if [ "$g1" != "$g2" ]; then
+    echo "WORLD FAIL 같은 씨앗이 프로세스마다 다른 월드를 준다"
+    diff <(printf '%s\n' "$g1") <(printf '%s\n' "$g2") | sed 's/^/    잰 값 /'
+    return 1
+  fi
+  echo "WORLD 두 프로세스 체크섬 일치"
+  [ $w1rc -eq 0 ] && [ $w2rc -eq 0 ]
 }
 
 case "$WHAT" in
