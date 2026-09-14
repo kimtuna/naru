@@ -9,7 +9,14 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIN="${1:-0}"
 out="$(bash "$ROOT/tools/loop/check.sh" tests 2>&1)"; rc=$?
 printf '%s\n' "$out" | grep -E '^\s*(ok|FAIL)|^TESTS' || true
-[ "$rc" -ne 0 ] && { echo "테스트가 빨갛다"; exit 1; }
+# **빨갈 때는 거른 것을 도로 보여준다.** `check.sh tests` 는 단위 검사 뒤에 실측
+# 게이트(MOVE·VIEW·FACE·WORLD·COLLIDE·CAMERA·DRAW)를 부르는데, 위 grep 이 그 줄을
+# 버려서 「TESTS 66 passed, 0 failed 인데 빨강」이라는 증거가 나온 적이 있다.
+if [ "$rc" -ne 0 ]; then
+  echo "테스트가 빨갛다 — 아래가 그 자리다"
+  printf '%s\n' "$out" | grep -vE '^\s*ok\s' | tail -12
+  exit 1
+fi
 n="$(printf '%s' "$out" | sed -n 's/^TESTS \([0-9]*\) passed.*/\1/p' | tail -1)"
 [ -z "$n" ] && { echo "테스트 개수를 못 읽었다"; exit 1; }
 if [ "$n" -lt "$MIN" ]; then

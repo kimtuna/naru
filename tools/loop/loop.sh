@@ -140,9 +140,14 @@ push_state() {
 }
 
 # ── 회귀 감지: 지난번 초록이던 기준이 지금 빨강인가 ─────────────────
+# **항목의 verify 가 계약을 다시 부를 수 있다** — `redteam.sh` 는 30번 부른다.
+# 그러면 `.loop/results.json` 이 verify 안쪽의 마지막 판으로 덮여서, 회귀 감지가
+# 「계약이 깬 것」이 아니라 「대조군이 일부러 깬 것」을 보고 멈춘다. 실제로 그랬다.
+# 그래서 채점 직후의 판본을 따로 떠 두고 그것과 비교한다.
 regressed() {
   [ -f "$PREV" ] || return 1
-  python3 - "$PREV" "$ROOT/.loop/results.json" <<'PY'
+  [ -f "${GRADED:-}" ] || return 1
+  python3 - "$PREV" "$GRADED" <<'PY'
 import json, sys
 try:
     old = {c["id"]: c["ok"] for c in json.load(open(sys.argv[1]))["criteria"]}
@@ -258,7 +263,9 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
   bash tools/loop/run-contract.sh > "$RD/contract.txt" 2>&1
   crc=$?
   sed 's/^/    /' "$RD/contract.txt"
-  cp "$ROOT/.loop/results.json" "$RD/results.json" 2>/dev/null || true
+  # 채점 직후의 판본. verify 가 계약을 다시 불러 results.json 을 덮어도 이건 산다.
+  GRADED="$RD/results.json"
+  cp "$ROOT/.loop/results.json" "$GRADED" 2>/dev/null || true
 
   # red line — 계약을 고쳐서 통과하려 했다
   [ "$crc" -eq 77 ] && stop "계약이 무장 뒤에 변조됐다 (red line) — 바퀴 $cycle"
@@ -278,6 +285,10 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
       vrc=1; say "  verify 빨강"; tail -5 "$RD/verify.txt" | sed 's/^/      /'
     fi
   fi
+
+  # verify 가 계약을 다시 불렀으면 증거를 채점 시점으로 되돌린다 —
+  # 일지의 「채점」과 대시보드가 대조군의 빨강을 물려받으면 안 된다.
+  cp "$GRADED" "$ROOT/.loop/results.json" 2>/dev/null || true
 
   # 회귀
   if reg="$(regressed)"; then
