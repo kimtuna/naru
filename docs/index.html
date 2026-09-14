@@ -152,18 +152,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 14:28:16</span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-14 14:42:54</span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 12</span><span class="note">초록 · 2026-09-14</span></div>
-<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 14:27</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">17 <small>/ 47</small></span><span class="note">백로그 항목</span></div>
-<div class="tile"><span class="k">누적 비용</span><span class="v">$36.3796</span></div>
+<div class="tile"><span class="k">마지막 바퀴</span><span class="v"><i class="dot run"></i>바퀴 13</span><span class="note">초록 · 2026-09-14</span></div>
+<div class="tile"><span class="k">계약</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-14 14:42</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">18 <small>/ 48</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">누적 비용</span><span class="v">$40.9262</span></div>
 </section>
-<div class="alert halt"><strong>멈춘 사유</strong> — 초록인데 일지를 안 적었다 — 세션이 안 채운 줄: 문제 · 원인 · 고친 것 · 남긴 것 (docs/JOURNAL.md 바퀴 12)<span class="note">2026-09-14 14:26:33</span></div>
-<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span><strong>창을 띄우는 게이트가 포커스를 안 뺏는다</strong> — <code>measure_view</code> · <code>measure_draw</code> ·</div>
+<div class="alert next"><span class="k">다음 항목</span><span class="pill">P1</span><strong>창을 띄우는 게이트를 한 프로세스로 합친다</strong> — <code>measure_view</code> 와 <code>measure_draw</code> 는</div>
 <h2>진행 — 한 줄 = 한 바퀴</h2>
 <div class="phases">
 <details class="phase full">
@@ -183,8 +182,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P1</span>
     <span class="ptitle">걸어다니는 세계</span>
-    <span class="pcount">10/11</span>
-    <span class="bar"><i style="width:91%"></i></span></summary>
+    <span class="pcount">11/12</span>
+    <span class="bar"><i style="width:92%"></i></span></summary>
   <ul class="items">
 <li class="done"><span class="box">✔</span>색 네모 플레이어가 48px 타일 위를 속도 240 으로 <strong>8방향</strong> 이동 (대각선 정규화)</li>
 <li class="done"><span class="box">✔</span>논리 960×540 · 정수 2배 · 보이는 칸 20 × 11.25</li>
@@ -196,7 +195,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done"><span class="box">✔</span><code>measure_draw.gd</code> 의 <strong>걷는 구간에 대조군을 붙이거나 그 구간을 뺀다</strong></li>
 <li class="done"><span class="box">✔</span><strong><code>measure_facing.gd</code> 가 사람의 마우스에 안 흔들리게 한다</strong> — 진짜 커서를 뺏어 재는</li>
 <li class="done"><span class="box">✔</span><strong>계약이 <code>check.sh tests</code> 를 두 번 돈다</strong> — 기준 3(<code>mintests.sh</code>)과 기준 4 가</li>
-<li class="todo"><span class="box"></span><strong>창을 띄우는 게이트가 포커스를 안 뺏는다</strong> — <code>measure_view</code> · <code>measure_draw</code> ·</li>
+<li class="done"><span class="box">✔</span><strong>창을 띄우는 게이트가 포커스를 안 뺏는다</strong> — <strong>못 막는다. 항목이 시킨 대로 닫는다</strong></li>
+<li class="todo"><span class="box"></span><strong>창을 띄우는 게이트를 한 프로세스로 합친다</strong> — <code>measure_view</code> 와 <code>measure_draw</code> 는</li>
 </ul></details>
 <details class="phase none">
   <summary><span class="pid">P2</span>
@@ -299,7 +299,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">매 바퀴 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  88/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  60/70줄</li><li>DOCLEN .loop/state.md  74/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
@@ -312,6 +312,21 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <h2>바퀴 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry ok">
+  <div class="ehead">
+    <span class="badge ">바퀴 13</span>
+    <h3><strong>창을 띄우는 게이트가 포커스를 안 뺏는다</strong> — <code>measure_view</code> · <code>measure_draw</code> ·</h3>
+    <span class="edate">2026-09-14</span>
+    <span class="eres ok">초록</span>
+  </div>
+<div class="row prob"><span class="k">문제</span><span class="v"><strong>막을 수 없다.</strong> 항목이 시킨 <code>WINDOW_FLAG_NO_FOCUS</code> + 화면 밖 위치를 포함해 <strong>6가지를 재서 전부 뺏겼다.</strong> 창을 띄우는 순간 Godot 이 맨 앞 앱이 된다</span></div>
+<div class="row cause"><span class="k">원인</span><span class="v"><code>no_focus</code> 는 <strong>창</strong>이 키 윈도우가 되는 것만 막는다 — <strong>앱의 활성화</strong>는 못 막는다. 창 생성 시점에 걸어도(<code>project.godot</code>) 그대로였고, <code>LSUIElement</code> 래퍼 번들도 LaunchServices 의 <code>open -g</code> 도 엔진의 활성화 호출을 못 이겼다. 화면 밖 위치는 <strong>macOS 가 화면 안으로 물린다</strong>(요청 5000,5000 → 실제 1536,1154 = 화면-창). CLI 로 설정을 덮는 길(<code>--display/window/size/no_focus=true</code>)은 <strong>조용히 무시된다</strong> — 인자 목록에는 남는데 설정값은 <code>false</code> 였다</span></div>
+<div class="row fix"><span class="k">고친 것</span><span class="v">새 도구 <code>tools/loop/focus.sh</code> — <code>lsappinfo</code> 로 맨 앞 앱을 계속 샘플해 <strong>표본 수 · 뺏긴 표본 수 · 앞뒤의 맨 앞 앱</strong>을 찍는다(접근성 권한이 필요 없다). 못 막으니 <strong>되돌려 준다</strong>: <code>tools/loop/godot.sh</code> 가 <code>NARU_FOCUS_RESTORE=1</code> 일 때 띄우기 직전의 맨 앞 앱을 기억했다가 끝나고 <code>open</code> 으로 돌려보낸다. 창을 띄우는 두 곳에만 걸었다 — <code>tools/loop/check.sh</code> 의 VIEW · DRAW 와 <code>tools/loop/shot.sh</code>. <code>docs/NUMBERS.md</code> 11절 · <code>docs/GOTCHAS.md</code> macOS 3줄</span></div>
+<div class="row decide"><span class="k">바꾼 결정</span><span class="v"><strong>막을 수 없는 것은 되돌리거나 횟수를 줄인다.</strong> 그리고 <code>project.godot</code> 에 <code>no_focus</code> 를 안 남겼다 — 켜두면 아무 이득 없이 <strong>사람이 직접 띄운 창에서 WASD 가 안 먹는다</strong>. 게이트 편의가 게임 동작을 바꾸면 안 된다</span></div>
+<div class="row left"><span class="k">남긴 것</span><span class="v"><strong>뺏기는 것 자체는 그대로다</strong> — 창 두 번이 도는 ~1.8초 동안 타이핑은 여전히</span></div>
+<div class="row meas"><span class="k">잰 값</span><span class="v">대조군 <strong>헤드리스 표본 6 · 뺏김 0</strong> / <strong>창 표본 7 · 뺏김 4</strong> — 도구는 창을 본다. 막기 6종 전부 실패 — ① 실행 중 플래그 4/7 ② 창 생성 시점 <code>no_focus</code> 4/7 ③ 화면 밖 4/7 ④ <code>LSUIElement</code> 3/7 ⑤ <code>open -g -n</code> 5/13 ⑥ 최소화 18/23 <strong>+ 프레임버퍼가 색 1개</strong>(죽는다. 손 안 댄 같은 프레임은 색 202개). 되돌리기 — 끔 <code>Finder → SystemUIServer</code>(안 돌아옴) · 켬 <strong>3/3 <code>Finder → Finder</code></strong> · 헤드리스에 켜도 오발 없음. <code>check.sh tests</code> 한 판 <strong>표본 110 · 뺏김 14 · 시작 앞 = 끝 앞</strong> · 계약 한 판(창 3번) <strong>표본 183 · 뺏김 13 · 시작 앞 = 끝 앞</strong> · <code>TESTS 66 passed, 0 failed</code> · <code>VIEW 배율 2.00x · 보이는 칸 20.00 x 11.25</code> · <code>DRAW [서서]/[걷고 144 px] 표본 7844 · 불일치 0</code> · <code>SHOT 960x540 색 217개 · 한 색 1.3%</code> · <code>ALL GREEN</code>(기준 6개 · 21.86s). <strong>새 게임 코드는 없다 — 도구만 건드린 바퀴다</strong></span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 27개 스크립트, 실패 0 · 3 TESTS 66 passed, 0 failed · 4 TESTS 66 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  60/70줄 / DOCLEN .loop/state.md  74/90줄 · 6 SHOT 960x540  색 217개  가장 넓은 한 색 1.3%  → /tmp/w.png</span><span>$40.9262 누적</span><span><code>5174b4d</code> Godot 으로 간다. 없어진 건 「끝나고도 안 돌아온다」쪽이다. 남은 길은 <strong>횟수 줄이기</strong> — VIEW 와 DRAW 를 한 프로세스로 합치면 한 판 2번 → 1번, <code>redteam.sh</code> 62번 → 31번. BACKLOG 에 한 줄로 넣었다. 되돌리기는 <strong>게이트만</strong> 켠다 — 사람이 직접 띄운 창은 보는 동안 딴 앱으로 옮겼을 수 있어서 도로 뺏으면 그게 또 도둑질이다</span></div>
+</article>
 <article class="entry ok">
   <div class="ehead">
     <span class="badge ">바퀴 12</span>
@@ -620,6 +635,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">바퀴 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/5174b4d"><code>5174b4d</code></a><span class="cd">2026-09-14</span>창의 포커스는 못 막는다 — 재서 6가지를 떨어뜨리고, 끝나고 되돌려 준다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/e264f13"><code>e264f13</code></a><span class="cd">2026-09-14</span>바퀴 12 일지를 증거에서 복원 · 백로그 [x]</li>
 <li><a href="https://github.com/kimtuna/naru/commit/ffc2355"><code>ffc2355</code></a><span class="cd">2026-09-14</span>바퀴 12 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/2bb1686"><code>2bb1686</code></a><span class="cd">2026-09-14</span>계약이 실측 게이트를 한 번만 돈다 — check.sh 에 unit 을 나눴다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/f24922f"><code>f24922f</code></a><span class="cd">2026-09-14</span>백로그 — 창을 띄우는 게이트가 포커스를 안 뺏는다</li>
@@ -630,8 +647,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/1d08d2b"><code>1d08d2b</code></a><span class="cd">2026-09-14</span>바퀴 10 일지 · 백로그 · NUMBERS 9절 — 대조군 29 잡음, 1 놓침</li>
 <li><a href="https://github.com/kimtuna/naru/commit/a409c6a"><code>a409c6a</code></a><span class="cd">2026-09-14</span>걷는 구간에만 걸리는 대조군 ⑤ — 캐시를 두 칸마다 채운다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/4a9ae02"><code>4a9ae02</code></a><span class="cd">2026-09-14</span>FACE 게이트가 사람 마우스에 흔들린다 — 세 번째라 백로그에 올린다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/88ffcb5"><code>88ffcb5</code></a><span class="cd">2026-09-14</span>바퀴 9 일지 · 대시보드 갱신</li>
-<li><a href="https://github.com/kimtuna/naru/commit/5b42bc2"><code>5b42bc2</code></a><span class="cd">2026-09-14</span>테스트 바닥 57 → 66</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 바퀴</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 바퀴가 올라왔다 — 새로고침</button>
