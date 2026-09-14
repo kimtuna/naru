@@ -34,6 +34,8 @@ cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
 cp scenes/player.tscn "$BAK/" 2>/dev/null || true
+cp tools/loop/journal.sh "$BAK/" 2>/dev/null || true
+cp tools/loop/journal-selftest.sh "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
@@ -51,6 +53,8 @@ restore() {
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
   cp "$BAK/player.tscn" scenes/player.tscn 2>/dev/null || true
+  cp "$BAK/journal.sh" tools/loop/journal.sh 2>/dev/null || true
+  cp "$BAK/journal-selftest.sh" tools/loop/journal-selftest.sh 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
 }
@@ -498,6 +502,107 @@ sed -i '' 's|^const ARC_DEG := 90.0|const ARC_DEG := 0.0|' scripts/hand_swing.gd
 expect 1 "부채꼴을 0 도로 만들면 잡는다 (네모가 한 자리에 붙박인다)"
 cp "$BAK/hand_swing.gd" scripts/hand_swing.gd
 
+# ── 회차 22 일지를 세션의 마지막 답변에서 뽑는다 ─────────────────────
+#
+# **이 여덟은 상태 검사가 아니라 `journal.sh selftest` 을 겨눈다.** 뽑기 게이트는
+# 아직 기준으로 승격되기 전이다 — 항목의 `verify` 가 백로그의 **이어지는 줄**에 있어서
+# 이번 회차의 드라이버가 못 봤다. 승격은 다음 회차 몫이지만, 게이트가 살아 있는지는
+# **지금** 재야 한다. 안 재면 「아무것도 안 잡는 검사」가 그대로 쌓인다.
+# 여기가 겨누는 것은 하나다: **일지가 조용히 비는 길.** 회차 12 · 21 이 그 길로 갔다.
+expect_journal() {  # expect_journal <기대 exit> <이름>
+  local want="$1" name="$2" rc; N=$((N+1))
+  if [ "$want" -ne 0 ] && [ -z "$(git status --porcelain)" ]; then
+    printf '  \033[33m헛돌았다\033[0m  %s  — 워킹트리가 그대로다. 대조군이 아무것도 안 깨뜨렸다\n' "$name"
+    MISS=$((MISS+1)); return
+  fi
+  bash tools/loop/journal-selftest.sh >"$EV/journal.txt" 2>&1; rc=$?
+  if [ "$rc" -eq "$want" ]; then
+    printf '  \033[32m잡았다\033[0m  %s  (exit %d)\n' "$name" "$rc"; PASS=$((PASS+1))
+  else
+    printf '  \033[31m놓쳤다\033[0m  %s  (기대 exit %d · 잰 값 %d)\n' "$name" "$want" "$rc"; MISS=$((MISS+1))
+    grep -E '^  FAIL|^JOURNAL SELFTEST' "$EV/journal.txt" | sed 's/^/      /'
+  fi
+}
+
+expect_journal 0 "손 안 댄 뽑기는 초록이다"
+
+# **블록이 없는데 조용히 넘어가는 것**이 제일 비싼 고장이다 — 일지가 비어도 초록이라
+# 며칠 뒤에야 보인다. 회차 12 · 21 이 정확히 이 모양이었다.
+python3 - <<'PYX'
+import io
+p='tools/loop/journal.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    '    print(f"마지막 답변에 `## 회차 {n}` 블록이 없다 — 세션이 일지를 안 적었다")\n    sys.exit(1)',
+    '    sys.exit(0)', 1))
+PYX
+expect_journal 1 "블록이 없는데 조용히 넘어가면 잡는다 (일지가 빈 채로 초록)"
+cp "$BAK/journal.sh" tools/loop/journal.sh
+
+# 세션이 「결과: 됐습니다 · 채점: 전부 초록입니다」를 써 보내는 것을 그대로 받으면
+# 일지가 **증거가 아니라 자기 보고**가 된다. 줄의 주인이 지워지는 자리다.
+python3 - <<'PYX'
+import io
+p='tools/loop/journal.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    '        dropped.append(k)                       # 줄의 주인이 아니다. 버린다',
+    '        got[k] = v[0].rstrip()', 1))
+PYX
+expect_journal 1 "드라이버 줄을 안 버리면 잡는다 (세션의 「됐습니다」가 결과 칸에 들어간다)"
+cp "$BAK/journal.sh" tools/loop/journal.sh
+
+# 답변에 일지 블록**만** 들어 있지 않다 — 앞에 요약이 있고 뒤에 diff 가 있다.
+python3 - <<'PYX'
+import io
+p='tools/loop/journal.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    '    for m in head.finditer(t):',
+    '    for m in ([head.match(t)] if head.match(t) else []):', 1))
+PYX
+expect_journal 1 "답변 맨 앞의 블록만 보면 잡는다 (요약 뒤의 일지를 못 찾는다)"
+cp "$BAK/journal.sh" tools/loop/journal.sh
+
+# 뽑기는 **덮어쓴다**. 그냥 끼우면 한 번 다시 뽑는 것만으로 같은 회차 절이 둘이 되고
+# `journal.sh next` 가 세는 번호부터 어긋난다.
+python3 - <<'PYX'
+import io
+p='tools/loop/journal.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace('m = sec.search(jt)', 'm = None', 1))
+PYX
+expect_journal 1 "두 번 뽑으면 절이 둘이 되는 것을 잡는다"
+cp "$BAK/journal.sh" tools/loop/journal.sh
+
+# 템플릿을 그대로 되돌려 보낸 것은 일지가 아니다. `check` 는 자리표시자도 글자로 보고
+# 통과시키므로 거르는 자리는 여기뿐이다.
+python3 - <<'PYX'
+import io
+p='tools/loop/journal.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    '    return v.startswith("<") and v.endswith(">")', '    return False', 1))
+PYX
+expect_journal 1 "자리표시자를 안 거르면 잡는다 (템플릿이 그대로 일지가 된다)"
+cp "$BAK/journal.sh" tools/loop/journal.sh
+
+# 일지 줄은 거의 다 여러 줄이다. 첫 줄만 받으면 「왜 그랬나」가 통째로 날아간다.
+python3 - <<'PYX'
+import io
+p='tools/loop/journal.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    '        val = "\\n".join(["  " + x for x in v[1:]])', '        val = ""', 1))
+PYX
+expect_journal 1 "이어지는 줄을 버리면 잡는다 (일지의 절반이 날아간다)"
+cp "$BAK/journal.sh" tools/loop/journal.sh
+
+# 검사 자신을 무르게 만드는 길도 막는다 — 실패가 0 이어도 **개수가 줄면** 빨개진다.
+python3 - <<'PYX'
+import io
+p='tools/loop/journal-selftest.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    'rc_is "블록이 없으면 exit 1" 1 $JSH extract 22 "$TMP/c.txt"', 'true', 1))
+PYX
+expect_journal 1 "뽑기 검사를 지우면 검사 바닥이 잡는다"
+cp "$BAK/journal-selftest.sh" tools/loop/journal-selftest.sh
+
+expect_journal 0 "원복하면 뽑기도 다시 초록이다"
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
 cp "$BAK/project.godot" project.godot

@@ -42,6 +42,15 @@ verify_of() {
   printf '%s' "$v" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s/^`//; s/`$//'
 }
 
+# **항목은 여러 줄일 수 있다.** `next_item` 은 한 줄만 뽑으므로 `| verify:` 가 이어지는
+# 줄에 있으면 못 본다 — 그러면 **verify 없는 회차**가 되고 기준 승격도 조용히 건너뛴다.
+# 「항목을 진짜로 했나」를 아무도 안 묻는 회차다. 회차 22 항목이 바로 그 모양이었다.
+verify_in_block() {                       # verify_in_block <백로그 줄번호>
+  awk -v s="$1" 'NR<s {next} NR>s && (/^- \[[ x]\] /||/^#/) {exit} {print}' docs/BACKLOG.md \
+    | grep -o '| verify:.*' | head -1 \
+    | sed 's/^| verify:[[:space:]]*//; s/[[:space:]]*$//; s/^`//; s/`$//'
+}
+
 # ── 초록으로 끝난 항목의 verify 를 상태 검사에 영구 기준으로 승격한다 ──────
 #
 # **이게 없으면 항목 일을 하나도 안 해도 초록이 나온다** — 상태 검사가
@@ -216,8 +225,10 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
     cat docs/PROMPT.md
     printf '\n\n---\n\n## 이번 회차 — 일지 번호 %s (이 실행의 %d/%d)\n\n%s\n' \
       "$turn" "$cycle" "$MAX_CYCLES" "$item"
-    printf '\n### 끝나면 일지를 적는다 — docs/JOURNAL.md\n\n'
-    printf '맨 위 `---` 바로 아래에 절을 하나 덧붙인다. **이 파일을 통째로 읽지 마라** — 형식은 이게 전부다.\n\n'
+    printf '\n### 끝나면 일지를 적는다 — **이 답변의 맨 끝에**\n\n'
+    printf '**`docs/JOURNAL.md` 를 열지 마라. 쓰지도 마라.** 아래 블록을 **마지막 답변에 그대로** 적으면\n'
+    printf '드라이버가 뽑아서 제가 넣는다 (`journal.sh extract`). 회차 12 · 21 은 일을 다 끝내고\n'
+    printf '커밋까지 하고도 **옮기는 것만** 빼먹었다 — 그 자리를 없앴다.\n\n'
     printf '```markdown\n## 회차 %s · %s\n' "$turn" "$(desc_of "$item")"
     printf -- '- 문제: <이번 회차에 실제로 막힌 것. 없으면 「없음」>\n'
     printf -- '- 원인: <왜 그랬나. 증상이 아니라 이유>\n'
@@ -225,7 +236,7 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
     printf -- '- 바꾼 결정: <설계·규칙이 바뀌었으면. 없으면 「없음」>\n'
     printf -- '- 잰 값: <숫자 + 조건>\n'
     printf -- '- 남긴 것: <다음으로 넘긴 것 / 사람이 정할 것. 없으면 「없음」>\n```\n'
-    printf '\n`날짜`·`결과`·`채점`·`비용`·`커밋` 은 **드라이버가 찍는다. 쓰지 마라.**\n'
+    printf '\n`날짜`·`결과`·`채점`·`비용`·`커밋` 은 **드라이버가 찍는다** — 써 보내도 뽑을 때 버려진다.\n'
     printf '`문제`·`원인`·`고친 것`·`남긴 것` 이 비어 있으면 **초록이어도 루프가 멈춘다.**\n'
     printf '막힌 게 없었으면 `문제: 없음` 이라고 적는다 — 빈 회차와 안 적은 회차는 다르다.\n' 
     printf '\n### 최근 회차 (state.md 를 열지 마라 — 이게 전부다)\n\n'
@@ -259,6 +270,19 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     fi
   fi
 
+  # 6b) 일지를 **드라이버가 쓴다.** 세션은 마지막 답변에 블록을 적을 뿐 파일을 안 연다.
+  # 회차 12 · 21 은 일을 끝내고 커밋까지 하고도 일지만 빼먹었다 — 둘 다 커밋 메시지에는
+  # 다 적혀 있었고 **옮기는 것만** 빠졌다. 파일을 여는 것이 별도의 일이라, 예산이 마르면
+  # 제일 먼저 잘리는 자리였다. 여기서는 안 멈춘다 — 빨간 회차의 일지도 받아야 하고,
+  # 초록인데 못 뽑았으면 아래 `journal.sh check` 가 어차피 멈춘다.
+  if [ "$DRY" = "0" ]; then
+    if jx="$(bash tools/loop/journal.sh extract "$turn" "$RD/session.json" 2>&1)"; then
+      say "$jx"
+    else
+      say "일지를 답변에서 못 뽑았다 — $jx"
+    fi
+  fi
+
   # 7) 판정 — 세션이 아니라 채점자가 한다
   [ -f "$ROOT/.loop/results.json" ] && cp "$ROOT/.loop/results.json" "$PREV"
   bash tools/loop/run-contract.sh > "$RD/contract.txt" 2>&1
@@ -274,6 +298,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
 
   # 7b) 이 항목 자신의 verify 도 돌린다. 상태 검사만으로는 항목을 안 해도 초록이 난다.
   vcmd="$(verify_of "$item")"
+  [ -z "$vcmd" ] && vcmd="$(verify_in_block "$lineno")"
   vrc=0
   if [ -n "$vcmd" ]; then
     if ! command -v "${vcmd%% *}" >/dev/null 2>&1; then

@@ -12,8 +12,8 @@
 | **3** | 자체 QA | `bash tools/loop/run-contract.sh`. 부족하면 2로 — 단, 정지 규칙에 걸리면 멈춘다 |
 | **4** | 커밋 | 초록일 때만. **경로 지정.** 메시지에 **잰 값**을 적는다 |
 
-끝나면 `docs/BACKLOG.md` 의 그 줄을 `- [x]` 로, `.loop/state.md` 에 `### 회차 N` 절을,
-**`docs/JOURNAL.md` 에 `## 회차 N` 절을** 덧붙인다 (형식은 드라이버가 아래에 붙여준다).
+끝나면 `docs/BACKLOG.md` 의 그 줄을 `- [x]` 로, `.loop/state.md` 에 `### 회차 N` 절을 덧붙인다.
+**일지는 파일에 쓰지 않는다** — 이 답변의 맨 끝에 블록으로 적으면 드라이버가 뽑아 넣는다.
 
 ## 무엇을 읽나 — **통째로 읽는 파일은 없다**
 
@@ -23,7 +23,7 @@
 | `docs/GOTCHAS.md` | **에러가 났을 때만** | grep |
 | `docs/GDD.md` | 그 영역을 **처음** 만들 때만 | 해당 절만 |
 | `docs/BACKLOG.md` | 항목을 넘길 때 | grep. 이번 항목은 이미 받았다 |
-| `docs/JOURNAL.md` | **열지 마라** | 끝에 절을 덧붙이기만 한다 |
+| `docs/JOURNAL.md` | **열지 마라. 쓰지도 마라** | 답변 끝의 블록을 드라이버가 뽑아 넣는다 |
 | `.loop/state.md` | **열지 마라** | 최근 회차는 이미 받았다 |
 
 ## 자체 QA
@@ -48,7 +48,7 @@
 - **검사를 약하게 하거나 지워서 초록에 도달하지 않는다.**
   `.loop/criteria.tsv` 는 무장돼 있다 — 고치면 `exit 77` 로 죽는다
 - **잰 값과 조건을 같이 적는다** — `TESTS 18 passed` 가 아니라 `18 passed, 0 failed · 240.00 px`
-- **일지의 `날짜`·`결과`·`채점`·`비용`·`커밋` 은 쓰지 않는다.** 드라이버가 채점자 값으로 찍는다
+- **일지는 답변 끝의 블록으로만 낸다.** `날짜`·`결과`·`채점`·`비용`·`커밋` 은 써 보내도 버려진다
 - **`NUMBERS.md` 는 재지 않고 고치지 않는다**
 - 산출물은 **사람이 볼 제안**이다. 끝에 diff 를 보인다
 
@@ -56,5 +56,5 @@
 
 | | |
 |---|---|
-| 됨 | `scenes/` `scripts/` `assets/` `tools/` `project.godot` · `.loop/state.md` · `docs/BACKLOG.md` · `docs/GOTCHAS.md` · `docs/JOURNAL.md`(덧붙이기만) |
-| **안 됨** | `.loop/criteria.tsv`(무장) · `.loop/results.json`(기계) · `docs/NUMBERS.md`(재고 나서) · `docs/GDD.md`(사람) · `docs/index.html`(생성물) |
+| 됨 | `scenes/` `scripts/` `assets/` `tools/` `project.godot` · `.loop/state.md` · `docs/BACKLOG.md` · `docs/GOTCHAS.md` |
+| **안 됨** | `.loop/criteria.tsv`(무장) · `.loop/results.json`(기계) · `docs/NUMBERS.md`(재고 나서) · `docs/GDD.md`(사람) · `docs/index.html`(생성물) · `docs/JOURNAL.md`(드라이버가 뽑아 쓴다) |
