@@ -26,6 +26,8 @@ cp scripts/player_motion.gd "$BAK/" 2>/dev/null || true
 cp scripts/player_facing.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_gen.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_collide.gd "$BAK/" 2>/dev/null || true
+cp scripts/world_view.gd "$BAK/" 2>/dev/null || true
+cp scripts/world_objects.gd "$BAK/" 2>/dev/null || true
 cp scripts/inventory.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar.gd "$BAK/" 2>/dev/null || true
 cp scripts/hand_swing.gd "$BAK/" 2>/dev/null || true
@@ -45,6 +47,8 @@ restore() {
   cp "$BAK/player_facing.gd" scripts/player_facing.gd 2>/dev/null || true
   cp "$BAK/world_gen.gd" scripts/world_gen.gd 2>/dev/null || true
   cp "$BAK/world_collide.gd" scripts/world_collide.gd 2>/dev/null || true
+  cp "$BAK/world_view.gd" scripts/world_view.gd 2>/dev/null || true
+  cp "$BAK/world_objects.gd" scripts/world_objects.gd 2>/dev/null || true
   cp "$BAK/inventory.gd" scripts/inventory.gd 2>/dev/null || true
   cp "$BAK/hotbar.gd" scripts/hotbar.gd 2>/dev/null || true
   cp "$BAK/hand_swing.gd" scripts/hand_swing.gd 2>/dev/null || true
@@ -501,6 +505,92 @@ cp "$BAK/hand_swing.gd" scripts/hand_swing.gd
 sed -i '' 's|^const ARC_DEG := 90.0|const ARC_DEG := 0.0|' scripts/hand_swing.gd
 expect 1 "부채꼴을 0 도로 만들면 잡는다 (네모가 한 자리에 붙박인다)"
 cp "$BAK/hand_swing.gd" scripts/hand_swing.gd
+
+# ── 회차 24 월드 오브젝트 배치 ───────────────────────────────────────
+# 배치는 순수 계산이라 **거의 다 단위 검사가 잡는다** — 그래서 두 개를 일부러
+# 딴 데로 겨눈다: ③ 은 단위 검사 113개를 전부 초록으로 남기고(프로세스 간 비교만 잡는다),
+# ⑥ 은 순수 계산이 멀쩡한 채 **화면에만** 안 나온다.
+
+# ① 물 위에 뜬 나무. **지형 체크섬은 한 글자도 안 변한다** — 지형을 안 건드렸으니까.
+python3 - <<'PYX'
+import io
+p='scripts/world_objects.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tif WorldGen.kind_at_height(h) != WorldGen.LAND:", "\tif false:", 1))
+PYX
+expect 1 "바다에도 놓으면 tests 가 잡는다 (물 위에 뜬 나무)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ② 스폰 빈터를 없앤다. 상수는 3 그대로라 **검사가 읽는 값은 안 변한다** —
+#    사람 눈에는 「어떤 씨앗에서는 시작하자마자 나무에 갇힌다」로만 보인다.
+python3 - <<'PYX'
+import io
+p='scripts/world_objects.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tvar sp := WorldGen.spawn_tile()\n"
+    "\tif absi(x - sp.x) <= SPAWN_CLEAR and absi(y - sp.y) <= SPAWN_CLEAR:\n"
+    "\t\treturn NONE\n", "", 1))
+PYX
+expect 1 "스폰 빈터를 없애면 tests 가 잡는다 (나무 속에서 시작한다)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ③ **이 하나가 배치까지 프로세스 간 게이트에 태운 이유다** (회차 6 과 같은 모양).
+#    한 프로세스 안에서는 늘 같은 자리라 단위 검사 113개가 전부 초록으로 남는다 —
+#    사람 눈에는 「어제 심은 나무가 오늘 딴 자리」로만 보이고 섬은 똑같다.
+python3 - <<'PYX'
+import io
+p='scripts/world_objects.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "const NONE := 0",
+    "static var _drift := int(Time.get_unix_time_from_system() * 1000.0)\nconst NONE := 0", 1).replace(
+    "WorldGen.unit(world_seed ^ PLACE_SALT, x, y)",
+    "WorldGen.unit(world_seed ^ PLACE_SALT ^ _drift, x, y)", 1))
+PYX
+expect 1 "배치에 시간을 섞으면 프로세스 간 실측이 잡는다 (어제 심은 나무 ≠ 오늘)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ④ 나무를 고르게 흩뿌린다. **밀도도 종류도 그대로다** — 뭉침 배수만 2.3 에서 1.0 으로
+#    내려간다. 사람 눈에는 「어디를 가도 똑같아서 갈 곳이 없다」로 보인다.
+python3 - <<'PYX'
+import io
+p='scripts/world_objects.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tvar f := FOREST_CELLS / float(WorldGen.SIZE)\n"
+    "\tvar n := WorldGen.value(world_seed ^ FOREST_SALT, x * f, y * f)\n"
+    "\treturn TREE_MAX * clampf(inverse_lerp(FOREST_FLOOR, 1.0, n), 0.0, 1.0)",
+    "\treturn 0.09", 1))
+PYX
+expect 1 "나무를 고르게 흩뿌리면 tests 가 잡는다 (숲이 없다 · 밀도는 그대로)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ⑤ 광물을 해안에도 놓는다. 개수는 거의 안 변한다 — 「산에 간다」가 없어질 뿐이다.
+sed -i '' 's|^const ORE_MIN_HEIGHT := 0.55|const ORE_MIN_HEIGHT := 0.0|' scripts/world_objects.gd
+expect 1 "광물 높이 문턱을 없애면 tests 가 잡는다 (해안에서 줍는다)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ⑥ 나무를 통과해 걸어간다. **화면은 한 픽셀도 안 달라진다** — 그려지기는 그려진다.
+python3 - <<'PYX'
+import io
+p='scripts/world_collide.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t\treturn WorldObjects.at_height(world_seed, tx, ty, h) != WorldObjects.NONE",
+    "\t\treturn false", 1))
+PYX
+expect 1 "놓인 것이 안 막으면 tests 가 잡는다 (나무를 통과해 걷는다)"
+cp "$BAK/world_collide.gd" scripts/world_collide.gd
+
+# ⑦ **놓기는 놓았는데 화면에 없다.** 순수 계산은 한 줄도 안 틀렸다 —
+#    `main.gd` 가 지형색만 칠할 뿐이라 단위 검사 113개가 전부 초록이다.
+#    구운 픽셀을 `color_at` 과 맞추는 DRAW 만 잡는다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t\t\t_cache[i] = WorldView.color_at(WORLD_SEED, tx, ty)",
+    "\t\t\t_cache[i] = WorldView.terrain_color(WORLD_SEED, tx, ty)", 1))
+PYX
+expect 1 "놓인 것을 화면에 안 그리면 그리기 실측이 잡는다 (배치는 멀쩡하다)"
+cp "$BAK/main.gd" scripts/main.gd
 
 # ── 회차 22 일지를 세션의 마지막 답변에서 뽑는다 ─────────────────────
 #

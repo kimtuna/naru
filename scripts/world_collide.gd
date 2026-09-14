@@ -11,7 +11,7 @@ extends RefCounted
 ## **재현 가능한 이동**을 전제한다. 여기는 격자에 대고 푸는 것이라 프레임률·빌드와 무관하다.
 ##
 ## **막는 칸이 무엇인지는 여기가 안 정한다.** `solid` Callable(칸 좌표 → bool)을 받는다 —
-## 지금은 바다지만 나중에 벽·바위가 같은 자리에 얹힌다. 검사도 손으로 만든 지도를 넣는다.
+## 바다와 **땅에 선 것**(나무·돌·광물)이 같은 자리에 얹힌다. 검사도 손으로 만든 지도를 넣는다.
 ##
 ## ── 미끄러짐은 **축을 따로 푸는 것**에서 나온다 ──────────────────────
 ## x 를 풀고 y 를 푼다. 해안에 비스듬히 붙으면 막힌 축만 죽고 나머지 축은 그대로 간다 —
@@ -39,9 +39,15 @@ const EPS := 0.01
 
 ## 씨앗 하나로 「이 칸이 막나」를 묻는 Callable 을 만든다.
 ## **칸 좌표는 월드 칸이다** — 카메라가 오면서(P1-6) 화면 칸과 갈라질 일이 없어졌다.
+##
+## **바다 + 땅에 선 것.** 나무를 통과해 걸을 수 있으면 도끼를 들 이유가 없다.
+## 높이를 한 번만 풀어 둘 다에 쓴다 — 한 물리 틱에 네 번쯤 묻는 자리다.
 static func solid_from_seed(world_seed: int) -> Callable:
 	return func(tx: int, ty: int) -> bool:
-		return WorldGen.tile_at(world_seed, tx, ty) == WorldGen.WATER
+		var h := WorldGen.height_at(world_seed, tx, ty)
+		if WorldGen.kind_at_height(h) == WorldGen.WATER:
+			return true
+		return WorldObjects.at_height(world_seed, tx, ty, h) != WorldObjects.NONE
 
 ## `pos` 에서 `motion` 만큼 가려다 막히면 벽 앞에 멈춘 자리를 준다.
 ## `solid` 가 비어 있으면 아무것도 안 막는다 — 월드 없이 띄운 씬이 그대로 움직인다.

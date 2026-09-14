@@ -82,9 +82,15 @@ func _slide_sec() -> float:
 
 ## 곧은 남북 해안을 찾는다: 땅 %d칸 × 활주로 옆으로, 그 오른쪽은 전부 바다.
 ## 스폰에서 가장 가까운 것을 고른다 — 플레이어가 실제로 처음 만나는 해안이다.
+##
+## **활주로에 나무·돌이 없어야 한다** (회차 24). 전에는 「땅이면 걸을 수 있다」였고
+## 그게 참이었다 — 월드가 빈 벌판이었기 때문이다. 이제 땅에도 막는 칸이 있으므로
+## **게이트가 제 전제를 말로 적는다**: 안 적으면 활주로 한복판의 나무가
+## 「해안 앞에 안 섰다」로 나타나서, 배치를 조금 만질 때마다 엉뚱한 게이트가 빨개진다.
 func _find_coast() -> bool:
 	var world_seed: int = _main.WORLD_SEED
 	var grid := WorldGen.generate(world_seed)
+	var objs := WorldObjects.generate(world_seed)
 	var spawn := WorldGen.spawn_tile()
 	var best := -1.0
 	for ty in range(1, WorldGen.SIZE - RUN):
@@ -95,7 +101,8 @@ func _find_coast() -> bool:
 					ok = false
 					break
 				for j in RUNWAY + 1:
-					if WorldGen.at(grid, tx - j, ty + k) != WorldGen.LAND:
+					if WorldGen.at(grid, tx - j, ty + k) != WorldGen.LAND \
+							or WorldObjects.at_grid(objs, tx - j, ty + k) != WorldObjects.NONE:
 						ok = false
 						break
 				if not ok:
@@ -107,13 +114,13 @@ func _find_coast() -> bool:
 				best = d
 				_coast = Vector2i(tx, ty)
 	if best < 0.0:
-		_fail("해안", "씨앗 %d 에 곧은 해안(땅 %d×%d + 바다)이 없다" % [world_seed, RUNWAY + 1, RUN],
+		_fail("해안", "씨앗 %d 에 곧은 해안(빈 땅 %d×%d + 바다)이 없다" % [world_seed, RUNWAY + 1, RUN],
 			"한 군데 이상")
 		return false
 	# **화면 칸 = 월드 칸이다** (P1-6). 카메라가 오면서 main.gd 의 `tile_offset` 이 사라졌다.
 	_start = PlayerMotion.tile_center(_coast.x - RUNWAY, _coast.y)
 	_wall = float(_coast.x + 1) * PlayerMotion.TILE
-	print("COLLIDE 해안 월드칸 %s · 스폰에서 %.1f칸 · 활주로 %d칸 · 바다 면 %.2f px" % [
+	print("COLLIDE 해안 월드칸 %s · 스폰에서 %.1f칸 · 빈 활주로 %d칸 · 바다 면 %.2f px" % [
 		_coast, best, RUNWAY, _wall])
 	return true
 

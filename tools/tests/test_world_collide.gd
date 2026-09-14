@@ -150,18 +150,30 @@ func test_overlapping_start_is_not_pushed_back() -> void:
 
 ## ── 씨앗 월드와 붙는 자리 ─────────────────────────────────────────────
 
-func test_seed_world_blocks_water_only() -> void:
+## **막는 것은 바다 + 땅에 선 것**이다 (회차 24). 회차 5 부터 「바다뿐」이었고,
+## 나무·돌·광물이 놓이면서 한 줄이 늘었다 — 나무를 통과해 걸으면 도끼를 들 이유가 없다.
+## 두 쪽을 다 센다: **놓인 칸이 안 막히는 것**과 **빈 땅이 막히는 것** 둘 다 버그다.
+func test_seed_world_blocks_water_and_what_stands_on_land() -> void:
 	var solid := WorldCollide.solid_from_seed(1)
 	var sp := WorldGen.spawn_tile()
 	check(not solid.call(sp.x, sp.y), "스폰 칸이 막히면 안 된다 %s" % sp)
 	check(solid.call(0, 0), "테두리 칸(0,0)은 막아야 한다")
 	check(solid.call(-5, 999), "월드 밖은 막아야 한다")
 	var bad := 0
+	var objs := 0
+	var first := ""
 	for y in range(0, WorldGen.SIZE, 11):
 		for x in range(0, WorldGen.SIZE, 13):
-			if solid.call(x, y) != (WorldGen.tile_at(1, x, y) == WorldGen.WATER):
+			var wet := WorldGen.tile_at(1, x, y) == WorldGen.WATER
+			var stands := WorldObjects.at(1, x, y) != WorldObjects.NONE
+			if stands:
+				objs += 1
+			if solid.call(x, y) != (wet or stands):
 				bad += 1
-	eq(bad, 0, "막는 칸과 바다가 어긋난 칸 수")
+				if first == "":
+					first = "(%d,%d) 막힘 %s · 물 %s · 놓임 %s" % [x, y, solid.call(x, y), wet, stands]
+	eq(bad, 0, "막는 칸이 「바다 또는 놓인 것」과 어긋난 칸 수 (첫 자리 %s)" % first)
+	check(objs > 0, "표본에 놓인 칸이 하나도 없다 — 판정이 공허하다 (표본 간격 11 x 13)")
 
 func test_overlaps_sees_the_body_corners() -> void:
 	var m := _map(COAST)

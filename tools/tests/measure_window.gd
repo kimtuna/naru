@@ -46,7 +46,8 @@ extends SceneTree
 ## **손에 든 것과 무관한 색으로 그려도** 한 줄이 안 빨개진다.
 ## 그래서 여기서 **모션이 도는 동안 프레임마다** 네모의 자리를 모으고 그 자리의 픽셀을
 ## 읽는다: 자리가 안 변하면 그건 모션이 아니라 켜진 네모다.
-## **맞힐 것이 하나도 없는 곳에서 잰다** — 월드에는 아직 오브젝트가 없다.
+## **맞힐 것을 안 찾는다** — 월드에 나무·돌이 놓였어도(회차 24) 판정은 아직 없다.
+## 「대상 0개」는 그 문장 그대로다: 벌목·채광이 오기 전까지 모션은 대상과 무관하다.
 ## 맨손으로 한 번 · 손에 든 것으로 한 번, 두 모션을 본다.
 ##
 ## **DRAW 는 핫바가 덮은 자리를 건너뛴다.** 안 그러면 「월드를 그렸나」가 핫바 때문에
@@ -76,6 +77,9 @@ const TOL := 2.0 / 255.0           # 8비트로 두 칸. 렌더러가 반올림�
 const MIN_SHARE := 0.15            # 물·땅이 각각 이만큼은 화면에 있어야 판정이 공허하지 않다
 const MAX_TILES := 2400            # 61 x 35 = 2135. 통째로 그리면 65536 이다
 const WALK := 3.0 * PlayerMotion.TILE   # 걷는 거리(px). 3칸이면 캐시가 반드시 한 번은 다시 찬다
+# 세우는 칸에서 **왼쪽으로 이만큼은 빈 땅이어야 한다** (회차 24). 서는 칸 + 걸어갈 3칸.
+# 월드에 나무·돌이 놓이면서 「땅이면 걸을 수 있다」가 더는 참이 아니다.
+const CLEAR_TILES := 4
 const WALK_FRAMES := 300           # 안전벨트. 막혀서 못 걸으면 여기서 끊는다
 
 # ── HOTBAR 기대값 ────────────────────────────────────────────────────
@@ -89,7 +93,7 @@ const HB_BOTTOM_GAP := 16.0        # 화면 아래 끝에서 이보다 멀면 �
 
 # ── USE 기대값 ───────────────────────────────────────────────────────
 # **대상이 없어도 모션이 나온다** (BACKLOG P2). 이 게이트가 서는 자리가 그 문장이다:
-# 월드에는 아직 오브젝트가 하나도 없고 플레이어는 맨땅(또는 바다)을 겨눈다.
+# 판정이 아직 한 줄도 없어서 플레이어가 무엇을 겨누든 모션은 그대로 나온다.
 const USE_ITEM := &"wood"          # 손에 들려 볼 것. 맨손과 색이 달라야 「든 것」이 보인다
 const USE_EMPTY_SLOT := 8          # 맨손을 만들 빈 칸
 ## **프레임 수로 끊지 않는다.** 모션은 `_process(delta)` 로 도는 **시간**인데 프레임은
@@ -199,11 +203,31 @@ func _measure_draw() -> void:
 			"%.0f px 이상 (안 걸으면 캐시가 상했는지 못 잰다)" % WALK)
 
 ## 스폰에서 +x 로 걸어 처음 만나는 바다. 그 **앞 칸(마지막 땅)**이 해안이다.
+##
+## **거기서 다시 왼쪽으로 물러나 빈 자리를 찾는다** (회차 24): 해안 칸에 나무가 서 있으면
+## 플레이어가 막힌 칸 한가운데로 순간이동해 **갇힌 채 0px 걷는다** — 그러면 캐시가
+## 상했는지 재는 `[걷고]` 구간이 통째로 공허해진다. 물러난 만큼 바다가 화면에서
+## 줄어드는데, 너무 물러나면 `MIN_SHARE` 가 「해안이 화면에 없다」로 잡는다.
 func _coast_tile() -> Vector2i:
 	var t := WorldGen.spawn_tile()
 	while t.x < WorldGen.SIZE and WorldGen.tile_at(_seed, t.x, t.y) == WorldGen.LAND:
 		t.x += 1
-	return Vector2i(t.x - 1, t.y)
+	var x := t.x - 1
+	var back := 0
+	while x > WorldGen.spawn_tile().x and not _clear_run(x, t.y):
+		x -= 1
+		back += 1
+	if back > 0:
+		print("DRAW 해안에서 %d칸 물러났다 (빈 %d칸을 찾는다)" % [back, CLEAR_TILES])
+	return Vector2i(x, t.y)
+
+## `x` 부터 왼쪽으로 CLEAR_TILES 칸이 **빈 땅**인가. 서는 칸도 센다.
+func _clear_run(x: int, y: int) -> bool:
+	for i in CLEAR_TILES:
+		if WorldGen.tile_at(_seed, x - i, y) != WorldGen.LAND \
+				or WorldObjects.at(_seed, x - i, y) != WorldObjects.NONE:
+			return false
+	return true
 
 func _center_of(tile: Vector2i) -> Vector2:
 	return Vector2(tile) * PlayerMotion.TILE + Vector2.ONE * (PlayerMotion.TILE * 0.5)

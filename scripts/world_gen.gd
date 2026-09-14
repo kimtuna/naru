@@ -8,7 +8,8 @@ extends RefCounted
 ## 값을 정하므로, 나중에 타일 하나만 다시 묻거나 청크를 따로 만들면 월드가 달라진다.
 ## 여기는 **좌표를 넣으면 값이 나오는 해시**다 — 순서가 없으니 부분 생성도 같은 답을 준다.
 ##
-## 지형은 두 종류뿐이다: 물(0) 과 땅(1). 나무·돌은 P2 에서 이 위에 얹는다.
+## 지형은 두 종류뿐이다: 물(0) 과 땅(1). **그 위에 무엇이 놓이나는 `WorldObjects` 다** —
+## 나무 한 그루가 지형을 바꾸지는 않는다 (베면 도로 풀밭이다).
 ##
 ## **섬 모양은 수학이 보장한다**, 운이 아니다:
 ##   - 가장자리는 항상 물   — 감쇠 1.25 가 잡음 최대 1.0 보다 크다
@@ -32,7 +33,19 @@ const BASE_CELLS := 3.5        # 월드 한 변에 들어가는 잡음 칸 수 (
 static func tile_at(world_seed: int, x: int, y: int) -> int:
 	if x < 0 or y < 0 or x >= SIZE or y >= SIZE:
 		return WATER                     # 월드 밖은 바다다. 예외를 던지지 않는다
-	return LAND if height_at(world_seed, x, y) > SEA_LEVEL else WATER
+	return kind_at_height(height_at(world_seed, x, y))
+
+## 높이 → 지형. **해수면 문턱을 아는 곳이 여기 한 군데다.**
+##
+## 왜 밖에 냈나: 그리기도 충돌도 오브젝트도 **높이를 이미 손에 들고** 있다 —
+## 그때마다 `tile_at` 을 부르면 잡음을 통째로 한 번 더 푼다 (한 칸 fbm 16회).
+## 그렇다고 부르는 쪽이 `h > SEA_LEVEL` 을 다시 적으면 **언젠가 한쪽만 고쳐져
+## 보이는 땅에 못 서는 날**이 온다. 문턱은 한 군데 두고 높이만 넘긴다.
+##
+## **월드 밖을 따로 안 본다**: 감쇠가 1.25 로 포화해서 밖의 높이는 -0.25 를 못 넘는다 —
+## 해수면 0.30 아래라 저절로 물이다 (NUMBERS 6절의 부등식).
+static func kind_at_height(h: float) -> int:
+	return LAND if h > SEA_LEVEL else WATER
 
 ## 높이. 검사와 대조군이 읽으라고 밖으로 낸다.
 static func height_at(world_seed: int, x: int, y: int) -> float:
@@ -95,7 +108,9 @@ static func unit(world_seed: int, x: int, y: int) -> float:
 	return float(h) / 4294967295.0
 
 ## 격자점 네 개를 smoothstep 으로 섞는다.
-static func _value(world_seed: int, x: float, y: float) -> float:
+## **밖으로 냈다**: `WorldObjects` 가 숲의 뭉침을 같은 잡음으로 만든다 —
+## `unit` 과 같은 이유다 (두 벌을 두면 언젠가 한쪽만 고쳐진다).
+static func value(world_seed: int, x: float, y: float) -> float:
 	var xi := floori(x)
 	var yi := floori(y)
 	var fx := x - xi
@@ -116,7 +131,7 @@ static func _fbm(world_seed: int, x: float, y: float) -> float:
 	var norm := 0.0
 	for o in OCTAVES:
 		# 옥타브마다 씨앗을 어긋내지 않으면 층이 겹쳐 격자 무늬가 보인다.
-		sum += amp * _value(world_seed + o * 1013904223, x * freq, y * freq)
+		sum += amp * value(world_seed + o * 1013904223, x * freq, y * freq)
 		norm += amp
 		amp *= 0.5
 		freq *= 2.0

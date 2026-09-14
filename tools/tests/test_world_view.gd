@@ -51,10 +51,18 @@ func test_negative_coords_floor_not_truncate() -> void:
 
 ## **색이 곧 지형이다.** 흔들기는 세 채널에 같은 양을 더하므로 이 부등식은
 ## 절대 안 뒤집힌다 — 뒤집히면 물처럼 보이는 땅이 생긴다.
+##
+## **오브젝트가 선 칸은 g > r > b 가 아니다** (회차 24): 돌은 회색이고 광물은 호박색이라
+## g 가 제일 크지 않다. 그래서 두 개로 나눠 잰다 —
+##   ① **빈 땅**은 여전히 g > r > b        (지형색 그대로다)
+##   ② **모든 땅**은 b 가 제일 작다        (물처럼 보이는 땅이 없다 = 이 검사의 목적)
+## ②는 오브젝트 색 셋이 다 b 최소이고 바닥과 섞는 것이 볼록 결합이라 참이다.
 func test_water_is_blue_and_land_is_green() -> void:
 	var bad_water := 0
 	var bad_land := 0
+	var bad_blue_land := 0
 	var n := 0
+	var objs := 0
 	for y in range(0, WorldGen.SIZE, 3):
 		for x in range(0, WorldGen.SIZE, 3):
 			n += 1
@@ -62,10 +70,42 @@ func test_water_is_blue_and_land_is_green() -> void:
 			if WorldGen.tile_at(SEED, x, y) == WorldGen.WATER:
 				if not (c.b > c.g and c.g > c.r):
 					bad_water += 1
-			elif not (c.g > c.r and c.r > c.b):
+				continue
+			if c.b >= c.r or c.b >= c.g:
+				bad_blue_land += 1
+			if WorldObjects.at(SEED, x, y) != WorldObjects.NONE:
+				objs += 1
+				continue
+			if not (c.g > c.r and c.r > c.b):
 				bad_land += 1
 	eq(bad_water, 0, "b > g > r 이 아닌 물 칸 (표본 %d)" % n)
-	eq(bad_land, 0, "g > r > b 가 아닌 땅 칸 (표본 %d)" % n)
+	eq(bad_land, 0, "g > r > b 가 아닌 빈 땅 칸 (표본 %d)" % n)
+	eq(bad_blue_land, 0, "b 가 제일 작지 않은 땅 칸 — 물처럼 보인다 (표본 %d)" % n)
+	check(objs > 0, "표본에 오브젝트 칸이 하나도 없다 — 위 두 줄이 갈라져 있을 이유가 없다")
+
+## **놓인 것이 화면에서 바닥과 갈려야 한다.** 색이 지형색에 파묻히면 「그렸다」가
+## 사람 눈에는 아무것도 아니다. 세 종류 다 바닥과 한 채널 이상 크게 벌어져야 한다.
+## 실측: 나무 0.139 · 돌 0.230 · 광물 0.377 (씨앗 20260914 · 8비트로 35 ~ 96)
+func test_objects_stand_out_from_the_ground() -> void:
+	var worst := {}
+	var seen := {}
+	for y in range(0, WorldGen.SIZE, 3):
+		for x in range(0, WorldGen.SIZE, 3):
+			var k := WorldObjects.at(SEED, x, y)
+			if k == WorldObjects.NONE:
+				continue
+			var ground := WorldView.terrain_color(SEED, x, y)
+			var c := WorldView.base_color(SEED, x, y)
+			var d := maxf(maxf(absf(c.r - ground.r), absf(c.g - ground.g)), absf(c.b - ground.b))
+			seen[k] = true
+			if not worst.has(k) or d < worst[k]:
+				worst[k] = d
+	for k in [WorldObjects.TREE, WorldObjects.ROCK, WorldObjects.ORE]:
+		check(seen.has(k), "종류 %d 가 표본에 없다 — 색 판정이 공허하다" % k)
+		if seen.has(k):
+			check(worst[k] > 0.10,
+				"종류 %d 와 바닥의 제일 작은 색차 — 잰 값 %.3f (8비트 %.0f) · 기대 0.10 초과" % [
+					k, worst[k], worst[k] * 255.0])
 
 ## 월드 밖은 감쇠가 1.25 로 포화해서 높이가 -0.25 를 못 넘는다 — **분기가 아니라
 ## 부등식이 보장한다** (WorldView.DEEP_AT 머리말). 그 부등식을 여기서 잰다.
