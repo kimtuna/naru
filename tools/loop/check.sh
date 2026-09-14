@@ -53,7 +53,15 @@ step_tests() {
   local vout vrc
   vout="$("$G" 60 -- --path "$ROOT" --script res://tools/tests/measure_view.gd 2>&1)"; vrc=$?
   printf '%s\n' "$vout" | grep -E '^VIEW ' || { printf '%s\n' "$vout" | tail -5; echo "VIEW FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $vrc -eq 0 ]
+  [ $vrc -eq 0 ] || return 1
+  # 방향 실측: 진짜 커서를 옮겨 넣고 어디를 보는지 잰다.
+  # PlayerFacing 이 맞아도 노드가 커서를 안 읽으면 게임은 앞만 본다 — 그 구멍을 막는다.
+  # **--headless 를 쓰지 않는다** — 창이 없으면 커서를 못 옮긴다.
+  # **사람의 커서를 1초쯤 뺏는다.** 끝나면 제자리로 돌려놓는다.
+  local fout frc
+  fout="$("$G" 60 -- --path "$ROOT" --script res://tools/tests/measure_facing.gd 2>&1)"; frc=$?
+  printf '%s\n' "$fout" | grep -E '^FACE ' || { printf '%s\n' "$fout" | tail -5; echo "FACE FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  [ $frc -eq 0 ]
 }
 
 case "$WHAT" in

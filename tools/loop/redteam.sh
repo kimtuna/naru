@@ -23,6 +23,7 @@ cp .loop/criteria.tsv "$BAK/" 2>/dev/null || true
 cp tools/tests/test_isolation.gd "$BAK/" 2>/dev/null || true
 cp docs/PROMPT.md "$BAK/" 2>/dev/null || true
 cp scripts/player_motion.gd "$BAK/" 2>/dev/null || true
+cp scripts/player_facing.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
@@ -32,6 +33,7 @@ restore() {
   cp "$BAK/test_isolation.gd" tools/tests/test_isolation.gd 2>/dev/null || true
   cp "$BAK/PROMPT.md" docs/PROMPT.md 2>/dev/null || true
   cp "$BAK/player_motion.gd" scripts/player_motion.gd 2>/dev/null || true
+  cp "$BAK/player_facing.gd" scripts/player_facing.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
@@ -105,6 +107,28 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
 PYX
 expect 1 "창을 실행 중에 줄이면 화면 실측이 잡는다 (배율 2 → 1)"
 cp "$BAK/main.gd" scripts/main.gd
+
+# ── P1-3 바라보는 방향 ────────────────────────────────────────────────
+# 셋 다 **단위 검사 26개는 전부 초록으로 남는다** — measure_facing.gd 만 잡는다.
+# PlayerFacing 자체는 안 건드리고 노드가 그걸 쓰는 방식만 망가뜨리기 때문이다.
+sed -i '' 's|aim_at(get_global_mouse_position())|pass|' scripts/player.gd
+expect 1 "노드가 커서를 안 읽으면 방향 실측이 잡는다 (계속 오른쪽만 본다)"
+cp "$BAK/player.gd" scripts/player.gd
+
+sed -i '' 's|PlayerFacing.resolve(point - global_position, facing)|PlayerFacing.nearest(point - global_position)|' scripts/player.gd
+expect 1 "히스테리시스를 건너뛰면 방향 실측이 잡는다 (46° 에서 벌써 아래를 본다)"
+cp "$BAK/player.gd" scripts/player.gd
+
+python3 - <<'PYX'
+import io
+p='scripts/player.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tfacing = PlayerFacing.resolve(point - global_position, facing)\n\t_place_nose()",
+    "\tfacing = PlayerFacing.resolve(point - global_position, facing)", 1))
+PYX
+expect 1 "방향은 맞는데 코가 안 돌면 방향 실측이 잡는다 (사람 눈엔 안 보인다)"
+cp "$BAK/player.gd" scripts/player.gd
+
 
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
