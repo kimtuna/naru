@@ -48,14 +48,33 @@ restore() {
 }
 trap restore EXIT
 
-PASS=0; MISS=0
+PASS=0; MISS=0; N=0
+# **놓친 대조군의 증거를 남긴다.** 전에는 출력을 통째로 버려서 「놓쳤다」만 뜨고
+# 무엇이 왜 빨갰는지 알 방법이 없었다 — 재현하려면 10분을 다시 태워야 했다.
+EV="$ROOT/.loop/redteam"; rm -rf "$EV"; mkdir -p "$EV"
 expect() {          # expect <기대 exit> <이름>
-  local want="$1" name="$2" rc
-  bash tools/loop/run-contract.sh >/dev/null 2>&1; rc=$?
+  local want="$1" name="$2" rc; N=$((N+1))
+  bash tools/loop/run-contract.sh >"$EV/last.txt" 2>&1; rc=$?
   if [ "$rc" -eq "$want" ]; then
     printf '  \033[32m잡았다\033[0m  %s  (exit %d)\n' "$name" "$rc"; PASS=$((PASS+1))
   else
     printf '  \033[31m놓쳤다\033[0m  %s  (기대 exit %d · 잰 값 %d)\n' "$name" "$want" "$rc"; MISS=$((MISS+1))
+    local slug; slug="$(printf '%02d' "$N")"
+    cp "$EV/last.txt" "$EV/$slug-contract.txt" 2>/dev/null || true
+    cp "$ROOT/.loop/results.json" "$EV/$slug-results.json" 2>/dev/null || true
+    git status --short > "$EV/$slug-tree.txt" 2>&1
+    # 빨간 기준만 뽑아서 그 자리에서 보여준다
+    python3 - "$EV/$slug-results.json" 2>/dev/null <<'PYX'
+import json, sys
+try: r = json.load(open(sys.argv[1], encoding="utf-8"))
+except Exception: sys.exit(0)
+for c in r.get("criteria", []):
+    if not c.get("ok"):
+        print(f"      기준 {c['id']} 빨강 — {c['what']}")
+        for e in (c.get("evidence") or [])[:4]:
+            print(f"        {e}")
+PYX
+    printf '      증거: .loop/redteam/%s-*\n' "$slug"
   fi
 }
 
