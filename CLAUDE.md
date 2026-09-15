@@ -23,7 +23,7 @@
 tools/loop/check.sh all            # import → parse → tests  (순서 중요)
 tools/loop/check.sh import|parse|unit|tests   # unit = 단위만 (실측 7종 없이)
 tools/loop/godot.sh <초> -- <인자>  # Godot 의 유일한 입구
-tools/loop/godot.sh 5 -- --path .  # 사람이 직접 띄워 보기
+open -a Godot project.godot        # 사람이 볼 때. godot.sh 는 <초> 뒤 **죽인다**
 tools/loop/shot.sh <out.png> [씬] [프레임] [--max-flat N]   # 화면을 PNG 로 굽는다
 tools/loop/ctl.sh start [회차수] | stop | status | report   # 루프 · 대시보드
 ```
