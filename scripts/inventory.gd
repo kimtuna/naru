@@ -112,3 +112,28 @@ func remove(id: StringName, amount: int) -> int:
 		if amounts[i] == 0:
 			ids[i] = EMPTY
 	return took
+
+## ── 칸 하나를 직접 만지는 문 (회차 44) ───────────────────────────────
+
+## 이런 칸 번호가 있나. **밖에서 온 번호는 전부 여기를 지난다** —
+## 커서가 집는 칸은 화면의 좌표에서 오므로 범위 밖이 들어올 길이 열려 있다.
+func has_slot(index: int) -> bool:
+	return index >= 0 and index < ids.size()
+
+## 한 칸을 통째로 적는다. **불변식을 지키는 유일한 문**이다:
+## `ids[i] == EMPTY` 와 `amounts[i] == 0` 은 여기를 지나는 한 늘 같이 참이다.
+## 돌려주는 것은 **실제로 적힌 개수** — 상한을 넘겨 부르면 잘린다.
+##
+## **`add()` 와 다른 자리다.** `add()` 는 「어느 칸이든 좋으니 넣어라」고, 이쪽은
+## 「바로 이 칸」이다 — 집어서 놓기(`Grab`)는 사람이 칸을 골랐으므로 옮길 수 없다.
+func set_slot(index: int, id: StringName, amount: int) -> int:
+	if not has_slot(index):
+		return 0
+	var n := clampi(amount, 0, STACK_MAX)
+	if id == EMPTY or n <= 0:
+		ids[index] = EMPTY
+		amounts[index] = 0
+		return 0
+	ids[index] = id
+	amounts[index] = n
+	return n

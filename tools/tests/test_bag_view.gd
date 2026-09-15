@@ -106,3 +106,63 @@ func test_geometry_follows_the_screen() -> void:
 	check(p2.position != p1.position, "화면이 커지면 가방 창의 자리는 따라 옮겨야 한다")
 	eq(p2.end.y, HotbarView.bar_rect(big).position.y - BagView.LIFT,
 		"큰 화면에서도 핫바 바로 위다")
+
+## ── 화면의 점 하나를 칸으로 읽는다 (회차 44 · 집어서 놓기) ───────────
+
+func test_칸_한가운데를_누르면_그_칸이다() -> void:
+	# **그리는 자리와 집는 자리가 같은 한 벌이라야** 「보이는 칸과 집히는 칸이
+	# 다르다」가 안 생긴다 — `slot_at` 이 `slot_rect` 위에 서 있는 이유다.
+	for i in 18:
+		eq(BagView.slot_at(BagView.slot_rect(i, SCREEN).get_center(), SCREEN), i,
+			"가방 %d번 칸 한가운데" % (i + 1))
+	for i in 9:
+		eq(HotbarView.slot_at(HotbarView.slot_rect(i, SCREEN).get_center(), SCREEN), i,
+			"핫바 %d번 칸 한가운데" % (i + 1))
+
+func test_칸이_아닌_자리는_없다고_답한다() -> void:
+	# **-1 이 없으면 빗나간 클릭이 0번 칸을 집는다** — 가방 밖을 눌렀는데
+	# 첫 칸이 손에 딸려 오는 그림이다.
+	eq(BagView.slot_at(Vector2(2.0, 2.0), SCREEN), -1, "화면 왼쪽 위 모서리")
+	eq(BagView.slot_at(Vector2(SCREEN.x * 0.5, 40.0), SCREEN), -1, "창보다 한참 위")
+	eq(HotbarView.slot_at(Vector2(2.0, 2.0), SCREEN), -1, "핫바 — 화면 왼쪽 위")
+	# 창 바탕(PAD)은 칸이 아니다. 창 안이라고 다 칸인 것은 아니라는 자리다.
+	var panel := BagView.panel_rect(SCREEN)
+	eq(BagView.slot_at(panel.position + Vector2(1.0, 1.0), SCREEN), -1, "창 바탕의 모서리")
+
+func test_가방과_핫바는_같은_점을_안_가져간다() -> void:
+	# `main.gd` 는 가방을 먼저 묻는다. 둘이 겹치면 **어느 창이 먹는지가 순서에
+	# 달리고**, 창이 늘 때(상자 · 제작대) 그 순서가 조용히 답을 바꾼다.
+	for i in 18:
+		var c := BagView.slot_rect(i, SCREEN).get_center()
+		eq(HotbarView.slot_at(c, SCREEN), -1, "가방 %d번 칸 자리를 핫바가 가져가면 안 된다" % (i + 1))
+	for i in 9:
+		var c := HotbarView.slot_rect(i, SCREEN).get_center()
+		eq(BagView.slot_at(c, SCREEN), -1, "핫바 %d번 칸 자리를 가방이 가져가면 안 된다" % (i + 1))
+
+func test_칸_사이의_틈은_한_칸에만_붙는다() -> void:
+	# 칸끼리 안 겹치므로(위의 검사) 어느 점이든 답이 **많아야 하나**다.
+	# 격자를 촘촘히 훑어서 두 칸이 같은 점을 집는 자리가 없는지 본다.
+	var panel := BagView.panel_rect(SCREEN)
+	var bad := 0
+	var y := panel.position.y
+	while y <= panel.end.y:
+		var x := panel.position.x
+		while x <= panel.end.x:
+			var hits := 0
+			for i in 18:
+				if BagView.slot_rect(i, SCREEN).has_point(Vector2(x, y)):
+					hits += 1
+			if hits > 1:
+				bad += 1
+			x += 1.0
+		y += 1.0
+	eq(bad, 0, "두 칸이 같이 집히는 점의 수")
+
+func test_화면이_커져도_칸을_따라간다() -> void:
+	# 자리가 **화면 크기의 함수**라서 히트 테스트도 같이 따라가야 한다 —
+	# 한쪽만 화면을 보면 창 크기를 바꾼 사람의 클릭이 옆 칸으로 간다.
+	var big := Vector2(1280.0, 720.0)
+	eq(BagView.slot_at(BagView.slot_rect(4, big).get_center(), big), 4, "큰 화면의 가방 5번 칸")
+	# 작은 화면의 칸 자리를 큰 화면에서 물으면 그 칸이 아니어야 한다.
+	check(BagView.slot_at(BagView.slot_rect(4, SCREEN).get_center(), big) != 4,
+		"화면 크기를 안 쓰면 여기가 4 로 답한다")

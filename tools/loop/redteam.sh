@@ -44,6 +44,7 @@ cp scripts/display.gd "$BAK/" 2>/dev/null || true
 cp scripts/day_cycle.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/bag_view.gd "$BAK/" 2>/dev/null || true
+cp scripts/grab.gd "$BAK/" 2>/dev/null || true
 cp scripts/input_route.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
@@ -58,6 +59,7 @@ cp tools/loop/state.py "$BAK/" 2>/dev/null || true
 cp tools/loop/state-selftest.sh "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_headless.gd "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_focus.gd "$BAK/" 2>/dev/null || true
+cp tools/tests/measure_grab.gd "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_collide.gd "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_move.gd "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_camera.gd "$BAK/" 2>/dev/null || true
@@ -85,6 +87,7 @@ restore() {
   cp "$BAK/day_cycle.gd" scripts/day_cycle.gd 2>/dev/null || true
   cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
   cp "$BAK/bag_view.gd" scripts/bag_view.gd 2>/dev/null || true
+  cp "$BAK/grab.gd" scripts/grab.gd 2>/dev/null || true
   cp "$BAK/input_route.gd" scripts/input_route.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
@@ -99,6 +102,7 @@ restore() {
   cp "$BAK/state-selftest.sh" tools/loop/state-selftest.sh 2>/dev/null || true
   cp "$BAK/measure_headless.gd" tools/tests/measure_headless.gd 2>/dev/null || true
   cp "$BAK/measure_focus.gd" tools/tests/measure_focus.gd 2>/dev/null || true
+  cp "$BAK/measure_grab.gd" tools/tests/measure_grab.gd 2>/dev/null || true
   cp "$BAK/measure_collide.gd" tools/tests/measure_collide.gd 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
@@ -1693,6 +1697,65 @@ expect 1 "열린 뒤 E 가 죽으면 tests 가 잡는다 (창을 못 닫는다)"
 cp "$BAK/input_route.gd" scripts/input_route.gd
 
 expect 0 "원복하면 열린 채의 입력도 초록이다"
+
+# ── 회차 44 칸 사이로 아이템을 옮긴다 ────────────────────────────────
+section "회차 44 칸 사이로 아이템을 옮긴다"
+#
+# 겨누는 것은 **계산은 맞는데 게임이 그 계산을 안 부르는 상태**다. `Grab` 은 순수
+# 계산이라 단위 검사가 「합이 안 변하나」밖에 못 묻는다 — `main.gd` 가 클릭을 안 이어도
+# **228개가 전부 초록**이고, 사람 눈에는 「가방을 열었는데 아무것도 안 집힌다」로만 보인다.
+# 회차 3 의 속도 · 5 의 방향 · 24 의 배치 · 30 의 시계 · 43 의 갈래와 같은 구멍이다.
+# **①②⑤⑥ 은 `main.gd` 한 파일만 만지므로 단위 검사를 하나도 안 깨뜨린다.**
+
+# ① **클릭을 아무 데도 안 잇는다.** 회차 43 이 「좌클릭은 UI 로 간다」고 적어 놓은
+#    그 자리가 다시 빈말이 된다 — 가방을 열어도 칸이 안 집힌다.
+mut scripts/main.gd '^(\t\t\tgrab_at\(get_viewport\(\)\.get_mouse_position\(\)\))$' '\t\t\tpass'
+expect 1 "클릭을 칸에 안 이으면 실측이 잡는다 (계산은 맞는데 아무도 안 부른다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ② **커서를 안 읽는다.** 늘 같은 점을 집으므로 어느 칸을 겨눴는지가 무의미해진다.
+#    **이 하나가 GRAB 이 제 SubViewport 를 세우는 이유다** — 커서를 못 밀어 넣으면
+#    이 고장과 「클릭이 아예 안 간다」가 구별되지 않는다.
+mut scripts/main.gd '^(\t\t\tgrab_at\()get_viewport\(\)\.get_mouse_position\(\)\)$' '\1Vector2.ZERO)'
+expect 1 "커서 자리를 안 읽으면 실측이 잡는다 (늘 같은 칸을 집는다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ③ **칸이 아닌 자리를 0번 칸이라고 답한다.** 빗나간 클릭이 첫 칸을 집어 든다 —
+#    가방 바깥을 눌렀는데 물건이 손에 딸려 오는 그림이다.
+#    **이것은 단위 검사도 잡는다**: -1 은 화면 기하의 값이라 표에 묶여 있다.
+mut scripts/bag_view.gd '^\treturn -1$' '\treturn 0'
+expect 1 "빈 자리가 0번 칸으로 답하면 tests 가 잡는다 (-1 이 사라진다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+# ④ **꽉 찬 칸에 놓으면 든 것이 증발한다.** BACKLOG 의 대조판 그 문장이다 —
+#    「꽉 찬 칸에 놓아서 개수가 줄어드는지」. GRAB ④ 와 단위 검사가 둘 다 본다.
+mut scripts/grab.gd '^(\tif put_n <= 0:)$' '\1\n\t\tclear()'
+expect 1 "꽉 찬 칸이 든 것을 삼키면 잡는다 (합이 줄어든다)"
+cp "$BAK/grab.gd" scripts/grab.gd
+
+# ⑤ **집은 채로 닫으면 사라진다.** BACKLOG 의 두 번째 대조판이다.
+#    커서는 화면의 것이라 창이 닫히면 그릴 자리가 없다 — 돌려놓지 않으면 그대로 증발이다.
+#    **`main.gd` 한 줄이라 단위 검사 228개는 전부 초록으로 남는다.**
+mut scripts/main.gd '^\t\t_stow_grab\(\)$' '\t\tgrab.clear()'
+expect 1 "집은 채로 닫아서 잃어버리면 실측이 잡는다 (커서는 비는데 합이 준다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ⑥ **가방에서 핫바로 못 간다.** 항목의 절반이 통째로 죽는다 — 「가방 ↔ 핫바를
+#    오간다」가 이 한 줄에 달려 있다. 가방 안에서만 옮기는 것은 여전히 되므로
+#    **집기만 재는 게이트는 이걸 못 본다**: GRAB ② 가 핫바 9번 칸을 겨누는 이유다.
+mut scripts/main.gd '^\t\t\tmoved = grab\.click\(hotbar\.items, i\)$' '\t\t\tmoved = false'
+expect 1 "핫바로 못 넘어가면 실측이 잡는다 (가방 ↔ 핫바)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ⑦ **맞바꿀 때 칸에 있던 것을 버린다.** 다른 물건 위에 놓으면 그 칸의 것이 커서로
+#    와야 하는데, 아이디를 안 옮기면 개수만 남고 물건이 사라진다.
+#    **GRAB 은 맞바꾸기를 안 겨눈다** — 이건 `test_grab.gd` 의 무작위 클릭이 잡는 자리다:
+#    갈래를 손으로 적는 검사는 「내가 생각한 경우」만 본다.
+mut scripts/grab.gd '^\t\tid = swap_id$' '\t\tid = EMPTY'
+expect 1 "맞바꾸기가 칸의 것을 버리면 tests 가 잡는다 (무작위 클릭의 합)"
+cp "$BAK/grab.gd" scripts/grab.gd
+
+expect 0 "원복하면 칸 사이로 옮기기도 초록이다"
 
 echo
 SKIPMSG=""

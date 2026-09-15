@@ -57,6 +57,17 @@ static func slot_offset(index: int) -> Vector2:
 static func slot_rect(index: int, screen: Vector2) -> Rect2:
 	return Rect2(bar_rect(screen).position + slot_offset(index), Vector2(SLOT, SLOT))
 
+## 이 화면 점 아래의 칸. **없으면 -1** 이다 (회차 44 · 집어서 놓기).
+## 자리를 내는 함수 바로 옆에 둔다 — 그리는 자리와 집는 자리가 **같은 한 벌**이라야
+## 「보이는 칸과 집히는 칸이 다르다」가 생기지 않는다.
+## **테두리도 그 칸이다**: `slot_rect` 는 테두리를 품고, 칸끼리는 안 겹친다
+## (`test_bag_view.gd` 가 지킨다) — 그래서 답이 하나다.
+static func slot_at(point: Vector2, screen: Vector2) -> int:
+	for i in Hotbar.SLOTS:
+		if slot_rect(i, screen).has_point(point):
+			return i
+	return -1
+
 ## 아이템 색. **자리표시자다** — 진짜 도감은 월드 오브젝트가 생기는 다음 항목에서 온다
 ## (BACKLOG P2 「월드 오브젝트 배치」). 그때까지는 아이디에서 결정적으로 뽑는다.
 static func item_color(id: StringName) -> Color:

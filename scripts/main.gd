@@ -50,6 +50,11 @@ extends Node2D
 ## **좌클릭은 안 휘두르고 숫자키는 손을 안 바꾼다.** 그 표는 `InputRoute` 에 있고
 ## 여기는 **창이 열렸나만 답한다**(`_ui_open`) — `_poll_*` 마다 조건을 적으면
 ## 창이 늘 때(상자 · 제작대) 어느 회차가 한 곳을 빼먹는다.
+##
+## **그 좌클릭이 가는 곳이 생겼다** (회차 44 · 집어서 놓기): 창이 열려 있으면 클릭은
+## 커서 아래의 칸으로 간다 — 가방 18칸과 핫바 9칸을 오간다. 계산은 `Grab` 이고
+## 여기는 **화면의 점 하나를 어느 칸으로 읽나**를 잇는다 (`grab_at`).
+## 회차 43 의 「좌클릭은 UI 로 간다」가 이제 빈말이 아니다.
 
 ## 좌클릭 · 가방 키의 입력 액션 이름. **`InputRoute` 가 출처다** — 갈래 표와 글자가
 ## 같은 곳에서 나와야 「배선은 맞는데 갈래에 안 적힌 입력」이 안 생긴다.
@@ -88,6 +93,13 @@ var hotbar := Hotbar.new()
 ## 바닥에 떨어진 것을 줍는 항목(BACKLOG P2)이 그 길을 낸다.
 var bag := Inventory.new()
 
+## **커서가 든 무더기** (회차 44). 가방이 열려 있는 동안만 쓴다 —
+## 창을 닫으면 `_stow_grab()` 이 돌려놓는다.
+##
+## **밖에서 보인다**(`_` 가 없다): `measure_grab.gd` 가 진짜 씬의 이것을 읽어
+## 「집었나 · 놓았나 · 합이 그대로인가」를 묻는다.
+var grab := Grab.new()
+
 ## **사람이 차지한 칸** — 다시 자라는 나무가 여기에 묻는다 (GDD A-4).
 ## 지금 꽂히는 것은 몸 하나뿐이지만, **앞으로 놓이는 것 전부가 여기 줄을 선다**:
 ## 설치물 · 간 밭 · 길. 새 종류는 `Claim.KINDS` 에 이름을 적고 `_link_world()` 에서
@@ -106,6 +118,13 @@ var _key_down := PackedByteArray()
 
 ## `E` 의 직전 프레임 상태. 같은 이유로 든다 (`_poll_bag`).
 var _bag_down := false
+
+## 좌클릭의 **직전 프레임 상태** (회차 44). 휘두르는 쪽은 「누르는 동안 내내」라
+## 이게 필요 없었지만, **집어서 놓기는 「눌린 순간」에 한 번**이다 — 누르고 있으면
+## 한 프레임에 한 번씩 집었다 놓았다 한다.
+## **죽어 있는 동안에도 적는다** (회차 43 이 숫자키에서 배운 그 자리): 안 적으면
+## 창을 닫는 그 프레임에 쥐고 있던 버튼이 새 클릭으로 읽힌다.
+var _use_down := false
 
 ## 지난 프레임에 실제로 그린 칸 수. **`measure_window.gd` 의 DRAW 가 이 수를 읽는다** —
 ## 월드를 통째로 그려도 화면 픽셀은 똑같아서 그림만 봐서는 못 잡는다.
@@ -155,6 +174,7 @@ func _ready() -> void:
 	# **가방은 닫힌 채로 시작한다.** 씬의 글자에만 맡기지 않는다 — 여기가 출처면
 	# 씬을 누가 건드려도 게임은 닫힌 채로 뜬다.
 	_bag_view.inventory = bag
+	_bag_view.grab = grab
 	_bag_view.visible = false
 	var vis := get_viewport().get_visible_rect().size
 	var win := DisplayServer.window_get_size()
@@ -254,20 +274,46 @@ func _poll_hotbar() -> void:
 func _poll_bag() -> void:
 	var down := Input.is_action_pressed(BAG_ACTION)
 	if down and not _bag_down and InputRoute.is_live(InputRoute.BAG, _ui_open()):
+		# **닫기 전에 든 것을 돌려놓는다** (회차 44). 커서는 화면의 것이라 창이
+		# 닫히면 그릴 자리가 없다 — 여기가 없으면 「집은 채로 닫으면 사라진다」가
+		# 한 글자도 안 틀리고 짜여진다. 닫을 때만이 아니라 **뒤집기 전에** 부른다:
+		# 여는 쪽에서는 손이 늘 비어 있으므로 아무 일도 안 일어난다.
+		_stow_grab()
 		_bag_view.toggle()
 	_bag_down = down
 
-## 좌클릭 → 손에 든 것의 동작. **누르고 있으면 계속 휘두른다** (HandSwing 머리말)
-## 이라서 「눌린 순간」을 따로 안 잡는다 — 겹치지 않게 막는 것은 `HandSwing.start()` 다.
-## 숫자키가 직전 프레임을 들고 있어야 했던 것과 다른 자리다: 저쪽은 **한 번**이고
-## 이쪽은 **누르는 동안 내내**다.
-func _poll_use() -> void:
-	if not Input.is_action_pressed(USE_ACTION):
+## 커서가 든 것을 가방 → 핫바 순으로 돌려놓는다. **못 넣은 몫은 바닥에 떨군다** —
+## `Inventory.add` 가 「남은 개수」를 돌려주는 것과 같은 자리고, 벌목이 이미 그 길이다
+## (`Harvest.hit`). 떨구는 것까지 실패하면 **손에 그대로 둔다**: 여기서 지우는 것이
+## 곧 증발이다.
+##
+## 집으면 그 칸이 비므로 실제로는 늘 들어간다 — 그래도 남는 쪽을 적어 둔다.
+## 상자·제작대가 생기면 받을 곳이 늘어서 그 전제가 흔들린다.
+func _stow_grab() -> void:
+	if grab.stow([bag, hotbar.items]) <= 0:
 		return
+	if world.add_drop(grab.id, grab.amount, _player.position):
+		grab.clear()
+
+## 좌클릭 → **창이 닫혀 있으면 손에 든 것의 동작, 열려 있으면 칸을 집고 놓기.**
+##
+## **한 버튼에 두 박자가 있다.** 휘두르는 쪽은 「누르는 동안 내내」고(HandSwing
+## 머리말 — 겹치지 않게 막는 것은 `HandSwing.start()` 다), 집어서 놓기는
+## 숫자키처럼 **「눌린 순간」에 한 번**이다. 그래서 `down` 과 `pressed` 를 둘 다 낸다.
+func _poll_use() -> void:
+	var down := Input.is_action_pressed(USE_ACTION)
+	# **눌린 순간**은 집어서 놓기의 것이다. 직전 프레임은 **갈래와 상관없이** 적는다
+	# (회차 43 이 숫자키에서 배운 자리) — 안 적으면 쥔 채로 창을 여닫는 프레임에
+	# 사람이 안 누른 클릭이 한 번 생긴다.
+	var pressed := down and not _use_down
+	_use_down = down
 	# **가방이 열려 있으면 휘두르지 않는다** — 그 클릭은 UI 의 것이다 (`InputRoute`).
-	# 집어서 놓기는 **다음 항목**이라, 지금 이 클릭은 아무 일도 안 한다:
-	# 「가방을 정리하다 나무를 벤다」를 먼저 막는 것이 이 줄의 전부다.
+	# 회차 44 부터 그 UI 가 있다: 커서 아래의 칸을 집고 놓는다.
 	if not InputRoute.is_live(InputRoute.USE, _ui_open()):
+		if pressed:
+			grab_at(get_viewport().get_mouse_position())
+		return
+	if not down:
 		return
 	# **모션이 이번에 시작됐을 때만 판정한다.** `use()` 가 false 면 이미 휘두르는
 	# 중이라, 여기서 또 판정하면 한 번의 동작이 프레임 수만큼 맞힌다 —
@@ -275,6 +321,31 @@ func _poll_use() -> void:
 	if not _player.use(HandSwing.color_for(hotbar.held_id())):
 		return
 	Harvest.hit(world, hotbar.held_id(), _player.position, _player.facing)
+
+## **화면의 점 하나를 칸으로 읽어 집거나 놓는다** (회차 44). 돌려주는 것은
+## **무엇인가 바뀌었나**다 — 칸이 아닌 자리를 누르면 false 고 아무 일도 안 난다.
+##
+## **어느 창이냐를 가르는 유일한 곳이다.** 가방이 먼저다: 창이 핫바 위에 뜨지만
+## 둘은 안 겹치므로(`test_bag_view.gd`) 순서가 결과를 안 바꾼다 — 그래도 못을 박는다.
+## 상자·제작대가 생기면 그 줄이 여기 붙는다.
+##
+## **밖에서 부를 수 있다**(`_` 가 없다): `measure_grab.gd` 가 `BagView.slot_rect` 로
+## 낸 진짜 화면 점을 밀어 넣는다. 커서를 읽는 줄(`get_viewport().get_mouse_position()`)은
+## 게이트가 SubViewport 에 밀어 넣은 이벤트로 함께 잰다.
+func grab_at(point: Vector2) -> bool:
+	var screen := get_viewport().get_visible_rect().size
+	var moved := false
+	var i := BagView.slot_at(point, screen)
+	if i >= 0:
+		moved = grab.click(bag, i)
+	else:
+		i = HotbarView.slot_at(point, screen)
+		if i >= 0:
+			moved = grab.click(hotbar.items, i)
+	if moved:
+		_bag_view.queue_redraw()
+		_hotbar_view.queue_redraw()
+	return moved
 
 ## 지금 화면에 걸리는 월드 범위(픽셀). 카메라의 위치·줌이 전부 여기 들어 있다.
 func visible_world_rect() -> Rect2:

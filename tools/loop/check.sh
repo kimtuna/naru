@@ -48,9 +48,9 @@ step_unit() {
   [ $rc -eq 0 ]
 }
 
-# 실측 게이트 12종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·CHOP·REGROW·DAY·FOCUS·VIEW+DRAW·BAG) — **엔진을 4번 띄운다.**
+# 실측 게이트 13종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·CHOP·REGROW·DAY·FOCUS·GRAB·VIEW+DRAW·BAG) — **엔진을 4번 띄운다.**
 # 회차 27 까지는 7번이었다. 합칠 수 있는 것은 두 갈래로 이미 합쳐져 있다:
-#   `measure_headless.gd`  MOVE·WORLD·COLLIDE·CAMERA·CHOP·REGROW·DAY·FOCUS — 창이 필요 없는 여덟 (27·29·30·31·43)
+#   `measure_headless.gd`  MOVE·WORLD·COLLIDE·CAMERA·CHOP·REGROW·DAY·FOCUS·GRAB — 창이 필요 없는 아홉 (27·29·30·31·43·44)
 #   `measure_window.gd`    VIEW·DRAW·HOTBAR·USE·BAG — 창이 필요한 다섯 (회차 14 · 40)
 # 남은 둘은 **합칠 수 없어서** 따로 돈다: WORLD 의 두 번째 프로세스(「다른 프로세스에서도
 # 같은가」가 묻는 것 자체다)와 FACE(제 SubViewport 를 세우고 `gui_disable_input` 을 끈다).
@@ -59,8 +59,8 @@ step_unit() {
 # **한 프로세스가 여러 구간을 재면 「반쪽만 돌고 죽어도 초록」이 열린다** (회차 14 가
 # `WINGATE` 로 배운 것): 앞 구간이 조용히 죽으면 뒤 구간은 아예 안 돌고 프로세스는
 # exit 0 으로 끝난다. 그래서 **구간마다 제 요약 줄을 찍었는지 전부 본다** — 그리고
-# 「여덟 다 돌았다」를 찍는 줄(`HEADGATE ... 구간 8/8`)까지 본다.
-# **여덟이라는 수를 여기가 안다**: 게이트 쪽은 「몇 구간을 돌았나」만 찍으므로
+# 「아홉 다 돌았다」를 찍는 줄(`HEADGATE ... 구간 9/9`)까지 본다.
+# **아홉이라는 수를 여기가 안다**: 게이트 쪽은 「몇 구간을 돌았나」만 찍으므로
 # 한 파일만 고쳐서는 초록이 안 된다.
 _need() {   # _need <출력> <정규식> <이름>
   local out="$1" re="$2" name="$3"
@@ -97,11 +97,19 @@ step_measure() {
   #            **대조군이 안에 있다**: 창을 닫고 같은 키를 같은 길이로 다시 눌러
   #            둘 다 나오는지 본다 — 없으면 「안 휘둘렀다」가 공허한 말이 된다.
   #            `InputRoute` 가 맞아도 main.gd 가 그 표를 안 물으면 단위 검사는 전부 초록이다.
+  #   GRAB     **가방을 열고 커서를 칸 위로 옮겨** 좌클릭으로 집고 놓는다 (회차 44).
+  #            가방 ↔ 핫바를 오가고, **꽉 찬 칸에 놓아도 손에 그대로 남고**, 집은 채로
+  #            창을 닫아도 안 잃는다 — BACKLOG 의 대조판 둘이 그대로 구간이다.
+  #            **제 SubViewport 를 세우는 유일한 헤드리스 구간이다**: 루트 뷰포트의
+  #            커서는 OS 를 되묻는데 헤드리스면 늘 (0,0) 이라 칸을 겨눌 수가 없다
+  #            (FACE 와 같은 이유 · 회차 8~11). **대조군이 안에 있다**: 창을 닫고 같은
+  #            칸 자리를 같은 길이로 눌러 **안 집히고 휘두르는지**를 본다.
+  #            `Grab` 이 맞아도 main.gd 가 클릭을 안 이으면 단위 검사는 전부 초록이다.
   local hout hrc miss=0
   hout="$("$G" 180 -- --headless --path "$ROOT" --script res://tools/tests/measure_headless.gd 2>&1)"; hrc=$?
   # `^WORLD [0-9]` 인 이유: 메인 씬이 `_ready` 에서 `WORLD    씨앗 ...` 를 찍는다 —
   # COLLIDE·CAMERA 가 그 씬을 세우므로 같은 출력에 섞인다 (회차 27).
-  printf '%s\n' "$hout" | grep -E '^(MOVE |WORLD [0-9]|WORLDGEN |COLLIDE |CAMERA |CHOP |REGROW |DAY |FOCUS |HEADGATE )'
+  printf '%s\n' "$hout" | grep -E '^(MOVE |WORLD [0-9]|WORLDGEN |COLLIDE |CAMERA |CHOP |REGROW |DAY |FOCUS |GRAB |HEADGATE )'
   _need "$hout" '^MOVE (ok|FAIL)'      MOVE     || miss=1
   _need "$hout" '^WORLDGEN '           WORLD    || miss=1
   _need "$hout" '^COLLIDE (ok|FAIL)'   COLLIDE  || miss=1
@@ -110,7 +118,8 @@ step_measure() {
   _need "$hout" '^REGROW (ok|FAIL)'    REGROW   || miss=1
   _need "$hout" '^DAY (ok|FAIL)'       DAY      || miss=1
   _need "$hout" '^FOCUS (ok|FAIL)'     FOCUS    || miss=1
-  _need "$hout" '^HEADGATE .*구간 8/8' HEADGATE || miss=1
+  _need "$hout" '^GRAB (ok|FAIL)'      GRAB     || miss=1
+  _need "$hout" '^HEADGATE .*구간 9/9' HEADGATE || miss=1
   [ "$miss" -eq 0 ] || return 1
   [ $hrc -eq 0 ] || return 1
 
