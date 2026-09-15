@@ -156,6 +156,32 @@ PYX
   fi
 }
 
+# **치환은 줄 하나로 잡는다** (회차 36).
+#
+# 대조군은 문자열로 코드를 망가뜨리는데, 전에는 **여러 줄을 통째로 맞대거나 인자까지
+# 통째로 적어** 두었다. 그러면 나중 회차가 인자를 하나 더하거나 그 사이에 줄을 끼우는
+# 순간 치환이 조용히 빗나간다 — 전체 쓸기가 잡은 헛돈 넷이 전부 이것이었다:
+#   · `color_at(WORLD_SEED, tx, ty)` 에 회차 29 가 `world.is_cleared(...)` 를 더했다 (둘)
+#   · `ORDER` 의 구간이 다섯에서 일곱으로 늘었다 (회차 30 · 31)
+#   · `world.occupied = _body_covers` 의 오른쪽이 `claim.covers` 로 바뀌었다 (회차 32)
+#
+# 그래서 **한 줄을 정규식으로 집고, 못 집으면 그 자리에서 죽는다.** 「게이트가 약하다」와
+# 「아무것도 안 깨뜨렸다」를 `expect` 가 가르기는 하지만, 그건 빗나간 **뒤**에 44초를
+# 태우고 나서다 — 여기는 빗나간 것을 곧바로 말한다.
+mut() {           # mut <파일> <정규식(한 줄)> <바꿀 것.  \1 로 묶음을 되쓴다>
+  python3 - "$1" "$2" "$3" <<'PYMUT'
+import io, re, sys
+path, pat, rep = sys.argv[1], sys.argv[2], sys.argv[3]
+s = io.open(path, encoding="utf-8").read()
+out, n = re.subn(pat, rep, s, count=1, flags=re.M)
+if n != 1 or out == s:
+    sys.stderr.write("  \033[33mmut 이 빗나갔다\033[0m  %s  /%s/  — 코드가 움직였다\n"
+                     % (path, pat))
+    sys.exit(3)
+io.open(path, "w", encoding="utf-8").write(out)
+PYMUT
+}
+
 echo "== 대조군 =="
 expect 0 "손 안 댄 상태는 초록이다"
 
@@ -352,13 +378,9 @@ cp "$BAK/main.gd" scripts/main.gd
 
 # **사람 눈에는 멀쩡한 섬이 보인다.** 파란 칸을 걸어 다니고 풀밭에서 막힌다 —
 # 그림과 충돌이 한 칸씩 다른 월드를 보는 것이다.
-python3 - <<'PYX'
-import io
-p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
-io.open(p,'w',encoding='utf-8').write(s.replace(
-    "\t\t\t_cache[i] = WorldView.color_at(WORLD_SEED, tx, ty)",
-    "\t\t\t_cache[i] = WorldView.color_at(WORLD_SEED + 1, tx, ty)", 1))
-PYX
+# **씨앗 인자 하나만 집는다** — 뒤에 무엇이 더 붙든 상관없다 (회차 29 가 `is_cleared` 를
+# 더하면서 이 대조군을 조용히 죽였다).
+mut scripts/main.gd '^(\t+_cache\[i\] = WorldView\.color_at\()WORLD_SEED,' '\1WORLD_SEED + 1,'
 expect 1 "다른 씨앗으로 그리면 잡는다 (보이는 땅에 못 선다)"
 cp "$BAK/main.gd" scripts/main.gd
 
@@ -653,13 +675,10 @@ cp "$BAK/world_collide.gd" scripts/world_collide.gd
 # ⑦ **놓기는 놓았는데 화면에 없다.** 순수 계산은 한 줄도 안 틀렸다 —
 #    `main.gd` 가 지형색만 칠할 뿐이라 단위 검사 113개가 전부 초록이다.
 #    구운 픽셀을 `color_at` 과 맞추는 DRAW 만 잡는다.
-python3 - <<'PYX'
-import io
-p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
-io.open(p,'w',encoding='utf-8').write(s.replace(
-    "\t\t\t_cache[i] = WorldView.color_at(WORLD_SEED, tx, ty)",
-    "\t\t\t_cache[i] = WorldView.terrain_color(WORLD_SEED, tx, ty)", 1))
-PYX
+#    **오른쪽을 통째로 갈아 끼운다** — `color_at` 의 인자가 몇 개든 `terrain_color` 의
+#    셋으로 바뀐다 (여기도 회차 29 의 `is_cleared` 에 빗나가 있었다).
+mut scripts/main.gd '^(\t+_cache\[i\] = )WorldView\.color_at\(WORLD_SEED, tx, ty.*$' \
+    '\1WorldView.terrain_color(WORLD_SEED, tx, ty)'
 expect 1 "놓인 것을 화면에 안 그리면 그리기 실측이 잡는다 (배치는 멀쩡하다)"
 cp "$BAK/main.gd" scripts/main.gd
 
@@ -1034,16 +1053,12 @@ PYX
 expect 1 "앞 구간이 죽어 뒤가 통째로 침묵하면 tests 가 잡는다 (프로세스는 exit 0)"
 cp "$BAK/measure_collide.gd" tools/tests/measure_collide.gd
 
-# ② **구간을 조용히 뺀다.** 남은 셋은 전부 초록이고 프로세스도 exit 0 이다.
-#    `HEADGATE` 가 `구간 4/4` 대신 `3/3` 을 찍는 것 하나만 다르다 —
+# ② **구간을 조용히 뺀다.** 남은 여섯은 전부 초록이고 프로세스도 exit 0 이다.
+#    `HEADGATE` 가 `구간 7/7` 대신 `6/6` 을 찍는 것 하나만 다르다 —
 #    **세는 수를 게이트와 check.sh 가 나눠 가지는 이유가 이것이다.**
-python3 - <<'PYX'
-import io
-p='tools/tests/measure_headless.gd'; s=io.open(p,encoding='utf-8').read()
-old = 'const ORDER := ["move", "world", "collide", "camera", "chop"]'
-new = 'const ORDER := ["move", "world", "collide", "camera"]'
-io.open(p,'w',encoding='utf-8').write(s.replace(old, new, 1))
-PYX
+#    **맨 뒤 하나를 이름 모르게 떼어낸다**: 구간 이름을 여기 적어 두면 구간이 늘 때마다
+#    (회차 30 이 `regrow`, 31 이 `day` 를 더했다) 치환이 조용히 빗나간다.
+mut tools/tests/measure_headless.gd '^(const ORDER := \[.*), "[a-z]+"\]$' '\1]'
 expect 1 "구간을 조용히 빼면 tests 가 잡는다 (나머지는 다 초록이고 exit 0)"
 cp "$BAK/measure_headless.gd" tools/tests/measure_headless.gd
 
@@ -1142,11 +1157,9 @@ cp "$BAK/main.gd" scripts/main.gd
 # ② **몸이 선 칸을 아무도 안 묻는다.** 월드는 플레이어를 모르므로 main.gd 가 그 물음을
 #    안 꽂으면 나무가 사람 안에서 자란다 — 회차 29 가 막은 「벤 자리에 몸이 낀다」의
 #    반대편이다. 단위 검사는 제 Callable 을 손으로 꽂으므로 전부 초록이다.
-python3 - <<'PYY'
-import io
-p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
-io.open(p,'w',encoding='utf-8').write(s.replace("\tworld.occupied = _body_covers\n", "", 1))
-PYY
+#    **오른쪽이 무엇이든 그 줄을 지운다** — 회차 32 가 `_body_covers` 를 `claim.covers`
+#    로 바꾸면서 이 대조군이 헛돌기 시작했다.
+mut scripts/main.gd '^\tworld\.occupied = .*\n' ''
 expect 1 "몸이 선 칸을 안 물으면 tests 가 잡는다 (나무가 사람 안에서 자란다)"
 cp "$BAK/main.gd" scripts/main.gd
 

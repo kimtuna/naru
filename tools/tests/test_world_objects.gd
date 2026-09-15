@@ -95,8 +95,24 @@ func test_ore_is_the_rarest() -> void:
 		check(k[WorldObjects.ROCK] * 2 < k[WorldObjects.TREE],
 			"씨앗 %d 돌 %d 이 나무 %d 의 절반 미만이 아니다" % [s, k[WorldObjects.ROCK], k[WorldObjects.TREE]])
 
+## 광물이 설 수 있는 **가장 낮은 땅**. 값의 출처는 NUMBERS 6b · GDD C-5 · D-4 다.
+##
+## **여기에 숫자를 다시 적는 이유**: 전에는 `WorldObjects.ORE_MIN_HEIGHT` 를 읽어서
+## 견줬는데, 그러면 **재는 값과 기대값이 같이 움직인다** — 상수를 0.0 으로 내리면
+## 기대도 0.0 이 되고, 해수면이 0.30 이라 `h <= 0.0` 인 땅이 아예 없어서 **초록**이다.
+## 대조군 ⑤(「광물 높이 문턱을 없앤다」)가 회차 24 부터 그래서 아무것도 안 잡았다.
+##
+## **한쪽으로만 막는다**: 올리는 회차는 통과하고 내리는 회차만 빨개진다.
+const ORE_FLOOR := 0.55
+
 ## **광물은 섬 안쪽 높은 땅에만** — 해안에서 주우면 「산에 간다」가 없어진다.
+## 두 가지를 따로 묻는다: **상수가 안 내려갔나**(값), **정말 높은 데만 있나**(배치).
+## 둘 중 하나만 있으면 빠져나가는 길이 남는다 — 상수를 그대로 두고 `at_height` 의
+## `if h > ORE_MIN_HEIGHT` 만 걷어내면 값은 멀쩡하고 배치만 해안까지 내려온다.
 func test_ore_only_on_high_ground() -> void:
+	check(WorldObjects.ORE_MIN_HEIGHT >= ORE_FLOOR,
+		"광물 높이 문턱이 내려갔다 — 잰 값 %.2f · 바닥 %.2f (해수면 %.2f)" % [
+			WorldObjects.ORE_MIN_HEIGHT, ORE_FLOOR, WorldGen.SEA_LEVEL])
 	for s in SEEDS:
 		var low := 0
 		var lowest := 9.0
@@ -106,10 +122,10 @@ func test_ore_only_on_high_ground() -> void:
 					continue
 				var h := WorldGen.height_at(s, x, y)
 				lowest = minf(lowest, h)
-				if h <= WorldObjects.ORE_MIN_HEIGHT:
+				if h <= ORE_FLOOR:
 					low += 1
-		eq(low, 0, "씨앗 %d 문턱 %.2f 아래의 광물 (제일 낮은 것 %.3f)" % [
-			s, WorldObjects.ORE_MIN_HEIGHT, lowest])
+		eq(low, 0, "씨앗 %d 바닥 %.2f 아래의 광물 (제일 낮은 것 %.3f)" % [
+			s, ORE_FLOOR, lowest])
 
 ## **나무는 뭉친다.** 칸마다 독립으로 뽑으면 이 배수가 1 이다 — 온 섬에 고르게 깔린
 ## 점이 되고 「저 숲으로 가자」가 없어진다. 실측 1.94 ~ 2.59 배 (NUMBERS 6b절).
