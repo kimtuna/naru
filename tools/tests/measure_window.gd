@@ -22,8 +22,13 @@ extends SceneTree
 ## 다른 씨앗으로 그리거나, 카메라와 어긋난 자리에 그리면 **단위 검사는 전부 초록**이다.
 ## **픽셀만으로는 못 잡는 것이 하나 있다**: 월드를 65536칸 통째로 그려도 화면은 똑같다.
 ## 그래서 `main.gd` 가 세어 둔 `drawn_tiles` 를 같이 읽는다.
-## **두 번 잰다 — 서고 나서, 그리고 걷고 나서.** main.gd 는 보이는 범위가 바뀔 때만
+## **세 번 잰다 — 서고 나서, 걷고 나서, 그리고 밤에.** main.gd 는 보이는 범위가 바뀔 때만
 ## 색을 다시 채우므로 캐시가 상하면 화면이 월드에서 미끄러진다.
+## **밤이 여기 있는 이유** (회차 31 · GDD G-1b): 「화면이 하루를 안다」는 픽셀로만 증명된다.
+## 시계를 반 바퀴 돌려 한밤에 세우고, 같은 칸의 색에 **하늘빛을 곱한 값**과 맞춘다 —
+## `main.gd` 가 `Sky` 를 안 물들이면 낮 색이 그대로 나와 여기서만 빨개진다.
+## 밤 구간은 둘을 더 본다: **핫바는 안 어두워진다**(제 `CanvasLayer` 라 곱이 안 닿는다)와
+## **색 캐시를 안 버린다**(밤을 칸 색에 섞었으면 여기서 채운 횟수가 오른다).
 ## **걷는 구간에는 저만 잡는 대조군이 하나 있다** (redteam ⑤ · NUMBERS 9절):
 ## 캐시를 **두 칸 넘게 움직였을 때만** 다시 채우면 아래의 순간이동(101칸)은 멀쩡히
 ## 채우므로 `[서서]` 는 전부 맞고 **`[걷고]` 에서만** 어긋난다.
@@ -81,6 +86,12 @@ const WALK := 3.0 * PlayerMotion.TILE   # 걷는 거리(px). 3칸이면 캐시�
 # 월드에 나무·돌이 놓이면서 「땅이면 걸을 수 있다」가 더는 참이 아니다.
 const CLEAR_TILES := 4
 const WALK_FRAMES := 300           # 안전벨트. 막혀서 못 걸으면 여기서 끊는다
+# 시계를 이만큼 돌려 밤으로 간다. **정확히 반 바퀴**라 낮의 한가운데(시작 위상 0.25)가
+# 밤의 한가운데(0.75)로 간다 — 램프에서 멀찍이 떨어진 평지라 몇 프레임 흘러도 빛이 안 변한다.
+const NIGHT_TURN := 0.5
+# 한밤의 밝기 상한. `DayCycle.NIGHT_LIGHT` 가 0.30 쯤이라 여유를 두고 절반에 건다 —
+# **밤이 낮과 구별될 만큼 어두운가**를 묻는 자리지 그 값을 다시 적는 자리가 아니다.
+const NIGHT_MAX_LIGHT := 0.5
 
 # ── HOTBAR 기대값 ────────────────────────────────────────────────────
 # 칸 안에서 읽는 두 점(칸의 왼쪽 위 모서리로부터). **자리가 겹치면 안 된다**:
@@ -118,6 +129,8 @@ var _frames := 0
 var _main: Node2D
 var _player: Node2D
 var _seed := 0
+## 마지막으로 구운 화면. 밤 구간이 **핫바가 그대로인지** 낮의 것과 맞대 보려고 든다.
+var _last_img: Image = null
 
 func _initialize() -> void:
 	var scene: String = ProjectSettings.get_setting("application/run/main_scene")
@@ -202,6 +215,61 @@ func _measure_draw() -> void:
 		_draw_fail("걸은 거리", "%.2f px" % walked,
 			"%.0f px 이상 (안 걸으면 캐시가 상했는지 못 잰다)" % WALK)
 
+	# ── 3. 밤에 ───────────────────────────────────────────────────
+	await _measure_night()
+
+## **화면이 하루를 아는가** (GDD G-1b · 회차 31). 위의 둘은 낮에 쟀다 —
+## 시작 위상이 한낮이라 하늘빛이 정확히 흰색이고, 그래서 「월드를 제 색으로 그렸나」와
+## 「밤에 어두워지나」가 서로를 흐리지 않는다.
+##
+## 시계를 **반 바퀴** 돌려 한밤에 세운다. 재는 것이 셋이다:
+##   ① 구운 픽셀 = 칸 색 × 하늘빛 — `main.gd` 가 `Sky` 를 안 물들이면 낮 색이 그대로 나온다
+##   ② **핫바는 그대로다** — `UI` 가 제 `CanvasLayer` 라 곱이 안 닿는다.
+##      밤에 가방이 안 보이면 그건 연출이 아니라 고장이다
+##   ③ **색 캐시를 안 버렸다** — 밤을 칸 색에 섞었으면 채운 횟수가 오른다.
+##      빛은 매 프레임 변하므로 그 구현은 한 화면 7.9 ms 를 프레임마다 문다
+##
+## **끝나면 시계를 되돌린다.** 뒤의 HOTBAR·USE 는 낮에 재는 게이트라,
+## 밤을 물려주면 빨강이 「밤 탓인지 제 탓인지」 흐려진다.
+func _measure_night() -> void:
+	var bar := HotbarView.bar_rect(Vector2(LOGICAL_I))
+	var probe := Vector2i(bar.position + HB_BG_PROBE)
+	var bar_day := _last_img.get_pixel(probe.x, probe.y) if _last_img != null else Color.BLACK
+	var fills_day: int = _main.cache_fills
+
+	var noon: float = _main.world.now
+	_main.world.now = noon + WorldState.DAY_SEC * NIGHT_TURN
+	await _settle()
+
+	var light := DayCycle.light_at(_main.world.now)
+	var lum := (light.r + light.g + light.b) / 3.0
+	_draw_measure("밤", light)
+
+	# ② 핫바는 밤에도 낮과 **같은 픽셀**이다.
+	var bar_night := _last_img.get_pixel(probe.x, probe.y) if _last_img != null else Color.WHITE
+	var bar_d: float = maxf(maxf(absf(bar_day.r - bar_night.r), absf(bar_day.g - bar_night.g)),
+		absf(bar_day.b - bar_night.b))
+	# ③ 밤이 왔다고 색 캐시를 다시 채우지 않았다 (카메라는 안 움직였다).
+	var fills_night: int = _main.cache_fills
+
+	print("DRAW [밤] 하늘빛 %s (밝기 %.3f) · 위상 %.3f · 핫바 낮 %s → 밤 %s (색차 %.1f/255) · 채운 횟수 %d → %d" % [
+		light.to_html(false), lum, DayCycle.phase(_main.world.now),
+		bar_day.to_html(false), bar_night.to_html(false), bar_d * 255.0, fills_day, fills_night])
+
+	if lum > NIGHT_MAX_LIGHT:
+		_draw_fail("밤이 안 어둡다", "밝기 %.3f" % lum,
+			"%.2f 이하 (밤이 낮과 구별돼야 한다)" % NIGHT_MAX_LIGHT)
+	if bar_d > TOL:
+		_draw_fail("핫바가 밤에 어두워졌다", "색차 %.1f/255 (낮 %s → 밤 %s)" % [
+			bar_d * 255.0, bar_day.to_html(false), bar_night.to_html(false)],
+			"그대로 (UI 는 제 CanvasLayer 라 하늘빛이 안 닿는다)")
+	if fills_night != fills_day:
+		_draw_fail("밤이 색 캐시를 버렸다", "채운 횟수 %d → %d" % [fills_day, fills_night],
+			"그대로 %d (밤은 곱 하나다 — 칸 색에 섞으면 프레임마다 7.9 ms)" % fills_day)
+
+	_main.world.now = noon
+	await _settle()
+
 ## 스폰에서 +x 로 걸어 처음 만나는 바다. 그 **앞 칸(마지막 땅)**이 해안이다.
 ##
 ## **거기서 다시 왼쪽으로 물러나 빈 자리를 찾는다** (회차 24): 해안 칸에 나무가 서 있으면
@@ -248,7 +316,10 @@ func _walk(action: String) -> float:
 	return from.distance_to(_player.global_position)
 
 ## 지금 화면을 구워서 월드와 맞춘다.
-func _draw_measure(phase: String) -> void:
+## `light` 는 화면에 곱해지는 **하늘빛**이다 (`Sky` · 회차 31). 기본이 흰색이라
+## 낮 구간은 예전과 글자 그대로 같은 판정이다.
+func _draw_measure(phase: String, light := DayCycle.DAY_LIGHT) -> void:
+	_last_img = null
 	var tex: ViewportTexture = root.get_texture()
 	var img: Image = tex.get_image() if tex != null else null
 	if img == null or img.get_width() == 0:
@@ -258,11 +329,12 @@ func _draw_measure(phase: String) -> void:
 		_draw_fail("화면 크기 [%s]" % phase, "%dx%d" % [img.get_width(), img.get_height()],
 			"%dx%d" % [LOGICAL_I.x, LOGICAL_I.y])
 		return
-	_compare(img, phase)
+	_last_img = img
+	_compare(img, phase, light)
 
 ## 화면의 점 하나하나를 월드 좌표로 되돌려 **그 칸의 색**과 맞춘다.
 ## 되돌리는 데 쓰는 것이 캔버스 변환이므로, 카메라가 어긋나 있으면 여기서 통째로 빨개진다.
-func _compare(img: Image, phase: String) -> void:
+func _compare(img: Image, phase: String, light: Color) -> void:
 	var inv := root.get_canvas_transform().affine_inverse()
 	var center := Vector2(LOGICAL_I) * 0.5
 	# **핫바가 덮은 자리는 월드가 아니다.** 건너뛴 만큼은 아래 HOTBAR 가 판정한다.
@@ -285,7 +357,10 @@ func _compare(img: Image, phase: String) -> void:
 			n += 1
 			if WorldGen.tile_at(_seed, tx, ty) == WorldGen.WATER:
 				water += 1
-			var want := WorldView.color_at(_seed, tx, ty)
+			# **하늘빛을 곱한 값**과 맞춘다 (회차 31). 낮에는 곱이 1 이라 예전과 같고,
+			# 밤에는 `main.gd` 가 `Sky` 를 물들였을 때만 맞는다.
+			var lit := WorldView.color_at(_seed, tx, ty)
+			var want := Color(lit.r * light.r, lit.g * light.g, lit.b * light.b)
 			var got := img.get_pixel(sx, sy)
 			var d := maxf(maxf(absf(want.r - got.r), absf(want.g - got.g)), absf(want.b - got.b))
 			if d > worst:
@@ -560,8 +635,8 @@ func _use_report() -> void:
 # ── 끝 ───────────────────────────────────────────────────────────────
 ## **넷 중 하나만 빨개도 이 프로세스는 빨갛다.** 합치기 전에도 상태 검사는 전부 봤다.
 func _finish() -> void:
-	print("DRAW %s (표본 간격 %d px · 중심 %.0f px 제외 · 서서 + 걷고 두 번)" % [
-		"ok" if _draw_bad == 0 else "FAIL %d개" % _draw_bad, STEP, SKIP_BOX])
+	print("DRAW %s (표본 간격 %d px · 중심 %.0f px 제외 · 서서 + 걷고 + 밤 세 번 · 하루 %.0f s)" % [
+		"ok" if _draw_bad == 0 else "FAIL %d개" % _draw_bad, STEP, SKIP_BOX, WorldState.DAY_SEC])
 	# 이름이 `WINGATE` 인 이유: `main.gd` 가 시작할 때 `WINDOW   1920 x 1080` 을 찍는다 —
 	# `WINDOW` 로 시작하면 check.sh 의 grep 이 게이트가 죽어도 그 줄을 잡아 초록으로 본다.
 	var bad := _view_bad + _draw_bad + _hb_bad + _use_bad

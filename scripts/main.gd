@@ -32,6 +32,11 @@ extends Node2D
 ## 벤 칸은 나무로 돌아온다 (GDD A-4 「한 번 캐고 끝나는 자원이 없다」).
 ## **몸이 서 있는 칸은 안 자란다** — 월드가 플레이어를 모르므로 여기가 그 물음을 잇는다.
 ##
+## **낮과 밤** (회차 31): 그 시계를 `DayCycle` 이 빛 하나로 바꾸고, `Sky` 가 화면에
+## 곱한다 (GDD G-1b). **칸 색은 한 톨도 안 고친다** — 밤을 색 캐시에 섞으면 빛이 계속
+## 변하는 만큼 캐시를 매 프레임 버려야 해서 한 화면(2135칸 · 7.9 ms)이 프레임 예산의
+## 절반을 먹는다. `CanvasModulate` 는 곱 하나라 공짜다.
+##
 ## **핫바는 화면에 못 박혀 있다** (GDD D-2c): `UI` 는 `CanvasLayer` 라 카메라를 안 탄다.
 ## 숫자키를 읽어 손을 옮기는 것도 여기서 한다 — `Hotbar` 는 순수 계산이라
 ## 엔진 입력을 안 본다.
@@ -44,6 +49,16 @@ const WORLD_SEED := 20260914
 
 @onready var _player: Player = $Player
 @onready var _hotbar_view: HotbarView = $UI/Hotbar
+
+## 화면에 곱해지는 **하늘빛**. `CanvasModulate` 라 이 노드 하나가 캔버스 전부를 물들인다 —
+## 칸 색에 밤을 섞지 않는 이유는 `DayCycle` 머리말에 있다 (색 캐시를 매 프레임 버리게 된다).
+## `UI` 는 제 `CanvasLayer` 라 안 닿는다: **밤에도 핫바는 밝다.**
+##
+## **밖에서 보인다**(`_` 가 없다). `measure_day.gd` 가 「`Main/Sky` 라는 경로에 무엇이
+## 있나」가 아니라 **이 게임이 실제로 물들이는 그 노드**를 집어서 캔버스를 묻는다 —
+## 경로로 찾으면 노드를 옮기는 순간 게이트가 「없다」로 죽어서, 정작 **엉뚱한 캔버스에
+## 있는 하늘**을 한 번도 못 본다 (회차 31 이 대조군에서 확인했다).
+@onready var sky: CanvasModulate = $Sky
 
 ## 씨앗 월드 위에 얹힌 **바뀐 것** — 벤 칸 · 바닥에 떨어진 것. 저장(P2d)이 먹을 자리다.
 var world := WorldState.new(WORLD_SEED)
@@ -109,6 +124,10 @@ func _ready() -> void:
 		get_viewport().get_canvas_transform().get_scale(), visible_world_rect()])
 	print("RANGE    보이는 칸 %d / 월드 %d 칸" % [
 		WorldView.tile_count(visible_world_rect()), WorldGen.SIZE * WorldGen.SIZE])
+	print("DAY      하루 %.0f s (낮 %.0f + 밤 %.0f) · 시작 위상 %.2f (%s) · 여명 %.0f s" % [
+		WorldState.DAY_SEC, WorldState.DAY_SEC * 0.5, WorldState.DAY_SEC * 0.5,
+		DayCycle.phase(world.now), "낮" if DayCycle.is_day(world.now) else "밤",
+		DayCycle.TWILIGHT * WorldState.DAY_SEC])
 
 ## 플레이어를 월드에 꽂는다. **이 줄이 없으면 바다 위를 걸어다닌다.**
 ##
@@ -139,6 +158,10 @@ func _process(delta: float) -> void:
 	# (GDD A-4) — 안 부르면 `WorldState` 가 아무리 맞아도 섬은 영영 그루터기다.
 	# 자란 칸은 `changed` 로 알려 오므로 색 캐시도 저절로 버려진다.
 	world.tick(delta)
+	# **그 시계가 화면에 나오는 자리** (GDD G-1b 하루 20분 = 낮 10 + 밤 10).
+	# 빛은 매 프레임 조금씩 움직이므로 「바뀌었을 때만」이 없다 — 곱 하나라 공짜고,
+	# 여기를 빼면 시계가 아무리 맞아도 **섬은 영영 한낮이다** (measure_day.gd 가 잡는다).
+	sky.color = DayCycle.light_at(world.now)
 	_poll_hotbar()
 	_poll_use()
 	queue_redraw()

@@ -10,6 +10,11 @@ extends SceneTree
 ## **헤드리스에서는 안 된다** — 렌더러가 더미라 텍스처가 비어 있다.
 ## 그래서 tools/loop/shot.sh 는 `--headless` 없이 띄운다.
 ##
+## **몇 시에 굽나** (회차 31): `NARU_SHOT_NOW=<게임초>` 를 주면 그 시각에 세우고 굽는다.
+## 안 주면 판이 시작하는 시각 — 한낮이다 (`DayCycle.START_PHASE`).
+## 이게 없으면 사람이 **밤 화면을 영영 못 본다**: 하루가 20분이라 밤까지 10분을
+## 기다려야 하고, 무인 루프에서는 아예 길이 없다.
+##
 ## 사용법: godot --path . --script res://tools/qa/shot.gd -- <출력.png> [씬] [대기프레임]
 
 func _initialize() -> void:
@@ -21,7 +26,17 @@ func _initialize() -> void:
 	var packed: PackedScene = load(scene)
 	if packed == null:
 		print("SHOT ERROR 씬을 못 연다: %s" % scene); quit(1); return
-	root.add_child(packed.instantiate())
+	var node := packed.instantiate()
+	root.add_child(node)
+
+	# **시계를 옮기고 나서 기다린다** — 하늘은 `_process` 가 칠하므로 한 프레임은 돌아야 한다.
+	var when := OS.get_environment("NARU_SHOT_NOW")
+	if when != "":
+		if node.get("world") == null:
+			# **조용히 한낮을 굽지 않는다.** 시각을 골랐는데 못 옮겼으면 사람은 그 화면을
+			# 「밤이 이렇구나」로 읽는다 — 침묵이 거짓말이 되는 자리다.
+			print("SHOT ERROR 이 씬에는 시계가 없다 (NARU_SHOT_NOW=%s)" % when); quit(1); return
+		node.world.now = float(when)
 
 	for i in wait_frames:
 		await process_frame
@@ -50,5 +65,14 @@ func _initialize() -> void:
 	for k in counts:
 		top = maxi(top, int(counts[k]))
 	var flat := float(top) / float(n) * 100.0
-	print("SHOT %dx%d  색 %d개  가장 넓은 한 색 %.1f%%  → %s" % [w, h, counts.size(), flat, out])
+	# **몇 시에 구웠는지 같이 찍는다** — 안 찍으면 밤 화면과 낮 화면이 파일 이름으로만
+	# 갈리고, 시각 옮기기가 조용히 망가져도 아무도 모른다.
+	var clock := ""
+	var main := root.get_child(root.get_child_count() - 1)
+	if main != null and main.get("world") != null:
+		var now: float = main.world.now
+		clock = "  %.0f s (위상 %.3f · %s · 밝기 %.3f)" % [
+			now, DayCycle.phase(now), "낮" if DayCycle.is_day(now) else "밤", DayCycle.daylight(now)]
+	print("SHOT %dx%d  색 %d개  가장 넓은 한 색 %.1f%%%s  → %s" % [
+		w, h, counts.size(), flat, clock, out])
 	quit(0)

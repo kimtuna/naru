@@ -48,9 +48,9 @@ step_unit() {
   [ $rc -eq 0 ]
 }
 
-# 실측 게이트 9종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·CHOP·REGROW·VIEW+DRAW) — **엔진을 4번 띄운다.**
+# 실측 게이트 10종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·CHOP·REGROW·DAY·VIEW+DRAW) — **엔진을 4번 띄운다.**
 # 회차 27 까지는 7번이었다. 합칠 수 있는 것은 두 갈래로 이미 합쳐져 있다:
-#   `measure_headless.gd`  MOVE·WORLD·COLLIDE·CAMERA·CHOP·REGROW — 창이 필요 없는 여섯 (회차 27·29·30)
+#   `measure_headless.gd`  MOVE·WORLD·COLLIDE·CAMERA·CHOP·REGROW·DAY — 창이 필요 없는 일곱 (27·29·30·31)
 #   `measure_window.gd`    VIEW·DRAW·HOTBAR·USE — 창이 필요한 넷 (회차 14)
 # 남은 둘은 **합칠 수 없어서** 따로 돈다: WORLD 의 두 번째 프로세스(「다른 프로세스에서도
 # 같은가」가 묻는 것 자체다)와 FACE(제 SubViewport 를 세우고 `gui_disable_input` 을 끈다).
@@ -59,8 +59,8 @@ step_unit() {
 # **한 프로세스가 여러 구간을 재면 「반쪽만 돌고 죽어도 초록」이 열린다** (회차 14 가
 # `WINGATE` 로 배운 것): 앞 구간이 조용히 죽으면 뒤 구간은 아예 안 돌고 프로세스는
 # exit 0 으로 끝난다. 그래서 **구간마다 제 요약 줄을 찍었는지 전부 본다** — 그리고
-# 「여섯 다 돌았다」를 찍는 줄(`HEADGATE ... 구간 6/6`)까지 본다.
-# **여섯이라는 수를 여기가 안다**: 게이트 쪽은 「몇 구간을 돌았나」만 찍으므로
+# 「일곱 다 돌았다」를 찍는 줄(`HEADGATE ... 구간 7/7`)까지 본다.
+# **일곱이라는 수를 여기가 안다**: 게이트 쪽은 「몇 구간을 돌았나」만 찍으므로
 # 한 파일만 고쳐서는 초록이 안 된다.
 _need() {   # _need <출력> <정규식> <이름>
   local out="$1" re="$2" name="$3"
@@ -87,18 +87,24 @@ step_measure() {
   #            비키면 자라서 다시 막나, 화면을 다시 칠하나 (GDD A-4).
   #            main.gd 가 `world.tick` 을 안 부르면 섬은 영영 그루터기밭인데
   #            단위 검사는 전부 초록이다.
+  #   DAY      **그 시계가 하늘빛으로 나오나** (GDD G-1b 하루 20분 = 낮 10 + 밤 10).
+  #            하루 한 바퀴를 돌며 `Sky.color` 를 그 시각의 빛과 맞춘다. DayCycle 이
+  #            맞아도 main.gd 가 `Sky` 를 안 물들이면 섬은 영영 한낮인데 단위 검사는
+  #            전부 초록이다. **픽셀은 여기서 안 본다** — 구운 화면이 정말 어두워지는지는
+  #            아래 DRAW 의 `[밤]` 구간이 잰다.
   local hout hrc miss=0
   hout="$("$G" 180 -- --headless --path "$ROOT" --script res://tools/tests/measure_headless.gd 2>&1)"; hrc=$?
   # `^WORLD [0-9]` 인 이유: 메인 씬이 `_ready` 에서 `WORLD    씨앗 ...` 를 찍는다 —
   # COLLIDE·CAMERA 가 그 씬을 세우므로 같은 출력에 섞인다 (회차 27).
-  printf '%s\n' "$hout" | grep -E '^(MOVE |WORLD [0-9]|WORLDGEN |COLLIDE |CAMERA |CHOP |REGROW |HEADGATE )'
+  printf '%s\n' "$hout" | grep -E '^(MOVE |WORLD [0-9]|WORLDGEN |COLLIDE |CAMERA |CHOP |REGROW |DAY |HEADGATE )'
   _need "$hout" '^MOVE (ok|FAIL)'      MOVE     || miss=1
   _need "$hout" '^WORLDGEN '           WORLD    || miss=1
   _need "$hout" '^COLLIDE (ok|FAIL)'   COLLIDE  || miss=1
   _need "$hout" '^CAMERA (ok|FAIL)'    CAMERA   || miss=1
   _need "$hout" '^CHOP (ok|FAIL)'      CHOP     || miss=1
   _need "$hout" '^REGROW (ok|FAIL)'    REGROW   || miss=1
-  _need "$hout" '^HEADGATE .*구간 6/6' HEADGATE || miss=1
+  _need "$hout" '^DAY (ok|FAIL)'       DAY      || miss=1
+  _need "$hout" '^HEADGATE .*구간 7/7' HEADGATE || miss=1
   [ "$miss" -eq 0 ] || return 1
   [ $hrc -eq 0 ] || return 1
 
@@ -147,7 +153,10 @@ step_measure() {
   #         맞힐 것이 하나도 없는 자리에서 잰다 — 「대상이 없어도 모션이 나온다」가 그 문장이다.
   #   DRAW  해안에 세우고 **구운 픽셀을 그 자리의 월드 칸 색과 맞춘다.** WorldView 가 맞아도
   #         main 이 안 그리거나 다른 씨앗으로 그리면 단위 검사는 전부 초록이다.
-  #         **서서 한 번 · 걷고 한 번** — 색 캐시는 걸어야 상한다.
+  #         **서서 한 번 · 걷고 한 번 · 밤에 한 번** — 색 캐시는 걸어야 상하고,
+  #         **화면이 하루를 아는 것은 픽셀로만 증명된다** (회차 31 · GDD G-1b):
+  #         시계를 반 바퀴 돌려 칸 색 × 하늘빛과 맞추고, 그 김에 핫바가 안 어두워지는지와
+  #         밤이 색 캐시를 안 버리는지까지 본다.
   # **--headless 를 쓰지 않는다** — 헤드리스는 창 크기가 (0,0) 이고 렌더러가 더미라
   # 배율도 뷰포트 텍스처도 안 나온다.
   # **다섯 줄을 다 본다**: VIEW·DRAW·HOTBAR·USE 가 각각 찍었는지, 그리고 넷 다 돌았다는 WINGATE 까지.

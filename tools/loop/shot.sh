@@ -3,6 +3,10 @@
 #
 # 사용법: shot.sh <출력.png> [씬] [대기프레임] [--max-flat <퍼센트>]
 #
+# **몇 시에 굽나** (회차 31): `NARU_SHOT_NOW=<게임초>` 로 시각을 고른다.
+#   NARU_SHOT_NOW=600 tools/loop/shot.sh /tmp/night.png    # 한밤 (하루 1200초의 절반)
+# 안 주면 한낮이다. 이게 없으면 밤 화면을 보려고 10분을 기다려야 한다.
+#
 # `--headless` 를 쓰지 않는다 — 헤드리스는 렌더러가 더미라 텍스처가 빈다.
 # 창이 잠깐 떴다 사라지는 것은 정상이다.
 set -uo pipefail
@@ -15,7 +19,7 @@ MAXFLAT="100"
 
 rm -f "$OUT"
 # `NARU_FOCUS_RESTORE=1`: 창이 포커스를 가져간다 — 끝나고 되돌려 준다 (NUMBERS 11절).
-out="$(NARU_FOCUS_RESTORE=1 bash "$ROOT/tools/loop/godot.sh" 40 -- --path "$ROOT" \
+out="$(NARU_FOCUS_RESTORE=1 NARU_SHOT_NOW="${NARU_SHOT_NOW:-}" bash "$ROOT/tools/loop/godot.sh" 40 -- --path "$ROOT" \
         --script res://tools/qa/shot.gd -- "$OUT" "$SCENE" "$FRAMES" 2>&1)"
 line="$(printf '%s' "$out" | grep -E '^SHOT' | tail -1)"
 [ -z "$line" ] && { printf '%s\n' "$out" | tail -5; echo "SHOT 실패 — 출력이 없다"; exit 1; }

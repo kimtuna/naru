@@ -33,6 +33,7 @@ cp scripts/hotbar.gd "$BAK/" 2>/dev/null || true
 cp scripts/hand_swing.gd "$BAK/" 2>/dev/null || true
 cp scripts/harvest.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_state.gd "$BAK/" 2>/dev/null || true
+cp scripts/day_cycle.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
@@ -63,6 +64,7 @@ restore() {
   cp "$BAK/hand_swing.gd" scripts/hand_swing.gd 2>/dev/null || true
   cp "$BAK/harvest.gd" scripts/harvest.gd 2>/dev/null || true
   cp "$BAK/world_state.gd" scripts/world_state.gd 2>/dev/null || true
+  cp "$BAK/day_cycle.gd" scripts/day_cycle.gd 2>/dev/null || true
   cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
@@ -1166,6 +1168,103 @@ expect 1 "나무의 날 수를 0 으로 만들면 tests 가 잡는다 (한 번 �
 cp "$BAK/world_objects.gd" scripts/world_objects.gd
 
 expect 0 "원복하면 다시 자라는 것도 초록이다"
+
+# ── 회차 31 낮과 밤 ───────────────────────────────────────────────────
+section "회차 31 낮과 밤"
+#
+# 겨누는 것은 **시계는 도는데 화면이 그걸 모르는 상태**다. 회차 30 이 `WorldState.now` 를
+# 놓았고 `DayCycle` 은 순수 계산이라 단위 검사가 구석까지 물을 수 있는데,
+# **main.gd 가 `Sky` 를 한 줄도 안 물들이면 섬은 영영 한낮**이고 154개가 전부 초록이다.
+# 회차 3(속도) · 5(방향) · 24(배치) · 29(벌목) · 30(시계)와 같은 모양의 구멍이다.
+#
+# 나머지는 **이 회차가 일부러 고르지 않은 길들**이다: 하늘을 핫바와 같은 캔버스에 두는 것,
+# 밤을 칸 색에 섞는 것, 밤빛을 파랗게 하는 것, 낮밤을 딱 끊는 것, 하루를 반반이 아니게
+# 가르는 것. 다섯 다 **사람 눈에는 그럴듯해 보이고 대부분의 검사는 초록이다.**
+
+# ① **하늘을 안 물들인다.** 시계는 그대로 돌아서 나무도 다시 자라므로 REGROW 도 초록이고,
+#    단위 검사 154개도 전부 초록이다 — **DAY 와 DRAW[밤] 만** 빨갛다.
+python3 - <<'PYZ'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tsky.color = DayCycle.light_at(world.now)\n", "", 1))
+PYZ
+expect 1 "하늘을 안 물들이면 tests 가 잡는다 (시계는 도는데 섬은 영영 한낮이다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ② **하늘을 핫바와 같은 캔버스에 둔다.** `CanvasModulate` 는 제가 속한 캔버스를
+#    물들이므로, `UI` 안으로 옮기면 **월드는 안 어두워지고 가방만 깜깜해진다** —
+#    정확히 뒤집힌 화면인데 씬은 여전히 「하늘이 있다」고 읽히고 단위 검사도 전부 초록이다.
+#    **main.gd 도 같이 옮긴다**: 노드만 옮기면 `$Sky` 가 null 이 되어 `_process` 가
+#    매 프레임 터지고 화면이 통째로 회색이 된다 — 그건 **다른 고장**이라, 그걸로는
+#    「엉뚱한 캔버스의 하늘」을 한 번도 못 본다 (회차 31 이 여기서 게이트를 고쳤다).
+python3 - <<'PYZ'
+import io
+p='scenes/main.tscn'; s=io.open(p,encoding='utf-8').read()
+s = s.replace('[node name="Sky" type="CanvasModulate" parent="."]\n\n', '', 1)
+s = s.replace('[node name="UI" type="CanvasLayer" parent="."]\n',
+              '[node name="UI" type="CanvasLayer" parent="."]\n\n[node name="Sky" type="CanvasModulate" parent="UI"]\n', 1)
+io.open(p,'w',encoding='utf-8').write(s)
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "@onready var sky: CanvasModulate = $Sky", "@onready var sky: CanvasModulate = $UI/Sky", 1))
+PYZ
+expect 1 "하늘을 UI 캔버스에 두면 tests 가 잡는다 (월드는 밝고 가방만 깜깜해진다)"
+cp "$BAK/main.tscn" scenes/main.tscn
+cp "$BAK/main.gd" scripts/main.gd
+
+# ③ **밤을 칸 색에 섞는다** — 이 회차가 일부러 안 고른 길이다. 빛이 매 프레임 변하므로
+#    색 캐시를 프레임마다 버려야 하고, 한 화면 2135칸 × 3.32 µs = 7.9 ms 가 16667 µs
+#    예산에서 매 프레임 빠진다. **화면은 똑같이 어두워져서 픽셀로는 안 보인다** —
+#    그래서 DRAW[밤] 이 채운 횟수를 같이 읽는다. 여기서 빨개지는 줄은 그 하나뿐이다.
+python3 - <<'PYZ'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tsky.color = DayCycle.light_at(world.now)\n",
+    "\tsky.color = DayCycle.light_at(world.now)\n\t_cache_range = Rect2i()\n", 1))
+PYZ
+expect 1 "밤이 색 캐시를 버리면 tests 가 잡는다 (화면은 똑같은데 프레임마다 7.9 ms)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ④ **밤빛을 파랗게 한다.** 달빛다워 보이지만 곱하기가 `WorldView` 의 부등식을 뒤집는다 —
+#    돌 색(0.58, 0.57, 0.54)은 r 과 b 가 9% 밖에 안 벌어져 있어서, 밤빛의 b/r 이 그걸
+#    넘는 순간 **달빛 아래 바위가 웅덩이로 보인다.** 화면 게이트는 전부 초록이다:
+#    픽셀은 여전히 「칸 색 × 하늘빛」과 정확히 맞기 때문이다.
+python3 - <<'PYZ'
+import io
+p='scripts/day_cycle.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "const NIGHT_LIGHT := Color(0.28, 0.29, 0.30)",
+    "const NIGHT_LIGHT := Color(0.24, 0.30, 0.42)", 1))
+PYZ
+expect 1 "밤빛을 파랗게 하면 tests 가 잡는다 (달빛 아래 바위가 웅덩이가 된다)"
+cp "$BAK/day_cycle.gd" scripts/day_cycle.gd
+
+# ⑤ **낮밤을 딱 끊는다.** 여명을 없애면 해가 지는 프레임에 화면이 통째로 튄다 —
+#    「하루가 있다」는 여전히 참이고 낮 10분 · 밤 10분도 그대로라 DAY 도 초록이다.
+python3 - <<'PYZ'
+import io
+p='scripts/day_cycle.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "const TWILIGHT := 0.08", "const TWILIGHT := 0.0001", 1))
+PYZ
+expect 1 "여명을 없애면 tests 가 잡는다 (해가 지는 한 프레임에 화면이 튄다)"
+cp "$BAK/day_cycle.gd" scripts/day_cycle.gd
+
+# ⑥ **하루를 반반이 아니게 가른다.** GDD G-1b 의 「낮 10 + 밤 10」이 깨지는데
+#    화면은 멀쩡히 밝아졌다 어두워져서 **눈으로는 못 본다** — 조건부 스폰(B-3)이
+#    기대는 문장이라 숫자로 못을 박는다.
+python3 - <<'PYZ'
+import io
+p='scripts/day_cycle.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\treturn phase(now) < 0.5", "\treturn phase(now) < 0.45", 1))
+PYZ
+expect 1 "낮을 9분으로 줄이면 tests 가 잡는다 (GDD 의 낮 10 + 밤 10 이 깨진다)"
+cp "$BAK/day_cycle.gd" scripts/day_cycle.gd
+
+expect 0 "원복하면 낮과 밤도 다시 초록이다"
 
 
 echo
