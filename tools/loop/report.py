@@ -305,13 +305,13 @@ def render():
         back = (f'<a class="badge" href="#i{e["n"]}" title="진행 목록으로">{esc(badge)}</a>'
                 if not e["human"] and e["n"] else
                 f'<span class="badge human">{esc(badge)}</span>')
-        A(f'''<article class="entry {rcls}"{anchor}>
-  <div class="ehead">
+        A(f'''<details class="entry {rcls}"{anchor}>
+  <summary class="ehead">
     {back}
 <h3>{inline(title)}</h3>
     <span class="edate">{esc(f.get("날짜", ""))}</span>
     <span class="eres {rcls}">{esc(res_txt or "—")}</span>
-  </div>''')
+  </summary>''')
         if not e["human"] and not any(f.get(k) for k in ("문제", "원인", "고친 것")):
             # 빈 절을 조용히 넘기면 「문제 없는 회차」와 구별이 안 된다.
             A('<div class="row prob"><span class="k">일지</span>'
@@ -337,7 +337,7 @@ def render():
             foot.append(f'<span>{inline(f["커밋"])}</span>')
         if foot:
             A('<div class="efoot">' + "".join(foot) + "</div>")
-        A('</article>')
+        A('</details>')
     A('</div>')
 
     # ── 문서 ──
@@ -387,6 +387,13 @@ FRESH = """<button id="fresh" hidden>새 회차가 올라왔다 — 새로고침
                     : d<1440 ? ' · '+Math.floor(d/60)+'시간 전' : ' · '+Math.floor(d/1440)+'일 전';
   }
   tick(); setInterval(tick,30000);
+  // 진행 줄의 [N회차] 를 누르면 접힌 카드를 펴 준다 — 안 그러면 제목만 보이고 끝난다.
+  function openTarget(){
+    var h=location.hash; if(!h||h.length<2) return;
+    var el=document.querySelector(h);
+    if(el && el.tagName==='DETAILS'){ el.open=true; el.scrollIntoView({block:'start'}); }
+  }
+  window.addEventListener('hashchange',openTarget); openTarget();
   el.addEventListener('click',function(){location.reload();});
   setInterval(function(){
     fetch(location.href,{cache:'no-store'}).then(function(r){return r.text();})
@@ -518,8 +525,15 @@ h2{font-size:16.5px;margin:44px 0 6px;letter-spacing:-.2px;display:flex;
 .ev{margin:7px 0 0;padding:7px 0 0 0;list-style:none;border-top:1px dotted var(--line)}
 .ev li{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--dim);padding:1px 0}
 
-.log{display:flex;flex-direction:column;gap:12px}
-.entry{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.log{display:flex;flex-direction:column;gap:7px}
+.entry>summary{cursor:pointer;list-style:none;margin-bottom:0}
+.entry>summary::-webkit-details-marker{display:none}
+.entry>summary::before{content:"▸";color:var(--faint);margin-right:7px;font-size:11px}
+.entry[open]>summary::before{content:"▾"}
+.entry[open]>summary{margin-bottom:10px}
+.entry>summary h3{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.entry[open]>summary h3{white-space:normal;overflow:visible}
+.entry{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 15px}
 .entry.bad{border-color:var(--bad)}
 .ehead{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}
 .badge{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;padding:3px 9px;
