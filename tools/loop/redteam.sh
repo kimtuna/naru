@@ -64,12 +64,36 @@ restore() {
 }
 trap restore EXIT
 
-PASS=0; MISS=0; N=0
+# ── 묶음만 돌리기 ───────────────────────────────────────────────────
+#
+# **대조군은 「방금 만든 게이트가 진짜 잡나」를 본다.** 이미 통과한 것을 매회 다시
+# 돌리는 것은 회귀 검사인데, 그건 상태 검사(기준 7개)가 매 회차 이미 한다.
+# 54개를 한 판 돌리면 44.5초 × 54 = **40분**이라 30분짜리 세션이 아예 못 끝낸다.
+#
+#   redteam.sh --only 핫바      그 묶음만
+#   redteam.sh                  전부 (드라이버가 FULL_REDTEAM_EVERY 회차마다 돌린다)
+#
+# **거르더라도 앞뒤 두 개는 늘 돈다** — 「손 안 댄 상태는 초록이다」와
+# 「원복하면 다시 초록이다」. 이게 빠지면 무엇을 쟀는지 알 수가 없다.
+ONLY=""
+[ "${1:-}" = "--only" ] && { ONLY="${2:?--only 뒤에 묶음 이름}"; shift 2; }
+SECTION="기본"
+section() { SECTION="$1"; }
+skip_section() {                          # 이번 묶음을 건너뛰나
+  [ -z "$ONLY" ] && return 1
+  [ "$SECTION" = "기본" ] && return 1
+  case "$SECTION" in *"$ONLY"*) return 1 ;; esac
+  return 0
+}
+
+PASS=0; MISS=0; N=0; SKIP=0
 # **놓친 대조군의 증거를 남긴다.** 전에는 출력을 통째로 버려서 「놓쳤다」만 뜨고
 # 무엇이 왜 빨갰는지 알 방법이 없었다 — 재현하려면 10분을 다시 태워야 했다.
 EV="$ROOT/.loop/redteam"; rm -rf "$EV"; mkdir -p "$EV"
 expect() {          # expect <기대 exit> <이름>
-  local want="$1" name="$2" rc; N=$((N+1))
+  local want="$1" name="$2" rc
+  if skip_section; then SKIP=$((SKIP+1)); return; fi
+  N=$((N+1))
   # **깨뜨렸다고 했는데 정말 깨졌나.** 대조군은 문자열 치환으로 코드를 망가뜨리는데,
   # 나중 회차가 그 사이에 줄을 끼우면 치환이 조용히 빗나간다 — 그러면 상태 검사는
   # 초록이고 「놓쳤다」로 뜬다. 「게이트가 약하다」와 「아무것도 안 깨뜨렸다」는
@@ -132,6 +156,7 @@ expect 1 "검사를 지우면 테스트 바닥이 잡는다 (HEAD 개수를 따�
 cp "$BAK/test_isolation.gd" tools/tests/test_isolation.gd
 
 # ── P1-1 이동 ────────────────────────────────────────────────────────
+section "P1-1 이동"
 sed -i '' 's|return input.normalized() \* SPEED|return input * SPEED|' scripts/player_motion.gd
 expect 1 "대각선 정규화를 빼면 tests 가 잡는다 (339.41 px/s)"
 cp "$BAK/player_motion.gd" scripts/player_motion.gd
@@ -143,6 +168,7 @@ expect 1 "노드가 속도를 제 맘대로 바꾸면 실측이 잡는다 (120 p
 cp "$BAK/player.gd" scripts/player.gd
 
 # ── P1-2 화면 ────────────────────────────────────────────────────────
+section "P1-2 화면"
 # **회차 8 에서 겨눌 곳이 바뀌었다**: 진짜 카메라가 생겼으므로 씬에 카메라를 하나 더
 # 덧붙여도 먼저 트리에 들어온 플레이어의 카메라가 화면을 잡는다(선착순) — 아무 일도
 # 안 일어나는 가짜 대조군이 된다. 그래서 **그 카메라의 줌을 직접** 건다.
@@ -161,6 +187,7 @@ expect 1 "창을 실행 중에 줄이면 화면 실측이 잡는다 (배율 2 �
 cp "$BAK/main.gd" scripts/main.gd
 
 # ── P1-3 바라보는 방향 ────────────────────────────────────────────────
+section "P1-3 바라보는 방향"
 # 셋 다 **단위 검사 26개는 전부 초록으로 남는다** — measure_facing.gd 만 잡는다.
 # PlayerFacing 자체는 안 건드리고 노드가 그걸 쓰는 방식만 망가뜨리기 때문이다.
 sed -i '' 's|aim_at(get_global_mouse_position())|pass|' scripts/player.gd
@@ -190,6 +217,7 @@ expect 1 "커서를 뷰포트 좌표로 읽으면 방향 실측이 잡는다 (�
 cp "$BAK/player.gd" scripts/player.gd
 
 # ── P1-4 월드 생성 ────────────────────────────────────────────────────
+section "P1-4 월드 생성"
 # **이 하나가 프로세스 간 게이트의 존재 이유다.** 정적 변수는 프로세스마다 한 번만
 # 초기화되므로 **한 프로세스 안에서는 늘 같은 월드**다 — 단위 검사 35개는 전부 초록으로
 # 남고 measure_world.gd 만 잡는다. 사람 눈에는 「어제 만든 섬이 오늘 다르다」로만 보인다.
@@ -215,6 +243,7 @@ cp "$BAK/world_gen.gd" scripts/world_gen.gd
 
 
 # ── P1-5 이동 충돌 ────────────────────────────────────────────────────
+section "P1-5 이동 충돌"
 # 앞의 둘은 **단위 검사 53개를 전부 초록으로 남긴다** — WorldCollide 자체는 멀쩡하고
 # 그걸 쓰는 배선만 끊기기 때문이다. measure_collide.gd 만 잡는다.
 sed -i '' 's|position = WorldCollide.move(position, velocity \* delta, solid)|position += velocity * delta|' scripts/player.gd
@@ -243,6 +272,7 @@ expect 1 "벽에 닿을 때 통째로 멈추면 잡는다 (해안에서 안 미�
 cp "$BAK/world_collide.gd" scripts/world_collide.gd
 
 # ── P1-6 카메라 ──────────────────────────────────────────────────────
+section "P1-6 카메라"
 # 셋 다 **단위 검사 57개를 전부 초록으로 남긴다** — 씬에 박힌 글자(zoom = 1,
 # 부드럽게 따라가기 끔)는 그대로고 **실행 중의 화면**만 달라지기 때문이다.
 printf 'enabled = false\n' >> scenes/player.tscn
@@ -272,6 +302,7 @@ expect 1 "카메라가 부드럽게 끌려오면 실측이 잡는다 (걷는 동
 cp "$BAK/main.gd" scripts/main.gd
 
 # ── 회차 9 월드 그리기 ────────────────────────────────────────────────
+section "회차 9 월드 그리기"
 # 넷 다 **단위 검사 66개를 전부 초록으로 남긴다** — WorldView 의 순수 계산은 멀쩡하고
 # main.gd 가 그걸 쓰는 방식만 망가지기 때문이다. measure_window.gd 의 DRAW 만 잡는다.
 
@@ -337,6 +368,7 @@ expect 1 "캐시를 두 칸마다 채우면 걷는 구간만 잡는다 (서서�
 cp "$BAK/main.gd" scripts/main.gd
 
 # ── 회차 16 몸통 1칸 · 발밑 상자 (회차 17 에 타일 16 으로 다시 잰다) ─────
+section "회차 16 몸통 1칸 · 발밑 상자 (회차 17 에 타일 16 으로 다시 잰다)"
 # **첫째는 단위 검사 66개를 전부 초록으로 남긴다** — 씬의 글자(16 x 32)는 그대로고
 # **실행 중의 네모**만 넓어지기 때문이다. 좌표 판정 ①②③ 도 전부 맞는다:
 # 멈추는 자리는 충돌 상자가 정하지 그리는 네모가 정하지 않는다.
@@ -370,6 +402,7 @@ expect 1 "충돌 상자를 다시 네모로 만들면 tests 가 잡는다 (발�
 cp "$BAK/world_collide.gd" scripts/world_collide.gd
 
 # ── 회차 18 인벤토리 ─────────────────────────────────────────────────
+section "회차 18 인벤토리"
 # 순수 클래스라 **단위 검사만 잡는다** — 화면에도 실측에도 아직 안 매달려 있다.
 # 그래서 여기서 빨개지지 않으면 「가방이 물건을 먹어도 상태 검사는 초록」이 된다.
 
@@ -392,6 +425,7 @@ expect 1 "가방을 36칸으로 늘리면 tests 가 잡는다 (18칸)"
 cp "$BAK/inventory.gd" scripts/inventory.gd
 
 # ── 회차 19 스택 상한 ────────────────────────────────────────────────
+section "회차 19 스택 상한"
 # **사람이 고른 값은 이름이 아니라 숫자로 묶여 있어야 한다.** 검사들이 전부
 # `MAX := Inventory.STACK_MAX` 로만 쓰면 상한이 99 로 돌아가도 한 줄도 안 빨개진다 —
 # 「꽉 찬 가방」이 그냥 다른 상황이 될 뿐이라 전부 그대로 통과한다.
@@ -400,6 +434,7 @@ expect 1 "스택 상한을 99 로 되돌리면 tests 가 잡는다 (사람이 �
 cp "$BAK/inventory.gd" scripts/inventory.gd
 
 # ── 회차 20 핫바 ─────────────────────────────────────────────────────
+section "회차 20 핫바"
 # **앞의 셋은 단위 검사 90개를 전부 초록으로 남긴다** — 순수 계산도 씬의 글자도
 # 입력 배선도 멀쩡하고 **실행 중의 픽셀만** 달라지기 때문이다.
 # `measure_window.gd` 의 HOTBAR 만 잡는다. 사람 눈에는 「핫바가 없다 / 숫자를 눌러도
@@ -457,6 +492,7 @@ expect 1 "핫바를 화면 위로 올리면 잡는다 (아래 여백 8 → 500px
 cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd
 
 # ── 회차 21 좌클릭 = 손에 든 것의 동작 ───────────────────────────────
+section "회차 21 좌클릭 = 손에 든 것의 동작"
 # **앞의 셋은 실행 중의 픽셀만 달라진다** — 씬도 배선도 순수 계산도 멀쩡하다.
 # 사람 눈에는 「클릭해도 아무 일이 없다 / 무엇을 들어도 똑같다」로만 보인다.
 
@@ -507,6 +543,7 @@ expect 1 "부채꼴을 0 도로 만들면 잡는다 (네모가 한 자리에 붙
 cp "$BAK/hand_swing.gd" scripts/hand_swing.gd
 
 # ── 회차 24 월드 오브젝트 배치 ───────────────────────────────────────
+section "회차 24 월드 오브젝트 배치"
 # 배치는 순수 계산이라 **거의 다 단위 검사가 잡는다** — 그래서 두 개를 일부러
 # 딴 데로 겨눈다: ③ 은 단위 검사 113개를 전부 초록으로 남기고(프로세스 간 비교만 잡는다),
 # ⑥ 은 순수 계산이 멀쩡한 채 **화면에만** 안 나온다.
@@ -593,6 +630,7 @@ expect 1 "놓인 것을 화면에 안 그리면 그리기 실측이 잡는다 (�
 cp "$BAK/main.gd" scripts/main.gd
 
 # ── 회차 22 일지를 세션의 마지막 답변에서 뽑는다 ─────────────────────
+section "회차 22 일지를 세션의 마지막 답변에서 뽑는다"
 #
 # 여기가 겨누는 것은 하나다: **일지가 조용히 비는 길.** 회차 12 · 21 이 그 길로 갔다.
 #
@@ -727,7 +765,9 @@ cp "$BAK/PROMPT.md" docs/PROMPT.md
 expect 0 "원복하면 다시 초록이다"
 
 echo
+SKIPMSG=""
+[ "$SKIP" -gt 0 ] && SKIPMSG=" · ${SKIP}개 건너뜀 (--only ${ONLY})"
 if [ "$MISS" -eq 0 ]; then
-  echo "REDTEAM ${PASS} 잡음, 0 놓침 — 게이트가 살아 있다"; exit 0
+  echo "REDTEAM ${PASS} 잡음, 0 놓침${SKIPMSG} — 게이트가 살아 있다"; exit 0
 fi
-echo "REDTEAM ${PASS} 잡음, ${MISS} 놓침 — 안 잡는 게이트가 있다"; exit 1
+echo "REDTEAM ${PASS} 잡음, ${MISS} 놓침${SKIPMSG} — 안 잡는 게이트가 있다"; exit 1
