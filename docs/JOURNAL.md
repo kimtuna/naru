@@ -39,6 +39,19 @@
 
 ---
 
+## 회차 26 · **doclen 이 `roll_state` 보다 먼저 돈다** — 기준 5 는 판정(7)에서 재는데
+- 문제: 이 항목의 verify 가 `bash tools/loop/run-contract.sh` 였는데, `promote` 는 상태 검사를 다시 부르는 verify 를 재귀라고 건너뛴다. 고치기만 하고 닫으면 순서가 도로 뒤집혀도 아무도 안 잡는, 게이트 없는 회차가 될 참이었다.
+- 원인: `roll_state` 가 자르기와 커밋을 한 함수로 묶고 있었고, 커밋이 초록 뒤에 있어야 해서 자르기도 같이 초록 뒤에 있었다. 기준 5(doclen)는 판정(7)에서 `.loop/state.md` 를 재는데, 그 시점의 파일에는 세션이 방금 붙인 절이 하나 더 들어 있다. 그래서 긴 절을 붙인 회차만 상한을 넘고 다음 회차엔 저절로 사라진다 — 회차 25 가 98줄 · 상한 90 으로 그 길을 갔다.
+- 고친 것: `tools/loop/loop.sh` 의 `roll_state` 를 `trim_state`(6d · 판정 앞 · 커밋 안 함)와 `commit_state_roll`(초록 뒤)로 갈랐다. `tools/loop/state-selftest.sh` 를 새로 만들어 자르기 자체(개수 · 아카이브 덧붙임 · 머리말 · 멱등 · tail)와 드라이버 순서(6d < 7 < 초록 커밋)를 같이 묶었다. `tools/loop/redteam.sh` 에 묶음 「회차 26 판정 앞에서 회차 기록을 굴린다」를 넣고 대조군 8종을 달았다. `docs/BACKLOG.md` 의 verify 를 `run-contract.sh` → `state-selftest.sh` 로 바꿨다.
+- 바꾼 결정: **자르기와 커밋은 다른 시점의 일이다.** 자르기는 판정 앞(채점자가 재는 것과 다음 회차가 읽는 것이 같은 파일이어야 한다), 커밋은 초록 뒤(빨간 회차의 기록은 역사에 안 남는다). 커밋을 같이 앞으로 옮기면 `head_after` 가 부기 커밋을 가리켜 일지의 커밋 칸이 항목 커밋을 못 짚는다. 그리고 **자르기를 게이트 앞에 두려면 「무뎌지지 않았나」를 같은 검사 안에 묶어야 한다** — 값싼 오답이 「state.md 를 아예 안 센다」이기 때문이다.
+- 잰 값: `STATE SELFTEST 26 passed, 0 failed (바닥 26)` 0.5초 · `REDTEAM 15 잡음, 0 놓침`(`--only 회차 26` · 1분 58초) · `TESTS 113 passed, 0 failed` · `ALL GREEN` 8/8 · 27.2초 · `DOCLEN .loop/state.md 77/90줄` (자르기 전 4절, 자른 뒤 3절)
+- 남긴 것: 다음은 **헤드리스 실측 게이트를 한 프로세스로** — `check.sh tests` 가 Godot 을 10번 띄운다(27초). 대조군 묶음 「회차 25」의 꼬리에 있던 WASD · PROMPT.md 부풀리기 두 검사는 일반 검사라 그 묶음에 그대로 뒀다. **[ASK] 상태 검사 기준 4 의 글자가 아직 48px 타일이다**
+- 날짜: 2026-09-15
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 35개 스크립트, 실패 0 · 3 TESTS 113 passed, 0 failed · 4 TESTS 113 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  77/90줄 · 6 SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34) · 8   ok   공백 든 경로를 통째로 지운다 / WORKTREE SELFTEST 45 passed, 0 failed (바닥 45)
+- 비용: $92.4037 누적
+- 커밋: `47fa1ee`
+
 ## 회차 25 · **세션이 손으로 깨뜨린 것을 반드시 되돌린다** — 회차 24 가 대조군 하나를
 - 문제: 새로 만든 대조군 ⑥ 이 처음에 놓쳤다. `worktree.sh restore` 끝의 「되돌린 뒤
   다시 묻기」(`rest="$(leftovers)"`)를 지워도 자체 검사 41개가 전부 초록이었다.
