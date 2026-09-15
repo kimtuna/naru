@@ -11,7 +11,7 @@ const MAIN := "res://scripts/main.gd"
 ## 우리가 묶은 것이 아니라 갈래를 물을 자리가 아니다.
 const ENGINE_PREFIX := "ui_"
 
-func test_창이_닫혀_있으면_네_갈래가_다_산다() -> void:
+func test_창이_닫혀_있으면_다섯_갈래가_다_산다() -> void:
 	for kind in InputRoute.KINDS:
 		check(InputRoute.is_live(kind, false),
 			"창이 닫혀 있으면 %s 는 살아 있어야 한다" % kind)
@@ -26,6 +26,9 @@ func test_가방이_열려_있으면_이동과_가방키만_산다() -> void:
 		"가방이 열려 있으면 좌클릭은 휘두르지 않아야 한다 (UI 로 간다)")
 	check(not InputRoute.is_live(InputRoute.HOTBAR, true),
 		"가방이 열려 있으면 숫자키가 손을 바꾸지 않아야 한다")
+	# **우클릭도 UI 로 간다** (회차 46): 반을 집고 한 개씩 놓는다.
+	check(not InputRoute.is_live(InputRoute.USE_ALT, true),
+		"가방이 열려 있으면 우클릭은 UI 로 가야 한다 (반 집기 · 한 개씩 놓기)")
 
 func test_표가_갈래를_다_덮는다() -> void:
 	# `Claim.missing()` 과 같은 자리 — 갈래를 적고 표에 안 적은 것을 이름으로 부른다.
@@ -42,7 +45,7 @@ func test_모르는_갈래는_창이_열리면_안_산다() -> void:
 	check(InputRoute.is_live(&"우클릭", false), "창이 닫혀 있으면 전부 산다")
 
 func test_묶인_입력_액션마다_갈래가_있다() -> void:
-	# **이 검사가 다음 회차를 막는다**: project.godot 에 우클릭(반 집기)을 묶으면서
+	# **이 검사가 회차 46 을 막았다**: project.godot 에 우클릭(반 집기)을 묶으면서
 	# 갈래를 안 적으면, 그 입력은 가방이 열려 있어도 그대로 월드로 간다.
 	for action in InputMap.get_actions():
 		if String(action).begins_with(ENGINE_PREFIX):
@@ -63,7 +66,22 @@ func test_main_이_쓰는_액션_이름이_갈래_표에서_온다() -> void:
 	# `main.gd` 가 제 글자를 따로 적으면 「배선은 맞는데 갈래에 안 적힌 입력」이 생긴다.
 	var m: Dictionary = load(MAIN).get_script_constant_map()
 	eq(InputRoute.kind_of(m["USE_ACTION"]), InputRoute.USE, "main.USE_ACTION 의 갈래")
+	eq(InputRoute.kind_of(m["USE_ALT_ACTION"]), InputRoute.USE_ALT, "main.USE_ALT_ACTION 의 갈래")
 	eq(InputRoute.kind_of(m["BAG_ACTION"]), InputRoute.BAG, "main.BAG_ACTION 의 갈래")
+
+func test_좌클릭과_우클릭은_다른_액션이다() -> void:
+	# 둘이 같은 글자면 우클릭을 누를 때마다 휘두르기가 같이 나간다 —
+	# 그런데 **갈래 표는 여전히 초록**이라 (둘 다 죽어 있다) 여기가 그 자리다.
+	check(InputRoute.USE_ACTION != InputRoute.USE_ALT_ACTION,
+		"좌클릭과 우클릭의 액션 이름이 같다")
+	var l: Array = InputMap.action_get_events(InputRoute.USE_ACTION)
+	var r: Array = InputMap.action_get_events(InputRoute.USE_ALT_ACTION)
+	check(l.size() == 1 and l[0] is InputEventMouseButton,
+		"%s 는 마우스 버튼 하나여야 한다" % InputRoute.USE_ACTION)
+	check(r.size() == 1 and r[0] is InputEventMouseButton,
+		"%s 는 마우스 버튼 하나여야 한다" % InputRoute.USE_ALT_ACTION)
+	eq((l[0] as InputEventMouseButton).button_index, MOUSE_BUTTON_LEFT, "use 의 버튼")
+	eq((r[0] as InputEventMouseButton).button_index, MOUSE_BUTTON_RIGHT, "use_alt 의 버튼")
 
 func test_이동_액션_넷이_get_vector_순서다() -> void:
 	# `player.gd` 가 `Input.get_vector(왼, 오른, 위, 아래)` 로 읽는다 — 순서가 뒤집히면

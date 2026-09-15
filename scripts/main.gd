@@ -55,11 +55,16 @@ extends Node2D
 ## 커서 아래의 칸으로 간다 — 가방 18칸과 핫바 9칸을 오간다. 계산은 `Grab` 이고
 ## 여기는 **화면의 점 하나를 어느 칸으로 읽나**를 잇는다 (`grab_at`).
 ## 회차 43 의 「좌클릭은 UI 로 간다」가 이제 빈말이 아니다.
+##
+## **우클릭은 몇 개를 옮길지 고른다** (회차 46): 반을 집고, 든 채로 누르면 한 개씩
+## 놓는다 (`Grab.click_alt`). 상한이 999 라 통째로만 옮기면 제작에 10개를 빼는 일조차
+## 못 한다. **창이 닫혀 있으면 아직 아무 데도 안 간다** — 설치·제작이 그 자리를 채운다.
 
 ## 좌클릭 · 가방 키의 입력 액션 이름. **`InputRoute` 가 출처다** — 갈래 표와 글자가
 ## 같은 곳에서 나와야 「배선은 맞는데 갈래에 안 적힌 입력」이 안 생긴다.
 ## `test_player_scene.gd` 는 이 상수를 읽어 배선이 좌클릭 · `E` 인지 본다.
 const USE_ACTION := InputRoute.USE_ACTION
+const USE_ALT_ACTION := InputRoute.USE_ALT_ACTION
 const BAG_ACTION := InputRoute.BAG_ACTION
 
 ## 이 판의 씨앗. 저장·불러오기가 생기면 세이브에서 온다 (GDD D-1).
@@ -125,6 +130,11 @@ var _bag_down := false
 ## **죽어 있는 동안에도 적는다** (회차 43 이 숫자키에서 배운 그 자리): 안 적으면
 ## 창을 닫는 그 프레임에 쥐고 있던 버튼이 새 클릭으로 읽힌다.
 var _use_down := false
+
+## 우클릭의 **직전 프레임 상태** (회차 46). 좌클릭과 달리 **박자가 하나뿐**이다 —
+## 반 집기도 한 개씩 놓기도 「눌린 순간」의 것이라 「누르는 동안 내내」가 없다.
+## 그래도 직전 프레임은 **갈래와 상관없이** 적는다 (`_poll_use` 와 같은 자리).
+var _alt_down := false
 
 ## 지난 프레임에 실제로 그린 칸 수. **`measure_window.gd` 의 DRAW 가 이 수를 읽는다** —
 ## 월드를 통째로 그려도 화면 픽셀은 똑같아서 그림만 봐서는 못 잡는다.
@@ -246,6 +256,7 @@ func _process(delta: float) -> void:
 	_poll_hotbar()
 	_poll_bag()
 	_poll_use()
+	_poll_use_alt()
 	queue_redraw()
 
 ## 숫자키 1..9 → 손. 액션 이름은 `Hotbar` 가 만든다 — 여기서 글자를 다시 적으면
@@ -322,8 +333,31 @@ func _poll_use() -> void:
 		return
 	Harvest.hit(world, hotbar.held_id(), _player.position, _player.facing)
 
+## 우클릭 → **창이 열려 있으면 반을 집고 한 개씩 놓는다** (회차 46).
+##
+## **좌클릭과 박자가 다르다.** 저쪽은 두 박자다 — 휘두르기는 「누르는 동안 내내」고
+## 집어서 놓기는 「눌린 순간」이다. 여기는 **눌린 순간 하나뿐**이라 `down` 을 쓸 자리가
+## 없는데, 그래도 직전 프레임은 **갈래와 상관없이 적는다**: 안 적으면 쥔 채로 창을
+## 여닫는 프레임에 사람이 안 누른 클릭이 한 번 생긴다 (회차 43·44 가 배운 그 자리).
+##
+## **창이 닫혀 있으면 아무 데도 안 간다.** 「아직 쓰는 데가 없으니 표에서 빼자」가
+## 아니라 **표에 적고 여기서 돌려보낸다** — 설치·제작(P3)이 붙는 회차는 이 줄만
+## 고치면 되고, 그때도 그 입력은 `InputRoute` 를 반드시 한 번 거친다.
+func _poll_use_alt() -> void:
+	var down := Input.is_action_pressed(USE_ALT_ACTION)
+	var pressed := down and not _alt_down
+	_alt_down = down
+	if InputRoute.is_live(InputRoute.USE_ALT, _ui_open()):
+		return
+	if pressed:
+		grab_at(get_viewport().get_mouse_position(), true)
+
 ## **화면의 점 하나를 칸으로 읽어 집거나 놓는다** (회차 44). 돌려주는 것은
 ## **무엇인가 바뀌었나**다 — 칸이 아닌 자리를 누르면 false 고 아무 일도 안 난다.
+##
+## **어느 버튼이냐는 `alt` 하나로 받는다** (회차 46): 좌클릭이면 통째로, 우클릭이면
+## 반을 집고 한 개씩 놓는다. 「어느 칸인가」는 버튼과 무관하므로 **칸을 읽는 줄이
+## 하나**여야 한다 — 버튼마다 이 함수를 복사하면 한쪽만 고쳐지는 날이 온다.
 ##
 ## **어느 창이냐를 가르는 유일한 곳이다.** 가방이 먼저다: 창이 핫바 위에 뜨지만
 ## 둘은 안 겹치므로(`test_bag_view.gd`) 순서가 결과를 안 바꾼다 — 그래도 못을 박는다.
@@ -332,16 +366,16 @@ func _poll_use() -> void:
 ## **밖에서 부를 수 있다**(`_` 가 없다): `measure_grab.gd` 가 `BagView.slot_rect` 로
 ## 낸 진짜 화면 점을 밀어 넣는다. 커서를 읽는 줄(`get_viewport().get_mouse_position()`)은
 ## 게이트가 SubViewport 에 밀어 넣은 이벤트로 함께 잰다.
-func grab_at(point: Vector2) -> bool:
+func grab_at(point: Vector2, alt := false) -> bool:
 	var screen := get_viewport().get_visible_rect().size
 	var moved := false
 	var i := BagView.slot_at(point, screen)
 	if i >= 0:
-		moved = grab.click(bag, i)
+		moved = grab.click_alt(bag, i) if alt else grab.click(bag, i)
 	else:
 		i = HotbarView.slot_at(point, screen)
 		if i >= 0:
-			moved = grab.click(hotbar.items, i)
+			moved = grab.click_alt(hotbar.items, i) if alt else grab.click(hotbar.items, i)
 	if moved:
 		_bag_view.queue_redraw()
 		_hotbar_view.queue_redraw()

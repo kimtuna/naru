@@ -1801,6 +1801,54 @@ cp "$BAK/bag_view.gd" scripts/bag_view.gd
 
 expect 0 "원복하면 커서에 든 것도 초록이다"
 
+# ── 회차 46 몇 개를 옮길지 정한다 ────────────────────────────────────
+section "회차 46 몇 개를 옮길지 정한다"
+#
+# 겨누는 것은 **좌클릭은 멀쩡한데 우클릭만 죽어 있는 상태**다. 앞 회차의 게이트는
+# 한 톨도 안 빨개진다 — 합은 그대로고 집기도 놓기도 되니까. 사람 눈에만
+# 「999개에서 10개를 못 뺀다」로 남는다.
+# **①②⑤ 는 `main.gd` 한 파일만 만지므로 단위 검사 243개를 전부 초록으로 남긴다.**
+
+# ① **우클릭을 아무 데도 안 잇는다.** 액션도 묶였고 갈래 표에도 적혀 있다 —
+#    `InputRoute` 검사가 초록이라 「배선은 됐다」로 읽힌다. 실제로는 아무 일도 안 난다.
+mut scripts/main.gd '^(\t\tgrab_at\(get_viewport\(\)\.get_mouse_position\(\), true\))$' '\t\tpass'
+expect 1 "우클릭을 칸에 안 이으면 실측이 잡는다 (좌클릭만 산 채로 초록이다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ② **우클릭이 좌클릭과 같은 일을 한다.** 버튼은 둘인데 하는 일이 하나다 —
+#    합은 한 톨도 안 변하므로 **합만 보는 검사는 통째로 초록이다.**
+mut scripts/main.gd '^\t\tmoved = grab\.click_alt\(bag, i\) if alt else grab\.click\(bag, i\)$' '\t\tmoved = grab.click(bag, i)'
+expect 1 "우클릭이 통째로 집으면 실측이 잡는다 (반이 아니라 9개가 다 온다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ③ **반을 내림한다.** 999 → 499 + 499 로 **한 톨이 샌다**. 그보다 나쁜 것은
+#    1개짜리 칸이다: 0개를 들고 칸은 그대로라 우클릭이 고장난 것처럼 보인다.
+mut scripts/grab.gd '^\treturn \(n \+ 1\) / 2 if n > 0 else 0$' '\treturn n / 2'
+expect 1 "반을 내림하면 잡는다 (9개에서 4개가 온다 · 1개짜리는 0개)"
+cp "$BAK/grab.gd" scripts/grab.gd
+
+# ④ **한 개씩 놓기가 꽉 찬 칸에서 손을 삼킨다.** BACKLOG 의 대조판 ② 다 —
+#    안 들어간 개수는 커서에 남아야 한다. 회차 44 의 ④ 와 같은 모양인데
+#    **그쪽은 `put` 이라 우클릭에서는 한 번도 안 지나간다.**
+mut scripts/grab.gd '^(\tif inv\.amounts\[index\] >= Inventory\.STACK_MAX:)$' '\1\n\t\tclear()'
+expect 1 "꽉 찬 칸이 한 개씩 놓던 손을 삼키면 잡는다 (합이 줄어든다)"
+cp "$BAK/grab.gd" scripts/grab.gd
+
+# ⑤ **우클릭이 창 상태를 안 묻는다.** 가방을 안 열고도 칸이 헤집힌다 —
+#    **가방이 열려 있는 동안은 아무 차이가 없어서** 앞 열두 구간이 통째로 초록이다.
+#    GRAB ⑬ 이 이 하나를 잡으려고 있다 (회차 43 의 FOCUS 와 같은 자리).
+mut scripts/main.gd '^\tif InputRoute\.is_live\(InputRoute\.USE_ALT, _ui_open\(\)\):$' '\tif false:'
+expect 1 "우클릭이 갈래 표를 안 물으면 실측이 잡는다 (닫힌 채로 칸이 헤집힌다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ⑥ **좌클릭과 우클릭을 같은 버튼에 묶는다.** 갈래 표는 여전히 초록이다 —
+#    둘 다 창이 열리면 죽는 갈래라 `InputRoute` 가 물어볼 것이 없다.
+sed -i '' 's|^"events": \[Object(InputEventMouseButton,"button_index":2)\]|"events": [Object(InputEventMouseButton,"button_index":1)]|' project.godot
+expect 1 "우클릭을 좌클릭 버튼에 묶으면 tests 가 잡는다 (배선은 되고 조작만 겹친다)"
+cp "$BAK/project.godot" project.godot
+
+expect 0 "원복하면 몇 개를 옮길지도 초록이다"
+
 echo
 SKIPMSG=""
 [ "$SKIP" -gt 0 ] && SKIPMSG=" · ${SKIP}개 건너뜀 (--only ${ONLY})"

@@ -12,8 +12,11 @@ extends RefCounted
 ## 들었으면 놓는다. 그래서 밖에서 부르는 문은 `click()` 하나다 — 부르는 쪽이
 ## 「지금 집는 차례인가」를 따로 세면 그 판단이 두 곳이 되고 언젠가 갈라진다.
 ##
-## **몇 개를 옮길지는 여기 없다.** 우클릭으로 반 집기 · 한 개씩 놓기는 **다음 항목**이고
-## (BACKLOG), 그때 `take`/`put` 에 개수 인자가 붙는다. 지금은 통째로만 간다.
+## **몇 개를 옮길지는 버튼이 정한다** (회차 46): 좌클릭은 통째로, **우클릭은 반을 집고
+## 한 개씩 놓는다** (마인크래프트 · 테라리아). 상한이 999 라 통째로만 옮기면 제작에
+## 10개를 빼는 일조차 못 한다. **개수 인자를 안 붙였다**: 붙이면 부르는 쪽이 「지금
+## 몇 개인가」를 세게 되고 그 계산이 두 곳이 된다 — 여기서는 **버튼마다 문이 하나**다
+## (`click` · `click_alt`). 총 개수가 안 변한다는 규칙은 네 갈래 전부에 같이 걸린다.
 ##
 ## **칸 번호를 믿지 않는다.** 번호는 화면 좌표에서 오므로(`BagView.slot_at`)
 ## 범위 밖이 들어올 길이 열려 있다 — `Inventory.has_slot` 이 그 문이다.
@@ -35,6 +38,55 @@ func total() -> int:
 ## 돌려주는 것은 **무엇인가 바뀌었나**다 — 빈 칸을 빈 손으로 누르면 false 다.
 func click(inv: Inventory, index: int) -> bool:
 	return put(inv, index) if not is_empty() else take(inv, index)
+
+## 우클릭 한 번. **빈 손이면 반을 집고, 들었으면 한 개만 놓는다.**
+## 좌클릭과 **같은 모양의 문 하나**다 — 갈래를 부르는 쪽에서 세면 언젠가 둘이 갈라진다.
+func click_alt(inv: Inventory, index: int) -> bool:
+	return put_one(inv, index) if not is_empty() else take_half(inv, index)
+
+## 반이 몇 개인가. **홀수면 큰 쪽이 커서로 온다** (999 → 커서 500 · 칸 499).
+##
+## **내림하면 안 된다**: 1개짜리 칸에서 0개를 들고 칸은 그대로라 「우클릭했는데
+## 아무 일도 안 난다」가 된다 — 사람 눈에는 버튼이 고장난 것으로 보인다.
+## 마인크래프트도 1개짜리는 통째로 손에 온다.
+static func half_of(n: int) -> int:
+	return (n + 1) / 2 if n > 0 else 0
+
+## 반을 집는다. **칸에 남는 것이 작은 쪽**이고, 둘을 더하면 원래 개수다 —
+## 여기서 한 톨이 새면 `take` 가 지키는 규칙이 우클릭에서만 깨진다.
+func take_half(inv: Inventory, index: int) -> bool:
+	if not is_empty() or inv == null or not inv.has_slot(index):
+		return false
+	if inv.ids[index] == EMPTY:
+		return false
+	var here: StringName = inv.ids[index]
+	var n := half_of(inv.amounts[index])
+	# 남는 몫을 **먼저 셈해 둔다** — 칸을 먼저 쓰면 뺄 원본이 사라진다.
+	var left: int = inv.amounts[index] - n
+	id = here
+	amount = n
+	inv.set_slot(index, here, left)   # 0 이면 `set_slot` 이 아이디까지 비운다
+	return true
+
+## 한 개만 놓는다. 갈래는 `put` 과 같은 모양인데 **개수만 하나다**:
+##   빈 칸    한 개가 들어간다
+##   같은 것  한 개 얹는다 — **꽉 찼으면 한 톨도 안 준다** (손에 그대로 남는다)
+##   다른 것  **아무 일도 안 난다**
+##
+## 마지막 갈래가 `put` 과 갈린다. 우클릭은 **개수를 고르는 조작**인데 맞바꾸면 무더기가
+## 통째로 움직여서 「한 개씩」이라는 말이 그 한 번만 거짓이 된다 — 맞바꾸기는 좌클릭의
+## 몫이다. 어느 쪽이든 총 개수는 안 변한다.
+func put_one(inv: Inventory, index: int) -> bool:
+	if is_empty() or inv == null or not inv.has_slot(index):
+		return false
+	var there: StringName = inv.ids[index]
+	if there != EMPTY and there != id:
+		return false
+	if inv.amounts[index] >= Inventory.STACK_MAX:
+		return false          # **꽉 찼다** — 손에 든 것은 그대로다
+	inv.set_slot(index, id, inv.amounts[index] + 1)
+	_drop_from_hand(1)
+	return true
 
 ## 집는다 — 칸을 **통째로** 커서에 올린다. 이미 들고 있으면 아무 일도 안 한다.
 func take(inv: Inventory, index: int) -> bool:

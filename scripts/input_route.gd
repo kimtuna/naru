@@ -18,19 +18,26 @@ extends RefCounted
 ## 새 입력을 묶는 회차가 그것을 **아무 갈래에도 안 넣은 채** 넘어간다 —
 ## 그 입력은 창이 열려 있어도 그대로 월드로 간다. `test_input_route.gd` 가
 ## InputMap 을 훑어서 갈래 없는 액션을 센다.
+##
+## **회차 46 이 그 자리에 우클릭을 넣었다** (`USE_ALT`): 가방이 열려 있으면 UI 로 가서
+## 반을 집고 한 개씩 놓는다. **창이 닫혀 있을 때는 아직 아무 데도 안 간다** — 그래도
+## 갈래는 여기 적혀 있어야 한다. 「아직 쓰는 데가 없으니 나중에」로 두면 그 입력은
+## 표를 한 번도 안 거치고, 설치·제작이 붙는 회차에 **아무도 안 묻는 채로** 월드로 간다.
 
 const MOVE := &"move"
 const USE := &"use"
+const USE_ALT := &"use_alt"
 const HOTBAR := &"hotbar"
 const BAG := &"bag"
 
 ## 입력의 갈래 전부. **여기 적고 아래 표에 안 적으면 `missing()` 이 부른다.**
-const KINDS := [MOVE, USE, HOTBAR, BAG]
+const KINDS := [MOVE, USE, USE_ALT, HOTBAR, BAG]
 
 ## **창이 열린 동안 살아 있는 갈래.** 여기 없는 갈래는 창이 먹는다.
 const LIVE_WHILE_OPEN := {
 	MOVE: true,      # 걸을 수는 있다 — 정리하다 굳으면 창을 열기가 겁난다
 	USE: false,      # 좌클릭은 UI 로 간다. 휘두르지 않는다
+	USE_ALT: false,  # 우클릭도 UI 로 간다 — 반을 집고 한 개씩 놓는다 (회차 46)
 	HOTBAR: false,   # 숫자키는 손을 안 바꾼다
 	BAG: true,       # E 로 닫는다. 이게 죽으면 창이 영영 안 닫힌다
 }
@@ -38,8 +45,9 @@ const LIVE_WHILE_OPEN := {
 ## 이동 액션 넷. **순서가 `Input.get_vector` 의 인자 순서다** (왼·오른·위·아래).
 const MOVE_ACTIONS := [&"move_left", &"move_right", &"move_up", &"move_down"]
 
-## 좌클릭 · 가방 키의 액션 이름. `main.gd` 의 상수가 이것을 가리킨다.
+## 좌클릭 · **우클릭** · 가방 키의 액션 이름. `main.gd` 의 상수가 이것을 가리킨다.
 const USE_ACTION := &"use"
+const USE_ALT_ACTION := &"use_alt"
 const BAG_ACTION := &"bag"
 
 ## 이 입력이 지금 살아 있나. **창이 닫혀 있으면 전부 산다.**
@@ -67,6 +75,8 @@ static func actions_for(kind: StringName) -> Array:
 			return MOVE_ACTIONS.duplicate()
 		USE:
 			return [USE_ACTION]
+		USE_ALT:
+			return [USE_ALT_ACTION]
 		BAG:
 			return [BAG_ACTION]
 		HOTBAR:
