@@ -646,7 +646,9 @@ else
 fi
 
 expect_journal() {  # expect_journal <기대 exit> <이름>
-  local want="$1" name="$2" rc; N=$((N+1))
+  local want="$1" name="$2" rc
+  if skip_section; then SKIP=$((SKIP+1)); return; fi
+  N=$((N+1))
   if [ "$want" -ne 0 ] && [ -z "$(git status --porcelain)" ]; then
     printf '  \033[33m헛돌았다\033[0m  %s  — 워킹트리가 그대로다. 대조군이 아무것도 안 깨뜨렸다\n' "$name"
     MISS=$((MISS+1)); return
