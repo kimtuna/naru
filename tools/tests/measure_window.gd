@@ -62,13 +62,23 @@ extends SceneTree
 
 # ── VIEW 기대값 (NUMBERS 1절) ────────────────────────────────────────
 const LOGICAL := Vector2(960.0, 540.0)
-const WINDOW := Vector2(1920.0, 1080.0)
-const SCALE := 2.0
 const TILES := Vector2(60.0, 33.75)        # 960/16 · 540/16 (BACKLOG 고정값 · 회차 17)
+
+## **창 크기와 배율은 상수가 아니다** (회차 33). 전체 화면으로 띄우므로 기계마다 다르다 —
+## 1920×1080 · 2.00x 를 여기 적어 두면 **다른 화면에서는 게이트가 거짓말을 한다.**
+## 기대값은 `Display` 가 **쓸 수 있는 화면에서 계산**하고, 여기서는 엔진이 실제로 건
+## 변환과 맞대 본다. 숫자 하나를 안 박는 대신 **부등식 하나**를 박는다:
+## **묶는 축**의 띠는 논리 화면보다 작아야 한다 — 두 축이 다 논리만큼 남았다면
+## 배율을 한 단계 더 올릴 수 있었다는 뜻이고, 그건 띠를 최소로 안 줄인 것이다.
 
 # 창 크기가 붙고 씬의 _ready(월드 배선)가 돌 때까지 기다리는 프레임.
 # VIEW 는 5, DRAW 는 4가 필요했다 — 큰 쪽을 쓴다.
 const WARMUP := 5
+
+## 전체 화면으로 넘어가는 데 걸리는 프레임의 상한. **macOS 는 곧바로 안 바뀐다** —
+## 요청한 프레임에 재면 아직 창 크기다 (2026-09-15 실측: 4프레임에 안 됐고 12프레임에 됐다).
+## 프레임 수로 끊지 않고 **크기가 쓸 수 있는 화면과 같아질 때까지** 기다린다.
+const FS_FRAMES := 60
 
 # ── DRAW 기대값 ──────────────────────────────────────────────────────
 const LOGICAL_I := Vector2i(960, 540)
@@ -144,7 +154,7 @@ func _initialize() -> void:
 		await process_frame
 		_frames += 1
 
-	_measure_view()
+	await _measure_view()
 	await _measure_draw()
 	await _measure_hotbar()
 	await _measure_use()
@@ -158,16 +168,49 @@ func _measure_view() -> void:
 		_view_report(driver)
 		return
 
+	# 전체 화면이 붙기를 기다린다. **창 크기가 쓸 수 있는 화면과 같아지는 순간**이 그것이다.
+	var avail := Display.avail()
+	for i in FS_FRAMES:
+		if Vector2i(DisplayServer.window_get_size()) == avail:
+			break
+		await process_frame
+		_frames += 1
+
+	var lg := Display.logical()
+	var want_scale := Display.max_scale(avail, lg)
+
 	var vis := root.get_visible_rect().size
 	var win := Vector2(DisplayServer.window_get_size())
 	_v2("논리 화면", vis, LOGICAL)
-	_v2("창", win, WINDOW)
+	# **숫자를 안 박는다**: 전체 화면이면 창은 쓸 수 있는 화면 그대로여야 한다.
+	# 창 모드를 따로 보는 이유 — 창이 우연히 같은 크기여도 전체 화면이 아니면 사람이
+	# 보는 화면은 다른 것이다 (`main.gd` 가 `go_fullscreen` 을 안 불러도 여기서 잡힌다).
+	_v2("창", win, Vector2(avail))
+	_num("창 모드(3 = 전체 화면)", float(DisplayServer.window_get_mode()), float(Window.MODE_FULLSCREEN))
 
-	# 배율은 나눗셈이 아니라 **엔진이 실제로 거는 변환**에서 잰다.
-	# content_scale_factor 를 만지면 여기서 잡힌다.
+	# 배율은 나눗셈이 아니라 **엔진이 실제로 거는 변환**에서 잰다 — `window_get_size()` 는
+	# 창 모드에서 요청값을 그대로 돌려주기 때문이다.
+	# (회차 33 에 지운 말: 「content_scale_factor 를 만지면 여기서 잡힌다」. 재 보니
+	#  `viewport` + `integer` 조합에서는 그 값이 무시된다 — GOTCHAS 에 옮겼다.)
 	var fs := root.get_final_transform().get_scale()
-	_v2("최종 변환 배율", fs, Vector2(SCALE, SCALE))
+	_v2("최종 변환 배율", fs, Vector2(want_scale, want_scale))
 	_num("정수 배율", fs.x, roundf(fs.x))       # 소수 배율이면 도트가 뭉갠다
+
+	# **그려진 크기 = 논리 × 정수배**. `window_get_size()` 는 창 모드에서 요청값을 그대로
+	# 돌려주므로(BACKLOG 의 함정), 크기는 **변환에서 되짚어** 낸다.
+	var drawn := vis * fs.x
+	_v2("그려진 크기", drawn, Vector2(Display.drawn(avail, lg)))
+	# **남는 띠.** 이 회차가 줄이려던 그것이다 — 값은 NUMBERS 1절에 조건과 같이 있다.
+	var bars := win - drawn
+	_v2("남는 띠", bars, Vector2(Display.bars(avail, lg)))
+	# 숫자가 아니라 **부등식**이 최소를 지킨다. **두 축이 다** 논리 화면만큼 남았을 때만
+	# 배율을 한 단계 올릴 수 있었다는 뜻이다 — `aspect=keep` 은 배율이 하나라서
+	# **묶는 축 하나만** 띠가 작고 반대쪽은 화면 비율만큼 통째로 남는다.
+	if bars.x >= LOGICAL.x and bars.y >= LOGICAL.y:
+		_view_fail("띠가 두 축 다 논리 화면만큼 남았다 — 배율을 한 단계 더 올릴 수 있었다",
+			"%.0f x %.0f" % [bars.x, bars.y], "한 축은 < %.0f / %.0f" % [LOGICAL.x, LOGICAL.y])
+	if bars.x < 0.0 or bars.y < 0.0:
+		_view_fail("띠가 음수 — 화면 밖으로 잘렸다", "%.0f x %.0f" % [bars.x, bars.y], ">= 0 x 0")
 
 	# 보이는 칸은 **월드 좌표**로 잰다 — 카메라 줌이 걸리면 여기서만 달라진다.
 	var cz := root.get_canvas_transform().get_scale()
@@ -175,8 +218,9 @@ func _measure_view() -> void:
 	var tiles := world / PlayerMotion.TILE
 	_v2("보이는 칸", tiles, TILES)
 
-	print("VIEW 논리 %.0fx%.0f · 창 %.0fx%.0f · 배율 %.2fx · 카메라 %.2fx · 타일 %dpx · 보이는 칸 %.2f x %.2f" % [
-		vis.x, vis.y, win.x, win.y, fs.x, cz.x, int(PlayerMotion.TILE), tiles.x, tiles.y])
+	print("VIEW 논리 %.0fx%.0f · 창 %.0fx%.0f · 배율 %.2fx · 그린 크기 %.0fx%.0f · 띠 %.0fx%.0f · 카메라 %.2fx · 타일 %dpx · 보이는 칸 %.2f x %.2f" % [
+		vis.x, vis.y, win.x, win.y, fs.x, drawn.x, drawn.y, bars.x, bars.y,
+		cz.x, int(PlayerMotion.TILE), tiles.x, tiles.y])
 	_view_report(driver)
 
 func _view_report(driver: String) -> void:

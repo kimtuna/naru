@@ -34,6 +34,7 @@ cp scripts/hand_swing.gd "$BAK/" 2>/dev/null || true
 cp scripts/harvest.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_state.gd "$BAK/" 2>/dev/null || true
 cp scripts/claim.gd "$BAK/" 2>/dev/null || true
+cp scripts/display.gd "$BAK/" 2>/dev/null || true
 cp scripts/day_cycle.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
@@ -66,6 +67,7 @@ restore() {
   cp "$BAK/harvest.gd" scripts/harvest.gd 2>/dev/null || true
   cp "$BAK/world_state.gd" scripts/world_state.gd 2>/dev/null || true
   cp "$BAK/claim.gd" scripts/claim.gd 2>/dev/null || true
+  cp "$BAK/display.gd" scripts/display.gd 2>/dev/null || true
   cp "$BAK/day_cycle.gd" scripts/day_cycle.gd 2>/dev/null || true
   cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
@@ -198,14 +200,18 @@ sed -i '' 's|^zoom = Vector2(1, 1)|zoom = Vector2(2, 2)|' scenes/player.tscn
 expect 1 "카메라 줌을 걸면 화면 실측이 잡는다 (보이는 칸 30 x 16.88)"
 cp "$BAK/player.tscn" scenes/player.tscn
 
+# **회차 33 에 겨눌 곳을 옮겼다.** `_ready` 맨 앞에 끼우면 바로 다음 줄의
+# `Display.go_fullscreen()` 이 창을 도로 전체 화면으로 돌려놔서 **아무 일도 안 일어난다** —
+# 워킹트리는 더러우니 「헛돌았다」도 안 뜨고 조용히 「놓쳤다」가 된다.
+# 값을 바꾼 회차는 **자기를 겨누는 대조군도 같이 옮긴다** (회차 33 이 밤빛에서 배운 것).
 python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    "func _ready() -> void:\n",
-    "func _ready() -> void:\n\tDisplayServer.window_set_size(Vector2i(1600, 900))\n", 1))
+    "\tDisplay.go_fullscreen(get_window())\n",
+    "\tDisplay.go_fullscreen(get_window())\n\tDisplayServer.window_set_size(Vector2i(1600, 900))\n", 1))
 PYX
-expect 1 "창을 실행 중에 줄이면 화면 실측이 잡는다 (배율 2 → 1)"
+expect 1 "창을 실행 중에 줄이면 화면 실측이 잡는다 (배율 3 → 1)"
 cp "$BAK/main.gd" scripts/main.gd
 
 # ── P1-3 바라보는 방향 ────────────────────────────────────────────────
@@ -888,6 +894,8 @@ cp "$BAK/PROMPT.md" docs/PROMPT.md
 
 expect 0 "원복하면 다시 초록이다"
 
+
+
 # ── 회차 26 판정 앞에서 회차 기록을 굴린다 ──────────────────────────
 section "회차 26 판정 앞에서 회차 기록을 굴린다"
 #
@@ -1347,6 +1355,35 @@ expect 1 "차지한 칸을 영영 안 자라게 적으면 tests 가 잡는다 (�
 cp "$BAK/world_state.gd" scripts/world_state.gd
 
 expect 0 "원복하면 차지한 칸도 다시 초록이다"
+
+# ── 회차 33 전체 화면 띠 ─────────────────────────────────────────────
+section "회차 33 전체 화면 띠"
+
+# ① **배선을 빼먹는다.** `Display` 는 순수 계산이라 **단위 검사 173개가 전부 초록**으로
+#    남는다 — 창을 안 띄우면 아무도 「전체 화면이 아니다」를 못 본다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace("\tDisplay.go_fullscreen(get_window())\n", "", 1))
+PYX
+expect 1 "전체 화면을 안 켜면 VIEW 가 잡는다 (창 모드 0 · 배율 2 → 기대 3)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ② **내림을 반올림으로 바꾼다.** 3.6 이 4 가 되어 그린 크기가 화면 밖으로 나간다 —
+#    잘린 만큼은 「남이 보는 것을 내가 못 보는 것」이라 ⓒ 가 깨진다.
+sed -i '' 's|return maxi(1, mini(avail_size.x / logical_size.x, avail_size.y / logical_size.y))|return maxi(1, mini(int(roundf(float(avail_size.x) / logical_size.x)), int(roundf(float(avail_size.y) / logical_size.y))))|' scripts/display.gd
+expect 1 "배율을 반올림하면 단위와 VIEW 가 같이 잡는다 (3.6 → 4)"
+cp "$BAK/display.gd" scripts/display.gd
+
+# ③ **쓸 수 있는 화면 대신 화면 전체를 쓴다.** macOS 는 메뉴 막대·노치 띠를 안 준다 —
+#    세로 66px 을 더 크게 보고 **띠를 그만큼 틀리게 적는다.** 배율은 3 그대로라
+#    「배율이 맞나」만 묻는 게이트는 초록이고, **띠를 재는 줄만** 빨개진다.
+#    단위 검사는 인자로 받는 순수 함수만 보므로 여기서도 전부 초록이다.
+sed -i '' 's|return DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen()).size|return DisplayServer.screen_get_size(DisplayServer.window_get_current_screen())|' scripts/display.gd
+expect 1 "쓸 수 있는 화면 대신 화면 전체를 재면 VIEW 가 띠에서 잡는다 (548 → 614)"
+cp "$BAK/display.gd" scripts/display.gd
+
+expect 0 "원복하면 전체 화면도 다시 초록이다"
 
 
 echo
