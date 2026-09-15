@@ -47,10 +47,9 @@ func _initialize() -> void:
 		await process_frame
 
 	# **가방은 기다린 뒤에 연다** (2026-09-15 실측). 씬의 `_ready` 는 여기 붙인 뒤
-	# **첫 프레임에** 돌고 거기서 가방을 닫는다 — 그 전에 열면 조용히 닫힌 화면이 구워진다.
-	# 처음엔 그걸 모르고 굽어서 **닫은 PNG 와 바이트까지 같은 파일**이 나왔다.
-	# **게임이 쓰는 문으로 연다**(`toggle`): 숨은 `CanvasItem` 은 `queue_redraw` 가
-	# 버려지므로 `visible` 만 켜면 빈 창이 뜬다.
+	# **첫 프레임에** 돌고 **거기서 가방을 닫는다** — 그 전에 열면 그 한 줄이 도로 닫아서
+	# 조용히 닫힌 화면이 구워진다. 처음엔 그걸 모르고 굽어서 **닫은 PNG 와 바이트까지
+	# 같은 파일**이 나왔다. **게임이 쓰는 문으로 연다**(`toggle`) — 여는 길은 하나다.
 	if OS.get_environment("NARU_SHOT_BAG") == "1":
 		var bag: BagView = node.get_node_or_null("UI/Bag") as BagView
 		if bag == null:

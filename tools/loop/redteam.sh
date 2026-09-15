@@ -1599,11 +1599,16 @@ mut scripts/bag_view.gd '^func _draw\(\) -> void:$' 'func _draw() -> void:\n\tif
 expect 1 "가방을 안 그리면 실측이 잡는다 (씬에도 있고 열리기도 한다)"
 cp "$BAK/bag_view.gd" scripts/bag_view.gd
 
-# **이 하나가 이 회차가 실제로 걸린 고장이다** (2026-09-15). 숨은 `CanvasItem` 은
-# `queue_redraw` 가 버려지고, 다시 보일 때 엔진이 저절로 다시 그리지 않는다 —
-# **그리기 목록이 빈 채로 뜬다.** `visible` 만 보는 검사는 전부 초록이다.
-mut scripts/bag_view.gd '^\tqueue_redraw\(\)\n\treturn visible$' '\treturn visible'
-expect 1 "열 때 다시 그리기를 빼면 실측이 잡는다 (빈 창이 뜬다)"
+# **창 바탕을 안 칠한다.** 18칸은 그대로 그려지지만 격자 사이가 월드로 비친다 —
+# 창의 가장자리가 없어서 「어디까지가 가방인가」를 못 읽는다. 칸만 보는 눈(HOTBAR 의
+# 테두리·바탕 두 점)으로는 못 잡는다: **창 바탕을 따로 읽는 BAG 만** 잡는다.
+#
+# 여기 있던 대조군 ③ (`toggle` 에서 `queue_redraw` 빼기) 은 **아무것도 안 잡아서
+# 지웠다** (2026-09-16 · `ALL GREEN`). 「숨은 CanvasItem 은 다시 그리기가 버려진다」는
+# 틀린 이야기였다 — 굽은 PNG 가 닫은 것과 같았던 진짜 원인은 **씬의 `_ready` 가 첫
+# 프레임에 돌면서 도로 닫은 것**이다. 안 잡는 대조군은 가짜 증거라 남기지 않는다.
+mut scripts/bag_view.gd '^\tdraw_rect\(Rect2\(Vector2\.ZERO, size\), PANEL, true\)$' ''
+expect 1 "창 바탕을 안 칠하면 실측이 잡는다 (격자 사이로 월드가 비친다)"
 cp "$BAK/bag_view.gd" scripts/bag_view.gd
 
 # **열리기만 하고 안 닫힌다.** `BagView.toggle` 은 멀쩡해서 단위 검사가 못 본다 —
