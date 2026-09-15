@@ -958,6 +958,8 @@ COLLIDE·CAMERA 가 그 씬을 세우므로 같은 출력에 섞인다.** `^WORL
 | `ORDER` 에서 `camera` 를 뺀다 | `CAMERA` 가 없고 `HEADGATE` 가 `구간 4/4` 대신 `3/3` | **0** |
 | COLLIDE 의 `cleanup` 이 씬을 두고 간다 | `CAMERA` (카메라가 둘이라 딴 변환으로 찍힌다) | — |
 
+`REDTEAM 10 잡음, 0 놓침` (`--only 회차 27` · 3분 37초 · 앞뒤 대조군 7종을 같이 돈다).
+
 **「넷」이라는 수를 게이트와 `check.sh` 가 나눠 가진다**: `measure_headless.gd` 는
 「몇 구간을 돌았나」만 찍고, 「넷이어야 한다」는 `check.sh` 의 `구간 4/4` grep 이 안다 —
 한 파일만 고쳐서는 초록이 안 된다.

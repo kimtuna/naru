@@ -76,5 +76,5 @@
 - **세는 수를 둘이 나눠 가진다**: 게이트는 「몇 구간 돌았나」만 찍고 「넷이어야 한다」는
   `check.sh` 가 안다 — 한 파일만 고쳐서는 초록이 안 된다
 - 실측: `TESTS 113 passed, 0 failed` · `HEADGATE ok (MOVE 0 · WORLD 0 · COLLIDE 0 ·
-  CAMERA 0 · 구간 4/4)` · `REDTEAM 5 잡음, 0 놓침`(`--only 회차 27`) · `ALL GREEN` 9/9
+  CAMERA 0 · 구간 4/4)` · `REDTEAM 10 잡음, 0 놓침`(`--only 회차 27` · 3분 37초) · `ALL GREEN` 9/9
 - 다음: **벌목**. **[ASK] 기준 4 의 글자가 아직 48px 타일**
