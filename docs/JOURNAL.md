@@ -39,6 +39,48 @@
 
 ---
 
+## 회차 27 · **헤드리스 실측 게이트를 한 프로세스로 모은다** — `check.sh tests` 가 Godot 을
+- 문제: **`WORLD` 머리말이 `main.gd` 의 시작 배너와 부딪혔다.** 합치기 전에는
+  `measure_world.gd` 가 메인 씬을 안 세워서 없던 충돌인데, 한 프로세스가 되면
+  COLLIDE·CAMERA 가 그 씬을 세우므로 `WORLD    씨앗 ...` 이 같은 출력에 섞인다 —
+  `^WORLD ` 로 긁는 두 프로세스 비교가 **영영 빨개질** 참이었다.
+  그리고 **백로그의 전제가 틀렸다**: 「10번 띄운다(27초)」가 이 기계에서는 아니다.
+- 원인: 머리말 충돌은 회차 14 가 `WINGATE` 주석에 예고해 둔 바로 그 함정이다
+  (「`^WINDOW ` 로 긁으면 게이트가 한 줄도 안 찍어도 배너가 걸린다」) — 창 쪽에만
+  적어 두고 **헤드리스 쪽에는 안 옮겨 적어서** 같은 자리를 다시 밟았다.
+  27초 쪽은 부팅이 비싸다는 짐작이었다. 실제로는 `--path` 까지 포함해 **0.14~0.2초**고,
+  한 판을 정하는 것은 재는 시간(MOVE 2s · COLLIDE 1.5s · CAMERA 2s · WORLD 1.2s)이다.
+- 고친 것: `tools/tests/_measure_phase.gd`(새 바닥 `MeasurePhase` — `begin`/`step`/
+  `cleanup`/`fail`/`drop`) · `tools/tests/measure_headless.gd`(새 드라이버 · 끝에
+  `HEADGATE ... 구간 4/4`) · `measure_move`·`measure_world`·`measure_collide`·
+  `measure_camera`(넷 다 `extends MeasurePhase` 로 · **재는 것과 기대값은 한 줄도 안 바꿨다**) ·
+  `tools/loop/check.sh`(`_need` 로 구간 줄을 전부 본다 · `^WORLD [0-9]` · `-- world` 로
+  둘째 프로세스) · `tools/loop/redteam.sh`(대조군 3종) · `docs/GOTCHAS.md`(배너 충돌 ·
+  `SceneTree.quit(0)`) · `docs/NUMBERS.md` 13절 · `docs/BACKLOG.md` · `.loop/state.md`.
+  `measure_collide.gd` 의 `_query_cost` 에 null 가드를 하나 넣었다 — 합친 뒤로는
+  거기서 죽으면 뒤 구간 셋이 통째로 안 돈다.
+- 바꾼 결정: **FACE 는 안 합친다.** 제 `SubViewport` 를 세우고 루트의
+  `gui_disable_input` 을 끄는 유일한 게이트고, 흔들림으로 회차 8·9·10·11 을 잡아먹은
+  자리다 — 섞으면 빨강이 어느 구간 탓인지 흐려진다. WORLD 의 둘째 프로세스도 못 합친다:
+  「다른 프로세스에서도 같은가」가 묻는 것 자체라서.
+  그리고 **세는 수를 둘이 나눠 가진다** — 게이트는 「몇 구간을 돌았나」만 찍고
+  「넷이어야 한다」는 `check.sh` 의 `구간 4/4` grep 이 안다. 한 파일만 고쳐서는 초록이 안 된다.
+- 잰 값: 프로세스 8 → **5**(실측 구간 7 → 4) · 한 판 15.08 → **14.78초**(각 3회) ·
+  들쭉날쭉 0.31 → **0.07초** · 헤드리스 부팅 **0.14초** ·
+  `TESTS 113 passed, 0 failed` · `HEADGATE ok (MOVE 0 · WORLD 0 · COLLIDE 0 · CAMERA 0 ·
+  구간 4/4 · 프로세스 한 번)` · 체크섬 `0x22a64c62`·`0x4d412265`·`0xb5650262` 와
+  정지 좌표 `3689.99` · 걸침 `1.99px` · 편차 `0.0000px` 이 합치기 전과 글자까지 같다 ·
+  `REDTEAM 10 잡음, 0 놓침`(`--only 회차 27` · 3분 37초) · `ALL GREEN` 9/9 (28.4초)
+- 남긴 것: **더 줄일 곳은 부팅이 아니라 구간의 초인데, 그건 판정을 무르게 하는 것이다** —
+- 날짜: 2026-09-15
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 37개 스크립트, 실패 0 · 3 TESTS 113 passed, 0 failed · 4 TESTS 113 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  80/90줄 · 6 SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34) · 8   ok   공백 든 경로를 통째로 지운다 / WORKTREE SELFTEST 45 passed, 0 failed (바닥 45) · 9   ok   세션에게 주는 꼬리 2 절이 남기는 3 절 안에 든다 / STATE SELFTEST 26 passed, 0 failed (바닥 26)
+- 비용: $98.8546 누적
+- 커밋: `360b6eb`
+  손대지 않았다. 새 대조군 셋은 전부 「프로세스는 exit 0 인데 게이트만 침묵한」 경우다:
+  ① 구간이 조용히 죽는다 ② `ORDER` 에서 구간을 뺀다 ③ 앞 구간이 씬을 두고 간다(카메라가 둘).
+  다음은 **벌목**. **[ASK] 상태 검사 기준 4 의 글자가 아직 48px 타일이다**
+
 ## 회차 26 · **doclen 이 `roll_state` 보다 먼저 돈다** — 기준 5 는 판정(7)에서 재는데
 - 문제: 이 항목의 verify 가 `bash tools/loop/run-contract.sh` 였는데, `promote` 는 상태 검사를 다시 부르는 verify 를 재귀라고 건너뛴다. 고치기만 하고 닫으면 순서가 도로 뒤집혀도 아무도 안 잡는, 게이트 없는 회차가 될 참이었다.
 - 원인: `roll_state` 가 자르기와 커밋을 한 함수로 묶고 있었고, 커밋이 초록 뒤에 있어야 해서 자르기도 같이 초록 뒤에 있었다. 기준 5(doclen)는 판정(7)에서 `.loop/state.md` 를 재는데, 그 시점의 파일에는 세션이 방금 붙인 절이 하나 더 들어 있다. 그래서 긴 절을 붙인 회차만 상한을 넘고 다음 회차엔 저절로 사라진다 — 회차 25 가 98줄 · 상한 90 으로 그 길을 갔다.
