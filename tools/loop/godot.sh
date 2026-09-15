@@ -48,6 +48,35 @@ if [ "${NARU_FOCUS_RESTORE:-0}" = "1" ] && command -v lsappinfo >/dev/null 2>&1;
   restore_from="$(lsappinfo info -only bundlepath "$(lsappinfo front)" 2>/dev/null | sed -n 's/.*"LSBundlePath"="\(.*\)"/\1/p')"
 fi
 
+# ── **사람이 타이핑하는 동안은 창을 안 띄운다** (회차 40) ─────────────
+#
+# 사람이 말했다: 「테스트가 자꾸 화면을 차지해서 다른 업무할 때 흐름이 끊긴다.」
+# 창을 안 뜨게 하는 길은 **없다** — 회차 13 이 여섯 가지를 재서 전부 뺏겼다
+# (NUMBERS 11절). 못 막으니 **때를 고른다.**
+#
+# **여기가 유일한 목이다.** 창을 띄우는 것은 둘(`check.sh` 의 `measure_window.gd` ·
+# `shot.sh` 의 `shot.gd`)인데 둘 다 이 파일을 지난다. 그리고 그 둘만
+# `NARU_FOCUS_RESTORE=1` 을 켠다 — **그게 이미 「창이 뜬다」는 표시다.** 헤드리스
+# 실행에는 안 켜져 있고, **사람이 직접 띄울 때도 안 켜진다**(회차 13 이 그렇게 갈랐다).
+# 그래서 한 군데를 고쳐 네 번을 다 덮는다.
+#
+# `NARU_WINDOW_WAIT` 는 **루프만 켠다.** 사람이 `godot.sh 5 -- --path .` 로 직접
+# 띄울 때 이게 걸리면 방금 키를 누른 사람을 자기 창 앞에서 기다리게 만든다.
+#
+# **상한이 있어야 한다.** 사람이 한 시간을 내리 타이핑하면 세션이 45분 상한에 걸려
+# 통째로 버려진다 — 그게 창 몇 번보다 비싸다. 상한이 지나면 그냥 띄운다.
+if [ -n "${NARU_WINDOW_WAIT:-}" ] && [ "${NARU_FOCUS_RESTORE:-0}" = "1" ]; then
+  _max="${NARU_WINDOW_WAIT_MAX:-180}"
+  _waited=0
+  while [ "$_waited" -lt "$_max" ]; do
+    bash "$ROOT/tools/loop/idle.sh" "$NARU_WINDOW_WAIT" >/dev/null 2>&1 && break
+    sleep 5; _waited=$(( _waited + 5 ))
+  done
+  if [ "$_waited" -gt 0 ]; then
+    echo "GODOT 창을 ${_waited}초 기다렸다 (문턱 ${NARU_WINDOW_WAIT}초 쉼 · 상한 ${_max}초)" >&2
+  fi
+fi
+
 set -m
 "$GODOT" "$@" &
 pid=$!

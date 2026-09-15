@@ -32,6 +32,13 @@ ROOT="$NARU_LOOP_ROOT"
 cd "$ROOT"
 . tools/loop/env.sh
 
+# **창을 띄우는 것은 사람이 쉴 때 띄운다** (회차 40). `godot.sh` 가 이 둘을 보고
+# 기다린다 — 창을 띄우는 실행에만(`NARU_FOCUS_RESTORE=1`) 걸린다. **루프에서만 켠다**:
+# 사람이 `godot.sh` 를 직접 부를 때 걸리면 방금 키를 누른 사람을 기다리게 만든다.
+# 세션도 이 환경을 물려받으므로 세션의 마지막 확인 2번까지 같이 덮인다.
+export NARU_WINDOW_WAIT="$IDLE_FOR_WINDOW"
+export NARU_WINDOW_WAIT_MAX="$IDLE_FOR_WINDOW_MAX"
+
 DRY=0
 [ "${1:-}" = "--dry-run" ] && { DRY=1; shift; }
 [ -n "${1:-}" ] && MAX_CYCLES="$1"
