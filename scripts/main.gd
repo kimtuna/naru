@@ -28,6 +28,10 @@ extends Node2D
 ## 그리는 쪽·막는 쪽이 **둘 다 그 하나**를 본다: 나무를 베면 화면에서 사라지고 그 자리로
 ## 걸어 들어갈 수 있다 — 한쪽만 고쳐지면 「벤 자리에 몸이 낀다」가 된다.
 ##
+## **시간이 흐른다** (회차 30): `_process` 가 `world.tick(delta)` 를 부르고, 때가 된
+## 벤 칸은 나무로 돌아온다 (GDD A-4 「한 번 캐고 끝나는 자원이 없다」).
+## **몸이 서 있는 칸은 안 자란다** — 월드가 플레이어를 모르므로 여기가 그 물음을 잇는다.
+##
 ## **핫바는 화면에 못 박혀 있다** (GDD D-2c): `UI` 는 `CanvasLayer` 라 카메라를 안 탄다.
 ## 숫자키를 읽어 손을 옮기는 것도 여기서 한다 — `Hotbar` 는 순수 계산이라
 ## 엔진 입력을 안 본다.
@@ -112,7 +116,14 @@ func _ready() -> void:
 ## 나중에 벤 칸도 이미 꽂힌 이 Callable 이 그대로 본다.
 func _link_world() -> void:
 	_player.solid = world.solid()
+	world.occupied = _body_covers
 	world.changed.connect(_on_world_changed)
+
+## 「이 칸에 몸이 서 있나」 — 다시 자라는 나무가 묻는다 (`WorldState.tick`).
+## **월드는 플레이어를 모른다**: 여기가 둘을 잇는다. 상자 규칙은 `WorldCollide` 에
+## 한 벌뿐이라 걷는 것과 자라는 것이 같은 네모를 본다.
+func _body_covers(tile: Vector2i) -> bool:
+	return WorldCollide.covers_tile(_player.position, tile)
 
 ## 월드의 한 칸이 바뀌었다. **색 캐시를 버린다** — 캐시는 「보이는 범위가 바뀔 때만」
 ## 다시 채우므로, 제자리에 선 채로 나무를 베면 **벤 자리에 나무가 그대로 남는다.**
@@ -123,7 +134,11 @@ func _on_world_changed(_tile: Vector2i) -> void:
 
 ## 카메라가 움직이면 보이는 월드 범위가 달라진다 — 타일은 월드에 고정돼 있으므로
 ## 다시 그려야 한다.
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	# **게임 시계는 여기서 흐른다.** 벤 나무가 다시 자라는 것이 이 한 줄에 달려 있다
+	# (GDD A-4) — 안 부르면 `WorldState` 가 아무리 맞아도 섬은 영영 그루터기다.
+	# 자란 칸은 `changed` 로 알려 오므로 색 캐시도 저절로 버려진다.
+	world.tick(delta)
 	_poll_hotbar()
 	_poll_use()
 	queue_redraw()

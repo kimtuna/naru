@@ -1103,6 +1103,70 @@ cp "$BAK/harvest.gd" scripts/harvest.gd
 
 expect 0 "원복하면 벌목도 다시 초록이다"
 
+# ── 회차 30 벤 나무가 다시 자란다 ─────────────────────────────────────
+section "회차 30 다시 자란다"
+#
+# 겨누는 것은 **시계가 안 꽂힌 채로 초록인 상태**다. `WorldState.tick()` 은 순수 계산이라
+# 단위 검사가 구석까지 물을 수 있는데, **main.gd 가 그걸 한 줄도 안 부르면** 게임 안에서는
+# 시간이 영영 0 초다 — 섬은 그루터기밭이 되는데 141개가 전부 초록이다.
+# 나머지 셋은 **다시 자라는 것이 사람을 끼우지 않는가**를 본다.
+
+# ① **시계를 안 돌린다.** 벌목도 모션도 그대로라 CHOP 도 USE 도 초록이고,
+#    단위 검사도 전부 초록이다 — **REGROW 하나만** 빨갛다.
+python3 - <<'PYY'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace("\tworld.tick(delta)\n", "", 1))
+PYY
+expect 1 "시계를 안 돌리면 tests 가 잡는다 (벤 나무가 영영 안 자란다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ② **몸이 선 칸을 아무도 안 묻는다.** 월드는 플레이어를 모르므로 main.gd 가 그 물음을
+#    안 꽂으면 나무가 사람 안에서 자란다 — 회차 29 가 막은 「벤 자리에 몸이 낀다」의
+#    반대편이다. 단위 검사는 제 Callable 을 손으로 꽂으므로 전부 초록이다.
+python3 - <<'PYY'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace("\tworld.occupied = _body_covers\n", "", 1))
+PYY
+expect 1 "몸이 선 칸을 안 물으면 tests 가 잡는다 (나무가 사람 안에서 자란다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ③ **몸이 서 있어도 밀고 자란다.** 규칙 쪽에서 같은 구멍을 낸다 — 위가 배선이면
+#    이쪽은 판정이다. 둘 다 결과는 「낀다」인데 고칠 자리가 다르다.
+python3 - <<'PYY'
+import io
+p='scripts/world_state.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t\tif occupied.is_valid() and occupied.call(tile):", "\t\tif false:", 1))
+PYY
+expect 1 "몸이 선 칸을 밀고 자라면 tests 가 잡는다"
+cp "$BAK/world_state.gd" scripts/world_state.gd
+
+# ④ **자란 것을 아무에게도 안 알린다.** 칸은 진짜로 나무로 돌아오고 다시 막으므로
+#    「자랐다」는 맞는데, 색 캐시가 안 버려져서 **화면에는 그루터기가 그대로 남는다.**
+#    회차 29 의 ② 와 같은 모양이고, 헤드리스에서 보이는 자리는 `cache_fills` 뿐이다.
+python3 - <<'PYY'
+import io
+p='scripts/world_state.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\t\tchanged.emit(tile)             # 화면을 다시 칠하게 한다 (main.gd 의 색 캐시)\n", "", 1))
+PYY
+expect 1 "자란 것을 안 알리면 tests 가 잡는다 (화면에 그루터기가 남는다)"
+cp "$BAK/world_state.gd" scripts/world_state.gd
+
+# ⑤ **나무도 안 자라는 것으로 적는다.** 균형값 한 줄이 0 이 되면 GDD A-4 가 통째로
+#    사라지는데, 배선도 판정도 멀쩡해서 **아무 데도 안 터지는 것처럼 보인다.**
+python3 - <<'PYY'
+import io
+p='scripts/world_objects.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace("\tTREE: 1.0,", "\tTREE: 0.0,", 1))
+PYY
+expect 1 "나무의 날 수를 0 으로 만들면 tests 가 잡는다 (한 번 캐고 끝난다)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+expect 0 "원복하면 다시 자라는 것도 초록이다"
+
 
 echo
 SKIPMSG=""

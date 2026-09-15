@@ -5,6 +5,9 @@ extends TestBase
 ## 여기가 지키는 한 문장: **씨앗이 만든 것을 안 고친다.** 없앤 칸의 목록만 들고
 ## 그 위에 덮어 답한다 — 그래서 저장은 목록 두 개고(P2d), 나무를 다시 자라게 하는 것은
 ## 목록에서 한 칸을 지우는 것이다 (GDD A-4).
+##
+## **회차 30 에 시계가 붙었다.** 다시 자라는 것은 여기서부터 「시간」이 필요한 첫 규칙이라
+## `now` · `tick()` 이 이 몸에 같이 산다 — 저장이 여전히 하나이기 위해서다.
 
 const SEED := 20260914
 
@@ -81,6 +84,118 @@ func test_clearing_announces_the_tile() -> void:
 	w.clear_object(sp.x, sp.y)
 	eq(heard.size(), 1, "빈 칸을 친 뒤 들린 신호의 수")
 
+## ── 다시 자란다 (GDD A-4) ────────────────────────────────────────────
+
+## **하루가 지나면 나무가 돌아온다.** 「한 번 캐고 끝나는 자원이 없다」가 이 한 줄이다.
+## 하루를 **꽉 채워야** 한다 — 1초 모자라면 아직 그루터기다.
+func test_a_cleared_tree_grows_back_after_one_day() -> void:
+	var w := WorldState.new(SEED)
+	var t := _a_tree(w)
+	if t == Vector2i.MAX:
+		check(false, "씨앗 %d 에서 나무를 하나도 못 찾았다" % SEED)
+		return
+	var solid := w.solid()
+	w.clear_object(t.x, t.y)
+	var day := WorldState.DAY_SEC * WorldObjects.regrow_days(WorldObjects.TREE)
+	eq(w.regrow_at(t.x, t.y), day, "다시 자랄 시각")
+	eq(w.tick(day - 1.0), 0, "하루가 1초 모자랄 때 자란 칸 수")
+	eq(w.object_at(t.x, t.y), WorldObjects.NONE, "1초 모자랄 때 그 칸")
+	eq(w.tick(2.0), 1, "하루를 넘겼을 때 자란 칸 수")
+	eq(w.object_at(t.x, t.y), WorldObjects.TREE, "다시 자란 칸")
+	eq(w.cleared_count(), 0, "없어진 칸의 수 — 목록에서 지워져야 한다")
+	# **미리 꽂아 둔 Callable 이 도로 막아야 한다.** 여기가 빠지면 나무를 통과해 걷는다.
+	check(solid.call(t.x, t.y), "다시 자란 칸이 안 막는다")
+
+## **자란 칸도 알린다.** 없앨 때와 같은 이유다 — 이 신호가 없으면 색 캐시가 안 버려져서
+## 화면에는 그루터기가 그대로 남는다 (main.gd).
+func test_regrowing_announces_the_tile() -> void:
+	var w := WorldState.new(SEED)
+	var t := _a_tree(w)
+	if t == Vector2i.MAX:
+		check(false, "씨앗 %d 에서 나무를 하나도 못 찾았다" % SEED)
+		return
+	w.clear_object(t.x, t.y)
+	var heard: Array[Vector2i] = []
+	w.changed.connect(func(tile: Vector2i) -> void: heard.append(tile))
+	w.tick(WorldState.DAY_SEC + 1.0)
+	eq(heard.size(), 1, "자란 뒤 들린 신호의 수")
+	if heard.size() == 1:
+		eq(heard[0], t, "알린 칸")
+
+## **몸이 서 있는 칸은 안 자란다.** 사람 안에서 나무가 자라면 그 자리가 곧
+## 「벤 자리에 몸이 낀다」다 — 이 파일이 막으려고 있는 바로 그것이다.
+## 비키면 `RETRY_SEC` 안에 자란다.
+func test_a_body_on_the_tile_holds_the_regrow() -> void:
+	var w := WorldState.new(SEED)
+	var t := _a_tree(w)
+	if t == Vector2i.MAX:
+		check(false, "씨앗 %d 에서 나무를 하나도 못 찾았다" % SEED)
+		return
+	# **람다는 값을 복사해 간다** (GOTCHAS): `var standing := true` 를 그대로 잡으면
+	# 나중에 false 로 바꿔도 람다 안은 영영 true 다 — 배열 한 칸에 담아 참조로 든다.
+	var standing := [true]
+	w.occupied = func(tile: Vector2i) -> bool: return standing[0] and tile == t
+	w.clear_object(t.x, t.y)
+	eq(w.tick(WorldState.DAY_SEC + 1.0), 0, "몸이 선 채로 하루가 지났을 때 자란 칸 수")
+	eq(w.object_at(t.x, t.y), WorldObjects.NONE, "몸이 선 칸")
+	# **영영 미루지 않는다** — 미룬 것은 다시 줄을 서야 한다.
+	eq(w.tick(WorldState.RETRY_SEC * 0.5), 0, "비키기 전 자란 칸 수")
+	standing[0] = false
+	eq(w.tick(WorldState.RETRY_SEC), 1, "비킨 뒤 자란 칸 수")
+	eq(w.object_at(t.x, t.y), WorldObjects.TREE, "비킨 뒤 그 칸")
+
+## **돌·광물은 아직 안 자란다** (`WorldObjects.REGROW_DAYS` 에 없다).
+## 캔 자리에 도로 생기면 광산과 자동화(GDD A-4)가 통째로 의미를 잃는다.
+func test_rock_does_not_grow_back() -> void:
+	var w := WorldState.new(SEED)
+	var t := _an_object(w, WorldObjects.ROCK)
+	if t == Vector2i.MAX:
+		check(false, "씨앗 %d 에서 돌을 하나도 못 찾았다" % SEED)
+		return
+	eq(w.clear_object(t.x, t.y), WorldObjects.ROCK, "없앤 종류")
+	check(is_inf(w.regrow_at(t.x, t.y)), "안 자라는 것의 시각은 INF 라야 한다")
+	eq(w.tick(WorldState.DAY_SEC * 365.0), 0, "한 해가 지났을 때 자란 칸 수")
+	eq(w.object_at(t.x, t.y), WorldObjects.NONE, "한 해 뒤 캔 자리")
+
+## **다시 벤 나무는 그때부터 다시 하루다.** 앞서 적힌 시각이 살아 있으면 두 번째 그루가
+## 심자마자 자란다 — 큐에 남은 철 지난 기록이 그 구멍이다.
+func test_chopping_again_restarts_the_clock() -> void:
+	var w := WorldState.new(SEED)
+	var t := _a_tree(w)
+	if t == Vector2i.MAX:
+		check(false, "씨앗 %d 에서 나무를 하나도 못 찾았다" % SEED)
+		return
+	w.clear_object(t.x, t.y)
+	w.tick(WorldState.DAY_SEC + 1.0)
+	eq(w.object_at(t.x, t.y), WorldObjects.TREE, "한 번 자란 칸")
+	w.clear_object(t.x, t.y)
+	eq(w.regrow_at(t.x, t.y), w.now + WorldState.DAY_SEC, "두 번째로 벤 칸의 시각")
+	eq(w.tick(WorldState.DAY_SEC - 1.0), 0, "두 번째 하루가 1초 모자랄 때 자란 칸 수")
+	eq(w.tick(2.0), 1, "두 번째 하루를 넘겼을 때 자란 칸 수")
+
+## **바닥에 떨어진 것은 안 건드린다.** 자라면서 목재를 거둬 가면 자리를 비운 사이에
+## 수확이 증발한다 — 「한 번 캐고 끝나는 자원이 없다」가 「캐도 안 남는다」가 된다.
+func test_regrowing_leaves_the_drops_alone() -> void:
+	var w := WorldState.new(SEED)
+	var t := _a_tree(w)
+	if t == Vector2i.MAX:
+		check(false, "씨앗 %d 에서 나무를 하나도 못 찾았다" % SEED)
+		return
+	Harvest.hit(w, Harvest.AXE, PlayerMotion.tile_center(t.x - 1, t.y), Vector2.RIGHT)
+	var before := w.dropped_total(Harvest.WOOD)
+	check(before > 0, "먼저 목재가 떨어져 있어야 한다 (잰 값 %d)" % before)
+	w.tick(WorldState.DAY_SEC + 1.0)
+	eq(w.object_at(t.x, t.y), WorldObjects.TREE, "다시 자란 칸")
+	eq(w.dropped_total(Harvest.WOOD), before, "자란 뒤 바닥의 목재")
+
+## **시간은 뒤로 안 간다.** 음수 delta 한 번이면 온 섬의 시각이 미래로 밀려
+## 벤 것이 영영 안 자란다.
+func test_the_clock_never_runs_backwards() -> void:
+	var w := WorldState.new(SEED)
+	w.tick(10.0)
+	eq(w.tick(-100.0), 0, "음수 delta 로 자란 칸 수")
+	eq(w.now, 10.0, "음수 delta 뒤의 시계")
+
 ## ── 막는 칸 ──────────────────────────────────────────────────────────
 
 ## **벤 칸은 안 막고, 바다는 여전히 막는다.** 없앤 칸 목록이 바다까지 뚫어 주면
@@ -126,16 +241,20 @@ func test_an_empty_drop_is_not_placed() -> void:
 	check(not w.add_drop(Inventory.EMPTY, 3, Vector2.ZERO), "빈 아이디는 안 놓아야 한다")
 	eq(w.drop_count(), 0, "바닥에 떨어진 것의 수")
 
-## 왼쪽 칸이 비어 있는 나무 하나. 못 찾으면 `Vector2i.MAX`.
+## 스폰에서 가까운 나무 하나. 못 찾으면 `Vector2i.MAX`.
 func _a_tree(w: WorldState) -> Vector2i:
+	return _an_object(w, WorldObjects.TREE)
+
+## 스폰에서 가까운 그 종류 하나. 돌은 나무보다 드물어서(2.0% 대 숲 42%) 더 멀리 본다.
+func _an_object(w: WorldState, kind: int) -> Vector2i:
 	var sp := WorldGen.spawn_tile()
-	for r in range(WorldObjects.SPAWN_CLEAR + 1, 40):
+	for r in range(WorldObjects.SPAWN_CLEAR + 1, 80):
 		for dy in range(-r, r + 1):
 			for dx in range(-r, r + 1):
 				if maxi(absi(dx), absi(dy)) != r:
 					continue
 				var t := Vector2i(sp.x + dx, sp.y + dy)
-				if w.object_at(t.x, t.y) == WorldObjects.TREE:
+				if w.object_at(t.x, t.y) == kind:
 					return t
 	return Vector2i.MAX
 

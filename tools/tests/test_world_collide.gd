@@ -190,3 +190,17 @@ func test_tile_of_works_left_of_the_origin() -> void:
 	eq(WorldCollide.tile_of(16.0), 1, "16px")
 	eq(WorldCollide.tile_of(-0.01), -1, "-0.01px")
 	eq(WorldCollide.tile_of(-16.0), -1, "-16px")
+
+## **몸이 이 칸을 밟고 있나** — 다시 자라는 나무가 묻는 자리다 (`WorldState.tick`).
+## `overlaps` 와 경계 규칙이 같아야 한다: 벽에 딱 붙어 선 몸은 그 칸을 「밟았다」로
+## 안 친다. 다르면 옆 칸 나무가 붙어 선 동안 영영 안 자란다.
+func test_covers_tile_matches_the_body_box() -> void:
+	# 칸 1(16..32) 한가운데. 상자 반크기는 (6, 4) 라 x 는 18..30, y 는 20..28 이다.
+	check(WorldCollide.covers_tile(Vector2(24, 24), Vector2i(1, 1)), "서 있는 칸을 밟는다")
+	check(not WorldCollide.covers_tile(Vector2(24, 24), Vector2i(2, 1)), "옆 칸은 안 밟는다")
+	check(not WorldCollide.covers_tile(Vector2(24, 24), Vector2i(1, 2)), "아래 칸은 안 밟는다")
+	# 칸 경계에 걸쳐 서면 **두 칸을 다 밟는다** — 그 위에서 자라면 몸이 낀다.
+	check(WorldCollide.covers_tile(Vector2(32, 24), Vector2i(1, 1)), "경계에 선 몸의 왼쪽 칸")
+	check(WorldCollide.covers_tile(Vector2(32, 24), Vector2i(2, 1)), "경계에 선 몸의 오른쪽 칸")
+	# 벽에 붙어 선 자리(41.99)는 `overlaps` 가 「안 겹친다」로 읽는 그 자리다.
+	check(not WorldCollide.covers_tile(Vector2(41.99, 24), Vector2i(3, 1)), "벽에 붙어 선 몸")

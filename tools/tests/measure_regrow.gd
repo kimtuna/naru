@@ -1,0 +1,205 @@
+extends MeasurePhase
+
+## **실측 게이트 — 다시 자란다** (GDD A-4 「한 번 캐고 끝나는 자원이 없다」).
+## 진짜 메인 씬을 돌려 **시계가 흐르는지**부터 본다.
+##
+## 왜 단위 검사로 부족한가: `WorldState.tick()` 이 아무리 맞아도 **main.gd 가 그걸 안
+## 부르면** 시간이 영영 0 초라 섬은 그루터기밭으로 남는다 — 그런데 단위 검사는 전부
+## 초록이다. 회차 3(속도) · 5(방향) · 24(배치) · 29(벌목)와 같은 모양의 구멍이다.
+##
+## **넷을 본다**:
+##   ① **시계가 프레임을 따라 흐른다** — `world.now` 가 실제로 흐른 초와 맞는다.
+##      main.gd 가 `tick` 을 안 부르면 0 이고, 엉뚱한 값을 넣으면 여기서 어긋난다
+##   ② **몸이 선 칸은 안 자란다** — 벤 자리에 서서 하루를 넘겨도 그루터기다.
+##      이게 없으면 나무가 사람 안에서 자라서 **몸이 낀다** (회차 29 가 막은 그것의 반대편)
+##   ③ 비키면 자란다 — 칸이 나무로 돌아오고 **다시 막는다.** 막는 쪽은 미리 꽂아 둔
+##      `player.solid` 라, 자란 것이 그 Callable 에 안 보이면 나무를 통과해 걷는다
+##   ④ **화면을 다시 칠했다**(`cache_fills`) — 헤드리스라 픽셀은 못 읽지만, 색 캐시는
+##      「보이는 범위가 바뀔 때만」 채우므로 **제자리에 선 채로는 그루터기가 그대로 남는다**
+##
+## **하루를 진짜로 기다리지 않는다**: 20분짜리 게이트는 루프를 죽인다. `tick()` 에
+## 큰 `delta` 를 한 번 넣는다 — 세이브를 불러오는 자리와 **같은 입구**고, 판정을 무르게
+## 하는 게 아니라 시계를 빨리 감는 것이다. ① 이 「진짜 프레임에서도 흐르나」를 따로 지킨다.
+##
+## 이름이 test_ 로 시작하지 않는다 — run_tests.gd 는 이 파일을 안 집는다.
+
+const WARMUP := 3          # 씬의 _ready(월드 배선)는 첫 프레임 뒤에 돈다 (measure_chop 과 같다)
+const CLOCK_SEC := 0.30    # 시계를 견주는 구간. 30 프레임쯤이라 한 프레임 어긋남에 안 죽는다
+const CLOCK_EPS := 0.05    # 허용 오차. 한 프레임(16.7ms)의 세 배 — 구간 경계의 어긋남만 먹는다
+const SETTLE := 3          # 몸을 옮기고 화면이 한 번 자리를 잡을 때까지
+const READ := 2            # `_draw` 는 `_process` 뒤에 돈다 — 칠한 횟수는 다음 프레임에 읽는다
+const SEARCH := 40         # 스폰에서 이만큼(체비쇼프) 안에서 나무를 찾는다
+
+var _main: Node
+var _player: Node2D
+var _tree := Vector2i.ZERO
+var _stand := Vector2i.ZERO
+var _frames := 0
+var _stage := 0            # 0 = 시계 · 1 = 비켜서 자리잡기 · 2 = 읽기
+var _wait := 0
+var _t := 0.0              # 실제로 흐른 초 (프레임 delta 의 합)
+var _now0 := 0.0           # 구간이 시작할 때의 게임 시계
+var _drift := 0.0
+var _held := false         # ② 몸이 선 채로 안 자랐나
+var _fills_before := 0
+var _done := false
+
+func tag() -> String:
+	return "REGROW"
+
+func begin(t: SceneTree) -> void:
+	super(t)
+	var scene: String = ProjectSettings.get_setting("application/run/main_scene")
+	_main = load(scene).instantiate()
+	tree.root.add_child(_main)
+
+func cleanup() -> void:
+	super()
+	drop(_main)
+	_main = null
+	_player = null
+
+func step(delta: float) -> bool:
+	_frames += 1
+	if _frames < WARMUP:
+		return false
+	if _frames == WARMUP:
+		return _setup()
+	if _done:
+		return true
+	match _stage:
+		0:
+			_t += delta
+			if _t < CLOCK_SEC:
+				return false
+			return _end_clock()
+		1:
+			_wait -= 1
+			if _wait > 0:
+				return false
+			return _let_it_grow()
+		_:
+			_wait -= 1
+			if _wait > 0:
+				return false
+			return _finish()
+
+func _setup() -> bool:
+	_player = _main.get_node_or_null("Player")
+	if _player == null:
+		fail("플레이어", "Main/Player 가 없다", "메인 씬에 플레이어")
+		return _stop()
+	if not _player.solid.is_valid():
+		fail("배선", "player.solid 가 비어 있다 — main.gd 가 월드를 안 꽂았다", "WorldState.solid()")
+		return _stop()
+	if not _main.world.occupied.is_valid():
+		fail("배선", "world.occupied 가 비어 있다 — 몸이 선 칸을 아무도 안 묻는다",
+			"main.gd 가 꽂은 Callable")
+		return _stop()
+	if not _find_tree():
+		return _stop()
+	_player.position = PlayerMotion.tile_center(_stand.x, _stand.y)
+	_player.velocity = Vector2.ZERO
+	_now0 = _main.world.now
+	print("REGROW 나무 월드칸 %s · 설 자리 %s · 하루 %.0f s · 나무 %.1f일" % [
+		_tree, _stand, WorldState.DAY_SEC, WorldObjects.regrow_days(WorldObjects.TREE)])
+	return false
+
+## ① 시계가 프레임을 따라 흘렀나. 그리고 ② **벤 자리에 올라서서** 하루를 넘겨 본다.
+func _end_clock() -> bool:
+	var world = _main.world
+	_drift = absf((world.now - _now0) - _t)
+	if _drift > CLOCK_EPS:
+		fail("게임 시계", "%.2f초 도는 동안 %.2f초 흘렀다 (오차 %.3f)" % [
+			_t, world.now - _now0, _drift],
+			"흐른 시간과 %.2f초 안에서 같다 (main.gd 가 tick 을 부른다)" % CLOCK_EPS)
+	# ② 나무를 없애고 **그 자리에 올라선다.**
+	if world.clear_object(_tree.x, _tree.y) != WorldObjects.TREE:
+		fail("없애기", "%s 가 나무가 아니었다" % _tree, "나무(%d)" % WorldObjects.TREE)
+		return _stop()
+	_player.position = PlayerMotion.tile_center(_tree.x, _tree.y)
+	_player.velocity = Vector2.ZERO
+	var day := WorldState.DAY_SEC * WorldObjects.regrow_days(WorldObjects.TREE)
+	world.tick(day + 1.0)
+	_held = world.object_at(_tree.x, _tree.y) == WorldObjects.NONE
+	if not _held:
+		fail("몸이 선 칸", "벤 자리에 서 있는데 하루 만에 자랐다", "안 자란다 (몸이 낀다)")
+	# ③ 비킨다. 화면이 자리를 잡고 나서 칠한 횟수를 잰다.
+	_player.position = PlayerMotion.tile_center(_stand.x, _stand.y)
+	_player.velocity = Vector2.ZERO
+	_stage = 1
+	_wait = SETTLE
+	return false
+
+## ③ 비켰다. `RETRY_SEC` 을 넘기면 자라야 한다.
+func _let_it_grow() -> bool:
+	_fills_before = _main.cache_fills
+	_main.world.tick(WorldState.RETRY_SEC + 0.1)
+	_stage = 2
+	_wait = READ
+	return false
+
+func _finish() -> bool:
+	var world = _main.world
+	var kind: int = world.object_at(_tree.x, _tree.y)
+	var blocked: bool = _player.solid.call(_tree.x, _tree.y)
+	var fills: int = _main.cache_fills - _fills_before
+	var ok := bad == 0
+
+	if kind != WorldObjects.TREE:
+		ok = false
+		fail("다시 자라기", "%s 가 종류 %d 다" % [_tree, kind], "나무(%d)" % WorldObjects.TREE)
+	if not blocked:
+		ok = false
+		fail("자란 칸", "안 막는다", "막는다 (나무를 통과해 걸으면 안 된다)")
+	if world.cleared_count() != 0:
+		ok = false
+		fail("없어진 칸의 수", "%d" % world.cleared_count(), "0 (목록에서 지워진다)")
+	if fills < 1:
+		ok = false
+		fail("화면 다시 칠하기", "자란 뒤 색 캐시 %d번" % fills,
+			"1번 이상 (안 버리면 화면에 그루터기가 남는다)")
+	if not ok:
+		bad += 1
+	print("REGROW 시계      %.2f초 도는 동안 게임 %.2f초 (오차 %.3f초)" % [
+		_t, world.now - _now0, _drift])
+	print("REGROW 몸이 선 칸 하루+1초 뒤 %s · 비킨 뒤 %s · 막힘 %s · 다시 칠하기 %d번" % [
+		"그대로" if _held else "자랐다", "나무" if kind == WorldObjects.TREE else "종류 %d" % kind,
+		"예" if blocked else "아니오", fills])
+	print("REGROW %s (하루 %.0f s · 나무 %.1f일 · 비킨 뒤 %.1f s · 남은 벤 칸 %d)" % [
+		"ok" if bad == 0 else "FAIL %d개" % bad, WorldState.DAY_SEC,
+		WorldObjects.regrow_days(WorldObjects.TREE), WorldState.RETRY_SEC,
+		world.cleared_count()])
+	_done = true
+	return true
+
+## 게이트가 죽을 때도 **제 요약 줄을 남긴다** — 침묵은 초록으로 읽히면 안 된다.
+func _stop() -> bool:
+	bad += 1
+	print("REGROW FAIL %d개 (설 자리를 못 잡았다)" % bad)
+	_done = true
+	return true
+
+## **옆 칸이 나무인 빈 땅**을 고른다. 벤 뒤에 그 칸으로 올라서야 하므로 둘 다 필요하다.
+## 스폰에서 가까운 것부터 — CHOP 과 같은 자리를 고르지만 방향은 안 본다 (클릭을 안 쓴다).
+func _find_tree() -> bool:
+	var world = _main.world
+	var sp := WorldGen.spawn_tile()
+	for r in range(1, SEARCH):
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				if maxi(absi(dx), absi(dy)) != r:
+					continue
+				var stand := Vector2i(sp.x + dx, sp.y + dy)
+				if _player.solid.call(stand.x, stand.y):
+					continue
+				for d: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+					var t := stand + d
+					if world.object_at(t.x, t.y) != WorldObjects.TREE:
+						continue
+					_stand = stand
+					_tree = t
+					return true
+	fail("나무", "스폰 %d칸 안에 빈 땅과 맞붙은 나무가 없다 (씨앗 %d)" % [
+		SEARCH, _main.WORLD_SEED], "한 그루 이상")
+	return false

@@ -213,3 +213,14 @@ func test_blocks_matches_at() -> void:
 			if WorldObjects.blocks(s, x, y) != (WorldObjects.at(s, x, y) != WorldObjects.NONE):
 				bad += 1
 	eq(bad, 0, "blocks 와 at 이 다른 칸")
+
+## ── 다시 자란다 (GDD A-4) ────────────────────────────────────────────
+
+## **나무만 자란다, 그것도 「하루」로 적힌다.** 초로 적으면 하루 길이를 고치는 회차가
+## 이 파일까지 열어야 하고, 둘이 어긋나면 균형이 조용히 달라진다 (WorldState.DAY_SEC).
+func test_only_trees_grow_back_and_the_unit_is_days() -> void:
+	eq(WorldObjects.regrow_days(WorldObjects.TREE), 1.0, "나무가 자라는 날 수")
+	# **돌·광물은 0 이다** — 캔 자리에 도로 생기면 광산·자동화가 의미를 잃는다.
+	eq(WorldObjects.regrow_days(WorldObjects.ROCK), 0.0, "돌이 자라는 날 수")
+	eq(WorldObjects.regrow_days(WorldObjects.ORE), 0.0, "광물이 자라는 날 수")
+	eq(WorldObjects.regrow_days(WorldObjects.NONE), 0.0, "빈 칸이 자라는 날 수")

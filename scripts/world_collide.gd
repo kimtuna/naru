@@ -76,6 +76,14 @@ static func overlaps(pos: Vector2, solid: Callable, half := HALF) -> bool:
 				return true
 	return false
 
+## 몸 네모가 **이 칸을 밟고 있나**. 「벤 자리가 다시 자라도 되나」를 묻는 자리다
+## (`WorldState.tick`) — 사람 안에서 나무가 자라면 그 자리가 곧 「몸이 낀다」다.
+## **`overlaps` 와 같은 경계 규칙을 쓴다**(EPS 로 한 톨 당긴다): 벽에 딱 붙어 선 몸은
+## 막는 칸을 「밟았다」로 안 친다 — 안 그러면 옆 칸 나무가 붙어 선 동안 영영 안 자란다.
+static func covers_tile(pos: Vector2, tile: Vector2i, half := HALF) -> bool:
+	return tile.x >= tile_of(pos.x - half.x + EPS) and tile.x <= tile_of(pos.x + half.x - EPS) \
+		and tile.y >= tile_of(pos.y - half.y + EPS) and tile.y <= tile_of(pos.y + half.y - EPS)
+
 ## 픽셀 좌표가 몇 번째 칸인가. 음수에서도 맞아야 해서 나눗셈이 아니라 floor 다.
 static func tile_of(v: float) -> int:
 	return floori(v / PlayerMotion.TILE)
