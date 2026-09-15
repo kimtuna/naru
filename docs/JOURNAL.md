@@ -39,6 +39,19 @@
 
 ---
 
+## 회차 29 · **벌목** — 도끼로 나무를 베면 목재가 바닥에 떨어진다
+- 문제: 새로 넣은 검사 11개가 **한 줄도 안 돌았는데 `TESTS 121 passed, 0 failed` 가 초록으로 나왔다.** 기대는 132 였다. 또 하나: 대조군 세 자리가 이번 변경으로 조용히 헛돌 참이었다 — 회차 27 의 `ORDER` 치환과 회차 21·P1-5 의 `_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)` 치환 둘.
+- 원인: `run_tests.gd` 는 `test_*.gd` 를 `load()` 해서 `test_` 메서드를 찾는데, **파스가 깨진 스크립트는 메서드가 하나도 없는 객체로 온다** — 실패가 아니라 **아예 안 세어진다.** 잡는 것은 `check.sh unit` 이 아니라 `check.sh parse` 다(`unit` 만 보면 「개수가 안 늘었다」로만 보인다). 대조군 쪽은 다르다: 고친 줄이 곧 치환 자리라서, 코드를 옮기면 대조군이 아무것도 안 깨뜨리고 상태 검사가 초록으로 남는다 — 「게이트가 약하다」가 아니라 「대조군이 헛돌았다」다.
+- 고친 것: `scripts/world_state.gd`(없앤 칸 + 바닥에 떨어진 것) · `scripts/harvest.gd`(도구·대상 칸·산출) · `scripts/main.gd`(판정 한 줄 · `changed` 로 색 캐시 버리기 · 바닥의 것 그리기) · `scripts/world_collide.gd`(`solid_from_seed(seed, cleared)`) · `scripts/world_view.gd`(`color_at(..., cleared)` · `drop_rect`) · `tools/tests/measure_chop.gd` 와 `measure_headless.gd`·`check.sh`(구간 4 → 5) · `test_harvest.gd`·`test_world_state.gd` 19종 · `redteam.sh` 에 4종 추가 + 헛돌 뻔한 치환 세 자리 갱신 · `GOTCHAS.md` 에 조용히 건너뛰는 검사 파일.
+- 바꾼 결정: ① **막는 규칙은 한 벌뿐이다** — `WorldState` 가 제 몸에 바다+오브젝트를 다시 적는 대신 `solid_from_seed` 에 없앤 칸 사전을 **참조로** 넘긴다. 두 벌이면 언젠가 한쪽만 고쳐져 **벤 자리에 몸이 낀다.** ② **치는 칸은 커서 칸이 아니라 겨눈 쪽 한 칸** — 사거리 24px = 8 + 16 이라 휘두르는 네모가 쓸고 가는 자리와 정확히 같고, 화면과 판정이 안 어긋난다. ③ **판정은 모션 시작 프레임에 한 번** — 누르고 있으면 계속 휘두르므로(회차 21) 매 프레임 판정하면 한 모션이 프레임 수만큼 맞힌다. ④ **벤 것은 가방이 아니라 바닥으로** — 베자마자 가방에 꽂으면 「가방이 꽉 찼을 때」가 벌목 판정 한가운데로 들어온다.
+- 잰 값: `CHOP ok (없어진 칸 1 · 사거리 24 px · 한 칸 16 px · 목재 3개/그루)` · `CHOP 맨손 0.43초 · 휘두른 프레임 8 · 나무 그대로 · 바닥 0 더미` · `CHOP 도끼 0.48초 · 벤 칸 빔 · 막힘 아니오 · 바닥 1 더미 3개 · 다시 칠하기 1번` · `HEADGATE ok (… CHOP 0 · 구간 5/5)` · `TESTS 132 passed, 0 failed`(113 → 132) · `check.sh tests` 28.8초(회차 27 은 27초) · `ALL GREEN` 9/9 61초 · `REDTEAM 11 잡음, 0 놓침`(`--only 회차 29` · 8분 26초).
+- 남긴 것: **벤 나무가 다시 자란다**(GDD A-4 — 되돌릴 재료는 `original_at` 에 다 있고 필요한 것은 하루 주기다) · **나무 한 그루에 몇 번 휘두르나**(지금은 한 번에 한 그루. 도구 등급·내구가 P3 제작에서 값을 요구할 때 같이 정한다) · **목재 3개/그루는 자리표시자다** — 균형은 제작이 정한다. **[ASK] 기준 4 의 글자가 아직 48px 타일이다**(실제 16px).
+- 날짜: 2026-09-15
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 42개 스크립트, 실패 0 · 3 TESTS 132 passed, 0 failed · 4 TESTS 132 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  63/90줄 · 6 SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34) · 8   ok   공백 든 경로를 통째로 지운다 / WORKTREE SELFTEST 45 passed, 0 failed (바닥 45) · 9   ok   세션에게 주는 꼬리 2 절이 남기는 3 절 안에 든다 / STATE SELFTEST 26 passed, 0 failed (바닥 26)
+- 비용: $107.4146 누적
+- 커밋: `0236cd7`
+
 ## 회차 28 · **벌목** — 도끼로 나무를 베면 목재가 바닥에 떨어진다
 - 날짜: 2026-09-15
 - 결과: 빨강
