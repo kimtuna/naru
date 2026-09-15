@@ -1237,8 +1237,8 @@ python3 - <<'PYZ'
 import io
 p='scripts/day_cycle.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    "const NIGHT_LIGHT := Color(0.28, 0.29, 0.30)",
-    "const NIGHT_LIGHT := Color(0.24, 0.30, 0.42)", 1))
+    "const NIGHT_LIGHT := Color(0.174, 0.180, 0.186)",
+    "const NIGHT_LIGHT := Color(0.144, 0.180, 0.252)", 1))
 PYZ
 expect 1 "밤빛을 파랗게 하면 tests 가 잡는다 (달빛 아래 바위가 웅덩이가 된다)"
 cp "$BAK/day_cycle.gd" scripts/day_cycle.gd
@@ -1264,6 +1264,22 @@ io.open(p,'w',encoding='utf-8').write(s.replace(
     "\treturn phase(now) < 0.5", "\treturn phase(now) < 0.45", 1))
 PYZ
 expect 1 "낮을 9분으로 줄이면 tests 가 잡는다 (GDD 의 낮 10 + 밤 10 이 깨진다)"
+cp "$BAK/day_cycle.gd" scripts/day_cycle.gd
+
+# ⑧ **기존 문들의 틈으로 밤을 내린다** (회차 33). 밝기 0.110 · b/r 1.0893 —
+#    **낡은 문 넷이 전부 초록이다**: 밝기 바닥 0.1 초과 · b/r 문턱 1.09 미만 ·
+#    float 여유 0.00316 으로 양수 · DRAW 의 밤 상한 0.30 미만. 그런데 **구운 픽셀에서는
+#    땅 한 칸의 r 과 b 가 같은 값으로 반올림돼 순서가 사라진다** — float 로만 보는 검사가
+#    못 보는 자리다. 여기서 빨개지는 줄은 회차 33 의 8비트 검사 **하나뿐**이라,
+#    그 검사를 지우면 이 대조군이 곧바로 「놓쳤다」가 된다.
+python3 - <<'PYZ'
+import io
+p='scripts/day_cycle.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "const NIGHT_LIGHT := Color(0.174, 0.180, 0.186)",
+    "const NIGHT_LIGHT := Color(0.1053, 0.1100, 0.1147)", 1))
+PYZ
+expect 1 "낡은 문 넷의 틈으로 밤을 내리면 tests 가 잡는다 (8비트에서 땅의 순서가 사라진다)"
 cp "$BAK/day_cycle.gd" scripts/day_cycle.gd
 
 expect 0 "원복하면 낮과 밤도 다시 초록이다"

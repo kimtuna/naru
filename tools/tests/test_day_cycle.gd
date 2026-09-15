@@ -172,6 +172,36 @@ func _coast_tile() -> Vector2i:
 		t.x += 1
 	return t
 
+## **밤이 얼마나 더 어두워질 수 있나 — 아래에서 막는 문.** 위의 검사는 float 로 보는데
+## 화면에 나가는 것은 **8비트로 반올림한 픽셀**이다. 밤빛을 더 내리면 여유가 같은 비로
+## 줄어서, float 부등식은 멀쩡히 참인 채로 **구운 픽셀에서는 r 과 b 가 같은 칸**이 된다 —
+## 「땅이 물처럼 보이지 않는다」가 눈앞에서 무너지는데 위의 검사는 초록이다.
+## 2026-09-15 실측: 밝기 0.18 에서 r−b 최소가 **1/255** · 0.072 에서 4 칸이 **0** 이 된다.
+## 밤을 더 어둡게 하자는 다음 회차는 여기서 먼저 빨개진다.
+func test_night_survives_8bit() -> void:
+	var sp := _coast_tile()
+	var light := DayCycle.NIGHT_LIGHT
+	var n_land := 0
+	var worst := 999
+	var bad := ""
+	for dy in PATCH:
+		for dx in PATCH:
+			var x := sp.x - PATCH / 2 + dx
+			var y := sp.y - PATCH / 2 + dy
+			if WorldGen.tile_at(SEED, x, y) == WorldGen.WATER:
+				continue
+			n_land += 1
+			var c := WorldView.color_at(SEED, x, y)
+			var r := int(round(c.r * light.r * 255.0))
+			var b := int(round(c.b * light.b * 255.0))
+			if r - b < worst:
+				worst = r - b
+				bad = "(%d,%d) r %d · b %d" % [x, y, r, b]
+	check(n_land >= MIN_KIND, "잰 땅 칸 — 잰 값 %d · 기대 %d 이상 (해안 %s)" % [n_land, MIN_KIND, sp])
+	check(worst >= 1,
+		"한밤에 8비트로 구운 땅의 r−b — 잰 값 %d · 기대 1 이상 · %s (0 이면 픽셀에서 순서가 사라진다)" % [
+			worst, bad])
+
 ## 위의 검사가 **왜 빡빡한지**를 숫자로 못 박는다. 밤빛의 b/r 이 이 값을 넘으면
 ## 땅의 여유가 음수가 된다 — 돌 색(0.58, 0.57, 0.54)이 가장 좁은 자리다.
 ## 이 줄이 「더 파랗게 하고 싶다」는 다음 회차에게 보내는 쪽지다.
