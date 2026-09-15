@@ -1399,8 +1399,11 @@ cp "$BAK/display.gd" scripts/display.gd
 
 # ⑤ **쓸 수 있는 화면 대신 화면 전체를 쓴다.** macOS 는 메뉴 막대·노치 띠를 안 준다 —
 #    세로 66px 을 더 크게 보고 자리도 (0,0) 으로 본다. **창 크기는 안 바뀐다**(2168 이든
-#    2234 이든 배율은 3) — 바뀌는 것은 **자리**다. 창이 위로 33px 밀려 메뉴 막대 밑으로
-#    들어간다. 잡히는지 보려고 넣는다 — **안 잡히면 그것도 알아야 할 값이다.**
+#    2234 이든 배율은 3) — 바뀌는 것은 **자리**다. 창이 위로 33px 밀린다 (340 → 307).
+#    **두 번 놓쳤다.** ① 게이트가 크기만 재고 자리를 안 봤다. ② 자리를 재게 했더니
+#    기대값을 `Display.avail_rect()` 로 냈다 — **이 대조군이 고치는 바로 그 함수**라
+#    「틀린 값과 틀린 값이 같다」로 초록이었다. VIEW 가 이제 OS 에 직접 묻는다.
+#    **재는 쪽은 재이는 쪽의 말을 빌리면 안 된다.**
 sed -i '' 's|return DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen())|return Rect2i(Vector2i.ZERO, DisplayServer.screen_get_size(DisplayServer.window_get_current_screen()))|' scripts/display.gd
 expect 1 "쓸 수 있는 화면 대신 화면 전체를 재면 잡는다 (자리가 33px 위로)"
 cp "$BAK/display.gd" scripts/display.gd

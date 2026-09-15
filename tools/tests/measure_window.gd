@@ -197,8 +197,12 @@ func _measure_view() -> void:
 	# **자리도 잰다.** 크기만 보면 「띠 0 인데 화면 한쪽으로 쏠린 창」이 초록이다 —
 	# 사람 눈에는 그것도 「화면이 안 맞는다」이다. 대조군 ⑤ 가 정확히 여기서만 잡힌다:
 	# 쓸 수 있는 곳의 **자리**(0,66)를 모르면 창이 33px 위로 밀리는데 **크기는 안 바뀐다.**
-	# 쓸 수 있는 곳 안에 **가운데로** 들어가야 한다.
-	var ar := Display.avail_rect()
+	#
+	# **`Display` 를 거치지 않고 OS 에 직접 묻는다.** 처음엔 `Display.avail_rect()` 로
+	# 기대값을 냈다가 대조군 ⑤ 를 **놓쳤다**: 그 대조군이 고치는 것이 바로 그 함수라,
+	# 게이트가 틀린 자리를 기대값으로 삼아 「틀린 값과 틀린 값이 같다」를 보고 초록이었다.
+	# **재는 쪽은 재이는 쪽의 말을 빌리면 안 된다** — 눈금자를 같이 구부리는 꼴이다.
+	var ar := DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen())
 	var pos := Vector2(DisplayServer.window_get_position())
 	var want_pos := Vector2(ar.position + (ar.size - Vector2i(win)) / 2)
 	if pos.distance_to(want_pos) > POS_TOL:
