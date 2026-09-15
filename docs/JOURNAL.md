@@ -39,6 +39,19 @@
 
 ---
 
+## 회차 41 · **가방이 열려 있는 동안의 입력** — **걸을 수는 있다**(코어 키퍼 방식 · GDD D-9).
+- 날짜: 2026-09-16
+- 결과: 초록
+- 문제: 
+- 원인: 
+- 고친 것: 
+- 바꾼 결정: 
+- 잰 값: 
+- 남긴 것: 
+- 채점: 1 IMPORT ok · 2 PARSE 54개 스크립트, 실패 0 · 3 TESTS 194 passed, 0 failed · 4 TESTS 194 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  89/90줄 · 6 SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  0 s (위상 0.250 · 낮 · 밝기 1.000)  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34) · 8   ok   공백 든 경로를 통째로 지운다 / WORKTREE SELFTEST 45 passed, 0 failed (바닥 45) · 9   ok   세션에게 주는 꼬리 2 절이 남기는 3 절 안에 든다 / STATE SELFTEST 26 passed, 0 failed (바닥 26)
+- 비용: $164.4956 누적
+- 커밋: `286f3a0`
+
 ## 회차 40 · **가방 화면 — `E` 로 열고 닫는다** — 지금 `Inventory` 는 순수 클래스뿐이고 화면이 없다.
 - 문제: 같은 회차를 두 세션이 한 워킹트리에서 동시에 돌았다. 내가 읽는 동안 파일이 계속 바뀌었고, `git status` 가 부를 때마다 달랐다 — 4건 → 8건 → 0건(커밋됨).
 - 원인: 23:46 에 루프를 다시 켜면서 `loop.sh` 만 갈렸다. `ctl.sh start` 는 이미 도는 세션을 안 죽인다 — 23:30 세션(나, pid 1779)이 `ppid=1` 고아로 살아남아 23:46 세션(pid 10172)과 같은 항목을 같이 돌았다. `stop` 은 회차 39 에서 자식까지 기다리게 고쳤지만 `start` 에는 그 자물쇠가 없다.
