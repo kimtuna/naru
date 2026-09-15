@@ -171,17 +171,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 15:41:04</span><span id="ago"></span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 16:00:45</span><span id="ago"></span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
 <div class="tile"><span class="k">마지막 회차</span><span class="v"><i class="dot run"></i>회차 32</span><span class="note">초록 · 2026-09-15</span></div>
-<div class="tile"><span class="k">상태</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-15 15:23</span></div>
+<div class="tile"><span class="k">상태</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-15 16:00</span></div>
 <div class="tile"><span class="k">진행</span><span class="v">39 <small>/ 77</small></span><span class="note">백로그 항목</span></div>
 <div class="tile"><span class="k">누적 비용</span><span class="v">$130.7225</span></div>
 </section>
-<div class="alert next"><span class="k">백로그 다음 줄</span><span class="pill">P2</span><strong>전체 화면에서 띠를 최소로 — 정수 배율과 「누구나 같은 범위」는 지킨다</strong></div>
+<div class="alert next"><span class="k">백로그 다음 줄</span><span class="pill">P2</span><strong>창을 게임 크기에 맞춘다 — 검은 띠 0</strong> (2026-09-15 사람이 두 번 지적했다)</div>
 <h2>진행 — 한 줄 = 한 회차</h2>
 <div class="phases">
 <details class="phase full">
@@ -242,8 +242,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done"><span class="box">✔</span><strong>낮과 밤</strong> — 하루 20분(GDD G-1b)을 화면이 안다 (회차 31)</li>
 <li class="done" id="i31" ><a class="turn" href="#t31" title="31회차 일지로">31회차</a><span class="box">✔</span><strong>사람이 차지한 칸에는 나무가 안 자란다 — 계약으로 박는다</strong> (GDD A-4 · 회차 32)</li>
 <li class="done" id="i32" ><a class="turn" href="#t32" title="32회차 일지로">32회차</a><span class="box">✔</span><strong>밤을 더 어둡게 — <code>NIGHT_LIGHT</code> 0.290 → 0.18</strong> (2026-09-15 사람이 정했다)</li>
-<li class="todo"><span class="box"></span><strong>전체 화면에서 띠를 최소로 — 정수 배율과 「누구나 같은 범위」는 지킨다</strong></li>
-<li class="todo"><span class="box"></span><strong>「사람이 띄운 화면에 남는 띠가 얼마인가」를 게이트로 박는다</strong> — 이 건은 **게이트가</li>
+<li class="todo"><span class="box"></span><strong>창을 게임 크기에 맞춘다 — 검은 띠 0</strong> (2026-09-15 사람이 두 번 지적했다)</li>
+<li class="todo"><span class="box"></span><strong>「사람이 띄운 창에 띠가 0 인가」를 게이트로 박는다</strong> — 이 건은 **게이트가 볼 수 없는</li>
 <li class="todo"><span class="box"></span><strong>가방 화면 — <code>E</code> 로 열고 닫는다</strong> — 지금 <code>Inventory</code> 는 순수 클래스뿐이고 화면이 없다.</li>
 <li class="todo"><span class="box"></span><strong>가방이 열려 있는 동안의 입력</strong> — <strong>걸을 수는 있다</strong>(코어 키퍼 방식 · GDD D-9).</li>
 <li class="todo"><span class="box"></span><strong>칸 사이로 아이템을 옮긴다</strong> — 집어서 놓기(좌클릭으로 집고 좌클릭으로 놓는다).</li>
@@ -326,21 +326,21 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">모든 GDScript 가 파스된다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh parse</code>
-<ul class="ev"><li>PARSE 48개 스크립트, 실패 0</li></ul>
+<ul class="ev"><li>PARSE 50개 스크립트, 실패 0</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">3</span>
     <span class="cwhat">단위 테스트가 통과하고 개수가 줄지 않는다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/mintests.sh 165</code>
-<ul class="ev"><li>TESTS 165 passed, 0 failed</li></ul>
+<ul class="ev"><li>TESTS 173 passed, 0 failed</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">4</span>
     <span class="cwhat">색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh tests</code>
-<ul class="ev"><li>TESTS 165 passed, 0 failed</li></ul>
+<ul class="ev"><li>TESTS 173 passed, 0 failed</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">5</span>
@@ -981,6 +981,9 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">회차 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/e33e570"><code>e33e570</code></a><span class="cd">2026-09-15</span>인자 이름을 avail_size 로 통일 — avail() 을 가리고 있었다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/c554e8d"><code>c554e8d</code></a><span class="cd">2026-09-15</span>전체 화면으로 띄운다 — 띠 576x548 이 이 화면의 바닥이다</li>
+<li><a href="https://github.com/kimtuna/naru/commit/9f426d0"><code>9f426d0</code></a><span class="cd">2026-09-15</span>화면과 가방을 맨 앞으로 — 사람이 요청한 것이 계속 밀렸다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/1415744"><code>1415744</code></a><span class="cd">2026-09-15</span>램프는 반경만 밝힌다 · 와이파이가 끊겨도 버틴다 · 잠자기를 막는다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/a2820d8"><code>a2820d8</code></a><span class="cd">2026-09-15</span>회차 32 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/56012a7"><code>56012a7</code></a><span class="cd">2026-09-15</span>회차 기록 롤링</li>
@@ -990,9 +993,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/fd7efea"><code>fd7efea</code></a><span class="cd">2026-09-15</span>밤을 0.290 → 0.180 · 바닥은 8비트가 정한다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/c467ade"><code>c467ade</code></a><span class="cd">2026-09-15</span>환경이 스폰의 열쇠다 · 밤을 더 어둡게 — 사람이 정했다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/fbddaf7"><code>fbddaf7</code></a><span class="cd">2026-09-15</span>회차 31 일지 · 대시보드 갱신</li>
-<li><a href="https://github.com/kimtuna/naru/commit/4455e1e"><code>4455e1e</code></a><span class="cd">2026-09-15</span>테스트 바닥 154 → 164</li>
-<li><a href="https://github.com/kimtuna/naru/commit/398781d"><code>398781d</code></a><span class="cd">2026-09-15</span>회차 32 기록 — 백로그 · 대조군 함정 · 상태</li>
-<li><a href="https://github.com/kimtuna/naru/commit/1eeb1c8"><code>1eeb1c8</code></a><span class="cd">2026-09-15</span>대조군이 헛돌았다 — heredoc 안의 <code>\n</code> 을 바깥 python 이 먹었다</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 회차</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 회차가 올라왔다 — 새로고침</button>
