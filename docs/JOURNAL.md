@@ -39,6 +39,19 @@
 
 ---
 
+## 회차 38 · **놓이는 것을 비율로 정한다 — 종류마다 문턱을 따로 두지 않는다** (2026-09-15)
+- 문제: **같은 워킹트리에서 도는 다른 클로드 세션이 이 회차의 코드를 지웠다.** `run-contract.sh` 를 ALL GREEN 으로 돌려 놓고 경로를 지정해 커밋했는데 커밋에 `docs/` 둘만 들어갔다 — `world_objects.gd` · `test_world_objects.gd` · `redteam.sh` 가 HEAD 로 돌아가 있었다. 옛 코드로도 177개가 통과하므로 **상태 검사는 계속 초록**이었고, 코드는 없고 그 코드를 설명하는 `NUMBERS 6b` 만 남을 뻔했다.
+- 원인: `tools/loop/worktree.sh restore` 는 「세션이 흘린 것」을 HEAD 로 되돌리는데 **누가 흘렸는지는 안 본다.** 옆 세션이 제 selftest 를 돌리면서 내 미커밋 변경을 제 쓰레기로 보고 되돌렸다. 커밋 쪽에서도 안 걸린다 — `git commit` 은 스테이징된 파일이 사라져도 안 죽고, 검사는 옛 코드에서도 초록이라 어느 게이트도 안 짖는다.
+- 고친 것: 세 파일을 다시 적고 **먼저 커밋한 뒤** 대조군을 돌렸다(`05775ac`). 대조군은 `git worktree add --detach /tmp/naru-rt HEAD` 로 **따로 뗀 트리**에서 돌려서 양쪽이 서로를 못 건드리게 했다 — `.loop/` 만 복사해 넣으면 그대로 돈다. 함정은 `docs/GOTCHAS.md` 대조군 절에 적었다. 본 일은 `scripts/world_objects.gd` 의 세 문턱을 `FILL`·`MIX`·`REACH` 와 `rate()` 로 모으고, `tools/tests/test_world_objects.gd` 에 검사 셋(`test_placed_density_follows_fill_and_mix` · `test_reach_still_matches_the_land` · `test_the_mix_is_a_ratio_and_ore_is_the_rarest_share`)을, `tools/loop/redteam.sh` 에 대조군 넷을 넣었다. 회차 24 의 대조군 ④ 가 치던 `TREE_MAX` 문자열도 같이 옮겼다.
+- 바꾼 결정: **밀도는 손잡이가 아니다.** 놓이는 양은 `FILL`(땅의 몇 할) 과 `MIX`(종류 사이의 비) 둘로만 정하고, 종류별 확률은 `밀도 = 뽑을 확률 × REACH` 로 **나눗셈에서 나온다**. `REACH` 는 「그 종류에게 열려 있는 땅의 몫」이고 **잰 값이라 지형을 만지면 낡는다** — 그래서 상수와 땅을 견주는 게이트를 따로 뒀다. **비는 씨앗 평균으로만 지켜진다**: 높은 땅이 씨앗마다 7배 흔들려 광물도 그만큼 흔들리는데, 세어서 맞추면 한 칸만 묻는 해시가 깨지므로(GDD D-1) 그건 고칠 것이 아니라 값으로 둔다. 또 **허용치를 감이 아니라 재서 정했다** — 다음 백로그 항목을 이 회차에 먼저 적용했다.
+- 잰 값: `TESTS 180 passed, 0 failed`(전 177) · `ALL GREEN` 9/9 · `REDTEAM 11 잡음, 0 놓침`(`--only "회차 38 놓이는 것을 비율로"` · 4분 48초) · 씨앗 8개 전수(땅 175,835칸)에서 나무 9.353% · 돌 1.989% · 광물 0.258% · 합 **11.600%** (`FILL` 11.6%) · 어긋남 나무 +0.79% · 돌 -3.53% · 광물 -0.06% · `REACH` 나무 0.2201 · 돌 1.0 · 광물 0.4470 · `ORE_MIN_HEIGHT` 를 0.05 올리면 광물의 `REACH` 가 19.5% 움직인다 · 대조군 ① 은 `178 passed, 2 failed`(빨개진 둘이 **이번에 넣은 둘**이다) · 표는 `NUMBERS.md` 6b절
+- 남긴 것: **36 : 8 : 1 은 사람이 정할 자리표시자다** — 백로그가 예로 든 3 : 2 : 1 을 쓰면 광물이 6배가 되어 통화가 돌만큼 흔해진다(GDD C-5). 값이 아니라 **순서**(나무 > 돌 > 광물)만 검사가 지킨다. **옆 세션과 워킹트리를 공유하는 것 자체가 열린 문제다** — 이번에는 알아채고 되살렸지만 「초록인데 코드가 없다」가 다시 날 수 있는 자리다. `test_trees_clump_into_forests` 의 뭉침 배수는 문턱 1.5 와의 여유가 1.3배뿐이라 다음에 다시 잴 자리다. `last-full-redteam` 은 여전히 25 다
+- 날짜: 2026-09-15
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 50개 스크립트, 실패 0 · 3 TESTS 180 passed, 0 failed · 4 TESTS 180 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  70/90줄 · 6 SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  0 s (위상 0.250 · 낮 · 밝기 1.000)  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34) · 8   ok   공백 든 경로를 통째로 지운다 / WORKTREE SELFTEST 45 passed, 0 failed (바닥 45) · 9   ok   세션에게 주는 꼬리 2 절이 남기는 3 절 안에 든다 / STATE SELFTEST 26 passed, 0 failed (바닥 26)
+- 비용: $158.6004 누적
+- 커밋: `668b641`
+
 ## 회차 37 · **돌·광물도 다시 자란다 — 나무보다 느리게** (2026-09-15 사람이 정했다)
 - 문제: 값은 `REGROW_DAYS` 의 두 줄인데, 그 두 줄이 **회차 30 부터 한 번도 안 쓰인
   코드 경로를 열었다.** `_due` 의 이진 삽입이다 — 한 종류만 자랄 때는 넣는 순서가
