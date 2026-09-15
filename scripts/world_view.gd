@@ -81,17 +81,22 @@ static func tile_count(view: Rect2) -> int:
 
 ## ── 그 칸이 무슨 색인가 ──────────────────────────────────────────────
 
-static func color_at(world_seed: int, x: int, y: int) -> Color:
-	var c := base_color(world_seed, x, y)
+## `cleared` 는 **사람이 없앤 칸**이다 (회차 29 · `WorldState`). 그리는 쪽이 이미
+## 아는 것을 여기서 다시 묻지 않는다: bool 하나면 되는데 배치를 되물으면 **한 칸마다
+## 잡음을 한 번 더 푼다** — 한 화면이 2135칸이라 그대로 프레임 예산에 들어간다.
+static func color_at(world_seed: int, x: int, y: int, cleared := false) -> Color:
+	var c := base_color(world_seed, x, y, cleared)
 	var d := (WorldGen.unit(world_seed ^ TINT_SALT, x, y) - 0.5) * 2.0 * TINT
 	return Color(clampf(c.r + d, 0.0, 1.0), clampf(c.g + d, 0.0, 1.0), clampf(c.b + d, 0.0, 1.0))
 
 ## 흔들기 전의 색 — 지형, 그리고 그 위에 선 것.
 ## **높이를 한 번만 푼다**: 지형색도 오브젝트 배치도 같은 높이를 쓴다.
-static func base_color(world_seed: int, x: int, y: int) -> Color:
+static func base_color(world_seed: int, x: int, y: int, cleared := false) -> Color:
 	var h := WorldGen.height_at(world_seed, x, y)
 	var ground := terrain_at_height(h)
-	var kind := WorldObjects.at_height(world_seed, x, y, h)
+	# **벤 칸은 도로 맨땅이다** (GDD A-4 · WorldObjects 머리말): 지형을 바꾸지 않고
+	# 놓인 것만 지웠으므로, 색도 지형색 그대로 돌아간다.
+	var kind := WorldObjects.NONE if cleared else WorldObjects.at_height(world_seed, x, y, h)
 	if kind == WorldObjects.NONE:
 		return ground
 	return object_color(kind).lerp(ground, GROUND_MIX)
@@ -103,6 +108,18 @@ static func object_color(kind: int) -> Color:
 		WorldObjects.ROCK: return ROCK_COLOR
 		WorldObjects.ORE: return ORE_COLOR
 	return GRASS                         # NONE 은 여기까지 안 온다
+
+## ── 바닥에 떨어진 것 ────────────────────────────────────────────────
+
+## 바닥에 떨어진 것의 네모(월드 픽셀). **휘두르는 네모와 같은 반 칸**이다 —
+## 벤 것이 손에 쥔 것과 같은 크기로 떨어져야 「저게 그거다」가 읽힌다.
+## 칸을 통째로 칠하지 않는 것이 요점이다: 떨어진 것은 **땅 위에 놓인 물건**이라
+## 둘레에 바닥이 보여야 하고, 안 그러면 나무를 벤 자리가 다른 오브젝트로 보인다.
+## 색은 `HotbarView.item_color` 가 준다 — 핫바·손·바닥이 **한 곳에서** 나온다.
+const DROP := PlayerMotion.TILE * 0.5
+
+static func drop_rect(pos: Vector2) -> Rect2:
+	return Rect2(pos - Vector2(DROP, DROP) * 0.5, Vector2(DROP, DROP))
 
 ## 흔들기 전의 지형색. 부등식을 재는 검사가 읽으라고 밖으로 냈다.
 static func terrain_color(world_seed: int, x: int, y: int) -> Color:

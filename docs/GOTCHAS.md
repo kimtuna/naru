@@ -48,6 +48,13 @@
 - **타입 추론이 안 되는 대입은 파스 에러다.** `var s := load(...).instantiate()` 는
   실패한다 — `var s: Node = packed.instantiate()` 처럼 타입을 적는다.
 
+- **파스가 깨진 `test_*.gd` 는 러너가 조용히 건너뛴다.** `run_tests.gd` 는 파일을
+  `load()` 해서 `test_` 메서드를 찾는데, 파스가 깨진 스크립트는 메서드가 하나도 없는
+  객체로 와서 **`0 passed, 0 failed` 도 아니고 아예 안 세어진다** — 회차 29 가 새 검사
+  11개를 넣고 `TESTS 121 passed, 0 failed` 를 초록으로 받았다(기대 132).
+  **잡는 것은 `check.sh parse` 다** — `unit` 만 돌리는 동안에는 개수가 안 는 것으로만 보인다.
+  새 검사 파일을 만든 회차는 **개수가 는 것을 눈으로 확인해라.**
+
 ## macOS
 
 - **`timeout` 이 없다.** `tools/loop/godot.sh` / `withtimeout.sh` 가 프로세스 **그룹째**

@@ -20,8 +20,13 @@ extends Node2D
 ## 카메라의 위치·줌이 전부 그 안에 들어 있다.
 ##
 ## **좌클릭은 손에 든 것으로 간다** (GDD D-2c): 무엇을 하는지는 「무엇을 눌렀나」가
-## 아니라 「무엇을 겨눴나」가 정하므로 버튼은 하나다. 여기서는 **손에 든 것의 색을
-## 플레이어에게 넘기는 것**까지만 한다 — 맞힐 것은 놓였지만 판정은 벌목·채광이 가져온다.
+## 아니라 「무엇을 겨눴나」가 정하므로 버튼은 하나다. 모션은 `Player` 가, **판정은
+## `Harvest` 가** 한다 — 여기는 둘을 잇는 한 줄이다 (회차 29 벌목).
+##
+## **월드의 바뀐 것은 `WorldState` 가 들고 있다.** 배치는 씨앗에서 나오는 순수 함수라
+## 상태가 없어서, 벤 칸도 바닥에 떨어진 것도 적을 자리가 없었다 (회차 24 가 남긴 물음).
+## 그리는 쪽·막는 쪽이 **둘 다 그 하나**를 본다: 나무를 베면 화면에서 사라지고 그 자리로
+## 걸어 들어갈 수 있다 — 한쪽만 고쳐지면 「벤 자리에 몸이 낀다」가 된다.
 ##
 ## **핫바는 화면에 못 박혀 있다** (GDD D-2c): `UI` 는 `CanvasLayer` 라 카메라를 안 탄다.
 ## 숫자키를 읽어 손을 옮기는 것도 여기서 한다 — `Hotbar` 는 순수 계산이라
@@ -35,6 +40,9 @@ const WORLD_SEED := 20260914
 
 @onready var _player: Player = $Player
 @onready var _hotbar_view: HotbarView = $UI/Hotbar
+
+## 씨앗 월드 위에 얹힌 **바뀐 것** — 벤 칸 · 바닥에 떨어진 것. 저장(P2d)이 먹을 자리다.
+var world := WorldState.new(WORLD_SEED)
 
 ## 손. 화면 아래 9칸 + 지금 든 칸 (GDD D-2c).
 var hotbar := Hotbar.new()
@@ -50,7 +58,13 @@ var _key_down := PackedByteArray()
 var drawn_tiles := 0
 
 ## 색을 다시 채운 횟수. 같은 이유로 밖에 낸다 — 캐시는 눈에 안 보인다.
+## **벌목 게이트(CHOP)가 이 수를 읽는다**: 헤드리스라 픽셀을 못 읽지만, 벤 뒤에
+## 이 수가 안 오르면 화면에는 나무가 그대로 남아 있다는 뜻이다.
 var cache_fills := 0
+
+## 지난 프레임에 그린 **바닥의 것**의 수. 칸과 따로 센다 — 같이 세면 「떨어진 것을
+## 하나도 안 그렸다」가 2135 라는 큰 수에 묻힌다.
+var drawn_drops := 0
 
 ## 마지막으로 색을 채우는 데 걸린 시간(µs). **한 프레임 예산 16667 µs 와 견주는 값이다.**
 var fill_usec := 0
@@ -93,8 +107,19 @@ func _ready() -> void:
 		WorldView.tile_count(visible_world_rect()), WorldGen.SIZE * WorldGen.SIZE])
 
 ## 플레이어를 월드에 꽂는다. **이 줄이 없으면 바다 위를 걸어다닌다.**
+##
+## **Callable 을 한 번만 만든다**: `WorldState` 가 없앤 칸의 사전을 참조로 넘기므로,
+## 나중에 벤 칸도 이미 꽂힌 이 Callable 이 그대로 본다.
 func _link_world() -> void:
-	_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)
+	_player.solid = world.solid()
+	world.changed.connect(_on_world_changed)
+
+## 월드의 한 칸이 바뀌었다. **색 캐시를 버린다** — 캐시는 「보이는 범위가 바뀔 때만」
+## 다시 채우므로, 제자리에 선 채로 나무를 베면 **벤 자리에 나무가 그대로 남는다.**
+## 빈 `Rect2i` 는 어떤 실제 범위와도 같을 수 없다(크기 0) — 그래서 버리는 표시로 쓴다.
+func _on_world_changed(_tile: Vector2i) -> void:
+	_cache_range = Rect2i()
+	queue_redraw()
 
 ## 카메라가 움직이면 보이는 월드 범위가 달라진다 — 타일은 월드에 고정돼 있으므로
 ## 다시 그려야 한다.
@@ -118,8 +143,14 @@ func _poll_hotbar() -> void:
 ## 숫자키가 직전 프레임을 들고 있어야 했던 것과 다른 자리다: 저쪽은 **한 번**이고
 ## 이쪽은 **누르는 동안 내내**다.
 func _poll_use() -> void:
-	if Input.is_action_pressed(USE_ACTION):
-		_player.use(HandSwing.color_for(hotbar.held_id()))
+	if not Input.is_action_pressed(USE_ACTION):
+		return
+	# **모션이 이번에 시작됐을 때만 판정한다.** `use()` 가 false 면 이미 휘두르는
+	# 중이라, 여기서 또 판정하면 한 번의 동작이 프레임 수만큼 맞힌다 —
+	# 나무 한 그루가 한 모션에 통째로 사라진다 (Harvest 머리말).
+	if not _player.use(HandSwing.color_for(hotbar.held_id())):
+		return
+	Harvest.hit(world, hotbar.held_id(), _player.position, _player.facing)
 
 ## 지금 화면에 걸리는 월드 범위(픽셀). 카메라의 위치·줌이 전부 여기 들어 있다.
 func visible_world_rect() -> Rect2:
@@ -137,6 +168,19 @@ func _draw() -> void:
 			draw_rect(Rect2(tx * t, ty * t, t, t), _cache[i])
 			i += 1
 	drawn_tiles = i
+	_draw_drops(visible_world_rect())
+
+## 바닥에 떨어진 것. **칸 위에, 플레이어 아래**다 — 캐릭터가 아이템에 가리면
+## 무엇을 밟고 섰는지 안 보인다 (플레이어는 자식 노드라 이 `_draw` 보다 뒤에 그려진다).
+## **보이는 것만 그린다**: 목록은 판이 길어질수록 늘어나는데 화면은 그대로다.
+func _draw_drops(view: Rect2) -> void:
+	drawn_drops = 0
+	for d in world.drops:
+		var r := WorldView.drop_rect(d["pos"])
+		if not view.intersects(r):
+			continue
+		draw_rect(r, HotbarView.item_color(d["id"]), true)
+		drawn_drops += 1
 
 func _fill_cache(r: Rect2i) -> void:
 	var t0 := Time.get_ticks_usec()
@@ -144,7 +188,7 @@ func _fill_cache(r: Rect2i) -> void:
 	var i := 0
 	for ty in range(r.position.y, r.position.y + r.size.y):
 		for tx in range(r.position.x, r.position.x + r.size.x):
-			_cache[i] = WorldView.color_at(WORLD_SEED, tx, ty)
+			_cache[i] = WorldView.color_at(WORLD_SEED, tx, ty, world.is_cleared(tx, ty))
 			i += 1
 	_cache_range = r
 	cache_fills += 1

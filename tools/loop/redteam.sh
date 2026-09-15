@@ -31,6 +31,8 @@ cp scripts/world_objects.gd "$BAK/" 2>/dev/null || true
 cp scripts/inventory.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar.gd "$BAK/" 2>/dev/null || true
 cp scripts/hand_swing.gd "$BAK/" 2>/dev/null || true
+cp scripts/harvest.gd "$BAK/" 2>/dev/null || true
+cp scripts/world_state.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
@@ -59,6 +61,8 @@ restore() {
   cp "$BAK/inventory.gd" scripts/inventory.gd 2>/dev/null || true
   cp "$BAK/hotbar.gd" scripts/hotbar.gd 2>/dev/null || true
   cp "$BAK/hand_swing.gd" scripts/hand_swing.gd 2>/dev/null || true
+  cp "$BAK/harvest.gd" scripts/harvest.gd 2>/dev/null || true
+  cp "$BAK/world_state.gd" scripts/world_state.gd 2>/dev/null || true
   cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
@@ -268,7 +272,7 @@ python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    "\t_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)", "\tpass", 1))
+    "\t_player.solid = world.solid()", "\tpass", 1))
 PYX
 expect 1 "main 이 월드를 안 꽂으면 실측이 잡는다 (막는 칸이 하나도 없다)"
 cp "$BAK/main.gd" scripts/main.gd
@@ -307,8 +311,8 @@ python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    "\t_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)",
-    "\t_player.solid = WorldCollide.solid_from_seed(WORLD_SEED)\n"
+    "\t_player.solid = world.solid()",
+    "\t_player.solid = world.solid()\n"
     "\tvar cam: Camera2D = _player.get_node(\"Camera\")\n"
     "\tcam.position_smoothing_enabled = true\n\tcam.position_smoothing_speed = 2.0", 1))
 PYX
@@ -1018,8 +1022,8 @@ cp "$BAK/measure_collide.gd" tools/tests/measure_collide.gd
 python3 - <<'PYX'
 import io
 p='tools/tests/measure_headless.gd'; s=io.open(p,encoding='utf-8').read()
-old = 'const ORDER := ["move", "world", "collide", "camera"]'
-new = 'const ORDER := ["move", "world", "collide"]'
+old = 'const ORDER := ["move", "world", "collide", "camera", "chop"]'
+new = 'const ORDER := ["move", "world", "collide", "camera"]'
 io.open(p,'w',encoding='utf-8').write(s.replace(old, new, 1))
 PYX
 expect 1 "구간을 조용히 빼면 tests 가 잡는다 (나머지는 다 초록이고 exit 0)"
@@ -1039,6 +1043,65 @@ expect 1 "앞 구간이 씬을 두고 가면 tests 가 잡는다 (카메라가 �
 cp "$BAK/measure_collide.gd" tools/tests/measure_collide.gd
 
 expect 0 "원복하면 한 프로세스 실측도 다시 초록이다"
+
+# ── 회차 29 벌목 ──────────────────────────────────────────────────────
+section "회차 29 벌목"
+#
+# 겨누는 것은 **판정이 게임에 안 꽂힌 채로 초록인 상태**다. `Harvest` 는 순수 계산이라
+# 단위 검사 132개로 구석까지 물을 수 있는데, **main.gd 가 그걸 한 줄도 안 부르면**
+# 좌클릭은 모션만 나오고 나무는 그대로다 — 그런데 132개가 전부 초록이다.
+# 회차 3(속도) · 5(방향) · 24(배치)와 같은 모양의 구멍이고, CHOP 이 그 자리다.
+
+# ① **판정을 아예 안 부른다.** 모션은 그대로 나오므로 USE 도 초록이고,
+#    단위 검사도 전부 초록이다 — **CHOP 하나만** 빨갛다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tHarvest.hit(world, hotbar.held_id(), _player.position, _player.facing)", "\tpass", 1))
+PYX
+expect 1 "판정을 안 부르면 tests 가 잡는다 (좌클릭이 모션만 내고 나무는 그대로)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ② **베고 나서 화면을 안 다시 칠한다.** 나무는 진짜로 없어지고 그 칸도 안 막으므로
+#    단위 검사는 물론 CHOP 의 ②③④ 도 전부 초록이다 — 사람 눈에만 **벤 자리에 나무가
+#    그대로 남는다.** 색 캐시가 「보이는 범위가 바뀔 때만」 채우기 때문이다.
+python3 - <<'PYX'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "func _on_world_changed(_tile: Vector2i) -> void:\n\t_cache_range = Rect2i()",
+    "func _on_world_changed(_tile: Vector2i) -> void:", 1))
+PYX
+expect 1 "벤 뒤 캐시를 안 버리면 tests 가 잡는다 (화면에 나무가 그대로 남는다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ③ **맨손으로도 베인다.** 도구가 판정을 가르는 것이 벌목의 절반이다 —
+#    빈 손이 「아무 도구나」가 되면 도끼를 만들 이유가 없어진다 (BACKLOG P3 제작).
+python3 - <<'PYX'
+import io
+p='scripts/harvest.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tif held_id == Inventory.EMPTY or kind == WorldObjects.NONE:",
+    "\tif kind == WorldObjects.NONE:", 1).replace(
+    "\treturn tool_for(kind) == held_id",
+    "\treturn tool_for(kind) == held_id or held_id == Inventory.EMPTY", 1))
+PYX
+expect 1 "맨손으로도 베이면 tests 가 잡는다 (도구가 판정을 안 가른다)"
+cp "$BAK/harvest.gd" scripts/harvest.gd
+
+# ④ **베는데 아무것도 안 떨어진다.** 나무는 없어지고 칸도 뚫리므로 「베였다」는
+#    맞는데 산출이 통째로 증발한다 — 인벤토리가 삼키는 것(회차 25)과 같은 종류다.
+python3 - <<'PYX'
+import io
+p='scripts/harvest.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tworld.add_drop(drop_for(kind), drop_amount(kind),\n\t\tPlayerMotion.tile_center(tile.x, tile.y))\n", "", 1))
+PYX
+expect 1 "벤 것이 바닥에 안 떨어지면 tests 가 잡는다 (산출이 증발한다)"
+cp "$BAK/harvest.gd" scripts/harvest.gd
+
+expect 0 "원복하면 벌목도 다시 초록이다"
 
 
 echo

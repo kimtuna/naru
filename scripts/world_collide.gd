@@ -42,11 +42,18 @@ const EPS := 0.01
 ##
 ## **바다 + 땅에 선 것.** 나무를 통과해 걸을 수 있으면 도끼를 들 이유가 없다.
 ## 높이를 한 번만 풀어 둘 다에 쓴다 — 한 물리 틱에 네 번쯤 묻는 자리다.
-static func solid_from_seed(world_seed: int) -> Callable:
+##
+## **`cleared` 는 사람이 없앤 칸이다** (회차 29 · `WorldState`). 벤 나무가 계속 몸을
+## 막으면 「베었다」가 거짓말이 된다. 사전을 **참조로** 들고 있으므로 나중에 벤 칸도
+## 같은 Callable 이 본다 — 벨 때마다 다시 꽂을 필요가 없다.
+## **막는 규칙은 여기 한 벌뿐이다**: `WorldState.solid()` 도 이 함수를 부른다.
+static func solid_from_seed(world_seed: int, cleared := {}) -> Callable:
 	return func(tx: int, ty: int) -> bool:
 		var h := WorldGen.height_at(world_seed, tx, ty)
 		if WorldGen.kind_at_height(h) == WorldGen.WATER:
 			return true
+		if cleared.has(Vector2i(tx, ty)):
+			return false
 		return WorldObjects.at_height(world_seed, tx, ty, h) != WorldObjects.NONE
 
 ## `pos` 에서 `motion` 만큼 가려다 막히면 벽 앞에 멈춘 자리를 준다.

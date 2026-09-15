@@ -48,9 +48,9 @@ step_unit() {
   [ $rc -eq 0 ]
 }
 
-# 실측 게이트 7종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·VIEW+DRAW) — **엔진을 4번 띄운다.**
+# 실측 게이트 8종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·CHOP·VIEW+DRAW) — **엔진을 4번 띄운다.**
 # 회차 27 까지는 7번이었다. 합칠 수 있는 것은 두 갈래로 이미 합쳐져 있다:
-#   `measure_headless.gd`  MOVE·WORLD·COLLIDE·CAMERA — 창이 필요 없는 넷 (회차 27)
+#   `measure_headless.gd`  MOVE·WORLD·COLLIDE·CAMERA·CHOP — 창이 필요 없는 다섯 (회차 27·29)
 #   `measure_window.gd`    VIEW·DRAW·HOTBAR·USE — 창이 필요한 넷 (회차 14)
 # 남은 둘은 **합칠 수 없어서** 따로 돈다: WORLD 의 두 번째 프로세스(「다른 프로세스에서도
 # 같은가」가 묻는 것 자체다)와 FACE(제 SubViewport 를 세우고 `gui_disable_input` 을 끈다).
@@ -59,8 +59,8 @@ step_unit() {
 # **한 프로세스가 여러 구간을 재면 「반쪽만 돌고 죽어도 초록」이 열린다** (회차 14 가
 # `WINGATE` 로 배운 것): 앞 구간이 조용히 죽으면 뒤 구간은 아예 안 돌고 프로세스는
 # exit 0 으로 끝난다. 그래서 **구간마다 제 요약 줄을 찍었는지 전부 본다** — 그리고
-# 「넷 다 돌았다」를 찍는 줄(`HEADGATE ... 구간 4/4`)까지 본다.
-# **넷이라는 수를 여기가 안다**: 게이트 쪽은 「몇 구간을 돌았나」만 찍으므로
+# 「다섯 다 돌았다」를 찍는 줄(`HEADGATE ... 구간 5/5`)까지 본다.
+# **다섯이라는 수를 여기가 안다**: 게이트 쪽은 「몇 구간을 돌았나」만 찍으므로
 # 한 파일만 고쳐서는 초록이 안 된다.
 _need() {   # _need <출력> <정규식> <이름>
   local out="$1" re="$2" name="$3"
@@ -80,16 +80,20 @@ step_measure() {
   #            WorldCollide 가 맞아도 main.gd 가 월드를 안 꽂으면 바다 위를 걸어간다.
   #   CAMERA   네 방향으로 걸으면서 **매 프레임** 플레이어가 화면 한가운데인지 · 줌이 1인지.
   #            씬에 zoom=1 이 박혀 있어도 실행 중에 코드가 줌을 걸면 단위 검사는 초록이다.
+  #   CHOP     **좌클릭을 쥐고 나무를 벤다.** 맨손으로는 안 베이고, 도끼를 들면 나무가
+  #            없어지고, 벤 칸이 안 막고, 목재가 바닥에 떨어지고, 화면을 다시 칠한다.
+  #            Harvest 가 맞아도 main.gd 가 그걸 안 부르면 단위 검사는 전부 초록이다.
   local hout hrc miss=0
   hout="$("$G" 180 -- --headless --path "$ROOT" --script res://tools/tests/measure_headless.gd 2>&1)"; hrc=$?
   # `^WORLD [0-9]` 인 이유: 메인 씬이 `_ready` 에서 `WORLD    씨앗 ...` 를 찍는다 —
   # COLLIDE·CAMERA 가 그 씬을 세우므로 같은 출력에 섞인다 (회차 27).
-  printf '%s\n' "$hout" | grep -E '^(MOVE |WORLD [0-9]|WORLDGEN |COLLIDE |CAMERA |HEADGATE )'
+  printf '%s\n' "$hout" | grep -E '^(MOVE |WORLD [0-9]|WORLDGEN |COLLIDE |CAMERA |CHOP |HEADGATE )'
   _need "$hout" '^MOVE (ok|FAIL)'      MOVE     || miss=1
   _need "$hout" '^WORLDGEN '           WORLD    || miss=1
   _need "$hout" '^COLLIDE (ok|FAIL)'   COLLIDE  || miss=1
   _need "$hout" '^CAMERA (ok|FAIL)'    CAMERA   || miss=1
-  _need "$hout" '^HEADGATE .*구간 4/4' HEADGATE || miss=1
+  _need "$hout" '^CHOP (ok|FAIL)'      CHOP     || miss=1
+  _need "$hout" '^HEADGATE .*구간 5/5' HEADGATE || miss=1
   [ "$miss" -eq 0 ] || return 1
   [ $hrc -eq 0 ] || return 1
 
