@@ -1743,7 +1743,7 @@ cp "$BAK/main.gd" scripts/main.gd
 # ⑥ **가방에서 핫바로 못 간다.** 항목의 절반이 통째로 죽는다 — 「가방 ↔ 핫바를
 #    오간다」가 이 한 줄에 달려 있다. 가방 안에서만 옮기는 것은 여전히 되므로
 #    **집기만 재는 게이트는 이걸 못 본다**: GRAB ② 가 핫바 9번 칸을 겨누는 이유다.
-mut scripts/main.gd '^\t\t\tmoved = grab\.click\(hotbar\.items, i\)$' '\t\t\tmoved = false'
+mut scripts/main.gd '^\t\t\tmoved = grab\.click_alt\(hotbar\.items, i\) if alt else grab\.click\(hotbar\.items, i\)$' '\t\t\tmoved = false'
 expect 1 "핫바로 못 넘어가면 실측이 잡는다 (가방 ↔ 핫바)"
 cp "$BAK/main.gd" scripts/main.gd
 
