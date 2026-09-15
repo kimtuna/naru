@@ -1288,10 +1288,9 @@ python3 - <<'PYW'
 import io
 p='scripts/claim.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    '	BODY: "플레이어가 서 있는 칸',
-    '	&"제작대": "사람이 놓은 제작대 — 그 위에 나무가 자라면 집 안에 숲이 선다",
-'
-    '	BODY: "플레이어가 서 있는 칸', 1))
+    '\tBODY: "플레이어가 서 있는 칸',
+    '\t&"제작대": "사람이 놓은 제작대 — 그 위에 나무가 자라면 집 안에 숲이 선다",\n'
+    '\tBODY: "플레이어가 서 있는 칸', 1))
 PYW
 expect 1 "차지 종류를 선언만 하고 안 꽂으면 tests 가 잡는다 (집 거실에 나무가 선다)"
 cp "$BAK/claim.gd" scripts/claim.gd
@@ -1303,9 +1302,7 @@ python3 - <<'PYW'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    "	world.occupied = claim.covers
-", "	world.occupied = _body_covers
-", 1))
+    "\tworld.occupied = claim.covers\n", "\tworld.occupied = _body_covers\n", 1))
 PYW
 expect 1 "월드가 차지 목록을 안 거치면 tests 가 잡는다 (설치물을 영영 안 묻는다)"
 cp "$BAK/main.gd" scripts/main.gd

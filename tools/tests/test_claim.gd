@@ -40,7 +40,9 @@ func test_one_source_covers_only_its_own_tile() -> void:
 	check(c.covers(T), "몸이 선 칸을 안 막는다")
 	check(not c.covers(U), "옆 칸까지 막는다")
 	eq(c.holder(T), Claim.BODY, "그 칸의 임자")
-	eq(c.missing().size(), 0, "몸을 꽂은 뒤 빠진 종류의 수")
+	# **「빠진 것이 0 개」로 안 적는다**: 나중에 제작대가 선언되면 이 검사가 그것 때문에
+	# 빨개져서, 정작 고쳐야 할 곳(main.gd 의 add 한 줄)이 아닌 데를 보게 된다.
+	check(not c.missing().has(Claim.BODY), "몸을 꽂았는데 아직 빠진 것으로 센다")
 
 ## **출처가 둘이면 둘 다 묻는다.** 첫 번째에서 멈추면 나중에 꽂은 설치물이
 ## 영영 안 물어지고, 「등록은 했는데 안 본다」가 된다.

@@ -113,9 +113,9 @@ func _setup() -> bool:
 			"main.gd 가 꽂은 Callable")
 		return _stop()
 	if not _check_claim():
-		return _stop()
+		return _stop("차지 목록이 계약을 어겼다")
 	if not _find_tree():
-		return _stop()
+		return _stop("설 자리를 못 잡았다")
 	_player.position = PlayerMotion.tile_center(_stand.x, _stand.y)
 	_player.velocity = Vector2.ZERO
 	_now0 = _main.world.now
@@ -262,9 +262,11 @@ func _summary(world, claim) -> bool:
 	return true
 
 ## 게이트가 죽을 때도 **제 요약 줄을 남긴다** — 침묵은 초록으로 읽히면 안 된다.
-func _stop() -> bool:
+## **왜 죽었는지를 그 줄에 적는다**: 배선이 틀려도 「설 자리를 못 잡았다」가 뜨면
+## 다음 사람이 나무부터 찾으러 간다 (회차 32 가 제 대조군에서 겪었다).
+func _stop(why := "세우다 죽었다") -> bool:
 	bad += 1
-	print("REGROW FAIL %d개 (설 자리를 못 잡았다)" % bad)
+	print("REGROW FAIL %d개 (%s)" % [bad, why])
 	_done = true
 	return true
 
