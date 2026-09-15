@@ -8,3 +8,4 @@
 6	**월드를 화면에 그린다** — 보이는 칸만. `main.gd` 의 임시 격자를 걷어낸다	tools/loop/shot.sh /tmp/w.png
 7	**일지 뽑기 게이트를 상태 검사 기준으로 올린다** — 회차 22 가 만든	bash tools/loop/journal.sh selftest
 8	**세션이 손으로 깨뜨린 것을 반드시 되돌린다** — 회차 24 가 대조군 하나를	bash tools/loop/worktree-selftest.sh
+9	**doclen 이 `roll_state` 보다 먼저 돈다** — 기준 5 는 판정(7)에서 재는데	bash tools/loop/state-selftest.sh
