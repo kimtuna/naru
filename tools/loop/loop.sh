@@ -53,6 +53,19 @@ stop() {                                  # stop <사유>
 # ── 백로그에서 다음 미완료 항목 한 줄 ──────────────────────────────
 next_item() { grep -n -m1 '^- \[ \] ' docs/BACKLOG.md || true; }
 
+# ── 그 줄이 어느 단계(P0·P1·P2…)에 속하나 ───────────────────────────
+#
+# 큰 검사를 **단계 경계**에서 돌리기 위한 것이다 (2026-09-15 사람이 정했다).
+# 줄 번호에서 **위로** 올라가며 가장 가까운 `## P<숫자>` 제목을 찾는다 — 백로그가
+# 단계순으로 적혀 있어서 그게 곧 그 항목의 단계다. 못 찾으면 빈 글자다
+# (단계 밖 항목 — 경계로 안 센다).
+phase_at() {                              # phase_at <줄번호>
+  [ -z "${1:-}" ] && { printf ''; return; }
+  sed -n "1,${1}p" docs/BACKLOG.md \
+    | grep -oE '^## P[0-9][a-z]*' | tail -1 | sed 's/^## //'
+}
+phase_of_next() { local l; l="$(next_item)"; phase_at "${l%%:*}"; }
+
 # 항목 줄에서 설명과 verify 명령을 가른다.
 desc_of()   { printf '%s' "${1%%| verify:*}" | sed 's/^- \[[ x]\] *//; s/[[:space:]]*$//'; }
 verify_of() {
@@ -179,16 +192,51 @@ finish_journal() {                        # finish_journal <회차> <항목> <�
 full_redteam_if_due() {
   [ "$DRY" = "1" ] && return 0
   [ "$FULL_REDTEAM_EVERY" -le 0 ] && return 0
-  local last=0
-  [ -f "$ROOT/.loop/last-full-redteam" ] && last="$(cat "$ROOT/.loop/last-full-redteam")"
-  [ $(( turn - last )) -lt "$FULL_REDTEAM_EVERY" ] && return 0
-  say "대조군 전체 쓸기 (마지막 $last 회차 · 지금 $turn 회차) — 몇 분 걸린다"
+  local ok=0 tried=0 last=0 why=""
+  [ -f "$ROOT/.loop/last-full-redteam" ]       && ok="$(cat "$ROOT/.loop/last-full-redteam")"
+  [ -f "$ROOT/.loop/last-full-redteam-tried" ] && tried="$(cat "$ROOT/.loop/last-full-redteam-tried")"
+  last="$ok"; [ "$tried" -gt "$last" ] && last="$tried"
+  # **단계(P0·P1·P2…)를 하나 끝냈으면 쓴다** (2026-09-15 사람이 정했다). 숫자 N 회차는
+  # 아무 뜻이 없는 경계다 — 「기능 한 덩어리가 닫혔으니 옛것이 안 죽었나 보자」가 뜻이
+  # 있다. 실측 간격도 비슷하다: P2 11개 · P2d 5 · P3 6 · P4 4 · P5 8 · P6 4 회차.
+  if [ -n "${1:-}" ] && [ "${1:-}" != "${2:-}" ]; then
+    why="단계 $1 을 끝냈다 → ${2:-단계 밖}"
+  # **긴 단계의 보험.** 20개짜리 단계가 생기면 9시간 동안 한 번도 안 쓸어서 죽은
+  # 게이트를 아무도 모른다. 둘 중 **먼저 오는 것**으로 한다.
+  elif [ "$FULL_REDTEAM_EVERY" -gt 0 ] && [ $(( turn - last )) -ge "$FULL_REDTEAM_EVERY" ]; then
+    why="$FULL_REDTEAM_EVERY 회차가 지났다 (단계가 안 닫혔다)"
+  else
+    return 0
+  fi
+  say "대조군 전체 쓸기 — $why (마지막 통과 $ok · 시도 $tried · 지금 $turn) — 몇 분 걸린다"
+  # **성공만 적으면 실패가 매 회차 되풀이된다.** `last-full-redteam` 은 통과할 때만
+  # 올라간다 — 그래서 한 번 빨개지면 **매 회차 끝에 50분짜리 쓸기가 붙었다**
+  # (33·34·35 회차가 연달아 그랬다: 바퀴당 32분 → 76분, 4배). **돌리기 전에 적는다** —
+  # 쓸기가 한가운데서 죽어도(19:42 가 그랬다) 다음 판이 또 50분을 안 태운다.
+  echo "$turn" > "$ROOT/.loop/last-full-redteam-tried"
   if bash tools/loop/redteam.sh > "$RD/redteam-full.txt" 2>&1; then
     tail -1 "$RD/redteam-full.txt" | sed 's/^/    /'
     echo "$turn" > "$ROOT/.loop/last-full-redteam"
   else
     tail -3 "$RD/redteam-full.txt" | sed 's/^/    /'
-    stop "대조군 전체에서 놓친 것이 나왔다 — $RD/redteam-full.txt"
+    # **멈추지 않는다 — 할 일로 적고 다음 회차가 바로 고친다** (2026-09-15 사람이 정했다).
+    # 예전엔 여기서 `stop` 이었다. 사람이 결과 파일을 읽고 항목을 손으로 적어야 했고,
+    # 그 「사람이 올 때까지」가 로그에서 몇 시간이었다. 루프가 스스로 고칠 수 있는 일을
+    # 안 하고 서 있는 것이 더 비싸다.
+    #
+    # **원칙을 한 칸 무르게 하는 것은 맞다**(「회귀면 멈춘다」). 그래서 둘로 받친다:
+    #   ① 적는 자리가 **백로그의 다음 항목 바로 앞**이다 — 눈이 먼 상태는 **한 회차**다
+    #   ② 일지·대시보드에 남으므로 사람이 다음에 볼 때 반드시 눈에 띈다
+    if bash tools/loop/file_findings.sh "$RD/redteam-full.txt" "$turn" 2>&1 | sed 's/^/    /'; then
+      if [ -n "$(git status --porcelain docs/BACKLOG.md)" ]; then
+        git add docs/BACKLOG.md
+        git -c user.name=loop -c user.email=loop@local commit -q \
+          -m "쓸기가 놓친 게이트를 할 일로 적는다 (회차 $turn)" || true
+      fi
+      say "→ 백로그 맨 앞에 적었다. 다음 회차가 이것부터 집는다"
+    else
+      stop "쓸기가 놓친 것을 할 일로 적지 못했다 — 사람이 봐야 한다 ($RD/redteam-full.txt)"
+    fi
   fi
 }
 
@@ -264,14 +312,45 @@ cycle=0
 last_item=""
 fails=0
 
-while [ "$cycle" -lt "$MAX_CYCLES" ]; do
+# **`MAX_CYCLES=0` 이면 끝없이 돈다** (2026-09-15 사람이 정했다). 회차 수로 끊는 것은
+# 로그에서 **사람을 기다린 2316분 중 1285분(57%)** 을 먹었다 — `start 1` 로 7번 켰고,
+# 30분 뒤에 일을 끝내 놓고 몇 시간씩 서 있었다. **끊을 것은 회차 수가 아니라 돈**
+# (`BUDGET_USD`)**과 할 일**이다 (백로그가 비면 `ALL GREEN` 으로 멈춘다).
+while [ "$MAX_CYCLES" -eq 0 ] || [ "$cycle" -lt "$MAX_CYCLES" ]; do
   cycle=$((cycle+1))
-  say "───────── 회차 $cycle / $MAX_CYCLES ─────────"
+  if [ "$MAX_CYCLES" -eq 0 ]; then
+    say "───────── 회차 $cycle / 끝없이 ─────────"
+  else
+    say "───────── 회차 $cycle / $MAX_CYCLES ─────────"
+  fi
 
-  # 1) 워킹트리 — 이전 회차가 안 끝났으면 여기서 멈춘다
+  # 1) 워킹트리 — 이전 회차가 커밋 없이 끝났으면 **되돌리고 계속한다** (회차 39)
+  #
+  # **예전엔 여기서 멈췄다. 그게 이 루프에서 가장 비싼 한 줄이었다**: 2026-09-15
+  # 01:49:36 에 걸려 **아침 09:48 까지 8시간(479분)** 을 서 있었다 — 로그 전체에서
+  # 사람을 기다린 2316분 중 21% 가 이 한 번이다. 그런데 이 상태는 **드라이버가 혼자
+  # 고칠 수 있는 것**이다: 6c 가 세션 끝에 하는 일(증거 뜨고 HEAD 로 되돌리기)을
+  # 그대로 하면 된다. **혼자 고칠 수 있는 자리에서 멈추는 것이 제일 비싸다.**
+  #
+  # **왜 6c 로는 안 잡히나**: `wait_and_retry` 가 `cycle=$((cycle-1)); continue` 로
+  # 회차 머리로 되돌아온다 — 6b(일지)·6c(되돌리기)를 **건너뛴다**. 위 8시간이 정확히
+  # 그 길이었다(01:48:34 세션 끝 → 「일시적인 오류」로 오분류 → 다시 걸기 → 더러운 트리).
+  # 그래서 되돌리기가 **양쪽에** 있어야 한다.
+  #
+  # **게이트가 무뎌지지는 않는다**: 되돌리기가 제 일을 못 하면 그때는 멈춘다 —
+  # 되돌리지 못한 변경을 다음 회차가 그대로 커밋하면 고장이 역사에 굳는다 (회차 24).
   if [ -n "$(git status --porcelain)" ]; then
     git status --short
-    stop "워킹트리가 더럽다 — 이전 회차가 커밋 없이 끝났다"
+    if [ "$DRY" = "0" ]; then
+      mkdir -p "$RUNS"
+      say "회차 머리에 커밋 안 된 변경이 있다 — 증거를 뜨고 되돌린다:"
+      bash tools/loop/worktree.sh check 2>&1 | sed 's/^/    /'
+      bash tools/loop/worktree.sh save "$RUNS/head-leftover.patch" >/dev/null 2>&1 || true
+      bash tools/loop/worktree.sh restore 2>&1 | sed 's/^/    /'
+      bash tools/loop/worktree.sh check >/dev/null 2>&1 \
+        || stop "회차 머리의 변경을 되돌리지 못했다 — 사람이 봐야 한다 ($RUNS/head-leftover.patch)"
+      say "되돌렸다 — 같은 항목을 다시 건다 ($RUNS/head-leftover.patch)"
+    fi
   fi
 
   # 2) 다음 항목
@@ -279,7 +358,10 @@ while [ "$cycle" -lt "$MAX_CYCLES" ]; do
   [ -z "$line" ] && stop "ALL GREEN — 백로그에 미완료 항목이 없다"
   lineno="${line%%:*}"
   item="${line#*:}"
+  # **이 항목의 단계를 기억해 둔다** — 회차 끝에 다음 항목의 단계와 견주어 경계를 잡는다.
+  phase_before="$(phase_at "$lineno")"
   say "항목: $item"
+  [ -n "$phase_before" ] && say "단계: $phase_before"
 
   # 3) [ASK] 는 세션을 열지 않는다 — 답을 아는 주체가 세션이 아니다
   case "$item" in
@@ -490,7 +572,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     if [ "$DRY" = "0" ] && ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
       stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 회차 $turn)"
     fi
-    full_redteam_if_due
+    full_redteam_if_due "$phase_before" "$(phase_of_next)"
     push_state
     fails=0
   else
