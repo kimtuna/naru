@@ -7,5 +7,8 @@ SESSION_TIMEOUT="${SESSION_TIMEOUT:-2700}"   # 세션 한 번의 벽시계 상�
 PUSH="${PUSH:-1}"                        # 초록으로 닫힌 회차를 origin 으로 내보낸다
 MAX_WAIT_SEC="${MAX_WAIT_SEC:-21600}"    # 한도가 풀리기를 기다리는 상한 (초 · 6시간)
 LIMIT_WAIT_SEC="${LIMIT_WAIT_SEC:-1800}" # 언제 풀리는지 모를 때 기다리는 시간 (초 · 30분)
-MAX_RETRIES="${MAX_RETRIES:-5}"          # 일시적인 오류를 몇 번까지 다시 걸까
+MAX_RETRIES="${MAX_RETRIES:-20}"         # 일시적인 오류를 몇 번까지 다시 걸까.
+                                         # **네트워크 오류는 돈이 0원이다** — 요청이 API 에 닿지도
+                                         # 못했으니 토큰을 안 쓴다. 인색할 이유가 없다.
+RETRY_CAP_SEC="${RETRY_CAP_SEC:-300}"    # 재시도 간격 상한 (초). 20번 × 5분 ≈ 1시간 40분을 버틴다
 FULL_REDTEAM_EVERY="${FULL_REDTEAM_EVERY:-8}"  # 몇 회차마다 대조군 전체를 쓸까 (0 이면 안 함)

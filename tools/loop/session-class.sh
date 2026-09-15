@@ -58,10 +58,15 @@ if any(k in low for k in LIMIT) or re.search(r"(?:status|code|http|error)\D{0,8}
 
 # **맨 숫자로 판단하지 않는다.** 앞에 상태·오류를 뜻하는 말이 붙어야 한다.
 CODE = r"(?:status|code|http|error|오류)\D{0,8}(?:429|5\d\d)"
-WORDS = ("overloaded", "econnreset", "etimedout", "fetch failed", "socket hang up",
-         "network error", "internal server error", "service unavailable", "bad gateway")
+# **와이파이가 끊기면 제일 흔한 것이 DNS 실패다.** 이걸 빼놓으면 끊긴 순간
+# 「세션 실패」로 세서 같은 항목을 STUCK_LIMIT 번 태우고 멈춘다 — 재시도를 아예 안 한다.
+WORDS = ("overloaded", "econnreset", "etimedout", "econnrefused", "econnaborted",
+         "enotfound", "eai_again", "enetunreach", "ehostunreach", "enetdown",
+         "getaddrinfo", "fetch failed", "socket hang up", "network error",
+         "offline", "internal server error", "service unavailable", "bad gateway",
+         "connection refused", "could not resolve", "temporary failure in name resolution")
 if any(k in low for k in WORDS) or re.search(CODE, blob, re.I):
-    m = re.search(r"[^\n]*(?:overloaded|econnreset|etimedout|fetch failed|" + CODE + r")[^\n]*",
+    m = re.search(r"[^\n]*(?:" + "|".join(re.escape(w) for w in WORDS) + "|" + CODE + r")[^\n]*",
                   blob, re.I)
     print("retry", (m.group(0).strip()[:120] if m else "일시적인 오류"))
     sys.exit(0)

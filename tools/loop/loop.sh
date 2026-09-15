@@ -391,7 +391,8 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
         retry*)
           RETRY_N=$((RETRY_N+1))
           [ "$RETRY_N" -gt "$MAX_RETRIES" ] && stop "일시적인 오류가 ${RETRY_N}번 이어졌다 — ${kind#retry }"
-          secs=$(( 60 * (1 << (RETRY_N - 1)) )); [ "$secs" -gt 900 ] && secs=900
+          secs=$(( 60 * (1 << (RETRY_N - 1)) ))
+          [ "$secs" -gt "$RETRY_CAP_SEC" ] && secs="$RETRY_CAP_SEC"
           wait_and_retry "$secs" "일시적인 오류 (${RETRY_N}번째) — ${kind#retry }"
           cycle=$((cycle-1)); continue ;;
         *) RETRY_N=0 ;;

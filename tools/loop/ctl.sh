@@ -13,6 +13,12 @@ case "${1:-status}" in
     rm -f "$ROOT/.loop/STOPPED"
     nohup bash tools/loop/loop.sh "${2:-}" >>"$LOG" 2>&1 &
     echo $! > "$PIDF"
+    # **도는 동안 잠자기를 막는다.** 배터리로 바뀌면 macOS 가 1분 만에 재우고(pmset sleep 1)
+    # 그러면 세션이 한가운데서 얼어붙는다. `pmset` 으로 설정을 영구히 바꾸지 않는다 —
+    # 배터리 수명과 평소 쓰임을 건드릴 일이 아니다. **루프가 끝나면 저절로 풀린다.**
+    # 뚜껑을 닫는 잠자기는 이걸로도 못 막는다.
+    command -v caffeinate >/dev/null && \
+      nohup caffeinate -i -w "$(cat "$PIDF")" >/dev/null 2>&1 &
     sleep 1
     alive && echo "시작됨 (pid $(cat "$PIDF")) — ctl.sh logs 로 본다" \
           || { echo "시작 실패. 로그:"; tail -20 "$LOG"; exit 1; }
