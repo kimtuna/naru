@@ -65,12 +65,34 @@ extends SceneTree
 ## 할 수 있다.
 ##
 ## **가방이 월드를 가린다** — 그 자리를 판정하는 눈이 여기 말고는 없다. DRAW 는
-## **닫힌 화면**만 보므로 창이 떠 있는 동안의 픽셀을 한 점도 안 본다. 그래서 세 번 굽는다:
+## **닫힌 화면**만 보므로 창이 떠 있는 동안의 픽셀을 한 점도 안 본다. 그래서 네 번 굽는다:
 ##   ① 닫힌 채 — 창 자리가 **월드 색 그대로**여야 한다 (같은 `panel_rect` 로 자리를 낸다)
 ##   ② 연 채   — 18칸이 전부 제 색이고, **찬 칸과 빈 칸이 눈에 달라야** 한다
 ##   ③ 다시 닫고 — ① 과 **픽셀 하나까지 같아야** 한다 (닫아도 자국이 남으면 잡힌다)
+##   ④ **든 채** — 커서 자리에 든 무더기가 보이나 (아래)
 ## **DRAW 가 이 자리를 안 건너뛰는 것이 일부러다**: 누가 가방을 기본으로 열어 두면
 ## DRAW 가 「화면이 월드와 다르다」로 빨개진다.
+##
+## ── BAG ④ **커서에 든 것이 화면에 그려지나** (회차 45) ───────────────
+## 왜 앞의 셋으로 부족한가: `BagView._draw_grab` 을 **통째로 지워도 전부 초록이었다.**
+## GRAB(헤드리스)은 개수와 칸 번호만 보고 픽셀을 한 점도 안 보며, ①②③ 은 **빈 손으로만**
+## 굽는다. 사람 눈에는 「집었는데 뭘 들었는지 안 보인다」로만 나온다 — 회차 44 가
+## 남긴 구멍이 그대로 이 자리다.
+##
+## **진짜 물음은 「커서를 어떻게 겨누나」였다.** 이 게이트는 창을 띄우므로 루트 뷰포트의
+## 커서는 **OS 를 되묻는다** — 사람의 마우스가 어디 있는지 모르고, `warp_mouse` 로 뺏으면
+## 회차 8~11 이 네 회차를 태운 그 흔들림이 돌아온다.
+## **답: OS 커서를 안 겨눈다 — 씬을 제 `SubViewport` 에 한 벌 더 세우고 합성 커서를
+## 밀어 넣는다.** SubViewport 는 밀어 넣은 이벤트만 보므로 커서가 정확히 내가 둔
+## 자리에 있다 (GRAB 과 같은 길 · FACE 와 같은 이유). **그런데 헤드리스에서는 못 한다**:
+## 렌더러가 더미라 그 뷰포트의 텍스처가 빈다 (NUMBERS 3b절) — 그래서 이 구간만
+## 헤드리스 묶음이 아니라 **창 프로세스 안**에 산다. 창은 띄우되 재는 것은 창이 아니다.
+##
+## **두 자리에서 굽는다 — 이게 「커서를 따라가나」의 전부다**:
+##   ⓐ **빈 가방 칸 위** — 무더기가 칸보다 **위에** 그려지나 (아래로 들어가면 안 보인다)
+##   ⓑ **핫바 칸 위**   — 창 네모 **밖**에서도 그려지나 (Control 이 안 자른다)
+## 그리고 ⓑ 를 구울 때 **ⓐ 자리가 빈 손 때와 픽셀로 같아야** 한다 — 자리를 박아 놓고
+## 그리면 여기서 잡힌다. 「빈 손일 때는 아무것도 없다」는 굽는 순서(빈 손 먼저)가 답한다.
 ##
 ## 이름이 test_ 로 시작하지 않는다 — run_tests.gd 는 이 파일을 안 집는다.
 
@@ -154,6 +176,28 @@ const BAG_FILL_PROBE := Vector2(HotbarView.SLOT * 0.5, HotbarView.SLOT * 0.5)
 ## 창 바탕을 읽는 점 (창 왼쪽 위 모서리로부터). PAD(6px) 안쪽 · 칸 격자 밖이다 —
 ## 여기가 칸 바탕과 같은 색이면 창의 가장자리가 안 읽힌다.
 const BAG_PANEL_PROBE := Vector2(3.0, 3.0)
+
+# ── BAG ④ 기대값: 커서에 든 것 (회차 45) ────────────────────────────
+const HELD_ITEM := &"wood"         # 손에 올려 볼 것. 색이 칸 바탕·테두리와 달라야 한다
+const HELD_N := 7                  # 2개 이상이어야 개수 글자까지 같이 그려진다
+const HELD_SLOT := 0               # `add` 가 채우는 첫 칸 — 여기서 집어 올린다
+## 커서를 둘 두 자리. **빈 칸이어야** 「무더기가 칸 위에 있나」를 물을 수 있다.
+##   ⓐ 가방 둘째 줄 한가운데 칸 · ⓑ 핫바 8번 칸 — **x 도 y 도 다르다**
+## (한 축만 옮기면 「세로만 따라가는」 고장이 안 잡힌다). 든 칸(핫바 1번)과도 달라야
+## 테두리 색 판정이 공허하지 않다.
+const HELD_OVER_BAG := 13
+const HELD_OVER_HOT := 7
+## 커서 점으로부터의 탐침 셋. **`_draw_grab` 의 식을 안 빌린다** — 여기가
+## 「커서 한가운데에 칸 하나 크기로 그린다」를 **따로 적은 문장**이고, 빌려 쓰면
+## 자리를 통째로 옮겨도 둘이 나란히 틀려서 아무것도 안 잡는다.
+##   속     커서 바로 그 점 — **든 것의 색**. 이 한 점이 이 구간의 문장이다
+##   테두리 위쪽 변 한가운데 (두께 2px 안) — `EDGE_HELD` 여야 「손에 있는 것」이다
+##   바탕   테두리 밖 · 아이템 네모(안쪽 6px) 밖 — 칸과 같은 `BG`
+const HELD_FILL_PROBE := Vector2.ZERO
+const HELD_EDGE_PROBE := Vector2(0.0, -HotbarView.SLOT * 0.5 + 1.0)
+const HELD_BG_PROBE := Vector2(-HotbarView.SLOT * 0.5 + 4.0, -HotbarView.SLOT * 0.5 + 4.0)
+## 제 SubViewport 의 씬이 `_ready`(월드 배선)를 끝낼 때까지 기다리는 프레임.
+const HELD_WARMUP := 6
 
 # ── USE 기대값 ───────────────────────────────────────────────────────
 # **대상이 없어도 모션이 나온다** (BACKLOG P2). 이 게이트가 서는 자리가 그 문장이다:
@@ -816,7 +860,166 @@ func _measure_bag() -> void:
 		_bag_report()
 		return
 	_bag_same(shut, again, panel)
+
+	# ④ **든 채로 굽는다.** 제 SubViewport 를 세워 커서를 겨눈다 (머리말).
+	await _measure_held()
 	_bag_report()
+
+## ④ **커서에 든 것이 화면에 그려지나** (회차 45).
+##
+## 씬을 **한 벌 더** 세운다 — 루트의 것은 OS 커서를 되묻기 때문이다 (머리말).
+## 그러므로 여기서 재는 가방·핫바·손은 전부 **이 SubViewport 안의 것**이고,
+## 루트에 떠 있는 화면은 한 점도 안 건드린다.
+##
+## **전역 `Input` 을 안 쓴다.** `E` 도 좌클릭도 누르지 않는다 — 누르면 루트의 씬까지
+## 같이 반응해서 앞의 ①②③ 이 남긴 화면이 흐트러진다. 여는 것은 `toggle()`(창을 여는
+## 유일한 문)이고 집는 것은 `Grab.take`(계산 한 벌)다. **「키가 열리나 · 클릭이 집나」는
+## 여기의 물음이 아니다** — ② 와 GRAB 이 이미 그 둘을 판정한다. 이 구간의 물음은
+## **「집고 나면 그것이 커서 자리에 보이나」** 하나다.
+func _measure_held() -> void:
+	var sub := SubViewport.new()
+	sub.size = LOGICAL_I
+	sub.handle_input_locally = true
+	# **창에 안 붙는 뷰포트라 기본값(보일 때만)으로는 한 번도 안 그린다.**
+	sub.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	var scene: String = ProjectSettings.get_setting("application/run/main_scene")
+	var m: Node2D = load(scene).instantiate()
+	sub.add_child(m)
+	root.add_child(sub)
+	for i in HELD_WARMUP:
+		await process_frame
+	await RenderingServer.frame_post_draw
+
+	var view: Control = m.get_node_or_null("UI/Bag") as Control
+	if view == null or sub.get_visible_rect().size != Vector2(LOGICAL_I):
+		_bag_fail("든 채로 굽기 — 판", "UI/Bag %s · 뷰포트 %s" % [view, sub.get_visible_rect().size],
+			"SubViewport %s 안에 가방" % LOGICAL_I)
+		sub.queue_free()
+		return
+
+	# **판정이 공허하지 않은가**: 든 것의 색이 칸의 세 색과 구별돼야 한다.
+	var item: Color = HotbarView.item_color(HELD_ITEM)
+	for pair in [[HotbarView.BG, "칸 바탕"], [HotbarView.EDGE, "칸 테두리"],
+			[HotbarView.EDGE_HELD, "든 칸 테두리"], [BagView.PANEL, "창 바탕"]]:
+		if _near(item, pair[0] as Color):
+			_bag_fail("든 것의 색 (%s)" % HELD_ITEM,
+				"%s 와 같다 (%s)" % [pair[1], item.to_html(false)],
+				"네 색 전부와 %.1f/255 넘게 달라야 판정이 공허하지 않다" % (TOL * 255.0))
+
+	m.bag.add(HELD_ITEM, HELD_N)
+	view.toggle()
+	if not view.visible or m.bag.ids[HELD_SLOT] != HELD_ITEM:
+		_bag_fail("든 채로 굽기 — 차려 놓기",
+			"가방 열림 %s · %d번 칸 %s" % [view.visible, HELD_SLOT + 1, m.bag.ids[HELD_SLOT]],
+			"열려 있고 %d번 칸에 %s" % [HELD_SLOT + 1, HELD_ITEM])
+		sub.queue_free()
+		return
+
+	# ⓐ 자리에 커서를 두고 **빈 손으로 먼저** 굽는다 — 아래가 전부 이것과 견준다.
+	var a := BagView.slot_rect(HELD_OVER_BAG, Vector2(LOGICAL_I)).get_center()
+	var b := HotbarView.slot_rect(HELD_OVER_HOT, Vector2(LOGICAL_I)).get_center()
+	_aim(sub, a)
+	await _settle()
+	var bare := _bake_view(sub)
+	if bare == null:
+		_bag_fail("화면 (빈 손)", "SubViewport 텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
+		sub.queue_free()
+		return
+	# **빈 손이면 커서 자리는 그냥 빈 칸이다.** 여기가 이미 아이템 색이면 아래가 공허하다.
+	var bare_px := bare.get_pixel(int(a.x), int(a.y))
+	if not _near(bare_px, HotbarView.BG):
+		_bag_fail("빈 손인데 커서 자리에 무엇이 있다", bare_px.to_html(false),
+			"빈 칸 바탕 %s" % HotbarView.BG.to_html(false))
+
+	# 집는다 — 칸에서 커서로. **계산은 `Grab` 의 것이고 여기는 그림만 묻는다.**
+	if not m.grab.take(m.bag, HELD_SLOT) or m.grab.amount != HELD_N:
+		_bag_fail("든 채로 굽기 — 집기", "커서 %s %d개" % [m.grab.id, m.grab.amount],
+			"커서 %s %d개" % [HELD_ITEM, HELD_N])
+		sub.queue_free()
+		return
+	await _settle()
+	var at_a := _bake_view(sub)
+	_aim(sub, b)
+	await _settle()
+	var at_b := _bake_view(sub)
+	if at_a == null or at_b == null:
+		_bag_fail("화면 (든 채)", "SubViewport 텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
+		sub.queue_free()
+		return
+	_held_pixels(at_a, bare, a, "빈 가방 칸 %d 위" % (HELD_OVER_BAG + 1))
+	_held_pixels(at_b, bare, b, "핫바 %d번 칸 위 (창 밖)" % (HELD_OVER_HOT + 1))
+	# **커서를 따라간다** — 옮기고 나면 앞자리는 빈 손 때와 픽셀로 같아야 한다.
+	_held_left(at_b, bare, a)
+	view.toggle()
+	sub.queue_free()
+
+## 커서 자리의 세 점을 읽는다. `bare` 는 **빈 손으로 구운 같은 화면**이다.
+func _held_pixels(img: Image, bare: Image, at: Vector2, where: String) -> void:
+	var probes := {"속": [HELD_FILL_PROBE, HotbarView.item_color(HELD_ITEM)],
+		"테두리": [HELD_EDGE_PROBE, HotbarView.EDGE_HELD],
+		"바탕": [HELD_BG_PROBE, HotbarView.BG]}
+	var bad := 0
+	var changed := 0
+	var first := ""
+	for what in probes:
+		var probe: Vector2 = probes[what][0]
+		var want: Color = probes[what][1]
+		var sx := int(at.x + probe.x)
+		var sy := int(at.y + probe.y)
+		var px := img.get_pixel(sx, sy)
+		if not _near(px, bare.get_pixel(sx, sy)):
+			changed += 1
+		if not _near(px, want):
+			bad += 1
+			if first == "":
+				first = "%s · 잰 값 %s · 기대 %s" % [what, px.to_html(false), want.to_html(false)]
+	print("BAG [든 채] 커서 %s (%s) · 탐침 3 · 어긋남 %d · 빈 손과 달라진 점 %d" % [
+		at, where, bad, changed])
+	if bad > 0:
+		_bag_fail("든 것이 커서 자리에 안 그려졌다 (%s)" % where,
+			"%d / 3 점 (첫 어긋남: %s)" % [bad, first],
+			"속 = %s 색 · 테두리 = EDGE_HELD · 바탕 = BG (허용 색차 %.1f/255)" % [
+				HELD_ITEM, TOL * 255.0])
+	# **화면이 실제로 달라졌나.** 위가 「무엇이 틀렸나」라면 이 한 줄은
+	# **「들어도 화면이 그대로다」**를 말한다.
+	if changed == 0:
+		_bag_fail("들어도 화면이 그대로다 (%s)" % where, "달라진 탐침 0 / 3", "1점 이상")
+
+## 커서가 떠난 자리. **빈 손 때와 같아야 한다** — 자리를 박아 놓고 그리거나
+## 지난 프레임의 자국이 남으면 여기서만 빨개진다.
+func _held_left(img: Image, bare: Image, at: Vector2) -> void:
+	var bad := 0
+	var first := ""
+	for probe in [HELD_FILL_PROBE, HELD_EDGE_PROBE, HELD_BG_PROBE]:
+		var sx := int(at.x + probe.x)
+		var sy := int(at.y + probe.y)
+		var px := img.get_pixel(sx, sy)
+		var want := bare.get_pixel(sx, sy)
+		if not _near(px, want):
+			bad += 1
+			if first == "":
+				first = "(%d,%d) · 잰 값 %s · 빈 손 때 %s" % [
+					sx, sy, px.to_html(false), want.to_html(false)]
+	print("BAG [든 채] 커서가 떠난 자리 %s · 탐침 3 · 어긋남 %d" % [at, bad])
+	if bad > 0:
+		_bag_fail("커서를 옮겼는데 앞자리에 자국이 남았다",
+			"%d / 3 점 (첫 어긋남: %s)" % [bad, first],
+			"빈 손으로 구운 화면과 같다 (허용 색차 %.1f/255)" % (TOL * 255.0))
+
+## 그 뷰포트에 **합성 커서**를 밀어 넣는다. OS 커서는 안 건드린다 (회차 11 · GRAB).
+func _aim(v: SubViewport, point: Vector2) -> void:
+	var ev := InputEventMouseMotion.new()
+	ev.position = point
+	ev.global_position = point
+	v.push_input(ev)
+
+## 그 뷰포트를 굽는다. 비었거나 크기가 다르면 null 이다 (`_bake` 와 한 벌).
+func _bake_view(v: SubViewport) -> Image:
+	var tex: ViewportTexture = v.get_texture()
+	var img: Image = tex.get_image() if tex != null else null
+	if img == null or img.get_width() != LOGICAL_I.x or img.get_height() != LOGICAL_I.y:
+		return null
+	return img
 
 ## 닫힌 화면에서 창 자리의 탐침이 **월드 색**인가. 「가방이 늘 떠 있다」와
 ## 「닫아도 반쯤 남는다」가 여기서 잡힌다.
@@ -931,7 +1134,7 @@ func _bag_fail(what: String, actual: String, expected: String) -> void:
 	print("BAG FAIL %s — 잰 값 %s · 기대 %s" % [what, actual, expected])
 
 func _bag_report() -> void:
-	print("BAG %s (18칸 × 세 점 · E 로 열고 닫으며 세 번 굽는다 · 창 %s)" % [
+	print("BAG %s (18칸 × 세 점 · E 로 열고 닫으며 세 번 + 든 채로 한 번 굽는다 · 창 %s)" % [
 		"ok" if _bag_bad == 0 else "FAIL %d개" % _bag_bad,
 		BagView.panel_rect(Vector2(LOGICAL_I))])
 

@@ -1757,6 +1757,50 @@ cp "$BAK/grab.gd" scripts/grab.gd
 
 expect 0 "원복하면 칸 사이로 옮기기도 초록이다"
 
+# ── 회차 45 커서에 든 것을 그린다 ────────────────────────────────────
+section "회차 45 커서에 든 것을 그린다"
+#
+# 겨누는 것은 **계산도 배선도 맞는데 손에 든 것이 화면에 없는 상태**다. 회차 44 가
+# 남긴 구멍이 그대로 여기다: `BagView._draw_grab` 을 통째로 지워도 **228개 + GRAB 8구간이
+# 전부 초록**이었다 — GRAB 은 헤드리스라 픽셀을 한 점도 안 보고, BAG 의 세 번 굽기는
+# **빈 손으로만** 구웠다. 사람 눈에는 「집었는데 뭘 들었는지 안 보인다」로만 나온다.
+# **다섯 다 `bag_view.gd` 의 그리기만 만지므로 단위 검사를 하나도 안 깨뜨린다.**
+
+# ① **아예 안 그린다.** 집기도 놓기도 멀쩡하고 개수도 맞다 — 손이 안 보일 뿐이다.
+mut scripts/bag_view.gd '^\t_draw_grab\(\)$' ''
+expect 1 "든 것을 안 그리면 실측이 잡는다 (계산도 배선도 맞는데 손이 빈 채로 보인다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+# ② **커서를 안 읽고 첫 자리에 박아 둔다.** 그 점은 BAG ④ 의 **첫 자리**(가방 14번 칸)
+#    의 창 안 좌표다 — 한 자리에서만 구우면 이 고장이 통째로 초록이다.
+#    **두 자리에서 굽는 것과 「떠난 자리」를 보는 것이 이 하나를 잡으려고 있다.**
+mut scripts/bag_view.gd '^\tvar c := get_local_mouse_position\(\)$' '\tvar c := Vector2(158.0, 56.0)'
+expect 1 "든 것이 커서를 안 따라가면 실측이 잡는다 (한 자리에 박혀 있다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+# ③ **커서를 따라가기는 하는데 다시 안 그린다.** `_process` 가 빠지면 집은 자리에
+#    멈춰 선다 — 회차 40 이 `toggle` 에서 시험했다가 아무것도 안 잡아 지운 그 줄이,
+#    **따라다니는 그림이 생기고 나서야** 진짜 대조군이 된다.
+mut scripts/bag_view.gd '^\t\tqueue_redraw\(\)$' '\t\tpass'
+expect 1 "든 것을 다시 안 그리면 실측이 잡는다 (커서만 가고 그림은 남는다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+# ④ **칸 아래로 들어간다.** 그리기는 한다 — 순서만 앞으로 가서 18칸이 그 위를 덮는다.
+#    창 밖(핫바 위)에서는 멀쩡히 보이므로 **빈 가방 칸 위에서 굽는 자리**가 이걸 잡는다.
+mut scripts/bag_view.gd '^\t_draw_grab\(\)$' ''
+mut scripts/bag_view.gd '^\tdraw_rect\(Rect2\(Vector2\.ZERO, size\), PANEL, true\)$' '\tdraw_rect(Rect2(Vector2.ZERO, size), PANEL, true)\n\t_draw_grab()'
+expect 1 "든 것이 칸 아래로 들어가면 실측이 잡는다 (그리기는 하는데 덮인다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+# ⑤ **손에 든 것과 칸에 있는 것이 같아 보인다.** 테두리가 `EDGE_HELD` 가 아니면
+#    커서 아래의 무더기가 그냥 또 하나의 칸으로 보인다 — 색 하나 차이라 사람 눈에도
+#    「어디까지가 손인가」가 안 읽힌다.
+mut scripts/bag_view.gd '^\t\tgrab\.id, grab\.amount, HotbarView\.EDGE_HELD\)$' '\t\tgrab.id, grab.amount, HotbarView.EDGE)'
+expect 1 "든 것의 테두리가 칸과 같으면 실측이 잡는다 (손인지 칸인지 안 읽힌다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+expect 0 "원복하면 커서에 든 것도 초록이다"
+
 echo
 SKIPMSG=""
 [ "$SKIP" -gt 0 ] && SKIPMSG=" · ${SKIP}개 건너뜀 (--only ${ONLY})"
