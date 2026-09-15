@@ -194,18 +194,58 @@ func test_a_body_and_an_installation_share_one_question() -> void:
 	eq(claim.holder(ts[0]), Claim.BODY, "첫 칸의 임자")
 	eq(claim.holder(ts[1]), &"가짜 설치물", "둘째 칸의 임자")
 
-## **돌·광물은 아직 안 자란다** (`WorldObjects.REGROW_DAYS` 에 없다).
-## 캔 자리에 도로 생기면 광산과 자동화(GDD A-4)가 통째로 의미를 잃는다.
-func test_rock_does_not_grow_back() -> void:
+## **돌·광물도 자란다 — 나무보다 느리게** (회차 37 · GDD A-4).
+## 안 자라게 두면 초반에 야생 철을 다 캔 판이 광산 방을 지을 재료도 없이 막힌다.
+## **캔 것이 도로 나온다**: 자란 칸은 빈 땅이 아니라 **씨앗이 놓았던 그 종류**라야 한다 —
+## 돌 자리에 나무가 서면 「다시 자란다」가 「지형이 바뀐다」가 된다.
+func test_stone_and_ore_grow_back_slower_than_trees() -> void:
+	for kind in [WorldObjects.ROCK, WorldObjects.ORE]:
+		var w := WorldState.new(SEED)
+		var t := _an_object(w, kind)
+		if t == Vector2i.MAX:
+			check(false, "씨앗 %d 에서 종류 %d 를 하나도 못 찾았다" % [SEED, kind])
+			continue
+		var solid := w.solid()
+		var wait := WorldState.DAY_SEC * WorldObjects.regrow_days(kind)
+		eq(w.clear_object(t.x, t.y), kind, "없앤 종류")
+		eq(w.regrow_at(t.x, t.y), wait, "종류 %d 가 다시 자랄 시각" % kind)
+		# **나무 하루로는 안 자란다.** 셋이 같은 속도면 광물이 흔해져서 통화(C-5)가 흔들린다.
+		eq(w.tick(WorldState.DAY_SEC + 1.0), 0, "종류 %d — 하루 뒤 자란 칸 수" % kind)
+		eq(w.object_at(t.x, t.y), WorldObjects.NONE, "종류 %d — 하루 뒤 캔 자리" % kind)
+		eq(w.tick(wait - w.now - 1.0), 0, "종류 %d — 1초 모자랄 때 자란 칸 수" % kind)
+		eq(w.tick(2.0), 1, "종류 %d — 제 날을 넘겼을 때 자란 칸 수" % kind)
+		eq(w.object_at(t.x, t.y), kind, "종류 %d — 자란 칸에 돌아온 것" % kind)
+		eq(w.cleared_count(), 0, "종류 %d — 없어진 칸의 수" % kind)
+		check(solid.call(t.x, t.y), "종류 %d 가 자랐는데 안 막는다" % kind)
+
+## **줄은 「없앤 순서」가 아니라 「자랄 시각」 순이다** (회차 37).
+## 종류마다 날 수가 달라진 순간부터 **넣는 순서가 곧 시각 순이 아니다** — 광물(7일)을
+## 먼저 캐고 나무(1일)를 나중에 베면, 줄 맨 뒤에 붙는 큐에서는 나무가 광물 뒤에 선다.
+## `tick` 은 맨 앞만 보므로 **엿새 동안 아무것도 안 자란다** — 그런데 한 종류만 캐 보는
+## 검사는 전부 초록이다. `_schedule` 의 이진 삽입이 여기서 처음으로 일을 한다.
+func test_the_queue_runs_in_time_order_not_in_clearing_order() -> void:
 	var w := WorldState.new(SEED)
-	var t := _an_object(w, WorldObjects.ROCK)
-	if t == Vector2i.MAX:
-		check(false, "씨앗 %d 에서 돌을 하나도 못 찾았다" % SEED)
+	var tree := _an_object(w, WorldObjects.TREE)
+	var rock := _an_object(w, WorldObjects.ROCK)
+	var ore := _an_object(w, WorldObjects.ORE)
+	if tree == Vector2i.MAX or rock == Vector2i.MAX or ore == Vector2i.MAX:
+		check(false, "씨앗 %d 에서 나무·돌·광물을 다 못 찾았다" % SEED)
 		return
-	eq(w.clear_object(t.x, t.y), WorldObjects.ROCK, "없앤 종류")
-	check(is_inf(w.regrow_at(t.x, t.y)), "안 자라는 것의 시각은 INF 라야 한다")
-	eq(w.tick(WorldState.DAY_SEC * 365.0), 0, "한 해가 지났을 때 자란 칸 수")
-	eq(w.object_at(t.x, t.y), WorldObjects.NONE, "한 해 뒤 캔 자리")
+	# **느린 것부터 캔다** — 자랄 시각의 역순이다.
+	w.clear_object(ore.x, ore.y)
+	w.clear_object(rock.x, rock.y)
+	w.clear_object(tree.x, tree.y)
+	eq(w.cleared_count(), 3, "캔 칸의 수")
+	eq(w.tick(WorldState.DAY_SEC + 1.0), 1, "하루 뒤 자란 칸 수")
+	eq(w.object_at(tree.x, tree.y), WorldObjects.TREE, "하루 뒤 나무 자리")
+	eq(w.object_at(rock.x, rock.y), WorldObjects.NONE, "하루 뒤 돌 자리")
+	eq(w.object_at(ore.x, ore.y), WorldObjects.NONE, "하루 뒤 광물 자리")
+	eq(w.tick(WorldState.DAY_SEC * 2.0), 1, "사흘 뒤 자란 칸 수")
+	eq(w.object_at(rock.x, rock.y), WorldObjects.ROCK, "사흘 뒤 돌 자리")
+	eq(w.object_at(ore.x, ore.y), WorldObjects.NONE, "사흘 뒤 광물 자리")
+	eq(w.tick(WorldState.DAY_SEC * 4.0), 1, "이레 뒤 자란 칸 수")
+	eq(w.object_at(ore.x, ore.y), WorldObjects.ORE, "이레 뒤 광물 자리")
+	eq(w.cleared_count(), 0, "이레 뒤 없어진 칸의 수")
 
 ## **다시 벤 나무는 그때부터 다시 하루다.** 앞서 적힌 시각이 살아 있으면 두 번째 그루가
 ## 심자마자 자란다 — 큐에 남은 철 지난 기록이 그 구멍이다.

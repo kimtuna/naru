@@ -1451,6 +1451,37 @@ cp "$BAK/display.gd" scripts/display.gd
 
 expect 0 "원복하면 창 크기도 다시 초록이다"
 
+# ── 회차 37 돌·광물도 다시 자란다 ────────────────────────────────────
+section "회차 37 돌·광물도 자란다"
+#
+# 겨누는 것은 **회차 30 이 남긴 「안 자라는 자원」**이다. 값 한 줄이 0 이면 배선도
+# 판정도 멀쩡하고 나무는 자라므로 REGROW 게이트까지 초록인데 — 초반에 야생 철을
+# 다 캔 판은 **광산 방을 지을 재료도 없이 막힌다** (GDD A-4).
+# ③ 은 다른 것이다: **값은 다 맞는데 줄이 틀린** 자리다.
+
+# ① **돌을 도로 「안 자람」으로 되돌린다.** 회차 30 의 상태 그대로다 —
+#    나무가 자라므로 REGROW 실측은 초록이고, 단위 검사만 빨갛다.
+mut scripts/world_objects.gd '^\tROCK: 3\.0,$' '\tROCK: 0.0,'
+expect 1 "돌의 날 수를 0 으로 되돌리면 tests 가 잡는다 (캐면 영영 안 돌아온다)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ② **광물을 나무만큼 빠르게 만든다.** 「자란다」는 맞으므로 ① 이 잡는 물음은
+#    통째로 초록이다 — 어긋나는 것은 **순서**뿐이다: 통화 본위(GDD C-5)가 나무만큼
+#    흔해지고 광산 방을 지을 동기가 사라진다. 값과 순서를 따로 묻는 이유가 이것이다.
+mut scripts/world_objects.gd '^\tORE: 7\.0,$' '\tORE: 1.0,'
+expect 1 "광물을 나무만큼 빠르게 하면 tests 가 잡는다 (통화가 흔해진다)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ③ **줄을 시각 순이 아니라 캔 순서로 세운다.** 날 수 셋은 **전부 맞고** 한 종류만
+#    캐 보는 검사는 전부 초록이다 — 광물(7일)을 먼저 캐고 나무(1일)를 나중에 베면
+#    나무가 광물 뒤에 서고, `tick` 은 맨 앞만 보므로 **엿새 동안 섬이 통째로 멈춘다.**
+#    종류가 하나였을 때는 넣는 순서가 곧 시각 순이라 이 구멍이 안 열려 있었다.
+mut scripts/world_state.gd '^\t_due\.insert\(lo, ' '\t_due.insert(_due.size(), '
+expect 1 "큐를 캔 순서로 세우면 tests 가 잡는다 (느린 것 뒤에 빠른 것이 선다)"
+cp "$BAK/world_state.gd" scripts/world_state.gd
+
+expect 0 "원복하면 돌·광물이 자라는 것도 초록이다"
+
 
 echo
 SKIPMSG=""

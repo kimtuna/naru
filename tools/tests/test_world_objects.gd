@@ -232,11 +232,28 @@ func test_blocks_matches_at() -> void:
 
 ## ── 다시 자란다 (GDD A-4) ────────────────────────────────────────────
 
-## **나무만 자란다, 그것도 「하루」로 적힌다.** 초로 적으면 하루 길이를 고치는 회차가
+## **셋 다 자라고, 단위는 「날」이다.** 초로 적으면 하루 길이를 고치는 회차가
 ## 이 파일까지 열어야 하고, 둘이 어긋나면 균형이 조용히 달라진다 (WorldState.DAY_SEC).
-func test_only_trees_grow_back_and_the_unit_is_days() -> void:
+##
+## **숫자를 여기 다시 적는다** — `REGROW_DAYS` 를 읽어서 견주면 재는 값과 기대값이
+## 같이 움직여서 무엇을 넣어도 초록이다 (회차 35 가 `ORE_MIN_HEIGHT` 에서 겪었다).
+func test_everything_grows_back_and_the_unit_is_days() -> void:
 	eq(WorldObjects.regrow_days(WorldObjects.TREE), 1.0, "나무가 자라는 날 수")
-	# **돌·광물은 0 이다** — 캔 자리에 도로 생기면 광산·자동화가 의미를 잃는다.
-	eq(WorldObjects.regrow_days(WorldObjects.ROCK), 0.0, "돌이 자라는 날 수")
-	eq(WorldObjects.regrow_days(WorldObjects.ORE), 0.0, "광물이 자라는 날 수")
+	eq(WorldObjects.regrow_days(WorldObjects.ROCK), 3.0, "돌이 자라는 날 수")
+	eq(WorldObjects.regrow_days(WorldObjects.ORE), 7.0, "광물이 자라는 날 수")
+	# **빈 칸만 0 이다.** 「없는 종류는 안 자란다」가 기본값으로 남아 있어야
+	# 다음에 놓이는 것(설치물·작물)이 말없이 자라지 않는다.
 	eq(WorldObjects.regrow_days(WorldObjects.NONE), 0.0, "빈 칸이 자라는 날 수")
+
+## **값이 아니라 순서가 규칙이다** (회차 37). 셋 다 자리표시자라 제작(P3)이 수요를
+## 요구하면 숫자는 바뀌는데, 그때도 **나무 < 돌 < 광물**은 지켜져야 한다:
+## 광물이 통화 본위(GDD C-5)라 가장 느리고, 그 느림이 광산 방을 지을 동기다.
+## 위의 검사는 값을 바꾸면 빨개지므로 이 물음을 못 지킨다 — 값을 고치는 회차가
+## 위를 고쳐 맞출 때 **여기가 순서까지 고쳤는지** 묻는다.
+func test_the_slower_the_rarer() -> void:
+	var tree := WorldObjects.regrow_days(WorldObjects.TREE)
+	var rock := WorldObjects.regrow_days(WorldObjects.ROCK)
+	var ore := WorldObjects.regrow_days(WorldObjects.ORE)
+	check(tree > 0.0, "나무가 자라는 날 수가 0 이다 (한 번 캐고 끝난다)")
+	check(rock > tree, "돌 %.1f일이 나무 %.1f일보다 느리지 않다" % [rock, tree])
+	check(ore > rock, "광물 %.1f일이 돌 %.1f일보다 느리지 않다" % [ore, rock])
