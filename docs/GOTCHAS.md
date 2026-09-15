@@ -37,6 +37,13 @@
 - **`measure_facing.gd` 는 사람이 마우스를 만지면 빨개진다.** 진짜 커서를 뺏는 게이트라
   그렇다 — `FACE FAIL 커서 각 … 잰 값 14.93°` 처럼 **커서 각부터 어긋난다**(2026-09-14 실측).
   코드 문제가 아니다. 마우스에서 손을 떼고 다시 돌린다.
+- **창에 안 붙은 `SubViewport` 는 한 번도 안 그린다.** 기본값이 「보일 때만」이라
+  `get_texture().get_image()` 가 **새까만 화면**(`000000`)을 준다 — 비어 있지 않아서
+  「크기가 맞나」로는 못 가른다 (2026-09-16 실측 · `measure_window.gd` BAG ④).
+  `render_target_update_mode = SubViewport.UPDATE_ALWAYS` 를 켜고
+  `await RenderingServer.frame_post_draw` 뒤에 굽는다. **그리고 굽는 게이트는
+  「아무것도 없는 상태」를 한 번 먼저 구워 두어라** — 새까만 화면이 조용히 초록으로
+  가는 길은 그 기준선 하나가 막는다.
 - **`main.gd` 의 시작 배너가 게이트의 grep 과 부딪힌다.** 메인 씬은 `_ready` 에서
   `WORLD    씨앗 …` · `WINDOW   1920 x 1080` 을 찍는다 — 게이트를 **한 프로세스로
   합치면** 그 씬을 세우는 구간 때문에 같은 출력에 섞인다. `^WORLD ` / `^WINDOW ` 로
