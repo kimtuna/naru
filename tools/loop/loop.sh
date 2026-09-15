@@ -142,6 +142,29 @@ finish_journal() {                        # finish_journal <회차> <항목> <�
   fi
 }
 
+# ── 몇 회차마다 대조군 전체를 쓸어 본다 ─────────────────────────────
+#
+# 회차마다 돌리는 것은 **그 회차가 건드린 묶음뿐**이다 (`redteam.sh --only`).
+# 54개를 매번 돌면 40분이라 30분짜리 세션이 아예 못 끝낸다.
+# **그러면 「나중에 전체로」가 「영영 안 함」이 된다** — 그래서 사람이 기억하는 대신
+# 드라이버가 N회차마다 제가 돌린다. 세션 밖이라 시간 상한이 없다.
+# 여기서 놓친 것이 나오면 멈춘다 — 오래된 게이트가 조용히 죽는 것이 제일 나쁘다.
+full_redteam_if_due() {
+  [ "$DRY" = "1" ] && return 0
+  [ "$FULL_REDTEAM_EVERY" -le 0 ] && return 0
+  local last=0
+  [ -f "$ROOT/.loop/last-full-redteam" ] && last="$(cat "$ROOT/.loop/last-full-redteam")"
+  [ $(( turn - last )) -lt "$FULL_REDTEAM_EVERY" ] && return 0
+  say "대조군 전체 쓸기 (마지막 $last 회차 · 지금 $turn 회차) — 몇 분 걸린다"
+  if bash tools/loop/redteam.sh > "$RD/redteam-full.txt" 2>&1; then
+    tail -1 "$RD/redteam-full.txt" | sed 's/^/    /'
+    echo "$turn" > "$ROOT/.loop/last-full-redteam"
+  else
+    tail -3 "$RD/redteam-full.txt" | sed 's/^/    /'
+    stop "대조군 전체에서 놓친 것이 나왔다 — $RD/redteam-full.txt"
+  fi
+}
+
 # ── 한도·과부하에 걸리면 기다렸다 같은 항목을 다시 건다 ─────────────
 #
 # **이걸 「세션 실패」로 세면 안 된다.** 세면 같은 항목을 STUCK_LIMIT 번 더 태우고
@@ -406,6 +429,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     if [ "$DRY" = "0" ] && ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
       stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 회차 $turn)"
     fi
+    full_redteam_if_due
     push_state
     fails=0
   else

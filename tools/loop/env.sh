@@ -8,3 +8,4 @@ PUSH="${PUSH:-1}"                        # 초록으로 닫힌 회차를 origin 
 MAX_WAIT_SEC="${MAX_WAIT_SEC:-21600}"    # 한도가 풀리기를 기다리는 상한 (초 · 6시간)
 LIMIT_WAIT_SEC="${LIMIT_WAIT_SEC:-1800}" # 언제 풀리는지 모를 때 기다리는 시간 (초 · 30분)
 MAX_RETRIES="${MAX_RETRIES:-5}"          # 일시적인 오류를 몇 번까지 다시 걸까
+FULL_REDTEAM_EVERY="${FULL_REDTEAM_EVERY:-8}"  # 몇 회차마다 대조군 전체를 쓸까 (0 이면 안 함)
