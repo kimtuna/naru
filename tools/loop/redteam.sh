@@ -38,6 +38,8 @@ cp scenes/main.tscn "$BAK/" 2>/dev/null || true
 cp scenes/player.tscn "$BAK/" 2>/dev/null || true
 cp tools/loop/journal.sh "$BAK/" 2>/dev/null || true
 cp tools/loop/journal-selftest.sh "$BAK/" 2>/dev/null || true
+cp tools/loop/worktree.sh "$BAK/" 2>/dev/null || true
+cp tools/loop/worktree-selftest.sh "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
@@ -59,6 +61,8 @@ restore() {
   cp "$BAK/player.tscn" scenes/player.tscn 2>/dev/null || true
   cp "$BAK/journal.sh" tools/loop/journal.sh 2>/dev/null || true
   cp "$BAK/journal-selftest.sh" tools/loop/journal-selftest.sh 2>/dev/null || true
+  cp "$BAK/worktree.sh" tools/loop/worktree.sh 2>/dev/null || true
+  cp "$BAK/worktree-selftest.sh" tools/loop/worktree-selftest.sh 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
 }
@@ -756,6 +760,106 @@ expect_journal 1 "승격 확인이 늘 초록이면 잡는다 (안 올리고 올
 cp "$BAK/journal.sh" tools/loop/journal.sh
 
 expect_journal 0 "원복하면 뽑기도 다시 초록이다"
+
+# ── 회차 25 세션이 흘린 것을 되돌린다 ────────────────────────────────
+section "회차 25 세션이 흘린 것을 되돌린다"
+#
+# 겨누는 것은 하나다: **세션이 손으로 깨뜨린 것이 커밋 없이 떠 있는 채로 회차가 닫히는 길.**
+# 회차 24 가 그 길로 갔다 — 대조군으로 `inventory.gd` 의 `return left` 를 `return 0` 으로
+# 바꿔 놓고 원복을 안 했다. 커밋엔 안 들어갔지만 채점자는 그 상태를 쟀고, 다음 회차가
+# 경로를 넓게 잡아 커밋했으면 꽉 찬 인벤토리가 아이템을 조용히 삼켰다.
+#
+# **여기는 `run-contract.sh` 가 아니라 `worktree-selftest.sh` 로 잰다.** 되돌리기는
+# 게임 코드가 아니라 **드라이버의 회차 진행**에 붙어 있어서 상태 검사가 볼 수 있는
+# 자리가 아니다 (기준으로 승격되면 `promoted` 처럼 옮겨 갈 자리다).
+expect_worktree() {  # expect_worktree <기대 exit> <이름>
+  local want="$1" name="$2" rc
+  if skip_section; then SKIP=$((SKIP+1)); return; fi
+  N=$((N+1))
+  if [ "$want" -ne 0 ] && [ -z "$(git status --porcelain)" ]; then
+    printf '  \033[33m헛돌았다\033[0m  %s  — 워킹트리가 그대로다. 대조군이 아무것도 안 깨뜨렸다\n' "$name"
+    MISS=$((MISS+1)); return
+  fi
+  bash tools/loop/worktree-selftest.sh >"$EV/worktree.txt" 2>&1; rc=$?
+  if [ "$rc" -eq "$want" ]; then
+    printf '  \033[32m잡았다\033[0m  %s  (exit %d)\n' "$name" "$rc"; PASS=$((PASS+1))
+  else
+    printf '  \033[31m놓쳤다\033[0m  %s  (기대 exit %d · 잰 값 %d)\n' "$name" "$want" "$rc"; MISS=$((MISS+1))
+    grep -E '^  FAIL|^WORKTREE SELFTEST' "$EV/worktree.txt" | sed 's/^/      /'
+  fi
+}
+
+expect_worktree 0 "손 안 댄 되돌리기는 초록이다"
+
+# **아무것도 안 세는 길** — 제일 비싼 고장이다. `check` 가 늘 초록이면 드라이버는
+# 「세션이 흘린 게 없다」고 믿고 그대로 채점한다. 회차 24 가 정확히 그 모양이었다.
+python3 - <<'PYX'
+import io
+p='tools/loop/worktree.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "    [ \"$n\" -eq 0 ] && { echo \"WORKTREE 깨끗하다 — 세션이 흘린 것 없음\"; exit 0; }",
+    "    echo \"WORKTREE 깨끗하다 — 세션이 흘린 것 없음\"; exit 0", 1))
+PYX
+expect_worktree 1 "흘린 것을 안 세면 잡는다 (늘 깨끗하다고 한다)"
+cp "$BAK/worktree.sh" tools/loop/worktree.sh
+
+# **찍기만 하고 안 되돌리는 길.** 「빨갛게는 하는데 고치지는 않는」 게이트다 —
+# 드라이버는 6c 에서 `restore` 뒤에 다시 묻지만, restore 가 거짓 초록이면 그 질문이
+# 통과한다. 여기서 원복이 진짜 일어났는지를 파일 내용으로 묶는다.
+python3 - <<'PYX'
+import io
+p='tools/loop/worktree.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    'restore_one() {                            # restore_one <XY> <경로>',
+    'restore_one() { printf \'  되돌림  %s\\n\' "$2"; return 0; }\n_unused_restore_one() {', 1))
+PYX
+expect_worktree 1 "되돌리는 시늉만 하면 잡는다 (찍기만 하고 파일은 그대로)"
+cp "$BAK/worktree.sh" tools/loop/worktree.sh
+
+# **드라이버 몫까지 쓸어 버리는 길.** 되돌리기가 `docs/JOURNAL.md` 를 같이 지우면
+# 6b 가 방금 답변에서 뽑은 일지가 6c 에서 날아간다 — 그러면 초록인데 일지가 비었다고
+# 루프가 멈추고, 왜 비었는지는 아무 데도 안 남는다.
+python3 - <<'PYX'
+import io
+p='tools/loop/worktree.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    '    .loop|.loop/*|docs/JOURNAL.md|docs/index.html) return 0 ;;',
+    '    .loop|.loop/*) return 0 ;;', 1))
+PYX
+expect_worktree 1 "일지를 드라이버 몫에서 빼면 잡는다 (되돌리기가 일지를 지운다)"
+cp "$BAK/worktree.sh" tools/loop/worktree.sh
+
+# HEAD 에 없는 것(세션이 새로 만든 파일)은 되돌릴 판본이 없어서 **지워야** 한다.
+# 그냥 두면 다음 회차의 워킹트리가 더러운 채로 시작한다.
+python3 - <<'PYX'
+import io
+p='tools/loop/worktree.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace('    rm -rf -- "$p"\n', '', 1))
+PYX
+expect_worktree 1 "새로 만든 파일을 안 지우면 잡는다"
+cp "$BAK/worktree.sh" tools/loop/worktree.sh
+
+# 되돌리기가 제 일을 했는지 **다시 묻는** 자리를 없애는 길 (회차 23 과 같은 모양이다).
+python3 - <<'PYX'
+import io
+p='tools/loop/worktree.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace('    rest="$(leftovers)"', '    rest=""', 1))
+PYX
+expect_worktree 1 "되돌린 뒤 다시 안 물으면 잡는다"
+cp "$BAK/worktree.sh" tools/loop/worktree.sh
+
+# 검사 자신을 무르게 만드는 길 — 실패가 0 이어도 **개수가 줄면** 빨개진다.
+python3 - <<'PYX'
+import io
+p='tools/loop/worktree-selftest.sh'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    'rc_is "고쳐만 두고 커밋 안 하면 잡는다" 1 check', 'true', 1))
+PYX
+expect_worktree 1 "되돌리기 검사를 지우면 검사 바닥이 잡는다"
+cp "$BAK/worktree-selftest.sh" tools/loop/worktree-selftest.sh
+
+expect_worktree 0 "원복하면 되돌리기도 다시 초록이다"
+
 sed -i '' 's|"events": \[Object(InputEventKey,"physical_keycode":68)\]|"events": []|' project.godot
 expect 1 "WASD 배선이 끊기면 tests 가 잡는다"
 cp "$BAK/project.godot" project.godot

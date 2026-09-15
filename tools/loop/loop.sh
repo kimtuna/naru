@@ -371,6 +371,25 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
       esac
   fi
 
+  # 6c) **세션이 흘린 것을 되돌린다** (회차 25). 회차 24 가 대조군으로 `inventory.gd` 를
+  # 깨뜨린 채 원복을 안 하고 끝냈다 — 커밋엔 안 들어갔지만 워킹트리에 떠 있었다.
+  # 여기가 **채점 앞**인 것이 요점이다: 아니면 채점자가 **커밋되지도 않을 상태**를 재고,
+  # 그 초록의 근거가 역사에 안 남는다. 되돌리기 전에 증거를 뜬다.
+  # `docs/JOURNAL.md` · `docs/index.html` · `.loop/` 는 드라이버 몫이라 안 센다 —
+  # 방금 6b 가 뽑은 일지가 여기서 지워지면 안 된다.
+  leftover=0
+  if [ "$DRY" = "0" ] && ! bash tools/loop/worktree.sh check > "$RD/leftover.txt" 2>&1; then
+    leftover=1
+    say "세션이 커밋 안 된 변경을 남겼다 — 되돌린다:"
+    sed 's/^/    /' "$RD/leftover.txt"
+    bash tools/loop/worktree.sh save "$RD/leftover.patch" >/dev/null 2>&1 || true
+    bash tools/loop/worktree.sh restore 2>&1 | sed 's/^/    /'
+    # 되돌리기가 제 일을 했는지 **다시 묻는다.** 못 되돌렸으면 다음 회차가 그대로
+    # 커밋할 수 있으므로 여기서 멈춘다 — 이건 사람이 봐야 하는 자리다.
+    bash tools/loop/worktree.sh check >/dev/null 2>&1 \
+      || stop "세션이 남긴 변경을 되돌리지 못했다 — 사람이 봐야 한다 ($RD/leftover.patch)"
+  fi
+
   # 7) 판정 — 세션이 아니라 채점자가 한다
   [ -f "$ROOT/.loop/results.json" ] && cp "$ROOT/.loop/results.json" "$PREV"
   bash tools/loop/run-contract.sh > "$RD/contract.txt" 2>&1
@@ -416,11 +435,15 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     # **깨끗하면** 정말로 할 일이 없었던 것이다 — 「확인만 하는 항목」이 그렇다
     # (회차 24 가 여기서 잘못 멈췄다). 앞은 사고고 뒤는 정상이다.
     if [ "$head_after" = "$head_before" ] && [ "$DRY" = "0" ]; then
-      if [ -n "$(git status --porcelain)" ]; then
-        stop "초록인데 세션이 커밋하지 않았다 — 작업이 워킹트리에 떠 있다"
+      if [ "$leftover" = "1" ]; then
+        stop "초록인데 세션이 커밋을 하나도 안 했다 — 작업이 워킹트리에 떠 있었다 ($RD/leftover.patch)"
       fi
       say "커밋 없음 — 워킹트리가 깨끗하다 (확인만 한 항목이다)"
     fi
+    # 커밋은 했는데 흘린 것도 있었다 = 회차 24 의 모양이다. 6c 가 이미 되돌렸으므로
+    # 초록은 **커밋된 상태**에 대한 판정이라 유효하다. 다만 조용히 넘기지는 않는다.
+    [ "$leftover" = "1" ] && say "※ 세션이 흘린 변경을 6c 에서 되돌렸다 — $RD/leftover.patch"
+
     say "✔ 초록"
     promote "$(desc_of "$item")" "$vcmd"
     bump_mintests
@@ -442,6 +465,8 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
       say "빨간 상태로 커밋했다. 되돌린다."
       git reset --hard "$head_before" >/dev/null
     fi
+    # 6c 가 판정 **앞**에서 세션이 흘린 것을 이미 치웠다. 여기 남는 것은 채점·verify 가
+    # 돌면서 생긴 것뿐이다 (`.godot-home/` 캐시 · 구운 PNG 따위).
     git checkout -- . 2>/dev/null || true
     git clean -fdq -e '.loop/' -e '.godot-home/' 2>/dev/null || true
     [ -s "$jsave" ] && cp "$jsave" docs/JOURNAL.md; rm -f "$jsave"
