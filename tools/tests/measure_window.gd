@@ -81,6 +81,10 @@ const WARMUP := 5
 ## 프레임 수로 끊지 않고 **크기가 `fit_size()` 와 같아질 때까지** 기다린다.
 const FS_FRAMES := 60
 
+## 창 자리를 재는 여유(px). macOS 가 창틀 때문에 한두 픽셀 옮길 수 있다.
+## 대조군 ⑤ 는 33px 을 옮기므로 이 여유 안에 안 숨는다 (2026-09-15 실측: 340 → 307).
+const POS_TOL := 4.0
+
 # ── DRAW 기대값 ──────────────────────────────────────────────────────
 const LOGICAL_I := Vector2i(960, 540)
 const SETTLE := 4                  # 순간이동·걷기 뒤 카메라가 따라붙을 시간
@@ -190,6 +194,16 @@ func _measure_view() -> void:
 	# 2배라 배선을 통째로 빼먹어도 띠가 0 이다 — 그래서 **배율이 최대인지**를 같이 본다.
 	_v2("창", win, Vector2(fit))
 	_num("창 모드(0 = 창)", float(DisplayServer.window_get_mode()), float(Window.MODE_WINDOWED))
+	# **자리도 잰다.** 크기만 보면 「띠 0 인데 화면 한쪽으로 쏠린 창」이 초록이다 —
+	# 사람 눈에는 그것도 「화면이 안 맞는다」이다. 대조군 ⑤ 가 정확히 여기서만 잡힌다:
+	# 쓸 수 있는 곳의 **자리**(0,66)를 모르면 창이 33px 위로 밀리는데 **크기는 안 바뀐다.**
+	# 쓸 수 있는 곳 안에 **가운데로** 들어가야 한다.
+	var ar := Display.avail_rect()
+	var pos := Vector2(DisplayServer.window_get_position())
+	var want_pos := Vector2(ar.position + (ar.size - Vector2i(win)) / 2)
+	if pos.distance_to(want_pos) > POS_TOL:
+		_view_fail("창 자리 — 쓸 수 있는 화면의 가운데가 아니다",
+			"%.0f, %.0f" % [pos.x, pos.y], "%.0f, %.0f (± %.0f)" % [want_pos.x, want_pos.y, POS_TOL])
 
 	# 배율은 나눗셈이 아니라 **엔진이 실제로 거는 변환**에서 잰다 — `window_get_size()` 는
 	# 창 모드에서 요청값을 그대로 돌려주기 때문이다.
@@ -227,8 +241,8 @@ func _measure_view() -> void:
 	var tiles := world / PlayerMotion.TILE
 	_v2("보이는 칸", tiles, TILES)
 
-	print("VIEW 논리 %.0fx%.0f · 창 %.0fx%.0f · 배율 %.2fx · 그린 크기 %.0fx%.0f · 띠 %.0fx%.0f · 화면 %dx%d · 카메라 %.2fx · 타일 %dpx · 보이는 칸 %.2f x %.2f" % [
-		vis.x, vis.y, win.x, win.y, fs.x, drawn.x, drawn.y, bars.x, bars.y,
+	print("VIEW 논리 %.0fx%.0f · 창 %.0fx%.0f @ %.0f,%.0f · 배율 %.2fx · 그린 크기 %.0fx%.0f · 띠 %.0fx%.0f · 화면 %dx%d · 카메라 %.2fx · 타일 %dpx · 보이는 칸 %.2f x %.2f" % [
+		vis.x, vis.y, win.x, win.y, pos.x, pos.y, fs.x, drawn.x, drawn.y, bars.x, bars.y,
 		avail.x, avail.y, cz.x, int(PlayerMotion.TILE), tiles.x, tiles.y])
 	_view_report(driver)
 
