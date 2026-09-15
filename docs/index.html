@@ -171,7 +171,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 12:44:28</span><span id="ago"></span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 13:10:07</span><span id="ago"></span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
@@ -247,7 +247,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="todo"><span class="box"></span><strong>가방이 열려 있는 동안의 입력</strong> — <strong>걸을 수는 있다</strong>(코어 키퍼 방식 · GDD D-9).</li>
 <li class="todo"><span class="box"></span><strong>칸 사이로 아이템을 옮긴다</strong> — 집어서 놓기(좌클릭으로 집고 좌클릭으로 놓는다).</li>
 <li class="todo"><span class="box"></span><strong>채광</strong> — 곡괭이로 돌/광물을 캔다</li>
-<li class="todo"><span class="box"></span>바닥 드롭 + 걸어가서 줍기. 인벤토리가 꽉 차면 바닥에 남는다</li>
+<li class="todo"><span class="box"></span><strong>바닥 드롭 + 밟으면 줍힌다</strong> — <strong>클릭하지 않는다</strong> (GDD D-4b · 2026-09-15 사람이 정했다).</li>
 <li class="todo"><span class="box"></span><strong>색 캐시를 스크롤한다 — 한 판 13.0 ms 가 프레임 예산의 78% 다</strong> (회차 17 실측).</li>
 <li class="todo"><span class="box"></span><strong>게임 화면을 <code>scenes/world.tscn</code> 으로 떼어낸다</strong> — 지금 <code>main.tscn</code> 이 곧 게임이라</li>
 <li class="todo"><span class="box"></span><strong>저장을 캐릭터와 월드로 가른다</strong> — <code>user://chars/&lt;id&gt;.json</code> 과 <code>user://worlds/&lt;id&gt;.json</code>.</li>
@@ -932,6 +932,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">회차 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/4474e18"><code>4474e18</code></a><span class="cd">2026-09-15</span>재생 규칙과 펫의 존재 이유를 GDD 에 박는다 — 사람이 정했다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/3ebc619"><code>3ebc619</code></a><span class="cd">2026-09-15</span>벤 나무가 다시 자란다 — 시계가 WorldState 에 산다</li>
 <li><a href="https://github.com/kimtuna/naru/commit/b24cec0"><code>b24cec0</code></a><span class="cd">2026-09-15</span>회차 29 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/4a3a66c"><code>4a3a66c</code></a><span class="cd">2026-09-15</span>회차 기록 롤링</li>
@@ -943,7 +944,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/ea0f13f"><code>ea0f13f</code></a><span class="cd">2026-09-15</span>회차 27 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/1fcd5a1"><code>1fcd5a1</code></a><span class="cd">2026-09-15</span>회차 기록 롤링</li>
 <li><a href="https://github.com/kimtuna/naru/commit/360b6eb"><code>360b6eb</code></a><span class="cd">2026-09-15</span>회차 27 대조군 결과를 잰 값으로 고친다 — REDTEAM 10 잡음, 0 놓침 (3분 37초)</li>
-<li><a href="https://github.com/kimtuna/naru/commit/c3d7332"><code>c3d7332</code></a><span class="cd">2026-09-15</span>헤드리스 실측 넷을 한 프로세스로 — 프로세스 7 → 4 · <strong>부팅은 병목이 아니었다</strong></li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 회차</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 회차가 올라왔다 — 새로고침</button>
