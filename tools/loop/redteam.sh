@@ -11,9 +11,15 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
 # 워킹트리가 더러우면 원복을 보장할 수 없다.
-if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
+# **드라이버 몫은 빼고 본다.** 세션이 끝난 시점에 `.loop/` 와 `docs/JOURNAL.md` ·
+# `docs/index.html` 은 드라이버가 방금 쓴 것이라 늘 더럽다 — 그걸 「사람이 안 치웠다」로
+# 보면 **`redteam.sh` 를 verify 로 쓰는 항목이 영영 통과 못 한다** (회차 34 가 그랬다).
+# 회차 25 가 `worktree.sh` 에서 가른 것과 같은 선이다.
+_dirty="$(git status --porcelain 2>/dev/null \
+  | grep -vE ' (\.loop/|docs/JOURNAL\.md|docs/index\.html)' || true)"
+if [ -n "$_dirty" ]; then
   echo "redteam: 워킹트리가 더럽다. 커밋하거나 치우고 다시 돌려라." >&2
-  git status --short >&2
+  printf '%s\n' "$_dirty" >&2
   exit 2
 fi
 
