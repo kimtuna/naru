@@ -48,63 +48,86 @@ step_unit() {
   [ $rc -eq 0 ]
 }
 
-# 실측 게이트 7종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·VIEW+DRAW) — 엔진을 7번 띄운다.
-# **창을 띄우는 것은 마지막 하나뿐이다** — VIEW 와 DRAW 를 한 프로세스로 합쳤다 (회차 14).
+# 실측 게이트 7종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·VIEW+DRAW) — **엔진을 4번 띄운다.**
+# 회차 27 까지는 7번이었다. 합칠 수 있는 것은 두 갈래로 이미 합쳐져 있다:
+#   `measure_headless.gd`  MOVE·WORLD·COLLIDE·CAMERA — 창이 필요 없는 넷 (회차 27)
+#   `measure_window.gd`    VIEW·DRAW·HOTBAR·USE — 창이 필요한 넷 (회차 14)
+# 남은 둘은 **합칠 수 없어서** 따로 돈다: WORLD 의 두 번째 프로세스(「다른 프로세스에서도
+# 같은가」가 묻는 것 자체다)와 FACE(제 SubViewport 를 세우고 `gui_disable_input` 을 끈다).
 # 상태 검사에서 가장 긴 구간이다. **여기를 두 번 돌리지 마라.**
+#
+# **한 프로세스가 여러 구간을 재면 「반쪽만 돌고 죽어도 초록」이 열린다** (회차 14 가
+# `WINGATE` 로 배운 것): 앞 구간이 조용히 죽으면 뒤 구간은 아예 안 돌고 프로세스는
+# exit 0 으로 끝난다. 그래서 **구간마다 제 요약 줄을 찍었는지 전부 본다** — 그리고
+# 「넷 다 돌았다」를 찍는 줄(`HEADGATE ... 구간 4/4`)까지 본다.
+# **넷이라는 수를 여기가 안다**: 게이트 쪽은 「몇 구간을 돌았나」만 찍으므로
+# 한 파일만 고쳐서는 초록이 안 된다.
+_need() {   # _need <출력> <정규식> <이름>
+  local out="$1" re="$2" name="$3"
+  printf '%s\n' "$out" | grep -qE "$re" && return 0
+  printf '%s\n' "$out" | tail -5
+  echo "$name FAIL 측정이 아무것도 안 찍었다 (없는 줄: $re)"
+  return 1
+}
+
 step_measure() {
   echo "== tests (실측) =="
-  # 실측: 실제 씬을 물리로 돌려 초당 몇 px 움직이는지 잰다.
-  # 순수 계산이 맞아도 노드가 그걸 안 쓰면 여기서만 빨개진다.
-  local mout mrc
-  mout="$("$G" 60 -- --headless --path "$ROOT" --script res://tools/tests/measure_move.gd 2>&1)"; mrc=$?
-  printf '%s\n' "$mout" | grep -E '^MOVE' || { printf '%s\n' "$mout" | tail -5; echo "MOVE FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $mrc -eq 0 ] || return 1
-  # 방향 실측: 메인 씬을 **제 SubViewport 에** 세우고 합성 마우스 이벤트를 밀어 넣어
-  # 어디를 보는지 잰다. PlayerFacing 이 맞아도 노드가 커서를 안 읽으면 게임은 앞만
-  # 본다 — 그 구멍을 막는다. 카메라가 그 안에 있어 캔버스 변환도 그대로 탄다.
-  # **사람의 커서를 안 뺏는다** (회차 11): 예전엔 `warp_mouse` 로 진짜 커서를 옮겨서
-  # 사람이 마우스를 건드리면 튀었다 — 회차 8·9·10 · 사람 세션, 네 번.
-  # 그래서 **헤드리스로 돈다** — 창도 커서도 필요 없다.
-  local fout frc
-  fout="$("$G" 60 -- --headless --path "$ROOT" --script res://tools/tests/measure_facing.gd 2>&1)"; frc=$?
-  printf '%s\n' "$fout" | grep -E '^FACE ' || { printf '%s\n' "$fout" | tail -5; echo "FACE FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $frc -eq 0 ] || return 1
-  # 월드 실측: **엔진을 두 번 띄워** 같은 씨앗이 같은 월드를 주는지 본다.
+  # ── 헤드리스 넷을 한 프로세스에서 (회차 27) ────────────────────────
+  #   MOVE     실제 씬을 물리로 돌려 초당 몇 px 움직이는지. 순수 계산이 맞아도
+  #            노드가 그걸 안 쓰면 여기서만 빨개진다.
+  #   WORLD    같은 씨앗이 같은 섬을 주나. **여기서는 한 번만 찍는다** — 비교는 아래.
+  #   COLLIDE  **메인 씬을 통째로** 물리로 돌려 진짜 섬의 해안에 걸어서 부딪힌다.
+  #            WorldCollide 가 맞아도 main.gd 가 월드를 안 꽂으면 바다 위를 걸어간다.
+  #   CAMERA   네 방향으로 걸으면서 **매 프레임** 플레이어가 화면 한가운데인지 · 줌이 1인지.
+  #            씬에 zoom=1 이 박혀 있어도 실행 중에 코드가 줌을 걸면 단위 검사는 초록이다.
+  local hout hrc miss=0
+  hout="$("$G" 180 -- --headless --path "$ROOT" --script res://tools/tests/measure_headless.gd 2>&1)"; hrc=$?
+  # `^WORLD [0-9]` 인 이유: 메인 씬이 `_ready` 에서 `WORLD    씨앗 ...` 를 찍는다 —
+  # COLLIDE·CAMERA 가 그 씬을 세우므로 같은 출력에 섞인다 (회차 27).
+  printf '%s\n' "$hout" | grep -E '^(MOVE |WORLD [0-9]|WORLDGEN |COLLIDE |CAMERA |HEADGATE )'
+  _need "$hout" '^MOVE (ok|FAIL)'      MOVE     || miss=1
+  _need "$hout" '^WORLDGEN '           WORLD    || miss=1
+  _need "$hout" '^COLLIDE (ok|FAIL)'   COLLIDE  || miss=1
+  _need "$hout" '^CAMERA (ok|FAIL)'    CAMERA   || miss=1
+  _need "$hout" '^HEADGATE .*구간 4/4' HEADGATE || miss=1
+  [ "$miss" -eq 0 ] || return 1
+  [ $hrc -eq 0 ] || return 1
+
+  # ── 월드만 한 번 더, **다른 프로세스에서** ─────────────────────────
   # 한 프로세스 안의 단위 검사로는 못 잡는다 — 정적 변수에 시간을 한 번 섞어 두면
   # 그 프로세스 안에서는 늘 같은 값이 나온다 (measure_world.gd 머리말).
-  local w1 w2 g1 g2 w1rc w2rc
-  w1="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_world.gd 2>&1)"; w1rc=$?
-  w2="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_world.gd 2>&1)"; w2rc=$?
-  g1="$(printf '%s\n' "$w1" | grep -E '^WORLD ')"
-  g2="$(printf '%s\n' "$w2" | grep -E '^WORLD ')"
-  if [ -z "$g1" ] || [ -z "$g2" ]; then
-    printf '%s\n' "$w1" | tail -5; echo "WORLD FAIL 측정이 아무것도 안 찍었다"; return 1
+  # 그래서 이것만은 합칠 수 없다. `-- world` 로 **그 구간만** 부른다.
+  local w2 w2rc g1 g2
+  w2="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_headless.gd -- world 2>&1)"; w2rc=$?
+  g1="$(printf '%s\n' "$hout" | grep -E '^WORLD [0-9]')"
+  g2="$(printf '%s\n' "$w2" | grep -E '^WORLD [0-9]')"
+  if [ -z "$g2" ]; then
+    printf '%s\n' "$w2" | tail -5; echo "WORLD FAIL 두 번째 프로세스가 아무것도 안 찍었다"; return 1
   fi
-  printf '%s\n' "$g1"
-  printf '%s\n' "$w1" | grep -E '^WORLDGEN '
   if [ "$g1" != "$g2" ]; then
     echo "WORLD FAIL 같은 씨앗이 프로세스마다 다른 월드를 준다"
     diff <(printf '%s\n' "$g1") <(printf '%s\n' "$g2") | sed 's/^/    잰 값 /'
     return 1
   fi
   echo "WORLD 두 프로세스 체크섬 일치"
-  [ $w1rc -eq 0 ] && [ $w2rc -eq 0 ] || return 1
-  # 충돌 실측: **메인 씬을 통째로** 물리로 돌려 진짜 섬의 해안에 걸어서 부딪힌다.
-  # WorldCollide 가 맞아도 노드가 안 부르거나 main.gd 가 월드를 안 꽂으면
-  # 플레이어는 바다 위를 걸어간다 — 그 구멍을 여기서 막는다.
-  local cout crc
-  cout="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_collide.gd 2>&1)"; crc=$?
-  printf '%s\n' "$cout" | grep -E '^COLLIDE' || { printf '%s\n' "$cout" | tail -5; echo "COLLIDE FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $crc -eq 0 ] || return 1
-  # 카메라 실측: 네 방향으로 걸으면서 **매 프레임** 플레이어가 화면 한가운데에 있는지,
-  # 캔버스 변환의 줌이 1 인지 잰다. 씬에 zoom=1 이 박혀 있어도 실행 중에 코드가
-  # 줌을 걸거나 카메라를 꺼 버리면 단위 검사는 전부 초록으로 남는다 — 그 구멍을 막는다.
-  local camout camrc
-  camout="$("$G" 120 -- --headless --path "$ROOT" --script res://tools/tests/measure_camera.gd 2>&1)"; camrc=$?
-  printf '%s\n' "$camout" | grep -E '^CAMERA' || { printf '%s\n' "$camout" | tail -5; echo "CAMERA FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  [ $camrc -eq 0 ] || return 1
-  # 창 실측 (VIEW + DRAW) — **한 프로세스다** (회차 14). 실측 7종 중 창이 필요한 둘은
-  # 이것뿐이고, 둘 다 메인 씬을 세운다. 따로 돌리면 창이 두 번 뜬다.
+  [ $w2rc -eq 0 ] || return 1
+
+  # ── 방향 (제 SubViewport 가 필요해서 따로 돈다) ────────────────────
+  # 메인 씬을 **제 SubViewport 에** 세우고 합성 마우스 이벤트를 밀어 넣어
+  # 어디를 보는지 잰다. PlayerFacing 이 맞아도 노드가 커서를 안 읽으면 게임은 앞만
+  # 본다 — 그 구멍을 막는다. 카메라가 그 안에 있어 캔버스 변환도 그대로 탄다.
+  # **사람의 커서를 안 뺏는다** (회차 11): 예전엔 `warp_mouse` 로 진짜 커서를 옮겨서
+  # 사람이 마우스를 건드리면 튀었다 — 회차 8·9·10 · 사람 세션, 네 번.
+  # 그래서 **헤드리스로 돈다** — 창도 커서도 필요 없다.
+  # **위의 넷에 안 섞는다** (회차 27): 루트의 `gui_disable_input` 을 끄는 유일한
+  # 게이트고 흔들림으로 네 회차를 잡아먹은 자리라, 섞으면 빨강이 어느 구간 탓인지 흐려진다.
+  local fout frc
+  fout="$("$G" 60 -- --headless --path "$ROOT" --script res://tools/tests/measure_facing.gd 2>&1)"; frc=$?
+  printf '%s\n' "$fout" | grep -E '^FACE ' || { printf '%s\n' "$fout" | tail -5; echo "FACE FAIL 측정이 아무것도 안 찍었다"; return 1; }
+  [ $frc -eq 0 ] || return 1
+
+  # ── 창 실측 (VIEW + DRAW + HOTBAR + USE) — **한 프로세스다** (회차 14) ─────
+  # 실측 게이트 중 창이 필요한 것은 이것뿐이고, 넷 다 메인 씬을 세운다.
   # **창을 띄우면 macOS 가 앱을 맨 앞으로 올린다 — 막을 길이 없다** (회차 13 · NUMBERS 11절).
   # 못 막으니 **횟수를 줄인다**: `NARU_FOCUS_RESTORE=1` 로 끝나고 되돌려 주는 것과 짝이다.
   #   VIEW  논리 화면 · 창 · 배율 · 보이는 칸. project.godot 의 글자가 맞아도 카메라 줌이나
@@ -122,11 +145,14 @@ step_measure() {
   # 한 프로세스라 앞이 죽으면 뒤가 통째로 안 돈다 — 그 침묵을 초록으로 보면 안 된다.
   local wout wrc
   wout="$(NARU_FOCUS_RESTORE=1 "$G" 120 -- --path "$ROOT" --script res://tools/tests/measure_window.gd 2>&1)"; wrc=$?
-  printf '%s\n' "$wout" | grep -E '^VIEW ' || { printf '%s\n' "$wout" | tail -5; echo "VIEW FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  printf '%s\n' "$wout" | grep -E '^DRAW (\[|ok|FAIL)' || { printf '%s\n' "$wout" | tail -5; echo "DRAW FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  printf '%s\n' "$wout" | grep -E '^HOTBAR (\[|ok|FAIL)' || { printf '%s\n' "$wout" | tail -5; echo "HOTBAR FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  printf '%s\n' "$wout" | grep -E '^USE (\[|ok|FAIL)' || { printf '%s\n' "$wout" | tail -5; echo "USE FAIL 측정이 아무것도 안 찍었다"; return 1; }
-  printf '%s\n' "$wout" | grep -E '^WINGATE ' || { printf '%s\n' "$wout" | tail -5; echo "WINGATE FAIL 게이트가 끝까지 못 갔다"; return 1; }
+  printf '%s\n' "$wout" | grep -E '^VIEW |^DRAW (\[|ok|FAIL)|^HOTBAR (\[|ok|FAIL)|^USE (\[|ok|FAIL)|^WINGATE '
+  miss=0
+  _need "$wout" '^VIEW (ok|FAIL)'    VIEW    || miss=1
+  _need "$wout" '^DRAW (ok|FAIL)'    DRAW    || miss=1
+  _need "$wout" '^HOTBAR (ok|FAIL)'  HOTBAR  || miss=1
+  _need "$wout" '^USE (ok|FAIL)'     USE     || miss=1
+  _need "$wout" '^WINGATE '          WINGATE || miss=1
+  [ "$miss" -eq 0 ] || return 1
   [ $wrc -eq 0 ]
 }
 

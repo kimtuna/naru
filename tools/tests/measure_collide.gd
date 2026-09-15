@@ -1,4 +1,4 @@
-extends SceneTree
+extends MeasurePhase
 
 ## **실측 게이트 — 이동 충돌.** 진짜 메인 씬을 물리로 돌려
 ## **진짜 섬의 해안**에 걸어서 부딪힌다. 손으로 만든 지도가 아니다.
@@ -11,6 +11,10 @@ extends SceneTree
 ## **메인 씬을 통째로 띄우는 것이 핵심이다.** 플레이어 씬만 띄우면 배선이 안 잡힌다.
 ##
 ## 헤드리스로 된다 — 창도 커서도 필요 없다.
+##
+## **홀로 도는 프로세스가 아니다** (회차 27): `measure_headless.gd` 의 한 구간이다.
+## `_initialize`/`_process` 가 `begin`/`step` 이 됐고 **`_frames` 는 구간마다 0 에서
+## 다시 센다** — `WARMUP` 은 여전히 「이 씬이 선 뒤 몇 프레임」이다.
 ##
 ## 이름이 test_ 로 시작하지 않는다 — run_tests.gd 는 이 파일을 안 집는다.
 
@@ -43,23 +47,33 @@ var _phases := []
 var _i := 0
 var _t := 0.0
 var _from := Vector2.ZERO
-var _bad := 0
 var _frames := 0
 
-func _initialize() -> void:
+func tag() -> String:
+	return "COLLIDE"
+
+func begin(t: SceneTree) -> void:
+	super(t)
 	var scene: String = ProjectSettings.get_setting("application/run/main_scene")
 	_main = load(scene).instantiate()
-	root.add_child(_main)
+	tree.root.add_child(_main)
+
+## 메인 씬을 통째로 걷는다 — 두고 가면 다음 구간의 카메라와 둘이 된다.
+func cleanup() -> void:
+	super()
+	drop(_main)
+	_main = null
+	_player = null
 
 ## 배선은 씬의 _ready 가 한다 — **_initialize 에서 보면 아직 비어 있다.**
 func _setup() -> bool:
 	_player = _main.get_node_or_null("Player")
 	if _player == null:
-		_fail("플레이어", "Main/Player 가 없다", "메인 씬에 플레이어")
+		fail("플레이어", "Main/Player 가 없다", "메인 씬에 플레이어")
 		return _finish()
 	if not _player.solid.is_valid():
 		# **배선이 끊긴 것이다.** 여기서 안 잡으면 아래 구간이 「바다를 통과」로 나온다.
-		_fail("배선", "player.solid 가 비어 있다 — main.gd 가 월드를 안 꽂았다",
+		fail("배선", "player.solid 가 비어 있다 — main.gd 가 월드를 안 꽂았다",
 			"WorldCollide.solid_from_seed")
 		return _finish()
 	if not _find_coast():
@@ -114,7 +128,7 @@ func _find_coast() -> bool:
 				best = d
 				_coast = Vector2i(tx, ty)
 	if best < 0.0:
-		_fail("해안", "씨앗 %d 에 곧은 해안(빈 땅 %d×%d + 바다)이 없다" % [world_seed, RUNWAY + 1, RUN],
+		fail("해안", "씨앗 %d 에 곧은 해안(빈 땅 %d×%d + 바다)이 없다" % [world_seed, RUNWAY + 1, RUN],
 			"한 군데 이상")
 		return false
 	# **화면 칸 = 월드 칸이다** (P1-6). 카메라가 오면서 main.gd 의 `tile_offset` 이 사라졌다.
@@ -132,7 +146,7 @@ func _start_phase() -> void:
 	for k in _phases[_i]["keys"]:
 		Input.action_press(k)
 
-func _process(delta: float) -> bool:
+func step(delta: float) -> bool:
 	_frames += 1
 	if _frames < WARMUP:
 		return false
@@ -161,25 +175,25 @@ func _check_phase() -> void:
 	# ① 바다 앞에 선다. 지나갔으면 이 판정이 통째로 무너진다.
 	if absf(pos.x - want_x) > TOL_POS:
 		ok = false
-		_fail("%s 멈춘 자리" % p["name"], "%.2f px" % pos.x, "%.2f px" % want_x)
+		fail("%s 멈춘 자리" % p["name"], "%.2f px" % pos.x, "%.2f px" % want_x)
 	# ② 몸이 바다에 걸치지 않는다. 벽 앞 좌표가 맞아도 반 칸 잠겼으면 그림이 틀린다.
 	if WorldCollide.overlaps(pos, _player.solid):
 		ok = false
-		_fail("%s 몸이 바다에" % p["name"], "겹침 %s" % pos, "안 겹침")
+		fail("%s 몸이 바다에" % p["name"], "겹침 %s" % pos, "안 겹침")
 	# ③ 옆으로 가려던 몫은 살아 있다 — 이게 「미끄러진다」다.
 	if absf(rate_y - p["rate_y"]) > TOL_RATE:
 		ok = false
-		_fail("%s 세로 속력" % p["name"], "%.2f px/s" % rate_y, "%.2f ±%.0f px/s" % [p["rate_y"], TOL_RATE])
+		fail("%s 세로 속력" % p["name"], "%.2f px/s" % rate_y, "%.2f ±%.0f px/s" % [p["rate_y"], TOL_RATE])
 	# ④ **그리는 네모가 막힌 칸에 얼마나 걸치나** (회차 16). ①②③ 이 전부 맞아도
 	#    네모가 상자보다 한참 넓으면 사람 눈에는 몸이 바다에 잠긴 채로 보인다 —
 	#    단위 검사도 좌표 판정도 이 구멍을 못 본다. **살아 있는 씬의 네모를 읽는다.**
 	var over := pos.x + _body_half_x() - _wall
 	if over > MAX_OVER:
 		ok = false
-		_fail("%s 네모가 바다에 걸침" % p["name"], "%.2f px" % over, "%.2f px 이하" % MAX_OVER)
+		fail("%s 네모가 바다에 걸침" % p["name"], "%.2f px" % over, "%.2f px 이하" % MAX_OVER)
 
 	if not ok:
-		_bad += 1
+		bad += 1
 	print("COLLIDE %-12s x %8.2f (바다 면 %.2f) · 세로 %7.2f px/s · 걸침 %.2f px · %.4f s 동안 %s  %s" % [
 		p["name"], pos.x, _wall, rate_y, over, _t, moved, "ok" if ok else "FAIL"])
 
@@ -194,7 +208,9 @@ func _body_half_x() -> float:
 ## 「이 칸이 막나」 한 번의 값. 지금은 물을 때마다 잡음을 다시 푼다 —
 ## 한 물리 틱에 네 번쯤 묻는다(옆축 2줄 × 두 축). 이 값이 커지면 월드를 미리 구워 둔다.
 func _query_cost() -> void:
-	if not _player.solid.is_valid():
+	# **한 프로세스가 된 뒤로 여기서 죽으면 뒤 구간이 통째로 안 돈다** (회차 27).
+	# `_setup` 이 플레이어를 못 찾고 곧장 `_finish` 로 오는 길이 있다.
+	if _player == null or not _player.solid.is_valid():
 		return
 	var n := 100000
 	var t0 := Time.get_ticks_usec()
@@ -209,13 +225,8 @@ func _query_cost() -> void:
 func _finish() -> bool:
 	_query_cost()
 	print("COLLIDE %s (구간 %d · 타일 %.0f · 미끄럼 %.3f s · 상자 반크기 %.0f x %.0f · 네모 반폭 %.0f · 틈 %.2f · 물리 %d Hz)" % [
-		"ok" if _bad == 0 else "FAIL %d개" % _bad, _phases.size(),
+		"ok" if bad == 0 else "FAIL %d개" % bad, _phases.size(),
 		PlayerMotion.TILE, _slide_sec(),
 		WorldCollide.HALF.x, WorldCollide.HALF.y, _body_half_x(),
 		WorldCollide.EPS, Engine.physics_ticks_per_second])
-	quit(1 if _bad > 0 else 0)
 	return true
-
-func _fail(what: String, actual: String, expected: String) -> void:
-	_bad += 1
-	print("COLLIDE FAIL %s — 잰 값 %s · 기대 %s" % [what, actual, expected])

@@ -43,6 +43,8 @@ cp tools/loop/worktree-selftest.sh "$BAK/" 2>/dev/null || true
 cp tools/loop/loop.sh "$BAK/" 2>/dev/null || true
 cp tools/loop/state.py "$BAK/" 2>/dev/null || true
 cp tools/loop/state-selftest.sh "$BAK/" 2>/dev/null || true
+cp tools/tests/measure_headless.gd "$BAK/" 2>/dev/null || true
+cp tools/tests/measure_collide.gd "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
@@ -69,6 +71,8 @@ restore() {
   cp "$BAK/loop.sh" tools/loop/loop.sh 2>/dev/null || true
   cp "$BAK/state.py" tools/loop/state.py 2>/dev/null || true
   cp "$BAK/state-selftest.sh" tools/loop/state-selftest.sh 2>/dev/null || true
+  cp "$BAK/measure_headless.gd" tools/tests/measure_headless.gd 2>/dev/null || true
+  cp "$BAK/measure_collide.gd" tools/tests/measure_collide.gd 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
 }
@@ -986,6 +990,55 @@ expect_state 1 "무뎌짐 검사를 지우면 검사 바닥이 잡는다"
 cp "$BAK/state-selftest.sh" tools/loop/state-selftest.sh
 
 expect_state 0 "원복하면 자르기도 다시 초록이다"
+
+
+section "회차 27 헤드리스 실측을 한 프로세스로"
+#
+# 겨누는 것은 하나다: **합치면 열리는 「반쪽만 돌고 죽어도 초록」.** 구간 넷이 한
+# 프로세스를 나눠 쓰므로 앞 구간이 죽으면 뒤 구간은 **아예 안 돈다** — 그런데
+# 프로세스는 exit 0 으로 끝난다. 회차 14 가 창 넷을 합칠 때 `WINGATE` 로 막은 자리고,
+# **여기가 그 두 번째다.** 아래 셋은 전부 「프로세스가 exit 0 인데 게이트가 침묵한」
+# 경우라, 종료 코드만 보는 게이트는 하나도 못 잡는다.
+
+# ① **구간이 조용히 죽는다.** COLLIDE 가 서기 직전에 프로세스를 끝낸다 —
+#    MOVE·WORLD 는 찍히고 COLLIDE·CAMERA·HEADGATE 만 침묵한다. **exit 0 이다.**
+python3 - <<'PYX'
+import io
+p='tools/tests/measure_collide.gd'; s=io.open(p,encoding='utf-8').read()
+old = 'func begin(t: SceneTree) -> void:\n\tsuper(t)\n\tvar scene'
+new = 'func begin(t: SceneTree) -> void:\n\tsuper(t)\n\ttree.quit(0)\n\treturn\n\tvar scene'
+io.open(p,'w',encoding='utf-8').write(s.replace(old, new, 1))
+PYX
+expect 1 "앞 구간이 죽어 뒤가 통째로 침묵하면 tests 가 잡는다 (프로세스는 exit 0)"
+cp "$BAK/measure_collide.gd" tools/tests/measure_collide.gd
+
+# ② **구간을 조용히 뺀다.** 남은 셋은 전부 초록이고 프로세스도 exit 0 이다.
+#    `HEADGATE` 가 `구간 4/4` 대신 `3/3` 을 찍는 것 하나만 다르다 —
+#    **세는 수를 게이트와 check.sh 가 나눠 가지는 이유가 이것이다.**
+python3 - <<'PYX'
+import io
+p='tools/tests/measure_headless.gd'; s=io.open(p,encoding='utf-8').read()
+old = 'const ORDER := ["move", "world", "collide", "camera"]'
+new = 'const ORDER := ["move", "world", "collide"]'
+io.open(p,'w',encoding='utf-8').write(s.replace(old, new, 1))
+PYX
+expect 1 "구간을 조용히 빼면 tests 가 잡는다 (나머지는 다 초록이고 exit 0)"
+cp "$BAK/measure_headless.gd" tools/tests/measure_headless.gd
+
+# ③ **앞 구간이 제 씬을 두고 간다.** 합치기 전에는 없던 고장이다 — 프로세스가 갈렸으니까.
+#    메인 씬이 둘이면 카메라도 둘이고, 먼저 들어온 쪽이 current 로 남는다:
+#    CAMERA 는 제 플레이어를 **딴 카메라의 변환**으로 찍어 보게 된다.
+python3 - <<'PYX'
+import io
+p='tools/tests/measure_collide.gd'; s=io.open(p,encoding='utf-8').read()
+old = 'func cleanup() -> void:\n\tsuper()\n\tdrop(_main)'
+new = 'func cleanup() -> void:\n\tsuper()'
+io.open(p,'w',encoding='utf-8').write(s.replace(old, new, 1))
+PYX
+expect 1 "앞 구간이 씬을 두고 가면 tests 가 잡는다 (카메라가 둘이 된다)"
+cp "$BAK/measure_collide.gd" tools/tests/measure_collide.gd
+
+expect 0 "원복하면 한 프로세스 실측도 다시 초록이다"
 
 
 echo

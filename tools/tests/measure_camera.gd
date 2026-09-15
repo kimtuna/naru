@@ -1,4 +1,4 @@
-extends SceneTree
+extends MeasurePhase
 
 ## **실측 게이트 — 카메라.** 메인 씬을 통째로 돌려 **네 방향으로 걸어 다니면서**
 ## 매 프레임 「플레이어가 화면 한가운데에 있나 · 보이는 월드가 안 늘었나」를 잰다.
@@ -12,6 +12,10 @@ extends SceneTree
 ## 판정은 「화면 안에 있나」가 아니라 **「중심에서 몇 px 벗어났나」**다.
 ##
 ## 헤드리스로 된다 — 캔버스 변환은 창 없이도 돈다. 창·배율은 measure_window.gd 가 잰다.
+##
+## **홀로 도는 프로세스가 아니다** (회차 27): `measure_headless.gd` 의 마지막 구간이다.
+## **맨 뒤인 이유**: 「매 프레임 한가운데」를 재므로 앞 구간이 남긴 카메라가 트리에
+## 하나라도 남아 있으면 통째로 무너진다 — 앞 구간들이 제 씬을 걷는 것이 여기서 판정된다.
 ##
 ## 이름이 test_ 로 시작하지 않는다 — run_tests.gd 는 이 파일을 안 집는다.
 
@@ -34,16 +38,25 @@ var _path := 0.0
 var _max_dev := 0.0
 var _said_center := false
 var _said_zoom := false
-var _bad := 0
 var _frames := 0
 var _samples := 0
 
-func _initialize() -> void:
+func tag() -> String:
+	return "CAMERA"
+
+func begin(t: SceneTree) -> void:
+	super(t)
 	var scene: String = ProjectSettings.get_setting("application/run/main_scene")
 	_main = load(scene).instantiate()
-	root.add_child(_main)
+	tree.root.add_child(_main)
 
-func _process(delta: float) -> bool:
+func cleanup() -> void:
+	super()
+	drop(_main)
+	_main = null
+	_player = null
+
+func step(delta: float) -> bool:
 	_frames += 1
 	if _frames < WARMUP:
 		return false
@@ -67,7 +80,7 @@ func _process(delta: float) -> bool:
 func _setup() -> bool:
 	_player = _main.get_node_or_null("Player") as Node2D
 	if _player == null:
-		_fail("플레이어", "Main/Player 가 없다", "메인 씬에 플레이어")
+		fail("플레이어", "Main/Player 가 없다", "메인 씬에 플레이어")
 		return _finish()
 	_last = _player.global_position
 	# 걷기 전에 한 번. 「카메라가 원점을 비춘다」는 여기서 이미 잡힌다 —
@@ -81,7 +94,7 @@ func _setup() -> bool:
 
 ## 플레이어의 월드 좌표가 화면 어디로 찍히나. **카메라가 하는 일 전부가 이 변환이다.**
 func _screen_of_player() -> Vector2:
-	return root.get_canvas_transform() * _player.global_position
+	return tree.root.get_canvas_transform() * _player.global_position
 
 func _sample() -> void:
 	_samples += 1
@@ -94,15 +107,15 @@ func _sample() -> void:
 		_max_dev = dev
 	if dev > TOL_CENTER and not _said_center:
 		_said_center = true
-		_fail("화면 중심에서 벗어났다", "%.2f px (화면 %s)" % [dev, _screen_of_player()],
+		fail("화면 중심에서 벗어났다", "%.2f px (화면 %s)" % [dev, _screen_of_player()],
 			"%.2f px 이내 (중심 %s)" % [TOL_CENTER, LOGICAL * 0.5])
 
 	# 줌 = 시야. 씬의 글자가 아니라 **엔진이 실제로 거는 캔버스 변환**에서 잰다.
-	var cz := root.get_canvas_transform().get_scale()
+	var cz := tree.root.get_canvas_transform().get_scale()
 	if not (is_equal_approx(cz.x, 1.0) and is_equal_approx(cz.y, 1.0)) and not _said_zoom:
 		_said_zoom = true
 		var tiles := Vector2(LOGICAL.x / cz.x, LOGICAL.y / cz.y) / PlayerMotion.TILE
-		_fail("줌", "%.2f x %.2f (보이는 칸 %.2f x %.2f)" % [cz.x, cz.y, tiles.x, tiles.y],
+		fail("줌", "%.2f x %.2f (보이는 칸 %.2f x %.2f)" % [cz.x, cz.y, tiles.x, tiles.y],
 			"1.00 x 1.00 (보이는 칸 %.2f x %.2f)" % [TILES.x, TILES.y])
 
 func _finish() -> bool:
@@ -110,18 +123,13 @@ func _finish() -> bool:
 		for k in d:
 			Input.action_release(k)
 	if _path < MIN_PATH:
-		_fail("걸은 거리", "%.2f px" % _path,
+		fail("걸은 거리", "%.2f px" % _path,
 			"%.0f px 이상 (안 움직이면 「늘 한가운데」는 공짜다)" % MIN_PATH)
-	var cz := root.get_canvas_transform().get_scale()
+	var cz := tree.root.get_canvas_transform().get_scale()
 	var tiles := Vector2(LOGICAL.x / cz.x, LOGICAL.y / cz.y) / PlayerMotion.TILE
 	print("CAMERA 최대 편차 %.4f px · 걸은 거리 %.2f px · 줌 %.2fx · 보이는 칸 %.2f x %.2f · 표본 %d" % [
 		_max_dev, _path, cz.x, tiles.x, tiles.y, _samples])
 	print("CAMERA %s (구간 %d × %.1f s · 허용 편차 %.2f px · 물리 %d Hz)" % [
-		"ok" if _bad == 0 else "FAIL %d개" % _bad, _dirs.size(), SEC, TOL_CENTER,
+		"ok" if bad == 0 else "FAIL %d개" % bad, _dirs.size(), SEC, TOL_CENTER,
 		Engine.physics_ticks_per_second])
-	quit(1 if _bad > 0 else 0)
 	return true
-
-func _fail(what: String, actual: String, expected: String) -> void:
-	_bad += 1
-	print("CAMERA FAIL %s — 잰 값 %s · 기대 %s" % [what, actual, expected])

@@ -1,4 +1,4 @@
-extends SceneTree
+extends MeasurePhase
 
 ## **다른 프로세스에서도 같은 씨앗이 같은 월드를 주는지** 잰다 (GDD D-1: 서버 재현성).
 ##
@@ -15,10 +15,24 @@ extends SceneTree
 ## 두 번 띄워서 `WORLD` 줄이 글자 하나까지 같은지 본다.
 ##
 ## 헤드리스로 된다 — 순수 계산이라 창도 렌더러도 필요 없다.
+##
+## **홀로 도는 프로세스가 아니다** (회차 27): `measure_headless.gd` 의 한 구간이다.
+## **이 게이트만은 여전히 두 프로세스가 필요하다** — 「다른 프로세스에서도 같은가」가
+## 묻는 것 그 자체라서다. 그래서 check.sh 는 두 번째 프로세스를
+## `measure_headless.gd -- world` 로 **이 구간만** 부른다.
+##
+## **찍는 줄의 머리말이 `main.gd` 와 부딪힌다** (회차 27): 메인 씬은 `_ready` 에서
+## `WORLD    씨앗 ...` 를 찍는데, 한 프로세스가 된 뒤로는 COLLIDE·CAMERA 가 메인 씬을
+## 세우므로 그 줄이 **같은 출력에 섞인다.** `^WORLD ` 로 긁으면 두 프로세스의 줄 수가
+## 달라져서 「씨앗이 프로세스마다 다르다」로 영영 빨개진다 — check.sh 는 그래서
+## `^WORLD [0-9]` 로 긁는다 (`measure_window.gd` 의 `WINGATE` 와 같은 자리의 함정이다).
 
 const SEEDS := [1, 42, -20260914]
 
-func _initialize() -> void:
+func tag() -> String:
+	return "WORLD"
+
+func step(_delta: float) -> bool:
 	var t0 := Time.get_ticks_msec()
 	for s in SEEDS:
 		var grid := WorldGen.generate(s)
@@ -31,4 +45,4 @@ func _initialize() -> void:
 			k[WorldObjects.TREE], k[WorldObjects.ROCK], k[WorldObjects.ORE],
 			WorldGen.checksum(objs)])
 	print("WORLDGEN %d장(지형+놓임) · %d ms" % [SEEDS.size(), Time.get_ticks_msec() - t0])
-	quit(0)
+	return true
