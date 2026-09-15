@@ -43,6 +43,7 @@ cp scripts/claim.gd "$BAK/" 2>/dev/null || true
 cp scripts/display.gd "$BAK/" 2>/dev/null || true
 cp scripts/day_cycle.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
+cp scripts/bag_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
@@ -81,6 +82,7 @@ restore() {
   cp "$BAK/display.gd" scripts/display.gd 2>/dev/null || true
   cp "$BAK/day_cycle.gd" scripts/day_cycle.gd 2>/dev/null || true
   cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
+  cp "$BAK/bag_view.gd" scripts/bag_view.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
@@ -1577,6 +1579,54 @@ cp "$BAK/test_tolerances.gd" tools/tests/test_tolerances.gd
 
 expect 0 "원복하면 허용치 표도 초록이다"
 
+
+# ── 회차 40 가방 화면 ────────────────────────────────────────────────
+section "회차 40 가방 화면"
+# **앞의 다섯 중 넷은 단위 검사 194개를 전부 초록으로 남긴다** — 순수 계산(18칸의
+# 기하)도 씬의 글자(UI/Bag 이 달렸고 닫힌 채다)도 입력 배선(E)도 멀쩡하고
+# **실행 중의 픽셀만** 달라지기 때문이다. `measure_window.gd` 의 BAG 만 잡는다.
+# 사람 눈에는 「E 를 눌러도 아무 일이 없다 / 창이 빈 채로 뜬다 / 한 번 열면 안 닫힌다 /
+# 무엇이 들었는지 안 보인다」로만 보인다.
+
+# **키를 안 읽는다.** 액션은 묶여 있고 `BagView.toggle` 도 멀쩡하다 — 아무도 안 부를 뿐이다.
+mut scripts/main.gd '^\t_poll_bag\(\)$' ''
+expect 1 "E 를 안 읽으면 실측이 잡는다 (가방이 영영 안 열린다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# **창이 빈 채로 뜬다.** `visible` 은 제대로 뒤집히고 자리도 크기도 맞다 —
+# 그리지만 않는다. DRAW 는 **닫힌 화면**만 보므로 여기 말고는 보는 눈이 없다.
+mut scripts/bag_view.gd '^func _draw\(\) -> void:$' 'func _draw() -> void:\n\tif true:\n\t\treturn'
+expect 1 "가방을 안 그리면 실측이 잡는다 (씬에도 있고 열리기도 한다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+# **이 하나가 이 회차가 실제로 걸린 고장이다** (2026-09-15). 숨은 `CanvasItem` 은
+# `queue_redraw` 가 버려지고, 다시 보일 때 엔진이 저절로 다시 그리지 않는다 —
+# **그리기 목록이 빈 채로 뜬다.** `visible` 만 보는 검사는 전부 초록이다.
+mut scripts/bag_view.gd '^\tqueue_redraw\(\)\n\treturn visible$' '\treturn visible'
+expect 1 "열 때 다시 그리기를 빼면 실측이 잡는다 (빈 창이 뜬다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+# **열리기만 하고 안 닫힌다.** `BagView.toggle` 은 멀쩡해서 단위 검사가 못 본다 —
+# 부르는 쪽이 한 방향으로만 부른다. 창이 월드를 영영 가린다.
+mut scripts/main.gd '^\t\t_bag_view\.toggle\(\)$' '\t\tif not _bag_view.is_open():\n\t\t\t_bag_view.toggle()'
+expect 1 "가방이 안 닫히면 실측이 잡는다 (여는 것만 된다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# **빈 칸과 찬 칸이 똑같이 보인다.** 아이템 네모를 안 그린다 — 칸 테두리도 바탕도
+# 그대로라 HOTBAR 의 두 점(테두리·바탕)은 전부 맞는다. **칸 한가운데를 보는 BAG 만**
+# 잡는다: 「무엇이 얼마나 들었나」가 화면에 없으면 가방 화면은 빈 격자다.
+mut scripts/hotbar_view.gd '^\ton\.draw_rect\(slot\.grow\(-SWATCH_INSET\), item_color\(id\), true\)$' ''
+expect 1 "아이템 네모를 안 그리면 실측이 잡는다 (18칸이 전부 빈 칸으로 보인다)"
+cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd
+
+# **사람이 정한 값은 숫자로 묶여 있어야 한다** (회차 19·20 과 같은 자리).
+# 18칸은 사람이 정한 가방 용량이다 — 화면이 9칸만 보여주면 나머지 9칸에 든 것은
+# 사람에게 **없는 것**이다. 이것만은 단위 검사가 잡는다.
+mut scripts/bag_view.gd '^const ROWS := 2 ' 'const ROWS := 1 '
+expect 1 "가방 화면을 9칸으로 줄이면 tests 가 잡는다 (18칸 중 9칸이 안 보인다)"
+cp "$BAK/bag_view.gd" scripts/bag_view.gd
+
+expect 0 "원복하면 가방 화면도 초록이다"
 
 echo
 SKIPMSG=""
