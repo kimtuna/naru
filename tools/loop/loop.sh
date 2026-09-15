@@ -11,7 +11,24 @@
 # 사용법: loop.sh [--dry-run] [회차수]
 set -uo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# **제 사본으로 갈아타고 거기서 돈다.**
+# bash 는 스크립트를 통째로 안 읽는다 — 돌면서 **파일 위치(offset)로 조금씩 읽는다.**
+# 그래서 도는 중에 `loop.sh` 가 바뀌면(세션이 고쳐 커밋 → 빨개서 `git reset --hard`)
+# 그다음 읽는 바이트가 엉뚱한 자리라 **문법 오류로 죽는다.** 실제로 죽었다 (2026-09-15 회차 28:
+# `line 451: op: command not found` · `line 522: syntax error near unexpected token 'done'`).
+# 세션이 드라이버를 고치는 것은 막을 일이 아니다 — 회차 22·25·27 이 그렇게 고쳤다.
+# 막을 것은 **도는 파일과 고치는 파일이 같은 것**이다. 사본은 저장소 밖이라 안 흔들린다.
+if [ -z "${NARU_LOOP_COPY:-}" ]; then
+  NARU_LOOP_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  export NARU_LOOP_ROOT
+  _self="$(mktemp -t naru-loop)"
+  cat "$NARU_LOOP_ROOT/tools/loop/loop.sh" > "$_self"
+  NARU_LOOP_COPY=1 bash "$_self" "$@"; _rc=$?
+  rm -f "$_self"
+  exit $_rc
+fi
+
+ROOT="$NARU_LOOP_ROOT"
 cd "$ROOT"
 . tools/loop/env.sh
 

@@ -171,16 +171,17 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 11:14:35</span><span id="ago"></span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 11:17:40</span><span id="ago"></span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
 <div class="tile"><span class="k">마지막 회차</span><span class="v"><i class="dot halt"></i>회차 28</span><span class="note">빨강 · 2026-09-15</span></div>
-<div class="tile"><span class="k">상태</span><span class="v bad">빨강</span><span class="note">2026-09-15 11:14</span></div>
-<div class="tile"><span class="k">진행</span><span class="v">33 <small>/ 66</small></span><span class="note">백로그 항목</span></div>
+<div class="tile"><span class="k">상태</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-15 11:16</span></div>
+<div class="tile"><span class="k">진행</span><span class="v">33 <small>/ 69</small></span><span class="note">백로그 항목</span></div>
 <div class="tile"><span class="k">누적 비용</span><span class="v">$98.8546</span></div>
 </section>
+<div class="alert halt"><strong>멈췄다 — 사람이 볼 것</strong> 워킹트리가 더럽다 — 이전 회차가 커밋 없이 끝났다<span class="note">2026-09-15 11:16:36</span></div>
 <div class="alert next"><span class="k">백로그 다음 줄</span><span class="pill">P2</span><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</div>
 <h2>진행 — 한 줄 = 한 회차</h2>
 <div class="phases">
@@ -220,8 +221,8 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase part" open>
   <summary><span class="pid">P2</span>
     <span class="ptitle">손: 인벤토리와 도구</span>
-    <span class="pcount">14/23</span>
-    <span class="bar"><i style="width:61%"></i></span></summary>
+    <span class="pcount">14/28</span>
+    <span class="bar"><i style="width:50%"></i></span></summary>
   <ul class="items">
 <li class="done" id="i15" ><a class="turn" href="#t15" title="15회차 일지로">15회차</a><span class="box">✔</span><strong>지형 타일 48 → 32px</strong> — 고정값이 바뀌었다(위 표). 캐릭터 48px 과 속도 240 px/s 는</li>
 <li class="done" id="i16" ><a class="turn" href="#t16" title="16회차 일지로">16회차</a><span class="box">✔</span><strong>캐릭터 네모를 1칸 폭으로 · 충돌 상자를 발밑에</strong> — 지금 그리는 네모는 48×48(1.5칸 ×</li>
@@ -238,6 +239,11 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done" id="i26" ><a class="turn" href="#t26" title="26회차 일지로">26회차</a><span class="box">✔</span><strong>doclen 이 <code>roll_state</code> 보다 먼저 돈다</strong> — 기준 5 는 판정(7)에서 재는데</li>
 <li class="done" id="i27" ><a class="turn" href="#t27" title="27회차 일지로">27회차</a><span class="box">✔</span><strong>헤드리스 실측 게이트를 한 프로세스로 모은다</strong> — <code>check.sh tests</code> 가 Godot 을</li>
 <li class="todo" id="i28" ><a class="turn" href="#t28" title="28회차 일지로">28회차</a><span class="box"></span><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</li>
+<li class="todo"><span class="box"></span><strong>전체 화면에서 띠를 최소로 — 정수 배율과 「누구나 같은 범위」는 지킨다</strong></li>
+<li class="todo"><span class="box"></span><strong>「사람이 띄운 화면에 남는 띠가 얼마인가」를 게이트로 박는다</strong> — 이 건은 **게이트가</li>
+<li class="todo"><span class="box"></span><strong>가방 화면 — <code>E</code> 로 열고 닫는다</strong> — 지금 <code>Inventory</code> 는 순수 클래스뿐이고 화면이 없다.</li>
+<li class="todo"><span class="box"></span><strong>가방이 열려 있는 동안의 입력</strong> — <strong>걸을 수는 있다</strong>(코어 키퍼 방식 · GDD D-9).</li>
+<li class="todo"><span class="box"></span><strong>칸 사이로 아이템을 옮긴다</strong> — 집어서 놓기(좌클릭으로 집고 좌클릭으로 놓는다).</li>
 <li class="todo"><span class="box"></span><strong>채광</strong> — 곡괭이로 돌/광물을 캔다</li>
 <li class="todo"><span class="box"></span>바닥 드롭 + 걸어가서 줍기. 인벤토리가 꽉 차면 바닥에 남는다</li>
 <li class="todo"><span class="box"></span><strong>색 캐시를 스크롤한다 — 한 판 13.0 ms 가 프레임 예산의 78% 다</strong> (회차 17 실측).</li>
@@ -245,7 +251,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="todo"><span class="box"></span><strong>저장을 캐릭터와 월드로 가른다</strong> — <code>user://chars/&lt;id&gt;.json</code> 과 <code>user://worlds/&lt;id&gt;.json</code>.</li>
 <li class="todo"><span class="box"></span><strong>캐릭터 만들기 화면 — 이름 + 색</strong> — 색 네모 단계라 <strong>고르는 것은 색</strong>이다</li>
 <li class="todo"><span class="box"></span><strong>캐릭터 고르기 → 월드 고르기 → 게임</strong> — 세 화면을 잇는다. 각 화면에서 만들기도 된다.</li>
-<li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>고를 수 있는 색을 몇 개로 할까</strong> — 임시로 8개. 자유 색상환은 색 네모 단계에서</li>
+<li class="todo"><span class="box"></span><strong>고를 수 있는 색 8개</strong> — 사람이 정했다 (2026-09-15): **디자인은 안 본다. UI 와</li>
 </ul></details>
 <details class="phase none">
   <summary><span class="pid">P3</span>
@@ -289,15 +295,13 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <details class="phase none">
   <summary><span class="pid">P6</span>
     <span class="ptitle">한 회차가 닫힌다</span>
-    <span class="pcount">0/6</span>
+    <span class="pcount">0/4</span>
     <span class="bar"><i style="width:0%"></i></span></summary>
   <ul class="items">
 <li class="todo"><span class="box"></span>원정 산출물로 <strong>더 좋은 도구 1종</strong>을 만든다</li>
 <li class="todo"><span class="box"></span>그 도구로 원정이 실제로 쉬워지는지 잰다 (잔해 채굴 시간 · 클리어 시간)</li>
 <li class="todo"><span class="box"></span>버프 음식을 먹고 간 판과 안 먹고 간 판의 차이를 잰다 — <strong>「보급」이 실제로 듣는가</strong></li>
 <li class="ask"><span class="box">?</span><code>[ASK]</code> <strong>사람이 직접 끝까지 플레이한다.</strong> 한 회차가 재미있는가? — <strong>이 판정만이 프로토타입의 결론이다</strong></li>
-<li class="todo"><span class="box"></span><strong>창을 논리 해상도의 정수배로 맞춘다 — 검은 띠 0</strong> — 지금은 <code>window_override</code></li>
-<li class="todo"><span class="box"></span><strong>「사람이 띄운 창에 띠가 없다」를 게이트로 박는다</strong> — 이번 건은 **게이트가 볼 수 없는</li>
 </ul></details>
 </div>
 <h2>상태 검사 — 기계가 채점한다 <span class="hash">무장 fcfe0d38f3df</span></h2>
@@ -315,35 +319,35 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">모든 GDScript 가 파스된다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh parse</code>
-<ul class="ev"><li>PARSE 44개 스크립트, 실패 0</li></ul>
+<ul class="ev"><li>PARSE 37개 스크립트, 실패 0</li></ul>
 </div>
-<div class="card bad">
+<div class="card ok">
   <div class="chead"><span class="cid">3</span>
     <span class="cwhat">단위 테스트가 통과하고 개수가 줄지 않는다</span>
-    <span class="cmark">빨강</span></div>
+    <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/mintests.sh 113</code>
-<ul class="ev"><li>  FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0</li><li>TESTS 131 passed, 1 failed</li><li>  FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0</li><li>TESTS 131 passed, 1 failed</li></ul>
+<ul class="ev"><li>TESTS 113 passed, 0 failed</li></ul>
 </div>
-<div class="card bad">
+<div class="card ok">
   <div class="chead"><span class="cid">4</span>
     <span class="cwhat">색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</span>
-    <span class="cmark">빨강</span></div>
+    <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh tests</code>
-<ul class="ev"><li>  FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0</li><li>TESTS 131 passed, 1 failed</li></ul>
+<ul class="ev"><li>TESTS 113 passed, 0 failed</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">5</span>
     <span class="cwhat">매 회차 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  65/70줄</li><li>DOCLEN .loop/state.md  86/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  65/70줄</li><li>DOCLEN .loop/state.md  60/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
     <span class="cwhat"><strong>월드를 화면에 그린다</strong> — 보이는 칸만. <code>main.gd</code> 의 임시 격자를 걷어낸다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/shot.sh /tmp/w.png</code>
-<ul class="ev"><li>SHOT 960x540  색 1001개  가장 넓은 한 색 1.3%  → /tmp/w.png</li></ul>
+<ul class="ev"><li>SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  → /tmp/w.png</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">7</span>
@@ -910,6 +914,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">회차 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/2cd9266"><code>2cd9266</code></a><span class="cd">2026-09-15</span>회차 28 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/ea0f13f"><code>ea0f13f</code></a><span class="cd">2026-09-15</span>회차 27 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/1fcd5a1"><code>1fcd5a1</code></a><span class="cd">2026-09-15</span>회차 기록 롤링</li>
 <li><a href="https://github.com/kimtuna/naru/commit/360b6eb"><code>360b6eb</code></a><span class="cd">2026-09-15</span>회차 27 대조군 결과를 잰 값으로 고친다 — REDTEAM 10 잡음, 0 놓침 (3분 37초)</li>
@@ -921,7 +926,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/3d15bce"><code>3d15bce</code></a><span class="cd">2026-09-15</span>회차 25 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/d965971"><code>d965971</code></a><span class="cd">2026-09-15</span>테스트 바닥 100 → 113</li>
 <li><a href="https://github.com/kimtuna/naru/commit/49255b9"><code>49255b9</code></a><span class="cd">2026-09-15</span>상태 검사에 기준 8 추가 — <strong>세션이 손으로 깨뜨린 것을 반드시 되돌린다</strong> — 회차 24 가 대조군 하나를</li>
-<li><a href="https://github.com/kimtuna/naru/commit/fd6ca82"><code>fd6ca82</code></a><span class="cd">2026-09-15</span>회차 25 기록 · state.md 를 3회차로 굴린다</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 회차</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 회차가 올라왔다 — 새로고침</button>
