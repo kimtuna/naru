@@ -35,6 +35,7 @@ color = Color(0.99, 0.93, 0.78, 1)
 shape = SubResource("1_shape")
 
 [node name="Camera" type="Camera2D" parent="."]
+position = Vector2(0, -12)
 zoom = Vector2(1, 1)
 position_smoothing_enabled = false
 rotation_smoothing_enabled = false

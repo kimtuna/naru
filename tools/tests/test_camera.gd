@@ -12,16 +12,27 @@ extends TestBase
 const PLAYER := "res://scenes/player.tscn"
 const MAIN := "res://scenes/main.tscn"
 
-func test_camera_rides_the_player() -> void:
+func test_camera_rides_the_body_center() -> void:
 	# **코드가 매 프레임 따라 붙이지 않는다.** 플레이어의 자식이라 공짜로 따라간다 —
 	# 따라 붙이는 코드는 물리와 그리기 사이에 한 틱 뒤처질 자리를 만든다.
 	var p: Node = load(PLAYER).instantiate()
 	var cam := p.get_node_or_null("Camera") as Camera2D
-	if cam == null:
-		failures.append("플레이어 씬에 Camera2D 'Camera' 가 있어야 한다")
-	else:
-		# 원점은 **발밑**이다 (회차 16) — 카메라가 비추는 것도 그 점이다.
-		eq(cam.position, Vector2.ZERO, "카메라가 플레이어 원점(발밑)에 있어야 한다")
+	var body := p.get_node_or_null("Body") as ColorRect
+	if cam == null or body == null:
+		failures.append("플레이어 씬에 Camera2D 'Camera' 와 ColorRect 'Body' 가 있어야 한다")
+		p.free()
+		return
+	# **원점은 발밑이지만**(회차 16) 비추는 것은 **몸통 한가운데**다 (2026-09-15 사람이 정했다).
+	# 발을 비추면 화면 절반이 플레이어 아래쪽 땅이다 — 가는 쪽이 덜 보인다.
+	# 기준점의 출처는 하나다: `player.gd` 의 코·도구가 쓰는 그 점(`_body` 사각형의 중심)이다.
+	# 여기서 숫자를 다시 적으면 몸통을 옮겼을 때 카메라만 뒤에 남는다.
+	eq(cam.position, body.position + body.size * 0.5,
+		"카메라가 몸통 한가운데에 있어야 한다 (몸통 %s + %s)" % [body.position, body.size])
+	# **한쪽으로만 막는 바닥을 따로 둔다.** 위의 등식은 몸통과 카메라가 **같이** 움직이면
+	# 초록으로 남는다 — 「발밑으로 되돌린다」만은 몸통과 무관하게 빨개져야 한다.
+	check(cam.position.y <= -PlayerMotion.TILE * 0.5,
+		"카메라는 발밑보다 최소 반 칸 위여야 한다 — 잰 값 %.2f px · 기대 %.2f px 이하" % [
+			cam.position.y, -PlayerMotion.TILE * 0.5])
 	p.free()
 
 func test_camera_zoom_is_one() -> void:

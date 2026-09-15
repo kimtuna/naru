@@ -11,6 +11,11 @@ extends MeasurePhase
 ## 카메라가 아예 없어도 플레이어가 화면 밖으로 나가는 데는 시간이 걸리므로,
 ## 판정은 「화면 안에 있나」가 아니라 **「중심에서 몇 px 벗어났나」**다.
 ##
+## **한가운데에 놓는 것은 발이 아니라 몸통 한가운데다** (2026-09-15 사람이 정했다).
+## `position` 은 발밑이므로(회차 16) 그것을 재면 **카메라를 어디에 두든 게이트가
+## 발을 계속 요구한다.** 기준점은 `player.gd` 의 코·도구와 같은 점 —
+## `Body` 사각형의 중심이다. 여기서 숫자를 다시 적지 않는다.
+##
 ## 헤드리스로 된다 — 캔버스 변환은 창 없이도 돈다. 창·배율은 measure_window.gd 가 잰다.
 ##
 ## **홀로 도는 프로세스가 아니다** (회차 27): `measure_headless.gd` 의 마지막 구간이다.
@@ -31,6 +36,7 @@ var _dirs := [["move_right"], ["move_down"], ["move_left"], ["move_up"]]
 
 var _main: Node
 var _player: Node2D
+var _body: ColorRect
 var _i := 0
 var _t := 0.0
 var _last := Vector2.ZERO
@@ -55,6 +61,7 @@ func cleanup() -> void:
 	drop(_main)
 	_main = null
 	_player = null
+	_body = null
 
 func step(delta: float) -> bool:
 	_frames += 1
@@ -82,19 +89,28 @@ func _setup() -> bool:
 	if _player == null:
 		fail("플레이어", "Main/Player 가 없다", "메인 씬에 플레이어")
 		return _finish()
+	_body = _player.get_node_or_null("Body") as ColorRect
+	if _body == null:
+		fail("몸통", "Main/Player/Body 가 없다", "한가운데에 놓을 것을 알려면 몸통이 필요하다")
+		return _finish()
 	_last = _player.global_position
 	# 걷기 전에 한 번. 「카메라가 원점을 비춘다」는 여기서 이미 잡힌다 —
 	# 스폰은 월드 한가운데(6168, 6168)라 화면 밖으로 128칸 떨어져 있다.
 	_sample()
-	print("CAMERA 스폰 월드 %s · 화면 %s · 보이는 월드 %s" % [
-		_player.global_position, _screen_of_player(), _main.visible_world_rect()])
+	print("CAMERA 스폰 몸통 한가운데 월드 %s (발밑 %s) · 화면 %s · 보이는 월드 %s" % [
+		_hub(), _player.global_position, _screen_of_hub(), _main.visible_world_rect()])
 	for k in _dirs[_i]:
 		Input.action_press(k)
 	return false
 
-## 플레이어의 월드 좌표가 화면 어디로 찍히나. **카메라가 하는 일 전부가 이 변환이다.**
-func _screen_of_player() -> Vector2:
-	return tree.root.get_canvas_transform() * _player.global_position
+## 화면 한가운데에 와야 하는 점 — **몸통 한가운데**의 월드 좌표.
+## 출처가 `player.gd` 의 코·도구와 같다: 몸통을 옮기면 카메라도 따라 옮겨야 한다.
+func _hub() -> Vector2:
+	return _player.global_position + _body.position + _body.size * 0.5
+
+## 그 점이 화면 어디로 찍히나. **카메라가 하는 일 전부가 이 변환이다.**
+func _screen_of_hub() -> Vector2:
+	return tree.root.get_canvas_transform() * _hub()
 
 func _sample() -> void:
 	_samples += 1
@@ -102,12 +118,14 @@ func _sample() -> void:
 	_path += pos.distance_to(_last)
 	_last = pos
 
-	var dev := _screen_of_player().distance_to(LOGICAL * 0.5)
+	var dev := _screen_of_hub().distance_to(LOGICAL * 0.5)
 	if dev > _max_dev:
 		_max_dev = dev
 	if dev > TOL_CENTER and not _said_center:
 		_said_center = true
-		fail("화면 중심에서 벗어났다", "%.2f px (화면 %s)" % [dev, _screen_of_player()],
+		fail("몸통 한가운데가 화면 중심에서 벗어났다",
+			"%.2f px (화면 %s · 발밑은 %s)" % [
+				dev, _screen_of_hub(), tree.root.get_canvas_transform() * _player.global_position],
 			"%.2f px 이내 (중심 %s)" % [TOL_CENTER, LOGICAL * 0.5])
 
 	# 줌 = 시야. 씬의 글자가 아니라 **엔진이 실제로 거는 캔버스 변환**에서 잰다.
@@ -129,6 +147,11 @@ func _finish() -> bool:
 	var tiles := Vector2(LOGICAL.x / cz.x, LOGICAL.y / cz.y) / PlayerMotion.TILE
 	print("CAMERA 최대 편차 %.4f px · 걸은 거리 %.2f px · 줌 %.2fx · 보이는 칸 %.2f x %.2f · 표본 %d" % [
 		_max_dev, _path, cz.x, tiles.x, tiles.y, _samples])
+	# **견준 두 점을 같이 찍는다** (회차 35): 편차만 0 이고 「무엇이 한가운데인가」가
+	# 안 보이면, 기준점이 발밑으로 되돌아가도 로그는 똑같이 ok 로 읽힌다.
+	if _body != null:
+		print("CAMERA 한가운데에 놓은 점 = 몸통 한가운데 (발밑에서 %.2f px 위) · 화면 %s" % [
+			-(_body.position.y + _body.size.y * 0.5), _screen_of_hub()])
 	print("CAMERA %s (구간 %d × %.1f s · 허용 편차 %.2f px · 물리 %d Hz)" % [
 		"ok" if bad == 0 else "FAIL %d개" % bad, _dirs.size(), SEC, TOL_CENTER,
 		Engine.physics_ticks_per_second])
