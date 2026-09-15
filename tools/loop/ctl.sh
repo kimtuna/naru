@@ -39,11 +39,21 @@ case "${1:-status}" in
     # 그러면 세션이 한가운데서 얼어붙는다. `pmset` 으로 설정을 영구히 바꾸지 않는다 —
     # 배터리 수명과 평소 쓰임을 건드릴 일이 아니다. **루프가 끝나면 저절로 풀린다.**
     # 뚜껑을 닫는 잠자기는 이걸로도 못 막는다.
-    command -v caffeinate >/dev/null && \
-      nohup caffeinate -i -w "$(cat "$PIDF")" >/dev/null 2>&1 &
-    sleep 1
-    alive && echo "시작됨 (pid $(cat "$PIDF")) — ctl.sh logs 로 본다" \
-          || { echo "시작 실패. 로그:"; tail -20 "$LOG"; exit 1; }
+    # **잠자기 막기는 사본이 뜬 뒤에 건다** (회차 40). 예전엔 pid 파일의 값(`$!`)을
+    # `caffeinate -w` 에 줬는데 **그 프로세스는 곧 사라진다** — `loop.sh` 가 제 사본으로
+    # 갈아타기 때문이다(`loop.sh:21`). 그래서 caffeinate 가 1초 만에 끝나고
+    # **밤새 도는 루프가 잠자기에 그대로 노출됐다.** `stop` 이 엉뚱한 pid 를 죽인 것과
+    # 같은 뿌리다. 이제 사본이 뜨기를 기다렸다가 **그것**을 물린다.
+    sleep 2
+    if ! alive; then
+      echo "시작 실패. 로그:"; tail -20 "$LOG"; exit 1
+    fi
+    _real="$(loop_pids | head -1)"
+    if [ -n "$_real" ] && command -v caffeinate >/dev/null; then
+      nohup caffeinate -i -w "$_real" >/dev/null 2>&1 &
+      echo "잠자기 막기 걸었다 (caffeinate -w $_real)"
+    fi
+    echo "시작됨 (pid ${_real:-$(cat "$PIDF")}) — ctl.sh logs 로 본다"
     ;;
   stop)
     alive || { echo "안 돌고 있다"; rm -f "$PIDF"; exit 0; }
