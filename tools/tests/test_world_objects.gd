@@ -257,3 +257,115 @@ func test_the_slower_the_rarer() -> void:
 	check(tree > 0.0, "나무가 자라는 날 수가 0 이다 (한 번 캐고 끝난다)")
 	check(rock > tree, "돌 %.1f일이 나무 %.1f일보다 느리지 않다" % [rock, tree])
 	check(ore > rock, "광물 %.1f일이 돌 %.1f일보다 느리지 않다" % [ore, rock])
+
+## ── 얼마나 놓이나: **손잡이가 둘뿐인가** (회차 38) ────────────────────
+
+## `FILL` 과 `MIX` 로 옮기기 전에는 종류마다 문턱이 따로였다 — `TREE_MAX` · `ROCK_RATE`
+## · `ORE_RATE`. 하나를 만지면 나머지 둘과의 비가 같이 흔들리는데 **아무 검사도 안 봤다**:
+## 위의 `test_density_on_land_is_in_range` 는 종류별 폭이 4%~16% 라 그 안에서 비가 두 배로
+## 벌어져도 초록이다. 아래 셋이 그 자리를 본다.
+
+## **씨앗을 8개나 쓰고 전수로 도는 이유**: 광물은 높은 땅에만 놓이는데 높은 땅이 씨앗마다
+## 9.99% ~ 69.46% 로 **7배**가 흔들린다 (NUMBERS 6b). 한 섬만 보면 비가 안 맞는 게 정상이고,
+## **여러 섬을 모아야** 비를 물을 수 있다. STEP 으로 건너뛰면 광물이 한 섬에 60칸뿐이라
+## 표본 오차만 +11% 다 — 실측해서 확인했다. 그래서 여기만 전수다 (8장 1.5초).
+const MIX_SEEDS := [1, 42, -20260914, 20260914, 0, 7, 999983, 2147483647]
+
+## 잰 어긋남은 나무 +0.79% · 돌 -3.53% · 광물 -0.06% 다 (NUMBERS 6b).
+## 돌이 늘 조금 모자란 것은 스폰 빈터와 `WorldGen.unit` 의 잔 치우침이고 **고장이 아니다** —
+## 문턱은 그 위에 둔다. **8% 는 잡음의 2.3배**이고, 비를 한 칸 만지는 것(광물 1 → 2)의
+## **12분의 1**이다: 잡음은 못 넘고 진짜 변경은 반드시 넘는 자리다.
+const MIX_TOL := 0.08
+
+## **두 손잡이가 말한 대로 놓이나.** 백로그의 대조판이 이것이다 —
+## 비를 바꾸면 세 밀도가 전부 그 비대로 움직이고, 총 %를 바꾸면 비는 그대로다.
+## 종류 이름이 붙은 상수가 어디 하나라도 도로 끼면 그 종류만 기대에서 벗어난다.
+func test_placed_density_follows_fill_and_mix() -> void:
+	var land := 0
+	var k := PackedInt32Array([0, 0, 0, 0])
+	for s in MIX_SEEDS:
+		for y in WorldGen.SIZE:
+			for x in WorldGen.SIZE:
+				var h := WorldGen.height_at(s, x, y)
+				if WorldGen.kind_at_height(h) != WorldGen.LAND:
+					continue
+				land += 1
+				k[WorldObjects.at_height(s, x, y, h)] += 1
+	var total := 0.0
+	for kind in WorldObjects.MIX:
+		total += WorldObjects.MIX[kind]
+	var placed := 0
+	for kind in [WorldObjects.TREE, WorldObjects.ROCK, WorldObjects.ORE]:
+		placed += k[kind]
+		var got := float(k[kind]) / land
+		var want: float = WorldObjects.FILL * float(WorldObjects.MIX[kind]) / total
+		check(absf(got / want - 1.0) < MIX_TOL,
+			"종류 %d 밀도 — 잰 값 %.4f%% · 기대 %.4f%% (FILL %.1f%% × 비 %.0f/%.0f) · 어긋남 %+.1f%% · 허용 ±%.0f%%" % [
+				kind, 100.0 * got, 100.0 * want, 100.0 * WorldObjects.FILL,
+				WorldObjects.MIX[kind], total, 100.0 * (got / want - 1.0), 100.0 * MIX_TOL])
+	# **총 채움도 같이 묻는다**: 셋이 저희끼리 비만 맞고 다 같이 반으로 줄면
+	# 비만 보는 물음은 전부 초록이다 — 지도가 텅 비는데.
+	var fill := float(placed) / land
+	check(absf(fill / WorldObjects.FILL - 1.0) < MIX_TOL,
+		"땅의 채움 — 잰 값 %.4f%% · FILL %.4f%% · 어긋남 %+.1f%% (씨앗 %d개 전수 · 땅 %d칸)" % [
+			100.0 * fill, 100.0 * WorldObjects.FILL,
+			100.0 * (fill / WorldObjects.FILL - 1.0), MIX_SEEDS.size(), land])
+
+## **`REACH` 는 잰 값이라 지형이 바뀌면 낡는다.** 밀도 = 뽑을 확률 × REACH 이므로,
+## `ORE_MIN_HEIGHT` 를 0.05 만 올려도 실제 몫이 19.5% 움직이는데 상수가 그대로면
+## **광물만 조용히 19.5% 귀해진다** — `MIX` 는 한 글자도 안 바뀐 채로.
+## 위의 물음은 그때 같이 빨개지지만 **왜인지를 말해 주는 것은 여기다.**
+##
+## 여기는 건너뛰며 재도 된다: 높은 땅도 숲 잡음도 **칸마다 있는 값**이라 표본이 넉넉하다
+## (STEP 3 과 전수의 차 — 나무 0.05% · 광물 0.13%). 귀한 **사건**을 세는 위와 다르다.
+## **5% 는 표본 오차의 38배**이고 `ORE_MIN_HEIGHT` 한 칸(0.05)의 **4분의 1**이다.
+const REACH_TOL := 0.05
+
+func test_reach_still_matches_the_land() -> void:
+	var land := 0
+	var high := 0
+	var forest := 0.0
+	for s in MIX_SEEDS:
+		for y in range(0, WorldGen.SIZE, STEP):
+			for x in range(0, WorldGen.SIZE, STEP):
+				var h := WorldGen.height_at(s, x, y)
+				if WorldGen.kind_at_height(h) != WorldGen.LAND:
+					continue
+				land += 1
+				if h > WorldObjects.ORE_MIN_HEIGHT:
+					high += 1
+				forest += WorldObjects.tree_rate(s, x, y) / WorldObjects.rate(WorldObjects.TREE)
+	var got := {
+		WorldObjects.TREE: forest / land,
+		WorldObjects.ROCK: 1.0,          # 돌은 땅이면 어디나 — 잴 것이 없다
+		WorldObjects.ORE: float(high) / land,
+	}
+	for kind in got:
+		var want: float = WorldObjects.REACH[kind]
+		check(absf(got[kind] / want - 1.0) < REACH_TOL,
+			"종류 %d 가 놓일 수 있는 땅의 몫 — 잰 값 %.4f · 상수 %.4f · 어긋남 %+.1f%% · 허용 ±%.0f%% (다시 재라)" % [
+				kind, got[kind], want, 100.0 * (got[kind] / want - 1.0), 100.0 * REACH_TOL])
+
+## **값이 아니라 순서가 규칙이다** (`REGROW_DAYS` 와 같은 자리). 36 : 8 : 1 은
+## 회차 37 까지의 섬을 재서 옮겨 적은 자리표시자라 경제(P3)가 값을 옮길 텐데,
+## 그때도 **나무 > 돌 > 광물**은 지켜져야 한다: 광물이 통화 본위라(GDD C-5) 가장 귀하고,
+## 돌은 건축 자재라 그 사이다. 위의 물음은 비를 어떻게 적든 초록이라 이걸 못 지킨다.
+##
+## 셋을 도로 합치면 `FILL` 이 나오는지도 같이 묻는다 — `rate` 가 비를 **정규화**하는지다.
+## 안 하면 `MIX` 에 적은 수의 크기가 그대로 밀도가 되어서, 「셋 다 두 배」가 지도를 바꾼다.
+func test_the_mix_is_a_ratio_and_ore_is_the_rarest_share() -> void:
+	var tree: float = WorldObjects.MIX[WorldObjects.TREE]
+	var rock: float = WorldObjects.MIX[WorldObjects.ROCK]
+	var ore: float = WorldObjects.MIX[WorldObjects.ORE]
+	check(ore > 0.0, "광물의 몫이 0 이다 (섬에 통화가 없다)")
+	check(rock > ore, "돌의 몫 %.1f 이 광물 %.1f 보다 크지 않다" % [rock, ore])
+	check(tree > rock, "나무의 몫 %.1f 이 돌 %.1f 보다 크지 않다" % [tree, rock])
+	var sum := 0.0
+	for kind in WorldObjects.MIX:
+		sum += WorldObjects.rate(kind) * float(WorldObjects.REACH[kind])
+	check(absf(sum / WorldObjects.FILL - 1.0) < 0.001,
+		"세 확률을 도로 합치면 FILL 이라야 한다 — 잰 값 %.6f · FILL %.6f" % [sum, WorldObjects.FILL])
+	# **모르는 종류는 0 이다.** 다음에 놓이는 것(설치물·작물)이 `MIX` 에 없는 채로
+	# 말없이 깔리면 안 된다 — `regrow_days(NONE)` 과 같은 자리다.
+	check(is_equal_approx(WorldObjects.rate(WorldObjects.NONE), 0.0),
+		"MIX 에 없는 종류가 0 이 아닌 확률을 받았다")

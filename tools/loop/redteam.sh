@@ -651,13 +651,16 @@ cp "$BAK/world_objects.gd" scripts/world_objects.gd
 
 # ④ 나무를 고르게 흩뿌린다. **밀도도 종류도 그대로다** — 뭉침 배수만 2.3 에서 1.0 으로
 #    내려간다. 사람 눈에는 「어디를 가도 똑같아서 갈 곳이 없다」로 보인다.
+#    **0.09 는 회차 38 뒤에도 일부러 그대로다**: 나무 밀도가 9.0% 로 기대 9.28% 의
+#    -3% 라 새 비율 물음(허용 ±8%)을 안 건드린다 — 이 대조군이 겨누는 것은 밀도가
+#    아니라 뭉침이라서, 겹쳐 잡히면 「무엇이 죽었나」를 못 읽는다.
 python3 - <<'PYX'
 import io
 p='scripts/world_objects.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
     "\tvar f := FOREST_CELLS / float(WorldGen.SIZE)\n"
     "\tvar n := WorldGen.value(world_seed ^ FOREST_SALT, x * f, y * f)\n"
-    "\treturn TREE_MAX * clampf(inverse_lerp(FOREST_FLOOR, 1.0, n), 0.0, 1.0)",
+    "\treturn rate(TREE) * clampf(inverse_lerp(FOREST_FLOOR, 1.0, n), 0.0, 1.0)",
     "\treturn 0.09", 1))
 PYX
 expect 1 "나무를 고르게 흩뿌리면 tests 가 잡는다 (숲이 없다 · 밀도는 그대로)"
@@ -1481,6 +1484,46 @@ expect 1 "큐를 캔 순서로 세우면 tests 가 잡는다 (느린 것 뒤에 
 cp "$BAK/world_state.gd" scripts/world_state.gd
 
 expect 0 "원복하면 돌·광물이 자라는 것도 초록이다"
+
+
+# ── 회차 38 놓이는 것을 비율로 정한다 ─────────────────────────────────
+section "회차 38 놓이는 것을 비율로"
+#
+# 겨누는 것은 **회차 37 까지의 모양으로 되돌아가는 길**이다: 종류마다 제 문턱이 따로라
+# 하나를 만지면 나머지 둘과의 비가 같이 흔들리던 자리. 그때는 아무 검사도 비를 안 봤다 —
+# `test_density_on_land_is_in_range` 의 폭이 4%~16% 라 그 안에서 비가 두 배로 벌어져도
+# 초록이다. 그래서 ① 은 **그 폭 안에 남는 값**으로 되돌린다.
+
+# ① **종류 하나에 제 문턱을 도로 단다.** 「숲을 좀 줄이자」를 `MIX` 가 아니라 여기서
+#    하는 길이다. 나무 밀도가 9.35% → 6.60% 로 내려가는데 **옛 폭(4%~16%) 안이라**
+#    회차 37 까지의 검사는 전부 초록이다 — 바뀐 것은 비뿐이다(36 : 8 : 1 → 25 : 8 : 1).
+mut scripts/world_objects.gd '^\treturn rate\(TREE\) \* clampf' '\treturn 0.30 * clampf'
+expect 1 "나무에 제 문턱을 도로 달면 tests 가 잡는다 (비만 흔들린다 · 옛 폭 안이다)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ② **`REACH` 를 나눗셈에서 뺀다.** 「몫을 그대로 확률로 쓰면 되지」다 — 좁은 데만
+#    놓이는 것이 그만큼 적게 나온다는 것을 잊은 자리. `FILL` 도 `MIX` 도 한 글자
+#    안 바뀌는데 광물이 0.258% → 0.115% 로, 나무가 9.35% → 2.06% 로 내려간다.
+mut scripts/world_objects.gd '^\t\t\t_rate\[k\] = FILL \* MIX\[k\] / total / REACH\[k\]$' '\t\t\t_rate[k] = FILL * MIX[k] / total'
+expect 1 "REACH 를 빼면 tests 가 잡는다 (좁은 데 놓이는 것이 그만큼 귀해진다)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ③ **높이 문턱만 올리고 `REACH` 를 안 다시 잰다.** 「광물을 산 위로 더 올리자」는
+#    멀쩡한 결정인데, 놓일 수 있는 땅이 44.70% → 21.01% 로 반이 되므로 **`MIX` 는
+#    한 글자도 안 바뀐 채 광물만 조용히 절반이 된다.** 상수가 낡는 유일한 길이다.
+#    `test_ore_only_on_high_ground` 는 **한쪽으로만 막는 문턱이라 초록**이다(올린 거니까).
+sed -i '' 's|^const ORE_MIN_HEIGHT := 0.55|const ORE_MIN_HEIGHT := 0.70|' scripts/world_objects.gd
+expect 1 "높이 문턱을 올리고 REACH 를 안 다시 재면 tests 가 잡는다 (광물만 조용히 절반)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+# ④ **비의 순서를 뒤집는다.** 36 : 8 : 1 은 자리표시자라 경제(P3)가 값을 옮길 텐데,
+#    그때 광물을 흔하게 적으면 통화 본위(GDD C-5)가 무너진다. **새 비율 물음은 초록이다** —
+#    놓인 것이 적어 준 비를 정확히 따라가기 때문이다. 값과 순서를 따로 묻는 이유가 이것이다.
+mut scripts/world_objects.gd '^\tORE: 1\.0,$' '\tORE: 12.0,'
+expect 1 "광물의 몫을 돌보다 크게 하면 tests 가 잡는다 (비는 정확히 지켜진다)"
+cp "$BAK/world_objects.gd" scripts/world_objects.gd
+
+expect 0 "원복하면 비율로 놓는 것도 초록이다"
 
 
 echo

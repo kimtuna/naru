@@ -23,6 +23,19 @@ extends RefCounted
 ## ── 광물은 **섬 안쪽 높은 땅에만** ──────────────────────────────────
 ## 통화가 광물 본위라(GDD C-5) 아무 데나 있으면 안 된다. 높이 문턱을 하나 걸면
 ## 해안에는 없고 안쪽에만 있다 — 「산에 간다」가 저절로 생긴다 (GDD D-4).
+##
+## ── 얼마나 놓이나: **손잡이는 둘뿐이다** (회차 38) ──────────────────
+## 회차 37 까지는 종류마다 제 문턱이 따로 있었다 — `TREE_MAX 0.42` · `ROCK_RATE 0.020`
+## · `ORE_RATE 0.006`. 셋이 서로를 모르므로 **하나를 만지면 나머지 둘과의 비가 같이
+## 흔들린다**: 「숲을 좀 늘리자」가 「광물이 상대적으로 귀해졌다」를 말없이 같이 했다.
+## 균형을 느끼는 단위는 밀도가 아니라 **비**다(나무 몇 그루에 광물 하나냐) —
+## 안 흔들려야 하는 쪽이 조용히 흔들리던 자리다.
+##
+## 이제 묻는 것은 둘이다:
+##   `FILL` — **땅의 몇 할**이 무언가로 채워지나 (지도가 얼마나 빽빽한가)
+##   `MIX`  — 그 몫을 종류끼리 **어떻게 나누나** (무엇이 귀한가)
+## 종류별 확률은 아래에서 **나눗셈으로 나온다.** 종류마다 따로 만질 수 있는 상수는
+## 하나도 안 남는다 — 그것이 이 절의 주장 전부다.
 
 const NONE := 0
 const TREE := 1
@@ -38,11 +51,74 @@ const FOREST_SALT := 0x7e13c5a9
 ## 숲과 빈터가 서너 번 갈린다.
 const FOREST_CELLS := 14.0
 const FOREST_FLOOR := 0.42     # 이 아래는 나무가 하나도 없다 (빈터)
-const TREE_MAX := 0.42         # 숲 한가운데 한 칸에 나무가 설 확률
 
-const ROCK_RATE := 0.020       # 돌은 섬 어디에나 고르게. 뭉치지 않는다
-const ORE_RATE := 0.006        # 광물은 그 높이 안에서도 돌의 1/3 이다
 const ORE_MIN_HEIGHT := 0.55   # 이 높이 위에만 광물 (해수면 0.30 · 최대 1.00)
+
+## 땅 칸의 몇 할이 무언가로 채워지나. **빽빽함 하나만 정한다** — 무엇이 채우는지는
+## 안 정한다. 11.6% 는 회차 37 까지의 세 문턱이 실제로 만들던 값이다(NUMBERS 6b):
+## 손잡이를 바꾸는 회차와 균형을 바꾸는 회차를 갈라 놓으려고 그대로 뒀다.
+const FILL := 0.116
+
+## 그 몫을 종류끼리 나누는 **비**. 여기 있는 것은 비율이라 **합이 몇이든 상관없다** —
+## 셋을 전부 두 배로 적어도 섬은 한 글자도 안 변한다. 변하는 것은 서로의 크기뿐이다.
+##
+## 36 : 8 : 1 은 **회차 37 까지의 섬을 재서 옮겨 적은 값이다**(36.72 : 7.57 : 1).
+## `REGROW_DAYS` 의 1·3·7 과 같은 **자리표시자**이고, 값이 아니라 **순서가 규칙이다**:
+## 나무 > 돌 > 광물. 광물이 통화 본위라(GDD C-5) 가장 귀해야 하고, 돌은 건축 자재라
+## 그 사이다. 검사는 값과 순서를 따로 묻는다.
+##
+## **백로그가 예로 든 3 : 2 : 1 은 여기 안 넣었다.** 그대로 넣으면 광물이 땅의 1.9% 가
+## 되어 지금의 **6배**다 — 통화가 돌만큼 흔해진다. 비를 얼마로 할지는 값의 문제가
+## 아니라 **경제의 문제라 사람이 정한다.** 이 회차가 판 것은 「어디서 정하나」다.
+const MIX := {
+	TREE: 36.0,
+	ROCK: 8.0,
+	ORE: 1.0,
+}
+
+## ── 나눗셈에 `REACH` 가 끼는 이유 ────────────────────────────────────
+## `MIX` 는 「**땅 전체**에서 차지할 몫」인데, 종류마다 놓일 수 있는 땅이 다르다:
+## 돌은 아무 땅에나, 광물은 `ORE_MIN_HEIGHT` 위에만, 나무는 숲 잡음이 센 데만.
+## 뽑을 확률을 몫과 같게 두면 **좁은 데만 놓이는 것이 그만큼 적게 나온다** —
+## 좁을수록 그 안에서 진하게 뽑아야 섬 전체의 몫이 맞는다.
+##
+## 그래서 등식은 하나다: **밀도 = 뽑을 확률 × REACH**. `REACH` 는 그 종류에게
+## 열려 있는 땅의 몫이고 — 돌 1.0(전부) · 광물 0.4470(높은 땅) ·
+## 나무 0.2201(숲 잡음의 평균 세기) — **잰 값이다** (NUMBERS 6b, 씨앗 8개 전수).
+##
+## **씨앗 평균이지 한 섬의 값이 아니다.** 높은 땅은 씨앗마다 9.99% ~ 69.46% 로
+## **7배**가 흔들리고 광물도 그대로 7배 흔들린다. 그건 고칠 것이 아니라 값이다 —
+## 섬마다 광맥의 빈부가 갈려야 「이 섬은 나무 섬이다」가 생긴다.
+##
+## **세어서 맞추지 않는다.** 「지금 몇 개인지 세고 모자란 만큼 채운다」는 한 장을
+## 통째로 봐야 답이 나오는 계산이라, 한 칸만 물어도 답이 나오는 해시가 깨진다
+## (GDD D-1 재현성). 재생에도 안 쓴다 — 재생은 시드의 원래 값으로 돌아가는 것이라
+## 비가 저절로 지켜진다.
+##
+## **이 값들은 지형이 바뀌면 낡는다.** `ORE_MIN_HEIGHT` 나 `FOREST_FLOOR` 를 만지면
+## 여기도 다시 재야 한다 — `test_reach_still_matches_the_land` 가 그때 빨개진다.
+const REACH := {
+	TREE: 0.2201,
+	ROCK: 1.0,
+	ORE: 0.4470,
+}
+
+## 종류별로 한 칸에서 뽑을 확률. **`FILL` 과 `MIX` 와 `REACH` 말고는 아무것도 안 본다** —
+## 여기에 종류 이름이 붙은 상수가 하나라도 더 끼면 손잡이가 셋으로 도로 갈라진다.
+##
+## 한 번만 셈하고 갖고 있는다: `at_height` 가 칸마다 세 번 부르는 자리다
+## (전수 한 장 = 65,536칸 × 3). **시간도 순서도 안 섞인다** — 상수만 보고 만든
+## 표라서 프로세스가 달라도 같은 값이다 (회차 6 · 24 가 막은 구멍과 다른 종류다).
+static var _rate: Dictionary = {}
+
+static func rate(kind: int) -> float:
+	if _rate.is_empty():
+		var total := 0.0
+		for k in MIX:
+			total += MIX[k]
+		for k in MIX:
+			_rate[k] = FILL * MIX[k] / total / REACH[k]
+	return _rate.get(kind, 0.0)
 
 ## 스폰 칸에서 이만큼(체비쇼프)은 **반드시 비운다** — 7 x 7 빈터다.
 ##
@@ -95,12 +171,13 @@ static func at_height(world_seed: int, x: int, y: int, h: float) -> int:
 		return NONE
 	var u := WorldGen.unit(world_seed ^ PLACE_SALT, x, y)
 	# 한 번 뽑은 값을 구간으로 가른다. 귀한 것부터 — 구간이 겹칠 수 없다.
-	var ore := ORE_RATE if h > ORE_MIN_HEIGHT else 0.0
+	var ore := rate(ORE) if h > ORE_MIN_HEIGHT else 0.0
 	if u < ore:
 		return ORE
-	if u < ore + ROCK_RATE:
+	var rock := ore + rate(ROCK)
+	if u < rock:
 		return ROCK
-	if u < ore + ROCK_RATE + tree_rate(world_seed, x, y):
+	if u < rock + tree_rate(world_seed, x, y):
 		return TREE
 	return NONE
 
@@ -108,7 +185,7 @@ static func at_height(world_seed: int, x: int, y: int, h: float) -> int:
 static func tree_rate(world_seed: int, x: int, y: int) -> float:
 	var f := FOREST_CELLS / float(WorldGen.SIZE)
 	var n := WorldGen.value(world_seed ^ FOREST_SALT, x * f, y * f)
-	return TREE_MAX * clampf(inverse_lerp(FOREST_FLOOR, 1.0, n), 0.0, 1.0)
+	return rate(TREE) * clampf(inverse_lerp(FOREST_FLOOR, 1.0, n), 0.0, 1.0)
 
 ## 몸이 지나갈 수 없는 칸인가. **셋 다 막는다** — 나무를 통과해 걸으면
 ## 도끼를 들 이유가 없다. 「무엇이 막나」를 아는 곳은 여기 한 군데다.
