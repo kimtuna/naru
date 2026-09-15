@@ -1183,6 +1183,21 @@ PYY
 expect 1 "나무의 날 수를 0 으로 만들면 tests 가 잡는다 (한 번 캐고 끝난다)"
 cp "$BAK/world_objects.gd" scripts/world_objects.gd
 
+# ⑥ **시계가 10% 느리다** (회차 35 가 얹었다). ① 처럼 아예 안 부르는 것이 아니라
+#    **델타를 깎아서** 부른다 — 게임은 멀쩡히 돌아가고 나무도 자라므로 ①~⑤ 도 단위
+#    검사도 전부 초록이다. 어긋나는 것은 **하루의 길이**뿐이다: 20분이 22분이 된다.
+#    **이게 회차 35 의 대조군이다.** 오차 0.034 / 0.34초라, 회차 30~34 의 허용치
+#    0.05·0.10 으로는 **초록**이었다 — 구간을 프레임에 맞춰 0.01 로 조인 값만 잡는다.
+#    (허용치를 다시 키우려는 회차는 이 줄에서 먼저 빨개진다.)
+python3 - <<'PYY'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tworld.tick(delta)\n", "\tworld.tick(delta * 0.9)\n", 1))
+PYY
+expect 1 "시계를 10% 느리게 돌리면 tests 가 잡는다 (하루가 20분이 아니라 22분이 된다)"
+cp "$BAK/main.gd" scripts/main.gd
+
 expect 0 "원복하면 다시 자라는 것도 초록이다"
 
 # ── 회차 31 낮과 밤 ───────────────────────────────────────────────────

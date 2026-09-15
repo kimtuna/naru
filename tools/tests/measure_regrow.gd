@@ -32,13 +32,21 @@ extends MeasurePhase
 ## 이름이 test_ 로 시작하지 않는다 — run_tests.gd 는 이 파일을 안 집는다.
 
 const WARMUP := 3          # 씬의 _ready(월드 배선)는 첫 프레임 뒤에 돈다 (measure_chop 과 같다)
-const CLOCK_SEC := 0.30    # 시계를 견주는 구간. 30 프레임쯤이라 한 프레임 어긋남에 안 죽는다
-## 허용 오차. **이 게이트가 막는 것은 「main.gd 가 tick 을 아예 안 부른다」**이고
-## 그때 오차는 구간 전체(~100%)다. 0.05(17%)까지 조이면 **기계가 바쁠 때 프레임이
-## 밀린 것**만 잡는다 — 2026-09-15 회차 34 가 오차 0.059 로 빨개졌고 게임은 멀쩡했다.
-## 0.10(33%)이면 안 부르는 경우를 **세 배 여유로** 잡으면서 부하에 안 흔들린다.
+const CLOCK_SEC := 0.30    # 시계를 견주는 구간. 30 프레임쯤 돈다
+
+## 허용 오차. **이 게이트가 막는 것은 「main.gd 가 tick 을 안 부르거나 엉뚱한 델타를
+## 넣는다」**이고, 안 부르면 오차는 구간 전체(0.30 = 100%)다.
+##
+## **0.01(3%) 까지 조일 수 있는 것은 구간이 프레임에 딱 맞기 때문이다** (회차 35).
+## 재는 쪽과 재이는 쪽이 **같은 프레임 묶음**을 더하므로 남는 것은 부동소수 찌꺼기뿐이다
+## (실측 0.000000 — 아래 `step` 의 주석이 그 등식이다). 회차 30~34 는 묶음이
+## **한 프레임 어긋나** 있어서 0.008~0.105 가 랜덤하게 났고, 그걸 허용치로 덮으려다
+## 0.05 → 0.10 으로 두 번 키웠다 — **허용치는 흔들림의 원인이 아니었다.**
+##
+## 막으려는 고장과의 여유: **안 부른다 30배**(0.30/0.01) · **델타를 10% 깎는다 3배**
+## (0.03/0.01 — 옛 0.10 은 이걸 통째로 놓쳤다) · 부동소수 찌꺼기의 1e10 배.
 ## (회차 11 의 FACE · 회차 26 의 USE 와 같은 자리다: 시간을 프레임으로 재지 마라.)
-const CLOCK_EPS := 0.10
+const CLOCK_EPS := 0.01
 const SETTLE := 3          # 몸을 옮기고 화면이 한 번 자리를 잡을 때까지
 const READ := 2            # `_draw` 는 `_process` 뒤에 돈다 — 칠한 횟수는 다음 프레임에 읽는다
 const SEARCH := 40         # 스폰에서 이만큼(체비쇼프) 안에서 나무를 찾는다
@@ -55,6 +63,7 @@ var _stage := 0            # 0 = 시계 · 1 = 비켜서 자리잡기 · 2 = 읽
 var _wait := 0
 var _t := 0.0              # 실제로 흐른 초 (프레임 delta 의 합)
 var _now0 := 0.0           # 구간이 시작할 때의 게임 시계
+var _game := 0.0           # 그 구간에 게임 시계가 흐른 초 — **찍는 줄이 이걸 봐야 한다**
 var _drift := 0.0
 var _held := false         # ② 몸이 선 채로 안 자랐나
 var _held_by_thing := false   # ⑥ 설치물이 선 채로 안 자랐나
@@ -78,20 +87,37 @@ func cleanup() -> void:
 	_main = null
 	_player = null
 
+## **구간의 경계는 프레임에 딱 맞아야 한다** (회차 35).
+##
+## `SceneTree` 를 물려받은 스크립트의 `_process` 는 **노드의 `_process` 보다 먼저** 돈다
+## (Godot 의 `SceneTree::process` 가 `MainLoop::process` 를 맨 앞에서 부른다). 그래서
+## 프레임 n 에서 여기가 읽는 `world.now` 에는 **frame n 의 tick 이 아직 안 들어 있다**:
+##
+##   프레임 k 에서 읽은 now  = Σ delta[1 .. k-1]
+##   프레임 E 에서 읽은 now  = Σ delta[1 .. E-1]
+##   ⇒ 게임이 흐른 초        = Σ delta[k .. E-1]      ← 재이는 쪽
+##
+## 그러니 **우리도 delta[k .. E-1] 을 더해야 한다** — k(=WARMUP, `_setup` 이 도는
+## 프레임)의 델타를 넣고, 끝 프레임 E 의 델타는 **넣기 전에** 끊는다.
+## 회차 30~34 는 `delta[k+1 .. E]` 를 더했다: 한쪽에 delta[E], 다른 쪽에 delta[k] 가
+## 남아 오차 = |delta[E] − delta[k]| 였다. 그런데 **k 는 이 판에서 가장 느린 프레임**이다
+## (`_find_tree` 가 반지름 40 을 훑는다) — 그래서 0.008~0.105 가 판마다 다르게 났고,
+## 「부하에서 흔들린다」로 보였다. 부하가 아니라 **등식이 틀려 있었다.**
 func step(delta: float) -> bool:
 	_frames += 1
 	if _frames < WARMUP:
 		return false
 	if _frames == WARMUP:
-		return _setup()
+		return _setup(delta)
 	if _done:
 		return true
 	match _stage:
 		0:
+			# **더하기 전에 끊는다** — 끝 프레임의 델타는 게임 시계에도 아직 안 들어갔다.
+			if _t >= CLOCK_SEC:
+				return _end_clock()
 			_t += delta
-			if _t < CLOCK_SEC:
-				return false
-			return _end_clock()
+			return false
 		1:
 			_wait -= 1
 			if _wait > 0:
@@ -105,7 +131,7 @@ func step(delta: float) -> bool:
 		_:
 			return _installation()
 
-func _setup() -> bool:
+func _setup(delta: float) -> bool:
 	_player = _main.get_node_or_null("Player")
 	if _player == null:
 		fail("플레이어", "Main/Player 가 없다", "메인 씬에 플레이어")
@@ -123,7 +149,10 @@ func _setup() -> bool:
 		return _stop("설 자리를 못 잡았다")
 	_player.position = PlayerMotion.tile_center(_stand.x, _stand.y)
 	_player.velocity = Vector2.ZERO
+	# **구간의 시작.** `now` 를 읽은 뒤 **이 프레임의 델타를 같이 넣는다** — 이 프레임의
+	# tick 은 아래 노드 처리에서 돌아 `now` 쪽에 들어가므로, 우리 쪽에도 있어야 짝이 맞는다.
 	_now0 = _main.world.now
+	_t += delta
 	print("REGROW 나무 월드칸 %s · 설 자리 %s · 하루 %.0f s · 나무 %.1f일" % [
 		_tree, _stand, WorldState.DAY_SEC, WorldObjects.regrow_days(WorldObjects.TREE)])
 	return false
@@ -156,10 +185,14 @@ func _check_claim() -> bool:
 ## ① 시계가 프레임을 따라 흘렀나. 그리고 ② **벤 자리에 올라서서** 하루를 넘겨 본다.
 func _end_clock() -> bool:
 	var world = _main.world
-	_drift = absf((world.now - _now0) - _t)
+	# **여기서 재 두지 않으면 못 잰다** — 바로 아래에서 하루를 감으므로 `world.now` 는
+	# 곧 1200 초를 뛴다. 회차 30~34 의 찍는 줄은 그 뛴 값을 「게임 1202.58초」로
+	# 보여 주고 있었다 — 오차만 맞고 **견준 두 값이 안 보였다.**
+	_game = world.now - _now0
+	_drift = absf(_game - _t)
 	if _drift > CLOCK_EPS:
-		fail("게임 시계", "%.2f초 도는 동안 %.2f초 흘렀다 (오차 %.3f)" % [
-			_t, world.now - _now0, _drift],
+		fail("게임 시계", "%.3f초 도는 동안 %.3f초 흘렀다 (오차 %.4f)" % [
+			_t, _game, _drift],
 			"흐른 시간과 %.2f초 안에서 같다 (main.gd 가 tick 을 부른다)" % CLOCK_EPS)
 	# ② 나무를 없애고 **그 자리에 올라선다.**
 	if world.clear_object(_tree.x, _tree.y) != WorldObjects.TREE:
@@ -211,8 +244,8 @@ func _read_regrow() -> bool:
 			"1번 이상 (안 버리면 화면에 그루터기가 남는다)")
 	if not ok:
 		bad += 1
-	print("REGROW 시계      %.2f초 도는 동안 게임 %.2f초 (오차 %.3f초)" % [
-		_t, world.now - _now0, _drift])
+	print("REGROW 시계      %.3f초 도는 동안 게임 %.3f초 (오차 %.6f초 · 허용 %.2f)" % [
+		_t, _game, _drift, CLOCK_EPS])
 	print("REGROW 몸이 선 칸 하루+1초 뒤 %s · 비킨 뒤 %s · 막힘 %s · 다시 칠하기 %d번" % [
 		"그대로" if _held else "자랐다", "나무" if kind == WorldObjects.TREE else "종류 %d" % kind,
 		"예" if blocked else "아니오", fills])
