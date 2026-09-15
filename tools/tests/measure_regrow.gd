@@ -7,7 +7,7 @@ extends MeasurePhase
 ## 부르면** 시간이 영영 0 초라 섬은 그루터기밭으로 남는다 — 그런데 단위 검사는 전부
 ## 초록이다. 회차 3(속도) · 5(방향) · 24(배치) · 29(벌목)와 같은 모양의 구멍이다.
 ##
-## **넷을 본다**:
+## **여섯을 본다** (⑤⑥ 은 회차 32 가 얹었다):
 ##   ① **시계가 프레임을 따라 흐른다** — `world.now` 가 실제로 흐른 초와 맞는다.
 ##      main.gd 가 `tick` 을 안 부르면 0 이고, 엉뚱한 값을 넣으면 여기서 어긋난다
 ##   ② **몸이 선 칸은 안 자란다** — 벤 자리에 서서 하루를 넘겨도 그루터기다.
@@ -16,6 +16,14 @@ extends MeasurePhase
 ##      `player.solid` 라, 자란 것이 그 Callable 에 안 보이면 나무를 통과해 걷는다
 ##   ④ **화면을 다시 칠했다**(`cache_fills`) — 헤드리스라 픽셀은 못 읽지만, 색 캐시는
 ##      「보이는 범위가 바뀔 때만」 채우므로 **제자리에 선 채로는 그루터기가 그대로 남는다**
+##   ⑤ **차지 목록의 계약** — `Claim.KINDS` 에 선언한 종류를 진짜 씬이 **전부 꽂았나**
+##      (`claim.missing()` 이 비었나), 그리고 월드가 묻는 것이 **그 목록인가.**
+##      P3 제작대·P4 밭을 만드는 회차가 등록을 빼먹으면 **그 회차 안에서** 여기가 빨갛다 —
+##      단위 검사는 제 Callable 을 손으로 꽂으므로 그때도 전부 초록이다
+##   ⑥ **설치물이 선 칸은 안 자란다** — 진짜 설치물은 아직 없으므로 **가짜 한 칸**을
+##      살아 있는 `claim` 에 꽂고 날을 넘긴다. 임자의 **이름까지** 본다: 「안 자랐다」만
+##      보면 몸이 막은 것과 구별이 안 돼서, 새 출처를 안 물어도 초록이다.
+##      허물면 `RETRY_SEC` 안에 자란다 — 집을 헐면 그 자리에 숲이 돌아와야 한다
 ##
 ## **하루를 진짜로 기다리지 않는다**: 20분짜리 게이트는 루프를 죽인다. `tick()` 에
 ## 큰 `delta` 를 한 번 넣는다 — 세이브를 불러오는 자리와 **같은 입구**고, 판정을 무르게
@@ -29,6 +37,9 @@ const CLOCK_EPS := 0.05    # 허용 오차. 한 프레임(16.7ms)의 세 배 —
 const SETTLE := 3          # 몸을 옮기고 화면이 한 번 자리를 잡을 때까지
 const READ := 2            # `_draw` 는 `_process` 뒤에 돈다 — 칠한 횟수는 다음 프레임에 읽는다
 const SEARCH := 40         # 스폰에서 이만큼(체비쇼프) 안에서 나무를 찾는다
+## 가짜 설치물의 이름. `Claim.KINDS` 밖의 이름이다 — 검사가 꽂는 것을 선언에 섞으면
+## **아무도 안 꽂아도 `missing()` 이 비는** 구멍이 열린다 (⑤ 가 통째로 무너진다).
+const FAKE := &"가짜 설치물(REGROW 게이트)"
 
 var _main: Node
 var _player: Node2D
@@ -41,6 +52,9 @@ var _t := 0.0              # 실제로 흐른 초 (프레임 delta 의 합)
 var _now0 := 0.0           # 구간이 시작할 때의 게임 시계
 var _drift := 0.0
 var _held := false         # ② 몸이 선 채로 안 자랐나
+var _held_by_thing := false   # ⑥ 설치물이 선 채로 안 자랐나
+var _holder := &""            # ⑥ 그때 임자의 이름 — 몸이면 새 출처를 안 물은 것이다
+var _freed := false           # ⑥ 허문 뒤 자랐나
 var _fills_before := 0
 var _done := false
 
@@ -78,11 +92,13 @@ func step(delta: float) -> bool:
 			if _wait > 0:
 				return false
 			return _let_it_grow()
-		_:
+		2:
 			_wait -= 1
 			if _wait > 0:
 				return false
-			return _finish()
+			return _read_regrow()
+		_:
+			return _installation()
 
 func _setup() -> bool:
 	_player = _main.get_node_or_null("Player")
@@ -93,8 +109,10 @@ func _setup() -> bool:
 		fail("배선", "player.solid 가 비어 있다 — main.gd 가 월드를 안 꽂았다", "WorldState.solid()")
 		return _stop()
 	if not _main.world.occupied.is_valid():
-		fail("배선", "world.occupied 가 비어 있다 — 몸이 선 칸을 아무도 안 묻는다",
+		fail("배선", "world.occupied 가 비어 있다 — 차지한 칸을 아무도 안 묻는다",
 			"main.gd 가 꽂은 Callable")
+		return _stop()
+	if not _check_claim():
 		return _stop()
 	if not _find_tree():
 		return _stop()
@@ -104,6 +122,31 @@ func _setup() -> bool:
 	print("REGROW 나무 월드칸 %s · 설 자리 %s · 하루 %.0f s · 나무 %.1f일" % [
 		_tree, _stand, WorldState.DAY_SEC, WorldObjects.regrow_days(WorldObjects.TREE)])
 	return false
+
+## ⑤ **차지 목록의 계약.** 선언한 종류를 진짜 씬이 전부 꽂았고, 월드가 묻는 것이
+## 바로 그 목록인가. 여기가 없으면 새 설치물을 만든 회차가 `Claim.KINDS` 에 이름만
+## 적고 `add()` 를 빼먹어도 **아무 데도 안 터진다** — 반 년 뒤에 사람이
+## 「자고 일어났더니 집 안에 나무가 섰다」로 겪는다.
+func _check_claim() -> bool:
+	var claim = _main.get("claim")
+	if claim == null:
+		fail("차지 목록", "main.gd 에 claim 이 없다", "Claim 하나")
+		return false
+	var missing: Array = claim.missing()
+	if not missing.is_empty():
+		fail("차지 목록", "선언만 하고 안 꽂은 종류 %s" % str(missing),
+			"없다 (Claim.KINDS 의 %d 종을 전부 add 한다)" % Claim.KINDS.size())
+		return false
+	# **월드가 묻는 것이 그 목록인가.** 목록은 멀쩡한데 main.gd 가 몸 하나를 바로
+	# 꽂아 두면 `missing()` 은 비어 있고 검사는 초록인데 **설치물은 안 물어진다.**
+	if _main.world.occupied.get_object() != claim:
+		fail("차지 목록", "world.occupied 가 claim 을 안 거친다 (%s)" % [
+			_main.world.occupied.get_method()],
+			"claim.covers — 출처가 하나든 넷이든 월드는 목록에 묻는다")
+		return false
+	print("REGROW 차지 출처  %d 종 %s · 선언 %d 종 · 안 꽂힌 것 없다" % [
+		claim.count(), str(claim.names()), Claim.KINDS.size()])
+	return true
 
 ## ① 시계가 프레임을 따라 흘렀나. 그리고 ② **벤 자리에 올라서서** 하루를 넘겨 본다.
 func _end_clock() -> bool:
@@ -139,7 +182,9 @@ func _let_it_grow() -> bool:
 	_wait = READ
 	return false
 
-func _finish() -> bool:
+## ②③④ 를 읽는다. **요약 줄은 아직 안 찍는다** — ⑥ 이 남았고, 「REGROW ok」가
+## 두 번 나오면 `check.sh` 의 grep 이 첫 줄만 보고 초록으로 읽는다.
+func _read_regrow() -> bool:
 	var world = _main.world
 	var kind: int = world.object_at(_tree.x, _tree.y)
 	var blocked: bool = _player.solid.call(_tree.x, _tree.y)
@@ -166,10 +211,53 @@ func _finish() -> bool:
 	print("REGROW 몸이 선 칸 하루+1초 뒤 %s · 비킨 뒤 %s · 막힘 %s · 다시 칠하기 %d번" % [
 		"그대로" if _held else "자랐다", "나무" if kind == WorldObjects.TREE else "종류 %d" % kind,
 		"예" if blocked else "아니오", fills])
-	print("REGROW %s (하루 %.0f s · 나무 %.1f일 · 비킨 뒤 %.1f s · 남은 벤 칸 %d)" % [
+	_stage = 3
+	return false
+
+## ⑥ **설치물이 선 칸은 안 자란다** (GDD A-4 · 회차 32). 살아 있는 `claim` 에 가짜
+## 설치물 한 칸을 꽂고 날을 넘긴다 — 몸은 비켜 서 있으므로, 그래도 안 자랐다면
+## **새로 꽂은 출처를 월드가 실제로 물었다는 뜻**이다. 임자의 이름으로 한 번 더 못을 박는다.
+func _installation() -> bool:
+	var world = _main.world
+	var claim = _main.claim
+	var standing := [true]     # 람다는 값을 복사해 간다 (GOTCHAS)
+	if not claim.add(FAKE, func(tile: Vector2i) -> bool: return standing[0] and tile == _tree):
+		fail("가짜 설치물", "claim.add 가 거절했다", "꽂힌다")
+		return _summary(world, claim)
+	if world.clear_object(_tree.x, _tree.y) != WorldObjects.TREE:
+		fail("없애기", "%s 가 나무가 아니었다" % _tree, "나무(%d)" % WorldObjects.TREE)
+		return _summary(world, claim)
+	var day := WorldState.DAY_SEC * WorldObjects.regrow_days(WorldObjects.TREE)
+	world.tick(day + 1.0)
+	_held_by_thing = world.object_at(_tree.x, _tree.y) == WorldObjects.NONE
+	_holder = claim.holder(_tree)
+	if not _held_by_thing:
+		fail("설치물이 선 칸", "설치물 아래에서 하루 만에 자랐다",
+			"안 자란다 (집 거실에 나무가 선다)")
+	if _holder != FAKE:
+		fail("임자", "%s" % ["아무도 없다" if _holder == &"" else _holder],
+			"%s (새로 꽂은 출처를 안 묻는다)" % FAKE)
+	# **허물면 자란다.** 「영영 안 자라는 칸」으로 적어 두면 되돌릴 자리가 없어진다.
+	standing[0] = false
+	world.tick(WorldState.RETRY_SEC + 0.1)
+	_freed = world.object_at(_tree.x, _tree.y) == WorldObjects.TREE
+	if not _freed:
+		fail("허문 자리", "설치물을 치웠는데 %.1f초 뒤에도 안 자랐다" % WorldState.RETRY_SEC,
+			"나무로 돌아온다")
+	print("REGROW 설치물     하루+1초 뒤 %s (임자 %s) · 허문 뒤 %s" % [
+		"그대로" if _held_by_thing else "자랐다",
+		"없다" if _holder == &"" else _holder,
+		"나무" if _freed else "그루터기"])
+	return _summary(world, claim)
+
+## **게이트의 마지막 한 줄.** `check.sh` 가 보는 것이 이 줄이다 — 죽는 길에서도 찍는다.
+func _summary(world, claim) -> bool:
+	if bad == 0 and not (_held and _held_by_thing and _freed):
+		bad += 1
+	print("REGROW %s (하루 %.0f s · 나무 %.1f일 · 비킨 뒤 %.1f s · 남은 벤 칸 %d · 차지 출처 %d 종)" % [
 		"ok" if bad == 0 else "FAIL %d개" % bad, WorldState.DAY_SEC,
 		WorldObjects.regrow_days(WorldObjects.TREE), WorldState.RETRY_SEC,
-		world.cleared_count()])
+		world.cleared_count(), claim.count()])
 	_done = true
 	return true
 

@@ -30,7 +30,9 @@ extends Node2D
 ##
 ## **시간이 흐른다** (회차 30): `_process` 가 `world.tick(delta)` 를 부르고, 때가 된
 ## 벤 칸은 나무로 돌아온다 (GDD A-4 「한 번 캐고 끝나는 자원이 없다」).
-## **몸이 서 있는 칸은 안 자란다** — 월드가 플레이어를 모르므로 여기가 그 물음을 잇는다.
+## **사람이 차지한 칸에는 안 자란다** — 월드가 플레이어도 설치물도 모르므로 여기가
+## 그 물음을 잇는다. 물음은 하나지만 **답하는 곳은 여럿**이라 목록은 `Claim` 이 든다
+## (회차 32): 지금은 몸뿐이고, 제작대·밭·길이 그 뒤에 줄을 선다.
 ##
 ## **낮과 밤** (회차 31): 그 시계를 `DayCycle` 이 빛 하나로 바꾸고, `Sky` 가 화면에
 ## 곱한다 (GDD G-1b). **칸 색은 한 톨도 안 고친다** — 밤을 색 캐시에 섞으면 빛이 계속
@@ -65,6 +67,16 @@ var world := WorldState.new(WORLD_SEED)
 
 ## 손. 화면 아래 9칸 + 지금 든 칸 (GDD D-2c).
 var hotbar := Hotbar.new()
+
+## **사람이 차지한 칸** — 다시 자라는 나무가 여기에 묻는다 (GDD A-4).
+## 지금 꽂히는 것은 몸 하나뿐이지만, **앞으로 놓이는 것 전부가 여기 줄을 선다**:
+## 설치물 · 간 밭 · 길. 새 종류는 `Claim.KINDS` 에 이름을 적고 `_link_world()` 에서
+## `add()` 로 꽂는다 — 적고 안 꽂으면 REGROW 게이트가 `missing()` 으로 잡는다.
+##
+## **밖에서 보인다**(`_` 가 없다): `measure_regrow.gd` 가 진짜 씬의 이 목록을 읽는다.
+## 단위 검사는 제 Callable 을 손으로 꽂으므로 **여기서 한 줄을 빼먹어도 전부 초록**이다
+## (회차 30 이 시계에서 겪은 그 구멍 — `Sky` 를 안 물들이는 것과도 같은 모양이다).
+var claim := Claim.new()
 
 ## 숫자키의 **직전 프레임 상태**. 눌린 순간에만 손이 움직인다.
 ## **`is_action_just_pressed` 를 안 쓴다**: 「눌린 프레임」이 딱 한 번뿐이라
@@ -124,6 +136,9 @@ func _ready() -> void:
 		get_viewport().get_canvas_transform().get_scale(), visible_world_rect()])
 	print("RANGE    보이는 칸 %d / 월드 %d 칸" % [
 		WorldView.tile_count(visible_world_rect()), WorldGen.SIZE * WorldGen.SIZE])
+	print("CLAIM    차지 출처 %d 종 %s · 선언 %d 종 · 안 꽂힌 것 %s" % [
+		claim.count(), str(claim.names()), Claim.KINDS.size(),
+		"없다" if claim.missing().is_empty() else str(claim.missing())])
 	print("DAY      하루 %.0f s (낮 %.0f + 밤 %.0f) · 시작 위상 %.2f (%s) · 여명 %.0f s" % [
 		WorldState.DAY_SEC, WorldState.DAY_SEC * 0.5, WorldState.DAY_SEC * 0.5,
 		DayCycle.phase(world.now), "낮" if DayCycle.is_day(world.now) else "밤",
@@ -135,10 +150,14 @@ func _ready() -> void:
 ## 나중에 벤 칸도 이미 꽂힌 이 Callable 이 그대로 본다.
 func _link_world() -> void:
 	_player.solid = world.solid()
-	world.occupied = _body_covers
+	# **월드는 목록이 아니라 물음 하나만 안다.** 「누가 차지했나」는 `Claim` 의 것이다 —
+	# 여기에 if 를 쌓으면 설치물이 생길 때마다 이 줄이 길어지고, 어느 회차가 조용히
+	# 하나를 빼먹는다 (그게 「내 집 거실에 나무가 났다」로 나온다).
+	claim.add(Claim.BODY, _body_covers)
+	world.occupied = claim.covers
 	world.changed.connect(_on_world_changed)
 
-## 「이 칸에 몸이 서 있나」 — 다시 자라는 나무가 묻는다 (`WorldState.tick`).
+## 「이 칸에 몸이 서 있나」 — `Claim` 에 꽂히는 출처 하나다 (`Claim.BODY`).
 ## **월드는 플레이어를 모른다**: 여기가 둘을 잇는다. 상자 규칙은 `WorldCollide` 에
 ## 한 벌뿐이라 걷는 것과 자라는 것이 같은 네모를 본다.
 func _body_covers(tile: Vector2i) -> bool:

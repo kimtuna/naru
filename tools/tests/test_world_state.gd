@@ -144,6 +144,56 @@ func test_a_body_on_the_tile_holds_the_regrow() -> void:
 	eq(w.tick(WorldState.RETRY_SEC), 1, "비킨 뒤 자란 칸 수")
 	eq(w.object_at(t.x, t.y), WorldObjects.TREE, "비킨 뒤 그 칸")
 
+## **설치물이 선 칸에는 안 자란다 — 그리고 옆 칸은 자란다** (GDD A-4 · 회차 32).
+## 몸과 다른 점은 **안 움직인다**는 것뿐이라 규칙은 하나면 되는데, 「하나면 된다」를
+## 안 재 두면 다음 회차가 설치물용 if 를 여기 하나 더 쌓는다.
+##
+## **옆 칸이 이 검사의 절반이다**: 설치물 하나가 온 섬의 재생을 멈춰도 「안 자란다」는
+## 초록이다 — 자라야 하는 칸이 실제로 자라는 것을 같이 봐야 임자를 보고 미룬 것이다.
+## 진짜 설치물은 아직 없으므로 **가짜 한 칸**을 `Claim` 에 꽂는다.
+func test_an_installation_on_the_tile_holds_only_that_tile() -> void:
+	var w := WorldState.new(SEED)
+	var ts := _two_trees(w)
+	if ts.is_empty():
+		check(false, "씨앗 %d 에서 나무 두 그루를 못 찾았다" % SEED)
+		return
+	var under: Vector2i = ts[0]      # 설치물 아래
+	var free: Vector2i = ts[1]       # 아무도 안 차지한 칸
+	# **람다는 값을 복사해 간다** (GOTCHAS) — 허무는 것을 배열 한 칸에 담아 참조로 든다.
+	var standing := [true]
+	var claim := Claim.new()
+	claim.add(&"가짜 설치물", func(tile: Vector2i) -> bool: return standing[0] and tile == under)
+	w.occupied = claim.covers
+	w.clear_object(under.x, under.y)
+	w.clear_object(free.x, free.y)
+	eq(w.tick(WorldState.DAY_SEC + 1.0), 1, "하루 뒤 자란 칸 수 (설치물 아래만 빼고)")
+	eq(w.object_at(under.x, under.y), WorldObjects.NONE, "설치물이 선 칸")
+	eq(w.object_at(free.x, free.y), WorldObjects.TREE, "아무도 안 차지한 옆 칸")
+	eq(claim.holder(under), &"가짜 설치물", "설치물이 선 칸의 임자")
+	# **허물면 자란다.** 영영 안 자라는 칸으로 적어 두면 되돌릴 자리가 없어진다.
+	standing[0] = false
+	eq(w.tick(WorldState.RETRY_SEC), 1, "허문 뒤 자란 칸 수")
+	eq(w.object_at(under.x, under.y), WorldObjects.TREE, "허문 자리")
+
+## **몸이든 설치물이든 월드는 똑같이 미룬다.** 물음은 하나뿐이고 목록은 `Claim` 의
+## 것이라, 둘을 같이 꽂아도 `WorldState` 에는 고칠 줄이 없다.
+func test_a_body_and_an_installation_share_one_question() -> void:
+	var w := WorldState.new(SEED)
+	var ts := _two_trees(w)
+	if ts.is_empty():
+		check(false, "씨앗 %d 에서 나무 두 그루를 못 찾았다" % SEED)
+		return
+	var claim := Claim.new()
+	claim.add(Claim.BODY, func(tile: Vector2i) -> bool: return tile == ts[0])
+	claim.add(&"가짜 설치물", func(tile: Vector2i) -> bool: return tile == ts[1])
+	w.occupied = claim.covers
+	w.clear_object(ts[0].x, ts[0].y)
+	w.clear_object(ts[1].x, ts[1].y)
+	eq(w.tick(WorldState.DAY_SEC + 1.0), 0, "둘 다 임자가 있을 때 자란 칸 수")
+	eq(w.cleared_count(), 2, "없어진 채로 남은 칸의 수")
+	eq(claim.holder(ts[0]), Claim.BODY, "첫 칸의 임자")
+	eq(claim.holder(ts[1]), &"가짜 설치물", "둘째 칸의 임자")
+
 ## **돌·광물은 아직 안 자란다** (`WorldObjects.REGROW_DAYS` 에 없다).
 ## 캔 자리에 도로 생기면 광산과 자동화(GDD A-4)가 통째로 의미를 잃는다.
 func test_rock_does_not_grow_back() -> void:
@@ -244,6 +294,23 @@ func test_an_empty_drop_is_not_placed() -> void:
 ## 스폰에서 가까운 나무 하나. 못 찾으면 `Vector2i.MAX`.
 func _a_tree(w: WorldState) -> Vector2i:
 	return _an_object(w, WorldObjects.TREE)
+
+## 스폰에서 가까운 **서로 다른 나무 두 그루**. 「차지한 칸만 안 자란다」를 재려면
+## 자라야 하는 칸이 같이 있어야 한다 — 한 그루로는 「전부 멈췄다」와 구별이 안 된다.
+func _two_trees(w: WorldState) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	var sp := WorldGen.spawn_tile()
+	for r in range(WorldObjects.SPAWN_CLEAR + 1, 80):
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				if maxi(absi(dx), absi(dy)) != r:
+					continue
+				var t := Vector2i(sp.x + dx, sp.y + dy)
+				if w.object_at(t.x, t.y) == WorldObjects.TREE:
+					out.append(t)
+					if out.size() == 2:
+						return out
+	return []
 
 ## 스폰에서 가까운 그 종류 하나. 돌은 나무보다 드물어서(2.0% 대 숲 42%) 더 멀리 본다.
 func _an_object(w: WorldState, kind: int) -> Vector2i:

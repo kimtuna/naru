@@ -33,6 +33,7 @@ cp scripts/hotbar.gd "$BAK/" 2>/dev/null || true
 cp scripts/hand_swing.gd "$BAK/" 2>/dev/null || true
 cp scripts/harvest.gd "$BAK/" 2>/dev/null || true
 cp scripts/world_state.gd "$BAK/" 2>/dev/null || true
+cp scripts/claim.gd "$BAK/" 2>/dev/null || true
 cp scripts/day_cycle.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
@@ -64,6 +65,7 @@ restore() {
   cp "$BAK/hand_swing.gd" scripts/hand_swing.gd 2>/dev/null || true
   cp "$BAK/harvest.gd" scripts/harvest.gd 2>/dev/null || true
   cp "$BAK/world_state.gd" scripts/world_state.gd 2>/dev/null || true
+  cp "$BAK/claim.gd" scripts/claim.gd 2>/dev/null || true
   cp "$BAK/day_cycle.gd" scripts/day_cycle.gd 2>/dev/null || true
   cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
@@ -1265,6 +1267,73 @@ expect 1 "낮을 9분으로 줄이면 tests 가 잡는다 (GDD 의 낮 10 + 밤 
 cp "$BAK/day_cycle.gd" scripts/day_cycle.gd
 
 expect 0 "원복하면 낮과 밤도 다시 초록이다"
+
+
+# ── 회차 32 사람이 차지한 칸 ──────────────────────────────────────────
+section "회차 32 사람이 차지한 칸"
+#
+# 겨누는 것은 **다음 회차가 등록을 빼먹는 것**이다. 회차 30 이 재생을 넣을 때 게임에
+# 설치물이 하나도 없어서 `occupied` 는 「몸이 서 있나」 하나였다. P3 제작대·P4 밭을
+# 만드는 회차가 `Claim` 에 제 출처를 안 꽂으면 **자고 일어난 집 거실에 나무가 선다** —
+# 그런데 그 회차의 검사는 전부 초록이다. 사람이 겪는 것은 반 년 뒤다.
+#
+# 그래서 **선언(`Claim.KINDS`)과 배선(`add`)을 갈라 놓고 둘이 안 맞는 것을 센다.**
+# ①②는 그 계약이고, ③④는 목록이 있어도 **안 묻거나 되돌릴 수 없는** 길이다.
+
+# ① **선언만 하고 안 꽂는다** — 이 묶음의 요점이다. 제작대를 만드는 회차가
+#    `Claim.KINDS` 에 이름은 적고 `main.gd` 의 `add()` 를 빼먹은 모양 그대로다.
+#    게임은 멀쩡히 돌고 **단위 검사도 전부 초록**이다 (선언을 세는 검사는 KINDS 를
+#    같이 읽으니까) — REGROW 의 `missing()` 하나만 빨갛다.
+python3 - <<'PYW'
+import io
+p='scripts/claim.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    '	BODY: "플레이어가 서 있는 칸',
+    '	&"제작대": "사람이 놓은 제작대 — 그 위에 나무가 자라면 집 안에 숲이 선다",
+'
+    '	BODY: "플레이어가 서 있는 칸', 1))
+PYW
+expect 1 "차지 종류를 선언만 하고 안 꽂으면 tests 가 잡는다 (집 거실에 나무가 선다)"
+cp "$BAK/claim.gd" scripts/claim.gd
+
+# ② **월드가 목록을 안 거친다.** `Claim` 은 멀쩡히 서 있고 몸도 제대로 꽂혀 있어서
+#    `missing()` 은 비어 있고 회차 30 의 「몸이 선 칸」도 그대로 초록인데,
+#    월드가 묻는 것은 **목록이 아니라 몸 하나**라 나중에 꽂는 설치물은 영영 안 물어진다.
+python3 - <<'PYW'
+import io
+p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "	world.occupied = claim.covers
+", "	world.occupied = _body_covers
+", 1))
+PYW
+expect 1 "월드가 차지 목록을 안 거치면 tests 가 잡는다 (설치물을 영영 안 묻는다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ③ **첫 출처에서 멈춘다.** 몸이 목록의 첫 줄이라 회차 30 이 재던 것은 전부 초록이고,
+#    **두 번째부터 꽂는 것만** 조용히 안 물어진다 — 늘 나중에 온 쪽이 진다.
+python3 - <<'PYW'
+import io
+p='scripts/claim.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "	for name in _order:", "	for name in _order.slice(0, 1):", 1))
+PYW
+expect 1 "첫 출처만 물으면 tests 가 잡는다 (나중에 꽂은 설치물이 늘 진다)"
+cp "$BAK/claim.gd" scripts/claim.gd
+
+# ④ **차지한 칸을 「영영 안 자라는 칸」으로 적는다.** 줄을 다시 안 세우니 싸 보이고
+#    「차지한 칸에는 안 자란다」도 참인데, **집을 헐어도 숲이 안 돌아온다** —
+#    비켜선 몸도 마찬가지라 회차 30 의 ③ 이 같이 빨개진다.
+python3 - <<'PYW'
+import io
+p='scripts/world_state.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "			_schedule(tile, now + RETRY_SEC)", "			_schedule(tile, INF)", 1))
+PYW
+expect 1 "차지한 칸을 영영 안 자라게 적으면 tests 가 잡는다 (집을 헐어도 숲이 안 온다)"
+cp "$BAK/world_state.gd" scripts/world_state.gd
+
+expect 0 "원복하면 차지한 칸도 다시 초록이다"
 
 
 echo
