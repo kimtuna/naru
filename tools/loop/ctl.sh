@@ -21,7 +21,12 @@ PIDF="$ROOT/.loop/loop.pid"; LOG="$ROOT/.loop/loop.log"
 # (회차 38 의 `05775ac` · `668b641` 이 그 사고의 기록이다).
 #
 # **사본을 pgrep 으로 찾는 것이 진실의 출처다.** pid 파일은 거들기만 한다.
-loop_pids() { pgrep -f 'naru-loop' 2>/dev/null || true; }
+# **세션 자식까지 센다** (회차 40 실측). `naru-loop`(사본) 하나만 보면, 사본이 첫 TERM
+# 에 죽는 순간 `stop` 이 「도는 프로세스 없음」으로 빠져나온다 — 그런데 **세션(`claude`)은
+# 아직 살아서 파일을 쓴다.** 2026-09-15 23:43:03 에 실제로 그랬다: stop 이 끝난 **뒤에**
+# 죽은 세션이 `tools/loop/redteam.sh` 를 썼고, 사람은 세운 줄 알고 있었다.
+# `withtimeout.sh` 는 루프가 세션을 감쌀 때만 쓴다 — 사람의 `claude --resume` 은 안 걸린다.
+loop_pids() { pgrep -f 'naru-loop|tools/loop/withtimeout\.sh' 2>/dev/null || true; }
 alive() {
   [ -n "$(loop_pids)" ] && return 0
   [ -f "$PIDF" ] && kill -0 "$(cat "$PIDF")" 2>/dev/null
