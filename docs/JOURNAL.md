@@ -39,6 +39,19 @@
 
 ---
 
+## 회차 39 · **실측 게이트의 허용치를 「잰 흔들림」에서 정한다 — 감으로 정하지 마라**
+- 날짜: 2026-09-15
+- 결과: 초록
+- 문제: 
+- 원인: 
+- 고친 것: 
+- 바꾼 결정: 
+- 잰 값: 
+- 남긴 것: 
+- 채점: 1 IMPORT ok · 2 PARSE 52개 스크립트, 실패 0 · 3 TESTS 183 passed, 0 failed · 4 TESTS 183 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  78/90줄 · 6 SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  0 s (위상 0.250 · 낮 · 밝기 1.000)  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34) · 8   ok   공백 든 경로를 통째로 지운다 / WORKTREE SELFTEST 45 passed, 0 failed (바닥 45) · 9   ok   세션에게 주는 꼬리 2 절이 남기는 3 절 안에 든다 / STATE SELFTEST 26 passed, 0 failed (바닥 26)
+- 비용: $158.6004 누적
+- 커밋: `179267e`
+
 ## 회차 38 · **놓이는 것을 비율로 정한다 — 종류마다 문턱을 따로 두지 않는다** (2026-09-15)
 - 문제: **같은 워킹트리에서 도는 다른 클로드 세션이 이 회차의 코드를 지웠다.** `run-contract.sh` 를 ALL GREEN 으로 돌려 놓고 경로를 지정해 커밋했는데 커밋에 `docs/` 둘만 들어갔다 — `world_objects.gd` · `test_world_objects.gd` · `redteam.sh` 가 HEAD 로 돌아가 있었다. 옛 코드로도 177개가 통과하므로 **상태 검사는 계속 초록**이었고, 코드는 없고 그 코드를 설명하는 `NUMBERS 6b` 만 남을 뻔했다.
 - 원인: `tools/loop/worktree.sh restore` 는 「세션이 흘린 것」을 HEAD 로 되돌리는데 **누가 흘렸는지는 안 본다.** 옆 세션이 제 selftest 를 돌리면서 내 미커밋 변경을 제 쓰레기로 보고 되돌렸다. 커밋 쪽에서도 안 걸린다 — `git commit` 은 스테이징된 파일이 사라져도 안 죽고, 검사는 옛 코드에서도 초록이라 어느 게이트도 안 짖는다.
