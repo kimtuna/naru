@@ -24,6 +24,28 @@ func test_short_axis_decides() -> void:
 	eq(Display.max_scale(Vector2i(3840, 1080), LOGICAL), 2, "짧은 축이 정한다")
 	eq(Display.max_scale(Vector2i(1920, 2160), LOGICAL), 2, "반대로도 짧은 축")
 
+func test_fit_window_leaves_no_bar() -> void:
+	# **이 회차가 사람에게 약속한 것이다.** 창을 `논리 × N` 으로 잡으면 띠가 0 이다 —
+	# 어떤 화면에서도. 전체 화면은 창 크기를 화면이 정해서 소수점 아래가 통째로 띠였다.
+	for w in [1920, 2560, 3000, 3456, 3840, 5120]:
+		for h in [1080, 1440, 1600, 2168, 2234, 2880]:
+			var av := Vector2i(w, h)
+			var win := Display.drawn(av, LOGICAL)     # = fit_size() 가 쓰는 식
+			eq(Display.bars(win, LOGICAL), Vector2i.ZERO,
+				"%s 에서 창 %s 의 띠" % [str(av), str(win)])
+			# 띠 0 은 작은 창으로도 만들 수 있다 — **제일 큰 창**인지 같이 본다.
+			check(win.x <= av.x and win.y <= av.y,
+				"%s — 창 %s 가 화면 밖으로 나갔다" % [str(av), str(win)])
+			var bigger := LOGICAL * (Display.max_scale(av, LOGICAL) + 1)
+			check(bigger.x > av.x or bigger.y > av.y,
+				"%s — 한 단계 큰 창 %s 도 들어간다. 덜 키웠다" % [str(av), str(bigger)])
+
+func test_fit_size_is_drawn_at_this_screen() -> void:
+	# `fit_size()` 는 화면을 읽으므로 헤드리스에서는 (0,0) 이 들어간다 — 그때도
+	# **1배는 나온다**(0배는 고장이다). 식이 `drawn` 과 갈라지지 않는 것을 잰다.
+	eq(Display.fit_size(), Display.drawn(Display.avail(), Display.logical()), "fit_size 의 식")
+	check(Display.fit_size().x > 0 and Display.fit_size().y > 0, "창 크기가 0 이면 안 그린다")
+
 func test_bar_is_smaller_than_logical() -> void:
 	# **이 회차가 지키려는 부등식**이다. 처음에 「두 축 다」로 적었다가 빨개졌다 —
 	# `aspect=keep` 은 배율이 하나라서 **묶는 축 하나만** 띠가 작다. 반대쪽은 화면

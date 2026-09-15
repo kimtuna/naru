@@ -64,20 +64,21 @@ extends SceneTree
 const LOGICAL := Vector2(960.0, 540.0)
 const TILES := Vector2(60.0, 33.75)        # 960/16 · 540/16 (BACKLOG 고정값 · 회차 17)
 
-## **창 크기와 배율은 상수가 아니다** (회차 33). 전체 화면으로 띄우므로 기계마다 다르다 —
+## **창 크기와 배율은 상수가 아니다** (회차 33). 화면에 맞춰 잡으므로 기계마다 다르다 —
 ## 1920×1080 · 2.00x 를 여기 적어 두면 **다른 화면에서는 게이트가 거짓말을 한다.**
 ## 기대값은 `Display` 가 **쓸 수 있는 화면에서 계산**하고, 여기서는 엔진이 실제로 건
-## 변환과 맞대 본다. 숫자 하나를 안 박는 대신 **부등식 하나**를 박는다:
-## **묶는 축**의 띠는 논리 화면보다 작아야 한다 — 두 축이 다 논리만큼 남았다면
-## 배율을 한 단계 더 올릴 수 있었다는 뜻이고, 그건 띠를 최소로 안 줄인 것이다.
+## 변환과 맞대 본다. 숫자 하나를 안 박는 대신 **등식 둘**을 박는다:
+## **띠 = 0** (창이 게임 크기다) 와 **배율 = 최대 정수 배율** (제일 크게 띄웠다).
+## 둘 중 하나만으로는 못 잡는다 — 960×540 창도 띠가 0 이고, override 1920×1080 은
+## 배선을 통째로 빼먹어도 정확히 2배라 띠가 0 이다.
 
 # 창 크기가 붙고 씬의 _ready(월드 배선)가 돌 때까지 기다리는 프레임.
 # VIEW 는 5, DRAW 는 4가 필요했다 — 큰 쪽을 쓴다.
 const WARMUP := 5
 
-## 전체 화면으로 넘어가는 데 걸리는 프레임의 상한. **macOS 는 곧바로 안 바뀐다** —
-## 요청한 프레임에 재면 아직 창 크기다 (2026-09-15 실측: 4프레임에 안 됐고 12프레임에 됐다).
-## 프레임 수로 끊지 않고 **크기가 쓸 수 있는 화면과 같아질 때까지** 기다린다.
+## 창 크기가 바뀌는 데 걸리는 프레임의 상한. **macOS 는 곧바로 안 바뀐다** —
+## 요청한 프레임에 재면 아직 override 크기다 (2026-09-15 실측: 4프레임에 안 됐고 12에 됐다).
+## 프레임 수로 끊지 않고 **크기가 `fit_size()` 와 같아질 때까지** 기다린다.
 const FS_FRAMES := 60
 
 # ── DRAW 기대값 ──────────────────────────────────────────────────────
@@ -168,10 +169,12 @@ func _measure_view() -> void:
 		_view_report(driver)
 		return
 
-	# 전체 화면이 붙기를 기다린다. **창 크기가 쓸 수 있는 화면과 같아지는 순간**이 그것이다.
+	# 창이 게임 크기로 잡히기를 기다린다. macOS 는 요청한 프레임에 안 바꾼다
+	# (2026-09-15 실측: 4프레임에 안 됐고 12프레임에 됐다).
 	var avail := Display.avail()
+	var fit := Display.fit_size()
 	for i in FS_FRAMES:
-		if Vector2i(DisplayServer.window_get_size()) == avail:
+		if Vector2i(DisplayServer.window_get_size()) == fit:
 			break
 		await process_frame
 		_frames += 1
@@ -182,11 +185,11 @@ func _measure_view() -> void:
 	var vis := root.get_visible_rect().size
 	var win := Vector2(DisplayServer.window_get_size())
 	_v2("논리 화면", vis, LOGICAL)
-	# **숫자를 안 박는다**: 전체 화면이면 창은 쓸 수 있는 화면 그대로여야 한다.
-	# 창 모드를 따로 보는 이유 — 창이 우연히 같은 크기여도 전체 화면이 아니면 사람이
-	# 보는 화면은 다른 것이다 (`main.gd` 가 `go_fullscreen` 을 안 불러도 여기서 잡힌다).
-	_v2("창", win, Vector2(avail))
-	_num("창 모드(3 = 전체 화면)", float(DisplayServer.window_get_mode()), float(Window.MODE_FULLSCREEN))
+	# **숫자를 안 박는다**: 창은 논리 × 최대 정수 배율이어야 한다.
+	# **띠 0 만으로는 부족하다** (이 회차가 걸린 함정): override 1920x1080 은 정확히
+	# 2배라 배선을 통째로 빼먹어도 띠가 0 이다 — 그래서 **배율이 최대인지**를 같이 본다.
+	_v2("창", win, Vector2(fit))
+	_num("창 모드(0 = 창)", float(DisplayServer.window_get_mode()), float(Window.MODE_WINDOWED))
 
 	# 배율은 나눗셈이 아니라 **엔진이 실제로 거는 변환**에서 잰다 — `window_get_size()` 는
 	# 창 모드에서 요청값을 그대로 돌려주기 때문이다.
@@ -198,19 +201,25 @@ func _measure_view() -> void:
 
 	# **그려진 크기 = 논리 × 정수배**. `window_get_size()` 는 창 모드에서 요청값을 그대로
 	# 돌려주므로(BACKLOG 의 함정), 크기는 **변환에서 되짚어** 낸다.
+	# 창이 우리가 준 크기이므로 기대값도 창에서 나온다 — 화면에서 내면 전체 화면 시절의
+	# 수가 그대로 남아 창 모드에서 늘 빨개진다.
 	var drawn := vis * fs.x
-	_v2("그려진 크기", drawn, Vector2(Display.drawn(avail, lg)))
-	# **남는 띠.** 이 회차가 줄이려던 그것이다 — 값은 NUMBERS 1절에 조건과 같이 있다.
+	_v2("그려진 크기", drawn, Vector2(fit))
+	# **남는 띠 = 0.** 이 회차가 사람에게 약속한 그것이다 (값은 NUMBERS 1b 절).
+	# **창에서 뺀다**: 화면에서 빼면 바탕 화면이 보이는 것까지 띠로 세게 된다.
+	# 요청한 창 크기는 거짓말일 수 있지만(macOS 가 줄이면), 그때는 엔진이 건 배율이
+	# 같이 내려가 `drawn` 이 작아지므로 **이 뺄셈에서 0 이 아니게 되어 잡힌다**.
 	var bars := win - drawn
-	_v2("남는 띠", bars, Vector2(Display.bars(avail, lg)))
-	# 숫자가 아니라 **부등식**이 최소를 지킨다. **두 축이 다** 논리 화면만큼 남았을 때만
-	# 배율을 한 단계 올릴 수 있었다는 뜻이다 — `aspect=keep` 은 배율이 하나라서
-	# **묶는 축 하나만** 띠가 작고 반대쪽은 화면 비율만큼 통째로 남는다.
-	if bars.x >= LOGICAL.x and bars.y >= LOGICAL.y:
-		_view_fail("띠가 두 축 다 논리 화면만큼 남았다 — 배율을 한 단계 더 올릴 수 있었다",
-			"%.0f x %.0f" % [bars.x, bars.y], "한 축은 < %.0f / %.0f" % [LOGICAL.x, LOGICAL.y])
-	if bars.x < 0.0 or bars.y < 0.0:
-		_view_fail("띠가 음수 — 화면 밖으로 잘렸다", "%.0f x %.0f" % [bars.x, bars.y], ">= 0 x 0")
+	_v2("남는 띠", bars, Vector2.ZERO)
+	# 띠 0 은 **작은 창으로도 만들 수 있다** — 1배짜리 960x540 창도 띠가 0 이다.
+	# 그래서 「띠가 없다」와 「제일 크다」를 **둘 다** 묻는다. 창이 화면 밖으로 나가면
+	# 반대로 잘린 것이고, 잘린 만큼은 ⓒ(누구나 같은 범위)가 깨진 것이다.
+	if bars != Vector2.ZERO:
+		_view_fail("띠가 남았다 — 창이 게임 크기가 아니다",
+			"%.0f x %.0f" % [bars.x, bars.y], "0 x 0")
+	if drawn.x > avail.x or drawn.y > avail.y:
+		_view_fail("창이 쓸 수 있는 화면보다 크다 — 잘린다",
+			"%.0f x %.0f" % [drawn.x, drawn.y], "<= %d x %d" % [avail.x, avail.y])
 
 	# 보이는 칸은 **월드 좌표**로 잰다 — 카메라 줌이 걸리면 여기서만 달라진다.
 	var cz := root.get_canvas_transform().get_scale()
@@ -218,9 +227,9 @@ func _measure_view() -> void:
 	var tiles := world / PlayerMotion.TILE
 	_v2("보이는 칸", tiles, TILES)
 
-	print("VIEW 논리 %.0fx%.0f · 창 %.0fx%.0f · 배율 %.2fx · 그린 크기 %.0fx%.0f · 띠 %.0fx%.0f · 카메라 %.2fx · 타일 %dpx · 보이는 칸 %.2f x %.2f" % [
+	print("VIEW 논리 %.0fx%.0f · 창 %.0fx%.0f · 배율 %.2fx · 그린 크기 %.0fx%.0f · 띠 %.0fx%.0f · 화면 %dx%d · 카메라 %.2fx · 타일 %dpx · 보이는 칸 %.2f x %.2f" % [
 		vis.x, vis.y, win.x, win.y, fs.x, drawn.x, drawn.y, bars.x, bars.y,
-		cz.x, int(PlayerMotion.TILE), tiles.x, tiles.y])
+		avail.x, avail.y, cz.x, int(PlayerMotion.TILE), tiles.x, tiles.y])
 	_view_report(driver)
 
 func _view_report(driver: String) -> void:

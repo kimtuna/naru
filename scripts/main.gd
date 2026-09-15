@@ -117,12 +117,14 @@ var _cache_range := Rect2i()
 var _cache := PackedColorArray()
 
 func _ready() -> void:
-	# **전체 화면으로 띄운다** (회차 33). 사람이 「화면이 안 맞는다」고 한 자리다 —
-	# 창 override 1920×1080 은 이 화면에서 가로의 절반밖에 안 덮었다.
-	# 배율은 여기서 안 건다: `scale_mode=integer` 가 창 크기에서 제가 내림한다.
+	# **창을 게임 크기에 맞춘다** (회차 33). 사람이 두 번 지적한 자리다 —
+	# 창 override 1920×1080 은 이 화면에서 가로의 절반밖에 안 덮었고, 앞 회차가 켠
+	# 전체 화면은 3456 ÷ 960 = 3.6 의 소수점 아래를 576×548 px 의 띠로 버렸다.
+	# 배율은 여기서 안 건다: `scale_mode=integer` 가 창 크기에서 제가 내림한다 —
+	# 창을 정확히 `논리 × N` 으로 주면 그 내림이 딱 N 이라 **띠가 0 이다**.
 	# `Display` 는 그 결과를 **미리 말해 두는 쪽**이고, VIEW 게이트가 엔진이 실제로
-	# 건 배율과 맞대 본다. 띠는 0 이 아니라 **최소**가 목표다 (Display 머리말).
-	Display.go_fullscreen(get_window())
+	# 건 배율·창·띠와 맞대 본다 (Display 머리말).
+	Display.fit_window(get_window())
 	_link_world()
 	_key_down.resize(Hotbar.SLOTS)
 	_hotbar_view.hotbar = hotbar

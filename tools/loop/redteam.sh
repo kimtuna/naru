@@ -200,16 +200,16 @@ sed -i '' 's|^zoom = Vector2(1, 1)|zoom = Vector2(2, 2)|' scenes/player.tscn
 expect 1 "카메라 줌을 걸면 화면 실측이 잡는다 (보이는 칸 30 x 16.88)"
 cp "$BAK/player.tscn" scenes/player.tscn
 
-# **회차 33 에 겨눌 곳을 옮겼다.** `_ready` 맨 앞에 끼우면 바로 다음 줄의
-# `Display.go_fullscreen()` 이 창을 도로 전체 화면으로 돌려놔서 **아무 일도 안 일어난다** —
+# **회차 33 에 겨눌 곳을 두 번 옮겼다.** `_ready` 맨 앞에 끼우면 바로 다음 줄의
+# `Display.fit_window()` 가 창을 도로 게임 크기로 돌려놔서 **아무 일도 안 일어난다** —
 # 워킹트리는 더러우니 「헛돌았다」도 안 뜨고 조용히 「놓쳤다」가 된다.
 # 값을 바꾼 회차는 **자기를 겨누는 대조군도 같이 옮긴다** (회차 33 이 밤빛에서 배운 것).
 python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
 io.open(p,'w',encoding='utf-8').write(s.replace(
-    "\tDisplay.go_fullscreen(get_window())\n",
-    "\tDisplay.go_fullscreen(get_window())\n\tDisplayServer.window_set_size(Vector2i(1600, 900))\n", 1))
+    "\tDisplay.fit_window(get_window())\n",
+    "\tDisplay.fit_window(get_window())\n\tDisplayServer.window_set_size(Vector2i(1600, 900))\n", 1))
 PYX
 expect 1 "창을 실행 중에 줄이면 화면 실측이 잡는다 (배율 3 → 1)"
 cp "$BAK/main.gd" scripts/main.gd
@@ -1356,34 +1356,56 @@ cp "$BAK/world_state.gd" scripts/world_state.gd
 
 expect 0 "원복하면 차지한 칸도 다시 초록이다"
 
-# ── 회차 33 전체 화면 띠 ─────────────────────────────────────────────
-section "회차 33 전체 화면 띠"
+# ── 회차 33 창을 게임 크기에 ──────────────────────────
+section "회차 33 창을 게임 크기에"
 
-# ① **배선을 빼먹는다.** `Display` 는 순수 계산이라 **단위 검사 173개가 전부 초록**으로
-#    남는다 — 창을 안 띄우면 아무도 「전체 화면이 아니다」를 못 본다.
+# ① **배선을 빼먹는다.** `Display` 는 순수 계산이라 **단위 검사 175개가 전부 초록**으로
+#    남는다 — 창을 안 맞추면 아무도 「띠가 있다」를 못 본다.
+#    **이것이 이 회차가 걸린 함정이다**: override 1920x1080 은 정확히 2배라 **띠가 0 이다.**
+#    「띠 0」만 묻는 게이트는 여기서 초록이고, **배율이 최대인지**를 같이 묻는 줄만 빨개진다.
 python3 - <<'PYX'
 import io
 p='scripts/main.gd'; s=io.open(p,encoding='utf-8').read()
-io.open(p,'w',encoding='utf-8').write(s.replace("\tDisplay.go_fullscreen(get_window())\n", "", 1))
+io.open(p,'w',encoding='utf-8').write(s.replace("\tDisplay.fit_window(get_window())\n", "", 1))
 PYX
-expect 1 "전체 화면을 안 켜면 VIEW 가 잡는다 (창 모드 0 · 배율 2 → 기대 3)"
+expect 1 "창을 안 맞추면 VIEW 가 잡는다 (띠는 0 인데 배율 2 → 기대 3)"
 cp "$BAK/main.gd" scripts/main.gd
 
-# ② **내림을 반올림으로 바꾼다.** 3.6 이 4 가 되어 그린 크기가 화면 밖으로 나간다 —
-#    잘린 만큼은 「남이 보는 것을 내가 못 보는 것」이라 ⓒ 가 깨진다.
+# ② **창 대신 전체 화면으로 돌아간다.** 앞 회차가 하던 그대로다 — 배율은 3 그대로라
+#    「배율이 맞나」만 묻는 게이트는 초록이고, **띠를 재는 줄만** 576x548 로 빨개진다.
+#    사람이 두 번 지적한 그 화면이 정확히 이것이다.
+python3 - <<'PYX'
+import io
+p='scripts/display.gd'; s=io.open(p,encoding='utf-8').read()
+io.open(p,'w',encoding='utf-8').write(s.replace(
+    "\tw.mode = Window.MODE_WINDOWED\n\tw.size = size\n\tw.position = rect.position + (rect.size - size) / 2\n",
+    "\tw.mode = Window.MODE_FULLSCREEN\n", 1))
+PYX
+expect 1 "전체 화면으로 돌아가면 VIEW 가 띠에서 잡는다 (0x0 → 576x548)"
+cp "$BAK/display.gd" scripts/display.gd
+
+# ③ **한 단계 작은 창으로 잡는다.** 띠는 **여전히 0 이다**(1920x1080 도 정확히 2배다) —
+#    「띠가 없다」만 묻는 게이트는 통째로 초록이고, 사람은 화면의 3할짜리 창을 본다.
+#    **「제일 큰 창인가」가 이 줄을 잡는다** — 단위·실측 양쪽에 그 물음을 같이 넣었다.
+sed -i '' 's|^	var size := drawn(rect.size, logical())|	var size := logical() * maxi(1, max_scale(rect.size, logical()) - 1)|' scripts/display.gd
+expect 1 "창을 한 단계 작게 잡으면 VIEW 가 배율에서 잡는다 (띠는 0 인데 3 → 2)"
+cp "$BAK/display.gd" scripts/display.gd
+
+# ④ **내림을 반올림으로 바꾼다.** 3.6 이 4 가 되어 창 3840x2160 이 화면 3456x2168 밖으로
+#    나간다 — 잘린 만큼은 「남이 보는 것을 내가 못 보는 것」이라 ⓒ 가 깨진다.
 sed -i '' 's|return maxi(1, mini(avail_size.x / logical_size.x, avail_size.y / logical_size.y))|return maxi(1, mini(int(roundf(float(avail_size.x) / logical_size.x)), int(roundf(float(avail_size.y) / logical_size.y))))|' scripts/display.gd
-expect 1 "배율을 반올림하면 단위와 VIEW 가 같이 잡는다 (3.6 → 4)"
+expect 1 "배율을 반올림하면 단위와 VIEW 가 같이 잡는다 (3.6 → 4 · 창이 화면 밖으로)"
 cp "$BAK/display.gd" scripts/display.gd
 
-# ③ **쓸 수 있는 화면 대신 화면 전체를 쓴다.** macOS 는 메뉴 막대·노치 띠를 안 준다 —
-#    세로 66px 을 더 크게 보고 **띠를 그만큼 틀리게 적는다.** 배율은 3 그대로라
-#    「배율이 맞나」만 묻는 게이트는 초록이고, **띠를 재는 줄만** 빨개진다.
-#    단위 검사는 인자로 받는 순수 함수만 보므로 여기서도 전부 초록이다.
-sed -i '' 's|return DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen()).size|return DisplayServer.screen_get_size(DisplayServer.window_get_current_screen())|' scripts/display.gd
-expect 1 "쓸 수 있는 화면 대신 화면 전체를 재면 VIEW 가 띠에서 잡는다 (548 → 614)"
+# ⑤ **쓸 수 있는 화면 대신 화면 전체를 쓴다.** macOS 는 메뉴 막대·노치 띠를 안 준다 —
+#    세로 66px 을 더 크게 보고 자리도 (0,0) 으로 본다. **창 크기는 안 바뀐다**(2168 이든
+#    2234 이든 배율은 3) — 바뀌는 것은 **자리**다. 창이 위로 33px 밀려 메뉴 막대 밑으로
+#    들어간다. 잡히는지 보려고 넣는다 — **안 잡히면 그것도 알아야 할 값이다.**
+sed -i '' 's|return DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen())|return Rect2i(Vector2i.ZERO, DisplayServer.screen_get_size(DisplayServer.window_get_current_screen()))|' scripts/display.gd
+expect 1 "쓸 수 있는 화면 대신 화면 전체를 재면 잡는다 (자리가 33px 위로)"
 cp "$BAK/display.gd" scripts/display.gd
 
-expect 0 "원복하면 전체 화면도 다시 초록이다"
+expect 0 "원복하면 창 크기도 다시 초록이다"
 
 
 echo
