@@ -124,6 +124,23 @@ rc_is   "섞여 있어도 되돌린다"            0 restore
 file_is "세션 것만 되돌아간다" scripts/inventory.gd "$(printf 'func add(n):\n\treturn left')"
 file_is "일지는 그대로 남는다" docs/JOURNAL.md "$(printf '# JOURNAL\n\n## 회차 25')"
 
+# ── 5b) **되돌렸는데 안 되돌아갔으면 빨갛다** ───────────────────────
+#
+# `restore` 가 「했다」고만 말하면 드라이버는 6c 를 통과하고 다음 회차가 그 변경을
+# 그대로 커밋한다 — 되돌리기가 만들 수 있는 **유일하고 가장 비싼 고장**이다
+# (회차 23 이 승격에서 본 것과 같은 모양: 하지 않고 했다고 말하기).
+# 그래서 `restore` 는 끝에 **다시 묻는다.** 그 질문이 살아 있는지를 재려면
+# 진짜로 못 되돌리는 자리가 있어야 한다 — 쓰기 권한을 뺏은 폴더를 만든다.
+fresh
+mkdir -p "$R/scripts/잠긴"
+printf 'x\n' > "$R/scripts/잠긴/_scratch.gd"
+chmod 500 "$R/scripts/잠긴"
+rc_is "못 되돌렸으면 restore 가 빨갛다" 1 restore
+there "scripts/잠긴/_scratch.gd" "못 지운 것은 그대로 남아 있다"
+chmod 700 "$R/scripts/잠긴"
+rc_is "권한이 돌아오면 restore 가 초록" 0 restore
+gone "scripts/잠긴" "권한이 돌아오면 진짜로 지운다"
+
 # ── 6) 무시되는 것은 흘린 것이 아니다 ───────────────────────────────
 fresh
 mkdir -p "$R/.godot-home"; printf 'cache\n' > "$R/.godot-home/x.dat"
@@ -140,7 +157,7 @@ gone "scripts/두 칸 이름.gd" "공백 든 경로를 통째로 지운다"
 echo
 # **바닥이 없으면 검사를 지워서 초록에 갈 수 있다** — 실패가 0 이면 통과 개수가 줄어도
 # 그냥 초록이기 때문이다. 단위 검사의 `mintests.sh` 와 같은 자리다.
-FLOOR=41
+FLOOR=45
 if [ "$F" -ne 0 ]; then echo "WORKTREE SELFTEST $P passed, $F failed"; exit 1; fi
 if [ "$P" -lt "$FLOOR" ]; then
   echo "WORKTREE SELFTEST $P passed, 0 failed — 바닥 $FLOOR 아래다. 검사가 지워졌다"; exit 1
