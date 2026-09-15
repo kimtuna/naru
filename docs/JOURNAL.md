@@ -39,6 +39,42 @@
 
 ---
 
+## 회차 25 · **세션이 손으로 깨뜨린 것을 반드시 되돌린다** — 회차 24 가 대조군 하나를
+- 문제: 새로 만든 대조군 ⑥ 이 처음에 놓쳤다. `worktree.sh restore` 끝의 「되돌린 뒤
+  다시 묻기」(`rest="$(leftovers)"`)를 지워도 자체 검사 41개가 전부 초록이었다.
+  덤으로 기준 5(doclen)가 `.loop/state.md` 98줄 · 상한 90 으로 빨갰다.
+- 원인: 검사 41개 중 `restore` 가 **실패하는** 경우가 하나도 없었다 — 전부 되돌리기가
+  성공하는 길이라 그 재확인이 한 번도 안 불렸다. 「있는데 아무도 안 돌리는 게이트」가
+  회차 22·23 과 똑같은 모양으로 또 생겼다. doclen 쪽은 순서 문제다: 기준 5 는 판정(7)
+  에서 재는데 `.loop/state.md` 를 잘라 주는 `roll_state` 는 **초록이 난 뒤에야** 돈다.
+- 고친 것: `tools/loop/worktree.sh` 를 만들었다 — `check` · `save` · `restore`.
+  `tools/loop/loop.sh` 가 **채점 앞(6c)** 에서 부른다. 뒤가 아니라 앞인 것이 요점이다:
+  뒤면 채점자가 **커밋되지도 않을 상태**를 재고 그 초록의 근거가 역사에 안 남는다.
+  초록 길도 고쳤다 — 커밋이 하나도 없는데 흘린 것이 있으면 「확인만 한 항목」이 아니라
+  작업이 떠 있었던 것이라 멈춘다. `tools/loop/worktree-selftest.sh` 45개,
+  `tools/loop/redteam.sh` 에 묶음 「회차 25」 대조군 6종. 놓쳤던 ⑥ 은 `chmod 500`
+  폴더로 **진짜 못 지우는 자리**를 만들어 닫았다. doclen 은 `state.py roll 3` 으로 60줄.
+- 바꾼 결정: **드라이버 몫과 세션 몫을 가른다.** 세션이 끝난 시점에 `docs/JOURNAL.md` ·
+  `docs/index.html` · `.loop/` 는 아직 커밋 전인데 드라이버가 뒤에서 제 손으로 커밋한다.
+  이걸 「세션이 흘린 것」으로 보면 되돌리기가 **6b 가 방금 답변에서 뽑은 일지를 지운다** —
+  대조군 ③ 이 그 하나만 잡는다. 항목 verify 도 `redteam.sh`(전부 40분)에서
+  `worktree-selftest.sh`(0.9초)로 바꿨다. 매 회차 도는 기준으로 승격돼야 하는데
+  전체 대조군은 상태 검사를 다시 불러 `promote` 가 재귀라고 건너뛴다.
+- 잰 값: `WORKTREE SELFTEST 45 passed, 0 failed (바닥 45)` 0.9초 ·
+  `REDTEAM 17 잡음, 0 놓침`(`--only 회차 25` · 55개 건너뜀 · 4분 04초) ·
+  대조군 ⑥ 증명 41 passed(놓침) → `44 passed, 1 failed`(잡음) → 45 passed(원복) ·
+  `ALL GREEN` 7/7 · 상태 검사 한 판 56.0s · `TESTS 113 passed, 0 failed` ·
+  `DOCLEN .loop/state.md 98 → 60/90줄` · 워킹트리 깨끗.
+- 남긴 것: **doclen 이 `roll_state` 보다 먼저 돈다** — 긴 절을 붙인 회차는 트리밍 전에
+- 날짜: 2026-09-15
+- 결과: 초록
+- 채점: 1 IMPORT ok · 2 PARSE 35개 스크립트, 실패 0 · 3 TESTS 113 passed, 0 failed · 4 TESTS 113 passed, 0 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  60/90줄 · 6 SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34)
+- 비용: $89.728 누적
+- 커밋: `fd6ca82`
+  빨개진다(백로그에 한 줄로 넘겼다). 다음은 **헤드리스 실측 게이트를 한 프로세스로 모은다**
+  (`check.sh tests` 가 Godot 을 10번 띄운다). **[ASK] 상태 검사 기준 4 의 글자가
+  아직 48px 타일이다** — 사람이 답할 것이다.
+
 ## 회차 24 · 월드 오브젝트 배치 — 나무 · 돌 · 광물 1종을 시드로 놓는다
 - 날짜: 2026-09-15
 - 결과: 초록
