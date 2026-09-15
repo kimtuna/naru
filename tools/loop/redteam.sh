@@ -44,6 +44,7 @@ cp scripts/display.gd "$BAK/" 2>/dev/null || true
 cp scripts/day_cycle.gd "$BAK/" 2>/dev/null || true
 cp scripts/hotbar_view.gd "$BAK/" 2>/dev/null || true
 cp scripts/bag_view.gd "$BAK/" 2>/dev/null || true
+cp scripts/input_route.gd "$BAK/" 2>/dev/null || true
 cp scripts/player.gd "$BAK/" 2>/dev/null || true
 cp scripts/main.gd "$BAK/" 2>/dev/null || true
 cp scenes/main.tscn "$BAK/" 2>/dev/null || true
@@ -56,6 +57,7 @@ cp tools/loop/loop.sh "$BAK/" 2>/dev/null || true
 cp tools/loop/state.py "$BAK/" 2>/dev/null || true
 cp tools/loop/state-selftest.sh "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_headless.gd "$BAK/" 2>/dev/null || true
+cp tools/tests/measure_focus.gd "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_collide.gd "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_move.gd "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_camera.gd "$BAK/" 2>/dev/null || true
@@ -83,6 +85,7 @@ restore() {
   cp "$BAK/day_cycle.gd" scripts/day_cycle.gd 2>/dev/null || true
   cp "$BAK/hotbar_view.gd" scripts/hotbar_view.gd 2>/dev/null || true
   cp "$BAK/bag_view.gd" scripts/bag_view.gd 2>/dev/null || true
+  cp "$BAK/input_route.gd" scripts/input_route.gd 2>/dev/null || true
   cp "$BAK/player.gd" scripts/player.gd 2>/dev/null || true
   cp "$BAK/main.gd" scripts/main.gd 2>/dev/null || true
   cp "$BAK/main.tscn" scenes/main.tscn 2>/dev/null || true
@@ -95,6 +98,7 @@ restore() {
   cp "$BAK/state.py" tools/loop/state.py 2>/dev/null || true
   cp "$BAK/state-selftest.sh" tools/loop/state-selftest.sh 2>/dev/null || true
   cp "$BAK/measure_headless.gd" tools/tests/measure_headless.gd 2>/dev/null || true
+  cp "$BAK/measure_focus.gd" tools/tests/measure_focus.gd 2>/dev/null || true
   cp "$BAK/measure_collide.gd" tools/tests/measure_collide.gd 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
@@ -1632,6 +1636,63 @@ expect 1 "가방 화면을 9칸으로 줄이면 tests 가 잡는다 (18칸 중 9
 cp "$BAK/bag_view.gd" scripts/bag_view.gd
 
 expect 0 "원복하면 가방 화면도 초록이다"
+
+# ── 회차 43 가방이 열려 있는 동안의 입력 ─────────────────────────────
+section "회차 43 가방이 열려 있는 동안의 입력"
+#
+# 겨누는 것은 **표는 맞는데 게임이 그 표를 안 묻는 상태**다. `InputRoute` 는 순수한
+# 표라 단위 검사가 표만 지킨다 — `main.gd` 가 묻기를 빼먹어도 **202개가 전부 초록**이고,
+# 사람 눈에는 「가방을 정리하다 나무를 베고 손이 바뀐다」로만 보인다.
+# 회차 3 의 속도 · 5 의 방향 · 24 의 배치 · 30 의 시계와 같은 모양의 구멍이다.
+# **①②③④⑤ 는 `main.gd` 한 파일만 만지므로 단위 검사를 하나도 안 깨뜨린다.**
+
+# ① **좌클릭이 갈래를 안 묻는다.** 표에는 「죽는다」고 적혀 있고 아무도 안 읽는다 —
+#    가방을 연 채로 휘두르고, 겨눈 나무를 벤다.
+mut scripts/main.gd '^(\tif not InputRoute\.is_live\(InputRoute\.USE, _ui_open\(\)\):)$' '\tif false:'
+expect 1 "열린 채 좌클릭이 휘두르면 실측이 잡는다 (표는 맞는데 안 묻는다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ② **숫자키가 갈래를 안 묻는다.** 가방을 정리하다 손이 바뀐다 — 창을 닫은 다음
+#    좌클릭이 딴 도구를 쓰는데, 사람은 무엇을 눌렀는지 모른다.
+mut scripts/main.gd '^(\t\tif down == 1 and _key_down\[i\] == 0) and live:$' '\1:'
+expect 1 "열린 채 숫자키가 손을 바꾸면 실측이 잡는다"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ③ **창이 열린 것을 안 본다** (`_ui_open` 이 늘 거짓). 갈래를 묻기는 하는데 늘
+#    「닫혀 있다」로 답하므로 표가 통째로 무의미해진다 — ①②를 한꺼번에 되돌린 꼴이다.
+mut scripts/main.gd '^\treturn _bag_view\.is_open\(\)$' '\treturn false'
+expect 1 "창이 열린 줄을 모르면 실측이 잡는다 (갈래를 물어도 답이 늘 같다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ④ **거꾸로 늘 열려 있다고 답한다.** 가방을 닫아도 좌클릭이 안 휘두르고 숫자키가
+#    손을 안 바꾼다 — **게이트 안의 대조군(⑤⑥ 구간)이 잡는 자리다.** 이것이 빨개지는
+#    것이 곧 「안 휘둘렀다」가 공허한 말이 아니라는 증거다.
+mut scripts/main.gd '^\treturn _bag_view\.is_open\(\)$' '\treturn true'
+expect 1 "닫은 뒤에도 입력이 안 살아나면 실측이 잡는다 (게이트 안의 대조군)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ⑤ **죽어 있는 동안의 직전 프레임을 안 적는다.** 가방을 연 채 누른 숫자키가
+#    「안 눌렸던 것」으로 남아, **창을 닫는 그 프레임에** 손이 옮겨간다.
+#    눌렀다 뗐다만 재는 게이트는 이걸 못 본다 — FOCUS 가 **키를 쥔 채로 닫는** 구간을
+#    따로 두는 이유다.
+mut scripts/main.gd '^\t\t_key_down\[i\] = down$' '\t\t\t_key_down[i] = down'
+expect 1 "쥔 키가 닫는 프레임에 손을 옮기면 실측이 잡는다 (뗐다 다시 눌러야 먹는다)"
+cp "$BAK/main.gd" scripts/main.gd
+
+# ⑥ **걷지도 못하게 한다.** 코어 키퍼 방식이 무너진다 — 정리하는 동안 몸이 굳으면
+#    사람은 창을 열기를 겁내고, 가방이 「멈춰서 쓰는 것」이 된다.
+#    **이것은 단위 검사도 잡는다**: 사람이 정한 값이라 표에 숫자로 묶여 있다.
+mut scripts/input_route.gd '^(\tMOVE: )true,' '\1false,'
+expect 1 "열린 채 못 걸으면 tests 가 잡는다 (걸을 수는 있다 · 코어 키퍼)"
+cp "$BAK/input_route.gd" scripts/input_route.gd
+
+# ⑦ **가방 키를 죽인다.** 한 번 연 창을 못 닫는다 — 월드가 영영 반쯤 가려진다.
+#    표의 그 줄이 **정말 읽히는지**를 여기서 본다 (`_poll_bag` 도 표에 묻는다).
+mut scripts/input_route.gd '^(\tBAG: )true,' '\1false,'
+expect 1 "열린 뒤 E 가 죽으면 tests 가 잡는다 (창을 못 닫는다)"
+cp "$BAK/input_route.gd" scripts/input_route.gd
+
+expect 0 "원복하면 열린 채의 입력도 초록이다"
 
 echo
 SKIPMSG=""

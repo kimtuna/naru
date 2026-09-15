@@ -44,16 +44,18 @@ extends Node2D
 ## 엔진 입력을 안 본다.
 ##
 ## **가방은 `E` 로 열고 닫는다** (회차 40). 핫바와 같은 `CanvasLayer` 에 있지만
-## **늘 떠 있지 않다** — 창이라 월드를 가린다. 열려 있는 동안의 입력 갈래(좌클릭이
-## UI 로 가고 숫자키가 손을 안 바꾼다)는 **다음 항목이다**: 지금은 열고 닫기만이라
-## 가방을 연 채로도 걷고 휘두를 수 있다 (코어 키퍼 방식 · GDD D-9).
+## **늘 떠 있지 않다** — 창이라 월드를 가린다.
+##
+## **창이 열려 있는 동안 입력이 갈린다** (회차 43): **걸을 수는 있고**(코어 키퍼 방식)
+## **좌클릭은 안 휘두르고 숫자키는 손을 안 바꾼다.** 그 표는 `InputRoute` 에 있고
+## 여기는 **창이 열렸나만 답한다**(`_ui_open`) — `_poll_*` 마다 조건을 적으면
+## 창이 늘 때(상자 · 제작대) 어느 회차가 한 곳을 빼먹는다.
 
-## 좌클릭의 입력 액션 이름. project.godot 의 글자와 **한 곳에서** 만난다.
-const USE_ACTION := &"use"
-
-## 가방을 열고 닫는 키의 액션 이름. 같은 이유로 여기가 출처다 —
-## `test_player_scene.gd` 가 이 상수를 읽어 배선이 `E` 인지 본다.
-const BAG_ACTION := &"bag"
+## 좌클릭 · 가방 키의 입력 액션 이름. **`InputRoute` 가 출처다** — 갈래 표와 글자가
+## 같은 곳에서 나와야 「배선은 맞는데 갈래에 안 적힌 입력」이 안 생긴다.
+## `test_player_scene.gd` 는 이 상수를 읽어 배선이 좌클릭 · `E` 인지 본다.
+const USE_ACTION := InputRoute.USE_ACTION
+const BAG_ACTION := InputRoute.BAG_ACTION
 
 ## 이 판의 씨앗. 저장·불러오기가 생기면 세이브에서 온다 (GDD D-1).
 const WORLD_SEED := 20260914
@@ -178,6 +180,12 @@ func _ready() -> void:
 		DayCycle.phase(world.now), "낮" if DayCycle.is_day(world.now) else "밤",
 		DayCycle.TWILIGHT * WorldState.DAY_SEC])
 
+## **창이 열려 있나** — 지금은 가방 하나다. 입력 갈래를 묻는 쪽(`_poll_*`)은
+## 「무슨 창인가」를 몰라야 한다: 상자 · 제작대가 생기면 여기에 `or` 하나가 붙고
+## 폴링하는 세 곳은 한 줄도 안 고친다.
+func _ui_open() -> bool:
+	return _bag_view.is_open()
+
 ## 플레이어를 월드에 꽂는다. **이 줄이 없으면 바다 위를 걸어다닌다.**
 ##
 ## **Callable 을 한 번만 만든다**: `WorldState` 가 없앤 칸의 사전을 참조로 넘기므로,
@@ -223,9 +231,15 @@ func _process(delta: float) -> void:
 ## 숫자키 1..9 → 손. 액션 이름은 `Hotbar` 가 만든다 — 여기서 글자를 다시 적으면
 ## project.godot 의 배선과 갈라진다.
 func _poll_hotbar() -> void:
+	# **가방이 열려 있으면 손을 안 바꾼다** (`InputRoute`): 칸을 정리하다 손이 바뀌면
+	# 창을 닫은 다음 좌클릭이 딴 도구를 쓴다.
+	var live := InputRoute.is_live(InputRoute.HOTBAR, _ui_open())
 	for i in Hotbar.SLOTS:
 		var down: int = 1 if Input.is_action_pressed(Hotbar.action_for(i)) else 0
-		if down == 1 and _key_down[i] == 0:
+		# **직전 프레임은 죽어 있는 동안에도 적는다.** 안 적으면 가방을 연 채 누른
+		# 키가 「안 눌렸던 것」으로 남아, 창을 닫는 순간 그 키가 손을 옮긴다 —
+		# 사람은 아무것도 안 눌렀는데 도구가 바뀐다.
+		if down == 1 and _key_down[i] == 0 and live:
 			hotbar.select(i)
 			_hotbar_view.queue_redraw()
 		_key_down[i] = down
@@ -234,9 +248,12 @@ func _poll_hotbar() -> void:
 ## `is_action_just_pressed` 는 「눌린 프레임」이 딱 한 번뿐이라 실측 게이트가
 ## 눌러 두는 창을 비껴간다. 여기서는 그 실수가 더 나쁘다 — 토글이라
 ## **한 번 누른 것이 두 번 먹히면** 창이 열렸다 닫힌 것처럼 보인다.
+## **이 키는 창이 열려 있어도 산다** (`InputRoute.BAG`) — 죽으면 한 번 연 창을
+## 못 닫는다. 그래도 **표에 묻는다**: 안 물으면 그 줄은 아무도 안 읽는 죽은 줄이 되고,
+## 창이 늘 때(상자 · 제작대) 「무엇으로 닫나」를 여기에 다시 적게 된다.
 func _poll_bag() -> void:
 	var down := Input.is_action_pressed(BAG_ACTION)
-	if down and not _bag_down:
+	if down and not _bag_down and InputRoute.is_live(InputRoute.BAG, _ui_open()):
 		_bag_view.toggle()
 	_bag_down = down
 
@@ -246,6 +263,11 @@ func _poll_bag() -> void:
 ## 이쪽은 **누르는 동안 내내**다.
 func _poll_use() -> void:
 	if not Input.is_action_pressed(USE_ACTION):
+		return
+	# **가방이 열려 있으면 휘두르지 않는다** — 그 클릭은 UI 의 것이다 (`InputRoute`).
+	# 집어서 놓기는 **다음 항목**이라, 지금 이 클릭은 아무 일도 안 한다:
+	# 「가방을 정리하다 나무를 벤다」를 먼저 막는 것이 이 줄의 전부다.
+	if not InputRoute.is_live(InputRoute.USE, _ui_open()):
 		return
 	# **모션이 이번에 시작됐을 때만 판정한다.** `use()` 가 false 면 이미 휘두르는
 	# 중이라, 여기서 또 판정하면 한 번의 동작이 프레임 수만큼 맞힌다 —

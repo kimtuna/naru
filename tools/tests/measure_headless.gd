@@ -1,8 +1,8 @@
 extends SceneTree
 
 ## **실측 게이트 — 창이 필요 없는 구간을 한 프로세스에서.** MOVE · WORLD · COLLIDE ·
-## CAMERA · CHOP · REGROW · DAY 를 차례로 잰다
-## (회차 27 에 넷, 29 에 벌목, 30 에 다시 자라기, 31 에 낮과 밤).
+## CAMERA · CHOP · REGROW · DAY · FOCUS 를 차례로 잰다
+## (회차 27 에 넷, 29 에 벌목, 30 에 다시 자라기, 31 에 낮과 밤, 43 에 창이 열린 채의 입력).
 ##
 ## **왜 합쳤나**: 넷 다 창이 필요 없는데 따로 돌리면 `check.sh tests` 가 Godot 을
 ## 여덟 번 띄운다 — 부팅이 재는 시간보다 길다. 회차 14 가 창 띄우는 둘(VIEW·DRAW)을
@@ -11,7 +11,7 @@ extends SceneTree
 ## **회차 14 가 그때 배운 것을 같이 지킨다 — 합치면 「반쪽만 돌고 죽어도 초록」이 열린다.**
 ## 앞 구간이 조용히 죽으면 뒤 구간은 아예 안 돌고 프로세스는 exit 0 으로 끝난다.
 ## 그래서 끝에 **`HEADGATE` 줄**을 찍는다: 어느 구간이 몇 개를 잡았는지와 **몇 구간을
-## 돌았는지(7/7)**를 같이 적는다. `check.sh` 는 구간 줄 일곱과 이 줄을 **전부** 본다 —
+## 돌았는지(8/8)**를 같이 적는다. `check.sh` 는 구간 줄 여덟과 이 줄을 **전부** 본다 —
 ## 하나라도 없으면 빨갛다.
 ##
 ## **`FACE` 는 여기 없다.** `measure_facing.gd` 는 제 `SubViewport` 를 세우고
@@ -36,7 +36,11 @@ extends SceneTree
 ## 벤 것의 뒷이야기라 읽는 순서가 곧 규칙의 순서다. **DAY 가 맨 뒤다** (회차 31):
 ## 시계를 하루 한 바퀴 통째로 돌리는 유일한 구간이라 가장 크게 휘젓고, 이야기로도
 ## 「벤다 → 자란다 → 그리고 해가 진다」가 읽는 순서다.
-const ORDER := ["move", "world", "collide", "camera", "chop", "regrow", "day"]
+##
+## **FOCUS 가 그 뒤다** (회차 43): 가방을 연 채로 좌클릭을 쥐어 보는 구간이라
+## **대조군으로 창을 닫고 한 번 더 누른다** — 그 클릭은 겨눈 것을 정말로 벤다.
+## 씬은 구간마다 새로 세우니 새지는 않지만, 휘젓는 구간은 뒤에 둔다.
+const ORDER := ["move", "world", "collide", "camera", "chop", "regrow", "day", "focus"]
 const PHASE_PATH := {
 	"move": "res://tools/tests/measure_move.gd",
 	"world": "res://tools/tests/measure_world.gd",
@@ -45,6 +49,7 @@ const PHASE_PATH := {
 	"chop": "res://tools/tests/measure_chop.gd",
 	"regrow": "res://tools/tests/measure_regrow.gd",
 	"day": "res://tools/tests/measure_day.gd",
+	"focus": "res://tools/tests/measure_focus.gd",
 }
 
 ## 구간 사이에 비우는 프레임. `queue_free` 는 프레임 끝에 돈다 — 앞 구간의 씬이
@@ -96,9 +101,9 @@ func _end_phase() -> void:
 	_gap = GAP
 
 ## **이 줄 하나가 「반쪽만 돌고 죽어도 초록」을 막는다.** 구간이 죽으면 여기까지
-## 못 오므로 줄이 아예 안 나오고, 구간을 조용히 뺐으면 `구간 7/7` 이 `6/6` 으로 바뀐다.
+## 못 오므로 줄이 아예 안 나오고, 구간을 조용히 뺐으면 `구간 8/8` 이 `7/7` 로 바뀐다.
 ## **세는 값을 `check.sh` 와 나눠 가진다**: 여기는 「몇 구간을 돌았나」만 찍고,
-## 「일곱이어야 한다」는 `check.sh` 가 안다 — 한 파일만 고쳐서는 초록이 안 된다.
+## 「여덟이어야 한다」는 `check.sh` 가 안다 — 한 파일만 고쳐서는 초록이 안 된다.
 func _report() -> bool:
 	print("HEADGATE %s (%s · 구간 %d/%d · 프로세스 한 번)" % [
 		"ok" if _bad == 0 else "FAIL %d개" % _bad,
