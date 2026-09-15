@@ -27,23 +27,25 @@ static func logical() -> Vector2i:
 		int(ProjectSettings.get_setting("display/window/size/viewport_height")))
 
 ## 쓸 수 있는 화면에 `logical` 을 **정수배로** 넣을 때 가장 큰 배율.
+## 인자 이름이 `avail_size` 인 것은 정적 함수 `avail()` 과 겹치지 않으려는 것이다 —
+## `avail` 로 두면 함수를 가려서, 안에서 `avail()` 을 부르려다 인자를 부른다.
 ## 정수 나눗셈이 곧 내림이다. 화면이 논리보다 작아도 1 밑으로는 안 내려간다 —
 ## 0 배는 아무것도 안 그리는 것이고, 그건 띠가 아니라 고장이다.
-static func max_scale(avail: Vector2i, logical_size: Vector2i) -> int:
+static func max_scale(avail_size: Vector2i, logical_size: Vector2i) -> int:
 	if logical_size.x <= 0 or logical_size.y <= 0:
 		return 1
-	if avail.x <= 0 or avail.y <= 0:
+	if avail_size.x <= 0 or avail_size.y <= 0:
 		return 1
-	return maxi(1, mini(avail.x / logical_size.x, avail.y / logical_size.y))
+	return maxi(1, mini(avail_size.x / logical_size.x, avail_size.y / logical_size.y))
 
 ## 그 배율로 실제로 그려지는 크기(px).
-static func drawn(avail: Vector2i, logical_size: Vector2i) -> Vector2i:
-	return logical_size * max_scale(avail, logical_size)
+static func drawn(avail_size: Vector2i, logical_size: Vector2i) -> Vector2i:
+	return logical_size * max_scale(avail_size, logical_size)
 
 ## **남는 띠**(px) — 가로·세로 **합**이다. 한쪽에 절반씩 붙는다.
 ## 이 수가 이 회차가 줄이려던 그것이고, 잰 값은 NUMBERS 1절에 있다.
-static func bars(avail: Vector2i, logical_size: Vector2i) -> Vector2i:
-	return avail - drawn(avail, logical_size)
+static func bars(avail_size: Vector2i, logical_size: Vector2i) -> Vector2i:
+	return avail_size - drawn(avail_size, logical_size)
 
 ## **어느 축이 배율을 묶나.** 「세로 띠가 크니 배율을 올리자」로 오는 다음 회차가
 ## 여기서 멈춘다 — `aspect=keep` 은 배율이 하나라서, 가로가 묶으면 세로를 아무리
