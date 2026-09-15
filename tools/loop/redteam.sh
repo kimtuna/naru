@@ -56,6 +56,11 @@ cp tools/loop/state.py "$BAK/" 2>/dev/null || true
 cp tools/loop/state-selftest.sh "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_headless.gd "$BAK/" 2>/dev/null || true
 cp tools/tests/measure_collide.gd "$BAK/" 2>/dev/null || true
+cp tools/tests/measure_move.gd "$BAK/" 2>/dev/null || true
+cp tools/tests/measure_camera.gd "$BAK/" 2>/dev/null || true
+cp tools/tests/measure_day.gd "$BAK/" 2>/dev/null || true
+cp tools/tests/measure_regrow.gd "$BAK/" 2>/dev/null || true
+cp tools/tests/test_tolerances.gd "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
@@ -1524,6 +1529,53 @@ expect 1 "광물의 몫을 돌보다 크게 하면 tests 가 잡는다 (비는 �
 cp "$BAK/world_objects.gd" scripts/world_objects.gd
 
 expect 0 "원복하면 비율로 놓는 것도 초록이다"
+
+
+
+# ── 회차 39 허용치를 「잰 흔들림」에서 정한다 ──────────────────────────
+section "회차 39 허용치를 잰 흔들림에서"
+#
+# 겨누는 것은 **회차 11·26·34·35 가 네 번 빠진 구덩이**다: 허용치를 감으로 적고,
+# 터지면 키우고, 키운 것이 고장까지 덮는지는 안 본다.
+# **이 대조군의 어려운 점**: 넷 다 **실측 게이트 자신은 초록으로 남는다.**
+# 조인 허용치는 오늘의 판에서는 안 터지고(내일 터진다), 벌린 허용치는 고장이 없는
+# 판에서는 아무 표시도 안 낸다. 그래서 **`test_tolerances.gd` 말고는 아무도 안 잡는다** —
+# 회차 38 까지는 넷 다 `ALL GREEN` 이었다.
+
+# ① **허용치를 잡음 아래로 조인다.** 「±5 는 너무 헐렁해 보인다」가 하는 일이다.
+#    MOVE 대각의 잰 폭이 2.313 이고 최대가 2.326 이라 4.639 아래는 언제든 터진다.
+#    **오늘 돌리면 MOVE 는 초록이다**(이번 판의 어긋남은 2.33) — 그게 이 고장의 전부다.
+mut tools/tests/measure_move.gd '^const TOL := 5\.0$' 'const TOL := 4.0'
+expect 1 "허용치를 잰 잡음 아래로 조이면 tests 가 잡는다 (MOVE 게이트 자신은 초록이다)"
+cp "$BAK/measure_move.gd" tools/tests/measure_move.gd
+
+# ② **허용치를 고장 위로 벌린다.** 「시계가 가끔 흔들리니 0.02 로」가 하는 일이다.
+#    REGROW 가 막는 고장은 `world.tick(delta*0.9)` 이고 그때 오차가 0.0337 이다 —
+#    0.02 면 여유가 1.69배라 **잡음과 고장을 못 가른다.** 게이트는 초록으로 남는다.
+mut tools/tests/measure_regrow.gd '^const CLOCK_EPS := 0\.01$' 'const CLOCK_EPS := 0.02'
+expect 1 "허용치를 고장의 1/3 위로 벌리면 tests 가 잡는다 (여유 3.4배 → 1.7배)"
+cp "$BAK/measure_regrow.gd" tools/tests/measure_regrow.gd
+
+# ③ **새 허용치를 만들고 표에 안 적는다.** 회차 39 가 한 일이 새는 유일한 길이다 —
+#    다음 회차가 게이트에 상수를 하나 더 달면, 그 상수의 폭은 아무도 안 잰다.
+mut tools/tests/measure_camera.gd '^\tTol\.obs\("CAMERA\.편차", "cap", _max_dev, TOL_CENTER\)$' '\tTol.obs("CAMERA.편차", "cap", _max_dev, TOL_CENTER)\n\tTol.obs("CAMERA.걸은거리", "floor", _path, MIN_PATH)'
+expect 1 "표에 없는 허용치를 흘리면 tests 가 잡는다 (폭을 안 잰 자리가 생겼다)"
+cp "$BAK/measure_camera.gd" tools/tests/measure_camera.gd
+
+# ④ **흘리기를 통째로 뺀다.** 「이 줄 뭐지」로 지워지는 자리다. 지우면 그 게이트의
+#    폭은 다음 회차부터 **잴 길이 없고**, 표의 수는 조용히 낡는다.
+mut tools/tests/measure_day.gd '^\tTol\.obs\("DAY\.하늘빛", "cap", _worst, TOL\)$' ''
+expect 1 "게이트가 Tol.obs 를 하나도 안 부르면 tests 가 잡는다 (폭을 잴 길이 없다)"
+cp "$BAK/measure_day.gd" tools/tests/measure_day.gd
+
+# ⑤ **표의 「고장」을 작게 적는다.** 허용치는 한 글자도 안 바뀐다 — 「막으려는 고장이
+#    생각보다 작네」로 줄이면 ② 의 3배 규칙이 통째로 물러진다. 고장 크기는 감이 아니라
+#    상수에서 셈하거나 대조군으로 잰 것이라야 한다 (줄마다 `왜` 에 출처를 적었다).
+mut tools/tests/test_tolerances.gd '"꼴": "band", "잰값": 2\.326, "폭": 2\.313, "고장": 16\.0,' '"꼴": "band", "잰값": 2.326, "폭": 2.313, "고장": 4.0,'
+expect 1 "고장을 작게 적으면 tests 가 잡는다 (여유 3.2배 → 0.8배)"
+cp "$BAK/test_tolerances.gd" tools/tests/test_tolerances.gd
+
+expect 0 "원복하면 허용치 표도 초록이다"
 
 
 echo

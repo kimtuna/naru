@@ -16,7 +16,10 @@ extends MeasurePhase
 
 const DURATION := 1.0            # 한 구간을 몇 초 돌리나
 const EXPECT := 240.0            # NUMBERS 1절
-const TOL := 5.0                 # 물리 틱 경계 때문에 ±1틱(4px) 이 남는다
+## 속력의 허용치(px/s). **잰 폭 위에 있다** — 9판 실측 대각 최대 2.326 · 폭 2.313 이라
+## 4.639 아래는 언제든 터진다 (2026-09-15 · `jitter.sh 9`).
+## 막는 고장은 **한 칸/s(16px) 어긋남** — 여유 **3.2배**. 표는 `test_tolerances.gd`.
+const TOL := 5.0
 
 var _player: CharacterBody2D
 var _phases := [

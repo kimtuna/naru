@@ -27,7 +27,9 @@ extends MeasurePhase
 const LOGICAL := Vector2(960.0, 540.0)     # NUMBERS 1절
 const TILES := Vector2(60.0, 33.75)        # 960/16 · 540/16 — 줌이 1 일 때만 이 값이다
 const SEC := 0.5                           # 한 방향으로 걷는 시간. 240px/s → 120px = 7.5칸
-const TOL_CENTER := 0.5                    # px. 카메라는 계산이라 틱 경계가 안 섞인다
+## px. 카메라는 계산이라 틱 경계가 안 섞인다 — **잰 폭 0.000** (9판 전부 0.0000).
+## 막는 고장은 **한 칸 16px 밀림** — 여유 **32배**.
+const TOL_CENTER := 0.5
 const MIN_PATH := 200.0                    # 전 구간 합. 안 걸으면 판정이 공허하다
 const WARMUP := 3                          # 씬의 _ready(월드 배선)는 첫 프레임 뒤에 돈다
 
