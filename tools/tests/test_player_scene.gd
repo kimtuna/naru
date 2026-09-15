@@ -105,6 +105,40 @@ func test_main_scene_has_the_hotbar_on_a_canvas_layer() -> void:
 		failures.append("UI 밑에 HotbarView 'Hotbar' 가 있어야 한다 — 잰 값 %s" % view)
 	m.free()
 
+func test_main_scene_has_the_bag_on_the_same_canvas_layer_and_it_starts_closed() -> void:
+	# **핫바와 같은 `UI` 밑이다** — 카메라를 타면 걸을 때 창이 흘러간다.
+	# **닫힌 채로 뜬다**: 열린 채로 뜨면 게임을 켜자마자 월드가 반쯤 가려진다.
+	var m: Node = load(MAIN).instantiate()
+	var layer := m.get_node_or_null("UI") as CanvasLayer
+	if layer == null:
+		failures.append("메인 씬에 CanvasLayer 'UI' 가 있어야 한다")
+		m.free()
+		return
+	var view := layer.get_node_or_null("Bag")
+	if view == null or not (view is BagView):
+		failures.append("UI 밑에 BagView 'Bag' 이 있어야 한다 — 잰 값 %s" % view)
+		m.free()
+		return
+	check(not view.visible, "가방은 닫힌 채로 시작해야 한다 (씬의 visible)")
+	m.free()
+
+func test_e_key_is_bound_to_the_bag() -> void:
+	# **물리 키코드 E** (WASD 와 같은 이유로 자판 배열을 안 탄다 · GDD D-2c).
+	# 액션 이름은 `main.gd` 의 상수가 출처다 — 여기서 글자를 다시 적으면
+	# 「배선은 맞는데 코드가 다른 이름을 부른다」를 못 잡는다.
+	var action: StringName = load("res://scripts/main.gd").get_script_constant_map()["BAG_ACTION"]
+	if not InputMap.has_action(action):
+		failures.append("입력 액션이 없다: %s" % action)
+		return
+	var found := false
+	for e in InputMap.action_get_events(action):
+		if e is InputEventKey and e.physical_keycode == KEY_E:
+			found = true
+	check(found, "%s 가 물리 키 %s 에 묶여야 한다" % [action, OS.get_keycode_string(KEY_E)])
+	# **가방 키는 손 키가 아니다.** 같은 키에 둘을 묶으면 가방을 열 때 손이 바뀐다.
+	for i in Hotbar.SLOTS:
+		check(action != Hotbar.action_for(i), "가방 키가 핫바 %d번 액션과 같으면 안 된다" % (i + 1))
+
 func test_left_click_is_bound_to_use() -> void:
 	# **좌클릭 하나다** (GDD D-2c). 액션 이름은 `main.gd` 의 상수가 출처다 —
 	# 여기서 글자를 다시 적으면 「배선은 맞는데 코드가 다른 이름을 부른다」를 못 잡는다.

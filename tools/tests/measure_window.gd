@@ -58,6 +58,20 @@ extends SceneTree
 ## **DRAW 는 핫바가 덮은 자리를 건너뛴다.** 안 그러면 「월드를 그렸나」가 핫바 때문에
 ## 통째로 빨개진다 — 건너뛴 만큼은 HOTBAR 가 대신 판정한다. 그래서 둘은 짝이다.
 ##
+## ── BAG: `E` 로 연 가방이 **정말 화면에 떴나** · 닫으면 월드가 돌아오나 ─────────
+## 왜 단위 검사로 부족한가: `test_bag_view.gd` 는 「18칸 자리의 기하」를 재고
+## `test_player_scene.gd` 는 「씬에 달렸나 · E 가 묶였나」를 잰다. 셋 다 초록인 채로
+## **키를 안 읽거나**(`_poll_bag` 을 안 부른다) **창을 안 그리거나** **닫아도 안 사라지거나**
+## 할 수 있다.
+##
+## **가방이 월드를 가린다** — 그 자리를 판정하는 눈이 여기 말고는 없다. DRAW 는
+## **닫힌 화면**만 보므로 창이 떠 있는 동안의 픽셀을 한 점도 안 본다. 그래서 세 번 굽는다:
+##   ① 닫힌 채 — 창 자리가 **월드 색 그대로**여야 한다 (같은 `panel_rect` 로 자리를 낸다)
+##   ② 연 채   — 18칸이 전부 제 색이고, **찬 칸과 빈 칸이 눈에 달라야** 한다
+##   ③ 다시 닫고 — ① 과 **픽셀 하나까지 같아야** 한다 (닫아도 자국이 남으면 잡힌다)
+## **DRAW 가 이 자리를 안 건너뛰는 것이 일부러다**: 누가 가방을 기본으로 열어 두면
+## DRAW 가 「화면이 월드와 다르다」로 빨개진다.
+##
 ## 이름이 test_ 로 시작하지 않는다 — run_tests.gd 는 이 파일을 안 집는다.
 
 # ── VIEW 기대값 (NUMBERS 1절) ────────────────────────────────────────
@@ -126,6 +140,21 @@ const HB_BG_PROBE := Vector2(4.0, 4.0)
 const HB_KEY := 3                  # 눌러 볼 숫자키. 처음 든 1번 칸과 달라야 옮겨간 것이 보인다
 const HB_BOTTOM_GAP := 16.0        # 화면 아래 끝에서 이보다 멀면 「상시 핫바」가 아니다
 
+# ── BAG 기대값 ───────────────────────────────────────────────────────
+## 가방에 넣어 볼 것. **두 칸만 채운다** — 나머지 16칸이 빈 채로 남아야
+## 「찬 칸과 빈 칸이 화면에서 달라 보이나」를 물을 수 있다.
+const BAG_ITEMS := [[&"wood", 7], [&"stone", 300]]
+## 칸 안에서 읽는 **세 점** (칸의 왼쪽 위 모서리로부터). 자리가 서로 겹치면 안 된다:
+##   테두리 — 칸 위쪽 변 한가운데 (두께 2px 안)
+##   바탕   — 테두리 밖 · 아이템 네모(안쪽 6px) 밖. 칸이 비든 차든 늘 바탕색이다
+##   속     — 칸 한가운데. **찬 칸은 아이템 색 · 빈 칸은 바탕색.** 여기가 「비었나 찼나」다
+const BAG_EDGE_PROBE := Vector2(HotbarView.SLOT * 0.5, 1.0)
+const BAG_BG_PROBE := Vector2(4.0, 4.0)
+const BAG_FILL_PROBE := Vector2(HotbarView.SLOT * 0.5, HotbarView.SLOT * 0.5)
+## 창 바탕을 읽는 점 (창 왼쪽 위 모서리로부터). PAD(6px) 안쪽 · 칸 격자 밖이다 —
+## 여기가 칸 바탕과 같은 색이면 창의 가장자리가 안 읽힌다.
+const BAG_PANEL_PROBE := Vector2(3.0, 3.0)
+
 # ── USE 기대값 ───────────────────────────────────────────────────────
 # **대상이 없어도 모션이 나온다** (BACKLOG P2). 이 게이트가 서는 자리가 그 문장이다:
 # 판정이 아직 한 줄도 없어서 플레이어가 무엇을 겨누든 모션은 그대로 나온다.
@@ -154,6 +183,7 @@ var _view_bad := 0
 var _draw_bad := 0
 var _hb_bad := 0
 var _use_bad := 0
+var _bag_bad := 0
 var _use_swings := 0
 var _frames := 0
 var _main: Node2D
@@ -174,6 +204,7 @@ func _initialize() -> void:
 	await _measure_draw()
 	await _measure_hotbar()
 	await _measure_use()
+	await _measure_bag()
 	_finish()
 
 # ── VIEW ─────────────────────────────────────────────────────────────
@@ -722,6 +753,188 @@ func _use_report() -> void:
 		"ok" if _use_bad == 0 else "FAIL %d개" % _use_bad, _use_swings,
 		HandSwing.REACH, HandSwing.ARC_DEG, HandSwing.SWING_SEC])
 
+# ── BAG ──────────────────────────────────────────────────────────────
+## **`E` 로 열고 닫는다.** 세 번 굽는다 — 닫힌 채 · 연 채 · 다시 닫고 (머리말 참고).
+##
+## **맨 뒤에 있어야 한다**: 창이 월드를 가리므로, 앞에 두면 DRAW·USE 가 「월드와 같은
+## 색이어야 한다」로 보는 자리를 덮는다. 끝나면 **반드시 닫고 나온다.**
+func _measure_bag() -> void:
+	var view: Control = _main.get_node_or_null("UI/Bag") as Control
+	if view == null:
+		_bag_fail("가방", "Main/UI/Bag 이 없다", "메인 씬에 BagView")
+		_bag_report()
+		return
+	var screen := Vector2(LOGICAL_I)
+	var panel := BagView.panel_rect(screen)
+
+	# ① **닫힌 채로 시작한다.** 켜자마자 월드가 반쯤 가려지면 안 된다.
+	if view.visible:
+		_bag_fail("시작 상태", "가방이 이미 열려 있다", "닫혀 있다 (E 를 눌러야 열린다)")
+		view.visible = false
+
+	# 볼 것을 넣는다. **두 칸만** — 나머지 16칸이 빈 채로 남아야 「비었나 찼나」를 묻는다.
+	for it in BAG_ITEMS:
+		var left: int = _main.bag.add(it[0], it[1])
+		if left != 0:
+			_bag_fail("가방에 넣기 (%s %d개)" % [it[0], it[1]], "%d개가 안 들어갔다" % left, "0개")
+
+	await _settle()
+	var shut := _bake()
+	if shut == null:
+		_bag_fail("화면 (닫힌 채)", "텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
+		_bag_report()
+		return
+	# **닫혀 있는 동안 그 자리는 월드다.** 창 자리를 내는 함수가 그리는 쪽과 같으므로,
+	# 창이 엉뚱한 데 떠 있으면 여기와 아래가 같이 어긋난다.
+	_bag_world(shut, panel)
+
+	# ② **`E` 를 눌러 연다.** 상태(`visible`)와 픽셀을 둘 다 본다 —
+	#    상태만 보면 「열렸다는데 안 그린다」를, 픽셀만 보면 키 배선을 못 잡는다.
+	await _press(_main.BAG_ACTION)
+	await _settle()
+	if not view.visible:
+		_bag_fail("E 를 눌렀다", "가방이 안 열렸다", "열린다 (main.gd 가 키를 읽나?)")
+	var got := Rect2(view.global_position, view.size)
+	if not (got.position.is_equal_approx(panel.position) and got.size.is_equal_approx(panel.size)):
+		_bag_fail("가방 창 자리", str(got), str(panel))
+	var open := _bake()
+	if open == null:
+		_bag_fail("화면 (연 채)", "텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
+		_bag_report()
+		return
+	_bag_pixels(open, shut, panel)
+
+	# ③ **다시 닫으면 월드가 돌아온다.** ① 과 픽셀 하나까지 같아야 한다.
+	await _press(_main.BAG_ACTION)
+	await _settle()
+	if view.visible:
+		_bag_fail("E 를 다시 눌렀다", "가방이 안 닫혔다", "닫힌다")
+		view.visible = false
+	var again := _bake()
+	if again == null:
+		_bag_fail("화면 (다시 닫고)", "텍스처가 비었거나 크기가 다르다", "%s" % LOGICAL_I)
+		_bag_report()
+		return
+	_bag_same(shut, again, panel)
+	_bag_report()
+
+## 닫힌 화면에서 창 자리의 탐침이 **월드 색**인가. 「가방이 늘 떠 있다」와
+## 「닫아도 반쯤 남는다」가 여기서 잡힌다.
+func _bag_world(img: Image, panel: Rect2) -> void:
+	var inv := root.get_canvas_transform().affine_inverse()
+	var bad := 0
+	var first := ""
+	for i in Inventory.SLOTS:
+		var r := BagView.slot_rect(i, Vector2(LOGICAL_I))
+		for probe in [BAG_EDGE_PROBE, BAG_BG_PROBE, BAG_FILL_PROBE]:
+			var sx := int(r.position.x + probe.x)
+			var sy := int(r.position.y + probe.y)
+			var w: Vector2 = inv * (Vector2(sx, sy) + Vector2(0.5, 0.5))
+			var tx := WorldCollide.tile_of(w.x)
+			var ty := WorldCollide.tile_of(w.y)
+			var want := WorldView.color_at(_seed, tx, ty, _main.world.is_cleared(tx, ty))
+			var px := img.get_pixel(sx, sy)
+			if not _near(px, want):
+				bad += 1
+				if first == "":
+					first = "화면 (%d,%d) → 칸 (%d,%d) · 잰 값 %s · 기대 %s" % [
+						sx, sy, tx, ty, px.to_html(false), want.to_html(false)]
+	print("BAG [닫힌 채] 창 %s · 탐침 %d · 어긋남 %d" % [panel, Inventory.SLOTS * 3, bad])
+	if bad > 0:
+		_bag_fail("가방이 닫혔는데 그 자리가 월드가 아니다",
+			"%d / %d 점 (첫 어긋남: %s)" % [bad, Inventory.SLOTS * 3, first],
+			"전부 월드 색 (허용 색차 %.1f/255)" % (TOL * 255.0))
+
+## 연 화면에서 18칸을 전부 읽는다. **찬 칸과 빈 칸이 눈에 달라야 한다.**
+func _bag_pixels(img: Image, shut: Image, panel: Rect2) -> void:
+	var screen := Vector2(LOGICAL_I)
+	var bad := 0
+	var changed := 0
+	var filled := 0
+	var empty := 0
+	var first := ""
+	# 창 바탕 — 칸 격자 밖이라 늘 PANEL 이다.
+	var pb := img.get_pixel(int(panel.position.x + BAG_PANEL_PROBE.x),
+		int(panel.position.y + BAG_PANEL_PROBE.y))
+	if not _near(pb, BagView.PANEL):
+		bad += 1
+		first = "창 바탕 · 잰 값 %s · 기대 %s" % [pb.to_html(false), BagView.PANEL.to_html(false)]
+	for i in Inventory.SLOTS:
+		var r := BagView.slot_rect(i, screen)
+		var id: StringName = _main.bag.ids[i]
+		var amount: int = _main.bag.amounts[i]
+		# 「속」의 기대값이 이 게이트의 문장이다: **찬 칸은 아이템 색 · 빈 칸은 바탕색.**
+		var want_fill: Color = HotbarView.item_color(id) if id != Inventory.EMPTY else HotbarView.BG
+		if id == Inventory.EMPTY:
+			empty += 1
+		else:
+			filled += 1
+		var probes := {"테두리": [BAG_EDGE_PROBE, HotbarView.EDGE],
+			"바탕": [BAG_BG_PROBE, HotbarView.BG], "속": [BAG_FILL_PROBE, want_fill]}
+		for what in probes:
+			var probe: Vector2 = probes[what][0]
+			var want: Color = probes[what][1]
+			var sx := int(r.position.x + probe.x)
+			var sy := int(r.position.y + probe.y)
+			var px := img.get_pixel(sx, sy)
+			if not _near(px, shut.get_pixel(sx, sy)):
+				changed += 1
+			if not _near(px, want):
+				bad += 1
+				if first == "":
+					first = "%d번 칸 %s · 잰 값 %s · 기대 %s (%s %d개)" % [
+						i + 1, what, px.to_html(false), want.to_html(false),
+						id if id != Inventory.EMPTY else &"빈 칸", amount]
+	var n := Inventory.SLOTS * 3
+	print("BAG [연 채] 칸 %d (찬 칸 %d · 빈 칸 %d) · 탐침 %d · 어긋남 %d · 닫힌 화면과 달라진 점 %d" % [
+		Inventory.SLOTS, filled, empty, n, bad, changed])
+	if bad > 0:
+		_bag_fail("가방이 화면에 없거나 다르게 그려졌다",
+			"%d / %d 점 (첫 어긋남: %s)" % [bad, n + 1, first],
+			"18칸 전부 일치 (허용 색차 %.1f/255)" % (TOL * 255.0))
+	# **화면이 실제로 달라졌나.** 창을 안 그리면 위의 판정이 통째로 어긋나지만,
+	# 이 한 줄은 「무엇이 틀렸나」가 아니라 **「열어도 화면이 그대로다」**를 말한다.
+	if changed == 0:
+		_bag_fail("가방을 열어도 화면이 그대로다", "달라진 탐침 0 / %d" % n, "1점 이상")
+	if filled < 1 or empty < 1:
+		_bag_fail("판정이 공허하다", "찬 칸 %d · 빈 칸 %d" % [filled, empty],
+			"둘 다 1칸 이상 (안 그러면 「비었나 찼나」를 못 묻는다)")
+
+## 다시 닫은 화면이 처음 닫힌 화면과 **창 자리에서 픽셀 하나까지** 같은가.
+## 탐침 몇 점이 아니라 통째로 본다 — 자국은 어디에 남을지 모른다.
+func _bag_same(shut: Image, again: Image, panel: Rect2) -> void:
+	var bad := 0
+	var worst := 0.0
+	var first := ""
+	var n := 0
+	for y in range(int(panel.position.y), int(panel.end.y)):
+		for x in range(int(panel.position.x), int(panel.end.x)):
+			n += 1
+			var a := shut.get_pixel(x, y)
+			var b := again.get_pixel(x, y)
+			var d := maxf(maxf(absf(a.r - b.r), absf(a.g - b.g)), absf(a.b - b.b))
+			if d > worst:
+				worst = d
+			if d > TOL:
+				bad += 1
+				if first == "":
+					first = "화면 (%d,%d) · 처음 %s · 다시 %s" % [
+						x, y, a.to_html(false), b.to_html(false)]
+	print("BAG [다시 닫고] 픽셀 %d · 어긋남 %d · 최대 색차 %.1f/255" % [n, bad, worst * 255.0])
+	if bad > 0:
+		_bag_fail("가방을 닫았는데 자국이 남았다",
+			"%d / %d 픽셀 (첫 어긋남: %s)" % [bad, n, first],
+			"열기 전과 같은 화면 (허용 색차 %.1f/255)" % (TOL * 255.0))
+
+func _bag_fail(what: String, actual: String, expected: String) -> void:
+	_bag_bad += 1
+	print("BAG FAIL %s — 잰 값 %s · 기대 %s" % [what, actual, expected])
+
+func _bag_report() -> void:
+	print("BAG %s (18칸 × 세 점 · E 로 열고 닫으며 세 번 굽는다 · 창 %s)" % [
+		"ok" if _bag_bad == 0 else "FAIL %d개" % _bag_bad,
+		BagView.panel_rect(Vector2(LOGICAL_I))])
+
 # ── 끝 ───────────────────────────────────────────────────────────────
 ## **넷 중 하나만 빨개도 이 프로세스는 빨갛다.** 합치기 전에도 상태 검사는 전부 봤다.
 func _finish() -> void:
@@ -729,9 +942,10 @@ func _finish() -> void:
 		"ok" if _draw_bad == 0 else "FAIL %d개" % _draw_bad, STEP, SKIP_BOX, WorldState.DAY_SEC])
 	# 이름이 `WINGATE` 인 이유: `main.gd` 가 시작할 때 `WINDOW   1920 x 1080` 을 찍는다 —
 	# `WINDOW` 로 시작하면 check.sh 의 grep 이 게이트가 죽어도 그 줄을 잡아 초록으로 본다.
-	var bad := _view_bad + _draw_bad + _hb_bad + _use_bad
-	print("WINGATE %s (VIEW %d · DRAW %d · HOTBAR %d · USE %d · 창 한 번)" % [
-		"ok" if bad == 0 else "FAIL %d개" % bad, _view_bad, _draw_bad, _hb_bad, _use_bad])
+	var bad := _view_bad + _draw_bad + _hb_bad + _use_bad + _bag_bad
+	print("WINGATE %s (VIEW %d · DRAW %d · HOTBAR %d · USE %d · BAG %d · 창 한 번)" % [
+		"ok" if bad == 0 else "FAIL %d개" % bad,
+		_view_bad, _draw_bad, _hb_bad, _use_bad, _bag_bad])
 	if _main != null:
 		_main.queue_free()
 	quit(1 if bad > 0 else 0)

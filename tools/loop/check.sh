@@ -48,10 +48,10 @@ step_unit() {
   [ $rc -eq 0 ]
 }
 
-# 실측 게이트 10종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·CHOP·REGROW·DAY·VIEW+DRAW) — **엔진을 4번 띄운다.**
+# 실측 게이트 11종 (MOVE·FACE·WORLD×2·COLLIDE·CAMERA·CHOP·REGROW·DAY·VIEW+DRAW·BAG) — **엔진을 4번 띄운다.**
 # 회차 27 까지는 7번이었다. 합칠 수 있는 것은 두 갈래로 이미 합쳐져 있다:
 #   `measure_headless.gd`  MOVE·WORLD·COLLIDE·CAMERA·CHOP·REGROW·DAY — 창이 필요 없는 일곱 (27·29·30·31)
-#   `measure_window.gd`    VIEW·DRAW·HOTBAR·USE — 창이 필요한 넷 (회차 14)
+#   `measure_window.gd`    VIEW·DRAW·HOTBAR·USE·BAG — 창이 필요한 다섯 (회차 14 · 40)
 # 남은 둘은 **합칠 수 없어서** 따로 돈다: WORLD 의 두 번째 프로세스(「다른 프로세스에서도
 # 같은가」가 묻는 것 자체다)와 FACE(제 SubViewport 를 세우고 `gui_disable_input` 을 끈다).
 # 상태 검사에서 가장 긴 구간이다. **여기를 두 번 돌리지 마라.**
@@ -141,8 +141,8 @@ step_measure() {
   printf '%s\n' "$fout" | grep -E '^FACE ' || { printf '%s\n' "$fout" | tail -5; echo "FACE FAIL 측정이 아무것도 안 찍었다"; return 1; }
   [ $frc -eq 0 ] || return 1
 
-  # ── 창 실측 (VIEW + DRAW + HOTBAR + USE) — **한 프로세스다** (회차 14) ─────
-  # 실측 게이트 중 창이 필요한 것은 이것뿐이고, 넷 다 메인 씬을 세운다.
+  # ── 창 실측 (VIEW + DRAW + HOTBAR + USE + BAG) — **한 프로세스다** (회차 14) ─
+  # 실측 게이트 중 창이 필요한 것은 이것뿐이고, 다섯 다 메인 씬을 세운다.
   # **창을 띄우면 macOS 가 앱을 맨 앞으로 올린다 — 막을 길이 없다** (회차 13 · NUMBERS 11절).
   # 못 막으니 **횟수를 줄인다**: `NARU_FOCUS_RESTORE=1` 로 끝나고 되돌려 주는 것과 짝이다.
   #   VIEW  논리 화면 · 창 · 배율 · 보이는 칸. project.godot 의 글자가 맞아도 카메라 줌이나
@@ -151,6 +151,10 @@ step_measure() {
   #         DRAW 는 핫바가 덮은 자리를 건너뛰므로 **여기가 그 자리의 유일한 판정**이다.
   #   USE   좌클릭을 쥐고 **모션이 도는 동안 프레임마다** 네모의 자리와 픽셀을 읽는다.
   #         맞힐 것이 하나도 없는 자리에서 잰다 — 「대상이 없어도 모션이 나온다」가 그 문장이다.
+  #   BAG   `E` 로 가방을 열고 닫으며 **세 번 굽는다** (회차 40): 닫힌 채 그 자리가 월드인가 ·
+  #         연 채 18칸이 제 색인가(찬 칸과 빈 칸이 다른가) · 다시 닫으면 픽셀 하나까지
+  #         돌아오는가. **가방이 떠 있는 동안의 픽셀은 여기 말고 보는 눈이 없다** —
+  #         DRAW 는 닫힌 화면만 본다.
   #   DRAW  해안에 세우고 **구운 픽셀을 그 자리의 월드 칸 색과 맞춘다.** WorldView 가 맞아도
   #         main 이 안 그리거나 다른 씨앗으로 그리면 단위 검사는 전부 초록이다.
   #         **서서 한 번 · 걷고 한 번 · 밤에 한 번** — 색 캐시는 걸어야 상하고,
@@ -159,16 +163,17 @@ step_measure() {
   #         밤이 색 캐시를 안 버리는지까지 본다.
   # **--headless 를 쓰지 않는다** — 헤드리스는 창 크기가 (0,0) 이고 렌더러가 더미라
   # 배율도 뷰포트 텍스처도 안 나온다.
-  # **다섯 줄을 다 본다**: VIEW·DRAW·HOTBAR·USE 가 각각 찍었는지, 그리고 넷 다 돌았다는 WINGATE 까지.
+  # **여섯 줄을 다 본다**: VIEW·DRAW·HOTBAR·USE·BAG 이 각각 찍었는지, 그리고 다섯 다 돌았다는 WINGATE 까지.
   # 한 프로세스라 앞이 죽으면 뒤가 통째로 안 돈다 — 그 침묵을 초록으로 보면 안 된다.
   local wout wrc
   wout="$(NARU_FOCUS_RESTORE=1 "$G" 120 -- --path "$ROOT" --script res://tools/tests/measure_window.gd 2>&1)"; wrc=$?
-  printf '%s\n' "$wout" | grep -E '^VIEW |^DRAW (\[|ok|FAIL)|^HOTBAR (\[|ok|FAIL)|^USE (\[|ok|FAIL)|^WINGATE '
+  printf '%s\n' "$wout" | grep -E '^VIEW |^DRAW (\[|ok|FAIL)|^HOTBAR (\[|ok|FAIL)|^USE (\[|ok|FAIL)|^BAG (\[|ok|FAIL)|^WINGATE '
   miss=0
   _need "$wout" '^VIEW (ok|FAIL)'    VIEW    || miss=1
   _need "$wout" '^DRAW (ok|FAIL)'    DRAW    || miss=1
   _need "$wout" '^HOTBAR (ok|FAIL)'  HOTBAR  || miss=1
   _need "$wout" '^USE (ok|FAIL)'     USE     || miss=1
+  _need "$wout" '^BAG (ok|FAIL)'     BAG     || miss=1
   _need "$wout" '^WINGATE '          WINGATE || miss=1
   [ "$miss" -eq 0 ] || return 1
   [ $wrc -eq 0 ]

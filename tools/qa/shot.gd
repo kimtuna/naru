@@ -15,6 +15,11 @@ extends SceneTree
 ## 이게 없으면 사람이 **밤 화면을 영영 못 본다**: 하루가 20분이라 밤까지 10분을
 ## 기다려야 하고, 무인 루프에서는 아예 길이 없다.
 ##
+## **가방을 연 채로 굽나** (회차 40): `NARU_SHOT_BAG=1` 이면 창을 열고 굽는다.
+## `NARU_SHOT_NOW` 와 같은 이유다 — 없으면 사람이 가방 화면을 눈으로 볼 길이 없다.
+## **키를 누르는 게 아니라 창을 연다**: 「E 가 정말 여나」는 게이트(`measure_window.gd`
+## 의 BAG)가 키를 눌러 잰다. 여기는 **보여 주는 자리**지 판정하는 자리가 아니다.
+##
 ## 사용법: godot --path . --script res://tools/qa/shot.gd -- <출력.png> [씬] [대기프레임]
 
 func _initialize() -> void:
@@ -40,6 +45,22 @@ func _initialize() -> void:
 
 	for i in wait_frames:
 		await process_frame
+
+	# **가방은 기다린 뒤에 연다** (2026-09-15 실측). 씬의 `_ready` 는 여기 붙인 뒤
+	# **첫 프레임에** 돌고 거기서 가방을 닫는다 — 그 전에 열면 조용히 닫힌 화면이 구워진다.
+	# 처음엔 그걸 모르고 굽어서 **닫은 PNG 와 바이트까지 같은 파일**이 나왔다.
+	# **게임이 쓰는 문으로 연다**(`toggle`): 숨은 `CanvasItem` 은 `queue_redraw` 가
+	# 버려지므로 `visible` 만 켜면 빈 창이 뜬다.
+	if OS.get_environment("NARU_SHOT_BAG") == "1":
+		var bag: BagView = node.get_node_or_null("UI/Bag") as BagView
+		if bag == null:
+			# 시계와 같은 규칙: **조용히 닫힌 화면을 굽지 않는다.**
+			print("SHOT ERROR 이 씬에는 가방이 없다 (NARU_SHOT_BAG=1)"); quit(1); return
+		if not bag.is_open():
+			bag.toggle()
+		await process_frame
+		await process_frame
+
 	await RenderingServer.frame_post_draw
 
 	var tex: ViewportTexture = root.get_texture()

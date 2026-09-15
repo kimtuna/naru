@@ -7,6 +7,8 @@
 #   NARU_SHOT_NOW=600 tools/loop/shot.sh /tmp/night.png    # 한밤 (하루 1200초의 절반)
 # 안 주면 한낮이다. 이게 없으면 밤 화면을 보려고 10분을 기다려야 한다.
 #
+# **가방을 연 채로** (회차 40): `NARU_SHOT_BAG=1 tools/loop/shot.sh /tmp/bag.png`
+#
 # `--headless` 를 쓰지 않는다 — 헤드리스는 렌더러가 더미라 텍스처가 빈다.
 # 창이 잠깐 떴다 사라지는 것은 정상이다.
 set -uo pipefail

@@ -66,17 +66,22 @@ func _draw() -> void:
 	var held := hotbar.selected if hotbar != null else -1
 	for i in Hotbar.SLOTS:
 		var r := Rect2(slot_offset(i), Vector2(SLOT, SLOT))
-		# 테두리를 먼저 통째로 칠하고 안쪽을 바탕으로 덮는다 — `draw_rect` 의
-		# 선 두께는 모서리에서 안팎으로 반씩 걸쳐서 **픽셀 자리가 모호하다.**
-		draw_rect(r, EDGE_HELD if i == held else EDGE, true)
-		draw_rect(r.grow(-BORDER), BG, true)
-		if hotbar != null:
-			_draw_item(r, hotbar.items.ids[i], hotbar.items.amounts[i])
+		var id: StringName = hotbar.items.ids[i] if hotbar != null else Hotbar.EMPTY
+		var amount: int = hotbar.items.amounts[i] if hotbar != null else 0
+		draw_slot(self, r, id, amount, EDGE_HELD if i == held else EDGE)
 
-func _draw_item(slot: Rect2, id: StringName, amount: int) -> void:
+## **칸 하나의 그림.** 핫바와 가방이 **같은 함수**를 쓴다 (회차 40) — 칸을 창마다 따로
+## 그리면 같은 물건이 다르게 보이고, 게이트의 탐침 자리가 둘로 갈라져 한쪽만 고치는 날이 온다.
+## 그리는 쪽을 인자로 받는 이유도 같다: `CanvasItem` 이면 누구든 이 한 벌을 쓴다.
+##
+## 테두리를 먼저 통째로 칠하고 안쪽을 바탕으로 덮는다 — `draw_rect` 의 선 두께는
+## 모서리에서 안팎으로 반씩 걸쳐서 **픽셀 자리가 모호하다.**
+static func draw_slot(on: CanvasItem, slot: Rect2, id: StringName, amount: int, edge: Color) -> void:
+	on.draw_rect(slot, edge, true)
+	on.draw_rect(slot.grow(-BORDER), BG, true)
 	if id == Hotbar.EMPTY:
 		return
-	draw_rect(slot.grow(-SWATCH_INSET), item_color(id), true)
+	on.draw_rect(slot.grow(-SWATCH_INSET), item_color(id), true)
 	if amount <= 1:
 		return
 	var font := ThemeDB.fallback_font
@@ -84,5 +89,5 @@ func _draw_item(slot: Rect2, id: StringName, amount: int) -> void:
 		return
 	var text := str(amount)
 	var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x
-	draw_string(font, slot.end - Vector2(w + 2.0, 2.0), text,
+	on.draw_string(font, slot.end - Vector2(w + 2.0, 2.0), text,
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 8, COUNT)

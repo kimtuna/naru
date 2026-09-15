@@ -42,15 +42,25 @@ extends Node2D
 ## **핫바는 화면에 못 박혀 있다** (GDD D-2c): `UI` 는 `CanvasLayer` 라 카메라를 안 탄다.
 ## 숫자키를 읽어 손을 옮기는 것도 여기서 한다 — `Hotbar` 는 순수 계산이라
 ## 엔진 입력을 안 본다.
+##
+## **가방은 `E` 로 열고 닫는다** (회차 40). 핫바와 같은 `CanvasLayer` 에 있지만
+## **늘 떠 있지 않다** — 창이라 월드를 가린다. 열려 있는 동안의 입력 갈래(좌클릭이
+## UI 로 가고 숫자키가 손을 안 바꾼다)는 **다음 항목이다**: 지금은 열고 닫기만이라
+## 가방을 연 채로도 걷고 휘두를 수 있다 (코어 키퍼 방식 · GDD D-9).
 
 ## 좌클릭의 입력 액션 이름. project.godot 의 글자와 **한 곳에서** 만난다.
 const USE_ACTION := &"use"
+
+## 가방을 열고 닫는 키의 액션 이름. 같은 이유로 여기가 출처다 —
+## `test_player_scene.gd` 가 이 상수를 읽어 배선이 `E` 인지 본다.
+const BAG_ACTION := &"bag"
 
 ## 이 판의 씨앗. 저장·불러오기가 생기면 세이브에서 온다 (GDD D-1).
 const WORLD_SEED := 20260914
 
 @onready var _player: Player = $Player
 @onready var _hotbar_view: HotbarView = $UI/Hotbar
+@onready var _bag_view: BagView = $UI/Bag
 
 ## 화면에 곱해지는 **하늘빛**. `CanvasModulate` 라 이 노드 하나가 캔버스 전부를 물들인다 —
 ## 칸 색에 밤을 섞지 않는 이유는 `DayCycle` 머리말에 있다 (색 캐시를 매 프레임 버리게 된다).
@@ -68,6 +78,14 @@ var world := WorldState.new(WORLD_SEED)
 ## 손. 화면 아래 9칸 + 지금 든 칸 (GDD D-2c).
 var hotbar := Hotbar.new()
 
+## 가방 18칸. **핫바와 다른 객체다** (`Inventory` 머리말) — 합쳐서 27칸으로 세면
+## 손에 못 드는 것이 손 칸을 먹는다.
+##
+## **밖에서 보인다**(`_` 가 없다): `measure_window.gd` 의 BAG 가 진짜 씬의 이 가방에
+## 물건을 넣고 **화면에서 다시 읽는다**. 지금은 여기에 물건이 들어오는 길이 없다 —
+## 바닥에 떨어진 것을 줍는 항목(BACKLOG P2)이 그 길을 낸다.
+var bag := Inventory.new()
+
 ## **사람이 차지한 칸** — 다시 자라는 나무가 여기에 묻는다 (GDD A-4).
 ## 지금 꽂히는 것은 몸 하나뿐이지만, **앞으로 놓이는 것 전부가 여기 줄을 선다**:
 ## 설치물 · 간 밭 · 길. 새 종류는 `Claim.KINDS` 에 이름을 적고 `_link_world()` 에서
@@ -83,6 +101,9 @@ var claim := Claim.new()
 ## `_process` 가 그 프레임을 비껴가면 아무 일도 안 일어난다 — 실측 게이트는
 ## `Input.action_press` 로 키를 몇 프레임 눌러 두므로 그 창에 걸린다.
 var _key_down := PackedByteArray()
+
+## `E` 의 직전 프레임 상태. 같은 이유로 든다 (`_poll_bag`).
+var _bag_down := false
 
 ## 지난 프레임에 실제로 그린 칸 수. **`measure_window.gd` 의 DRAW 가 이 수를 읽는다** —
 ## 월드를 통째로 그려도 화면 픽셀은 똑같아서 그림만 봐서는 못 잡는다.
@@ -129,6 +150,10 @@ func _ready() -> void:
 	_key_down.resize(Hotbar.SLOTS)
 	_hotbar_view.hotbar = hotbar
 	_hotbar_view.queue_redraw()
+	# **가방은 닫힌 채로 시작한다.** 씬의 글자에만 맡기지 않는다 — 여기가 출처면
+	# 씬을 누가 건드려도 게임은 닫힌 채로 뜬다.
+	_bag_view.inventory = bag
+	_bag_view.visible = false
 	var vis := get_viewport().get_visible_rect().size
 	var win := DisplayServer.window_get_size()
 	print(Display.report())
@@ -191,6 +216,7 @@ func _process(delta: float) -> void:
 	# 여기를 빼면 시계가 아무리 맞아도 **섬은 영영 한낮이다** (measure_day.gd 가 잡는다).
 	sky.color = DayCycle.light_at(world.now)
 	_poll_hotbar()
+	_poll_bag()
 	_poll_use()
 	queue_redraw()
 
@@ -203,6 +229,16 @@ func _poll_hotbar() -> void:
 			hotbar.select(i)
 			_hotbar_view.queue_redraw()
 		_key_down[i] = down
+
+## `E` → 가방을 열고 닫는다. **숫자키와 같은 이유로 직전 프레임을 들고 폴링한다**:
+## `is_action_just_pressed` 는 「눌린 프레임」이 딱 한 번뿐이라 실측 게이트가
+## 눌러 두는 창을 비껴간다. 여기서는 그 실수가 더 나쁘다 — 토글이라
+## **한 번 누른 것이 두 번 먹히면** 창이 열렸다 닫힌 것처럼 보인다.
+func _poll_bag() -> void:
+	var down := Input.is_action_pressed(BAG_ACTION)
+	if down and not _bag_down:
+		_bag_view.toggle()
+	_bag_down = down
 
 ## 좌클릭 → 손에 든 것의 동작. **누르고 있으면 계속 휘두른다** (HandSwing 머리말)
 ## 이라서 「눌린 순간」을 따로 안 잡는다 — 겹치지 않게 막는 것은 `HandSwing.start()` 다.
