@@ -297,6 +297,11 @@ P0 의 전부다** — 이게 없으면 매 회차가 사람 시간에 묶인다
   > `.loop/` 는 세션이 끝난 시점에 아직 커밋 전인데 드라이버가 뒤에서 커밋한다 —
   > 이걸 「흘린 것」으로 보면 되돌리기가 **6b 가 방금 뽑은 일지를 지운다**(대조군 ③).
   > `WORKTREE SELFTEST 41 passed, 0 failed` · `REDTEAM 12 잡음, 0 놓침`(묶음).
+- [ ] **doclen 이 `roll_state` 보다 먼저 돈다** — 기준 5 는 판정(7)에서 재는데
+      `.loop/state.md` 를 잘라 주는 `roll_state` 는 **초록이 난 뒤에야** 돈다.
+      긴 절을 붙인 회차는 트리밍 전에 빨개진다 (회차 25 가 98줄 · 상한 90 으로 걸렸다 —
+      손으로 `state.py roll 3` 을 돌려 60줄로 내렸다). 판정 **앞**에서 굴리거나,
+      세션이 붙인 절 하나는 상한에서 빼고 센다 | verify: `bash tools/loop/run-contract.sh`
 - [ ] **헤드리스 실측 게이트를 한 프로세스로 모은다** — `check.sh tests` 가 Godot 을
       **10번** 띄운다(27초). `measure_move` · `measure_collide` · `measure_camera` ·
       `measure_world` 는 전부 헤드리스라 **한 프로세스에서 이어 잴 수 있다.**
