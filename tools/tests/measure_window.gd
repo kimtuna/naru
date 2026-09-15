@@ -205,6 +205,7 @@ func _measure_view() -> void:
 	var ar := DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen())
 	var pos := Vector2(DisplayServer.window_get_position())
 	var want_pos := Vector2(ar.position + (ar.size - Vector2i(win)) / 2)
+	Tol.obs("VIEW.창자리", "cap", pos.distance_to(want_pos), POS_TOL)
 	if pos.distance_to(want_pos) > POS_TOL:
 		_view_fail("창 자리 — 쓸 수 있는 화면의 가운데가 아니다",
 			"%.0f, %.0f" % [pos.x, pos.y], "%.0f, %.0f (± %.0f)" % [want_pos.x, want_pos.y, POS_TOL])
@@ -447,6 +448,7 @@ func _compare(img: Image, phase: String, light: Color) -> void:
 						sx, sy, tx, ty, got.to_html(false), want.to_html(false)]
 
 	var wet := 100.0 * water / n
+	Tol.obs("DRAW.색차.%s" % phase, "cap", worst, TOL)
 	var drawn: int = _main.drawn_tiles
 	# **채우는 데 걸린 시간을 같이 찍는다** (회차 17): 칸이 3.8배로 늘어 한 판이 프레임
 	# 예산(16667 µs)에 얼마나 가까운지가 눈이 아니라 숫자로만 보인다.
@@ -671,6 +673,8 @@ func _swing_once(phase: String, want: Color, tool_rect: ColorRect, body: ColorRe
 			distinct += 1
 			last_kept = spots[a]
 	_use_swings += 1
+	Tol.obs("USE.벌어짐.%s" % phase, "floor", span, USE_MIN_SPAN)
+	Tol.obs("USE.자리수.%s" % phase, "floor", float(distinct), float(USE_MIN_SPOTS))
 	print("USE [%s] 프레임 %d · 자리 %d · 벌어짐 %.2f px · 픽셀 어긋남 %d · 기하 어긋남 %d · 색 %s · 진행도 %.2f" % [
 		phase, frames, distinct, span, px_bad, geo_bad, want.to_html(false), _player.swing.progress()])
 	if px_bad > 0:

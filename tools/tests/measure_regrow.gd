@@ -190,6 +190,7 @@ func _end_clock() -> bool:
 	# 보여 주고 있었다 — 오차만 맞고 **견준 두 값이 안 보였다.**
 	_game = world.now - _now0
 	_drift = absf(_game - _t)
+	Tol.obs("REGROW.시계", "cap", _drift, CLOCK_EPS)
 	if _drift > CLOCK_EPS:
 		fail("게임 시계", "%.3f초 도는 동안 %.3f초 흘렀다 (오차 %.4f)" % [
 			_t, _game, _drift],

@@ -143,6 +143,7 @@ func _follow_clock() -> bool:
 
 func _finish() -> bool:
 	var ok := bad == 0
+	Tol.obs("DAY.하늘빛", "cap", _worst, TOL)
 	if _worst > TOL:
 		ok = false
 		fail("하늘빛", "최대 어긋남 %.4f (%s)" % [_worst, _worst_at],

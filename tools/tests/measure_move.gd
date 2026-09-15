@@ -58,6 +58,7 @@ func step(delta: float) -> bool:
 	var moved := _player.position - _from
 	var per_sec := moved.length() / _t
 	var ok := absf(per_sec - EXPECT) <= TOL
+	Tol.obs("MOVE.%s" % _phases[_i]["name"], "band", absf(per_sec - EXPECT), TOL)
 	if not ok:
 		bad += 1
 	print("MOVE %s  %.2f px/s · %.3f 칸/s  (%.2f px in %.4f s, 방향 %s)  %s" % [

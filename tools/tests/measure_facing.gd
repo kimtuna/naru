@@ -31,6 +31,11 @@ const DIST := 200.0          # 겨눔 거리. 데드존(8px) 한참 밖이면 �
 ## 하필 첫 구간인 이유: 밀어 넣기 전 SubViewport 의 커서 기본값이 (0,0) 이라
 ## 플레이어(화면 한가운데) 기준 왼쪽 위 −151° 다 — 플레이어가 먼저 LEFT 를 잡는다.
 const SETTLE_TICKS := 2      # 겨눔이 물리에 붙는 데 드는 물리 틱 (1 + 여유 1)
+
+## **겨눔이 정말 그 각에 갔나**의 허용치(도). 합성 이벤트라 흔들릴 자리가 없다 —
+## 밀어 넣은 이벤트를 그대로 되읽는 값이라 물리 틱이 안 섞인다.
+## 폭과 여유 배수는 `test_tolerances.gd` 의 표가 지킨다.
+const AIM_TOL_DEG := 1.0
 const WARMUP_TICKS := 3      # 씬이 서고 물리가 돌기 시작하는 데 드는 물리 틱
 
 ## 커서를 이 각도들로 차례로 옮긴다. 5·6 번은 히스테리시스다 —
@@ -111,7 +116,9 @@ func _check_phase() -> void:
 	# 겨눔이 정말 그 자리에 갔나 — 아니면 밑의 판정은 의미가 없다.
 	var aim: Vector2 = _player.get_global_mouse_position() - _player.global_position
 	var aim_deg: float = rad_to_deg(Vector2.RIGHT.angle_to(aim))
-	if absf(angle_difference(deg_to_rad(p["deg"]), deg_to_rad(aim_deg))) > deg_to_rad(1.0):
+	var aim_err := rad_to_deg(absf(angle_difference(deg_to_rad(p["deg"]), deg_to_rad(aim_deg))))
+	Tol.obs("FACE.커서각", "cap", aim_err, AIM_TOL_DEG)
+	if aim_err > AIM_TOL_DEG:
 		_fail("커서 각 %s" % p["name"], "%.2f°" % aim_deg, "%.2f°" % p["deg"])
 	# 코 네모가 방향을 따라갔나 — facing 만 맞고 그림이 안 돌면 사람 눈엔 안 보인다.
 	# **몸통 한가운데를 돈다** (회차 16): 원점이 발밑으로 내려가서 몸 중심은 그 위에 있고,

@@ -145,6 +145,7 @@ func _finish() -> bool:
 			"%.0f px 이상 (안 움직이면 「늘 한가운데」는 공짜다)" % MIN_PATH)
 	var cz := tree.root.get_canvas_transform().get_scale()
 	var tiles := Vector2(LOGICAL.x / cz.x, LOGICAL.y / cz.y) / PlayerMotion.TILE
+	Tol.obs("CAMERA.편차", "cap", _max_dev, TOL_CENTER)
 	print("CAMERA 최대 편차 %.4f px · 걸은 거리 %.2f px · 줌 %.2fx · 보이는 칸 %.2f x %.2f · 표본 %d" % [
 		_max_dev, _path, cz.x, tiles.x, tiles.y, _samples])
 	# **견준 두 점을 같이 찍는다** (회차 35): 편차만 0 이고 「무엇이 한가운데인가」가

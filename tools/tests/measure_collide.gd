@@ -179,6 +179,7 @@ func _check_phase() -> void:
 	var ok := true
 
 	# ① 바다 앞에 선다. 지나갔으면 이 판정이 통째로 무너진다.
+	Tol.obs("COLLIDE.멈춘자리", "band", absf(pos.x - want_x), TOL_POS)
 	if absf(pos.x - want_x) > TOL_POS:
 		ok = false
 		fail("%s 멈춘 자리" % p["name"], "%.2f px" % pos.x, "%.2f px" % want_x)
@@ -187,6 +188,7 @@ func _check_phase() -> void:
 		ok = false
 		fail("%s 몸이 바다에" % p["name"], "겹침 %s" % pos, "안 겹침")
 	# ③ 옆으로 가려던 몫은 살아 있다 — 이게 「미끄러진다」다.
+	Tol.obs("COLLIDE.세로속력.%s" % p["name"], "band", absf(rate_y - p["rate_y"]), TOL_RATE)
 	if absf(rate_y - p["rate_y"]) > TOL_RATE:
 		ok = false
 		fail("%s 세로 속력" % p["name"], "%.2f px/s" % rate_y, "%.2f ±%.0f px/s" % [p["rate_y"], TOL_RATE])
@@ -194,6 +196,7 @@ func _check_phase() -> void:
 	#    네모가 상자보다 한참 넓으면 사람 눈에는 몸이 바다에 잠긴 채로 보인다 —
 	#    단위 검사도 좌표 판정도 이 구멍을 못 본다. **살아 있는 씬의 네모를 읽는다.**
 	var over := pos.x + _body_half_x() - _wall
+	Tol.obs("COLLIDE.걸침", "cap", over, MAX_OVER)
 	if over > MAX_OVER:
 		ok = false
 		fail("%s 네모가 바다에 걸침" % p["name"], "%.2f px" % over, "%.2f px 이하" % MAX_OVER)
