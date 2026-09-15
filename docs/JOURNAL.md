@@ -39,6 +39,19 @@
 
 ---
 
+## 회차 28 · **벌목** — 도끼로 나무를 베면 목재가 바닥에 떨어진다
+- 날짜: 2026-09-15
+- 결과: 빨강
+- 문제: 
+- 원인: 
+- 고친 것: 
+- 바꾼 결정: 
+- 잰 값: 
+- 남긴 것: 
+- 채점: 1 IMPORT ok · 2 PARSE 44개 스크립트, 실패 0 · 3 ✘   FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0 / TESTS 131 passed, 1 failed /   FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0 / TESTS 131 passed, 1 failed · 4 ✘   FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0 / TESTS 131 passed, 1 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  86/90줄 · 6 SHOT 960x540  색 1001개  가장 넓은 한 색 1.3%  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34) · 8   ok   공백 든 경로를 통째로 지운다 / WORKTREE SELFTEST 45 passed, 0 failed (바닥 45) · 9   ok   세션에게 주는 꼬리 2 절이 남기는 3 절 안에 든다 / STATE SELFTEST 26 passed, 0 failed (바닥 26)
+- 비용: $98.8546 누적
+- 커밋: `ea0f13f`
+
 ## 회차 27 · **헤드리스 실측 게이트를 한 프로세스로 모은다** — `check.sh tests` 가 Godot 을
 - 문제: **`WORLD` 머리말이 `main.gd` 의 시작 배너와 부딪혔다.** 합치기 전에는
   `measure_world.gd` 가 메인 씬을 안 세워서 없던 충돌인데, 한 프로세스가 되면

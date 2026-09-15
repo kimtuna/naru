@@ -171,13 +171,13 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <header>
   <div class="brand"><span class="logo">🌾</span>
     <div><h1>나루 · Naru</h1>
-      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 10:43:54</span><span id="ago"></span></p></div>
+      <p class="sub">루프 대시보드 — 굽힌 시각 <span id="baked">2026-09-15 11:14:35</span><span id="ago"></span></p></div>
   </div>
   <nav><a href="https://github.com/kimtuna/naru/blob/master/docs/">문서</a><a href="https://github.com/kimtuna/naru">GitHub</a></nav>
 </header>
 <section class="strip">
-<div class="tile"><span class="k">마지막 회차</span><span class="v"><i class="dot run"></i>회차 27</span><span class="note">초록 · 2026-09-15</span></div>
-<div class="tile"><span class="k">상태</span><span class="v ok">ALL GREEN</span><span class="note">2026-09-15 10:43</span></div>
+<div class="tile"><span class="k">마지막 회차</span><span class="v"><i class="dot halt"></i>회차 28</span><span class="note">빨강 · 2026-09-15</span></div>
+<div class="tile"><span class="k">상태</span><span class="v bad">빨강</span><span class="note">2026-09-15 11:14</span></div>
 <div class="tile"><span class="k">진행</span><span class="v">33 <small>/ 66</small></span><span class="note">백로그 항목</span></div>
 <div class="tile"><span class="k">누적 비용</span><span class="v">$98.8546</span></div>
 </section>
@@ -237,7 +237,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li class="done" id="i25" ><a class="turn" href="#t25" title="25회차 일지로">25회차</a><span class="box">✔</span><strong>세션이 손으로 깨뜨린 것을 반드시 되돌린다</strong> — 회차 24 가 대조군 하나를</li>
 <li class="done" id="i26" ><a class="turn" href="#t26" title="26회차 일지로">26회차</a><span class="box">✔</span><strong>doclen 이 <code>roll_state</code> 보다 먼저 돈다</strong> — 기준 5 는 판정(7)에서 재는데</li>
 <li class="done" id="i27" ><a class="turn" href="#t27" title="27회차 일지로">27회차</a><span class="box">✔</span><strong>헤드리스 실측 게이트를 한 프로세스로 모은다</strong> — <code>check.sh tests</code> 가 Godot 을</li>
-<li class="todo"><span class="box"></span><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</li>
+<li class="todo" id="i28" ><a class="turn" href="#t28" title="28회차 일지로">28회차</a><span class="box"></span><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</li>
 <li class="todo"><span class="box"></span><strong>채광</strong> — 곡괭이로 돌/광물을 캔다</li>
 <li class="todo"><span class="box"></span>바닥 드롭 + 걸어가서 줍기. 인벤토리가 꽉 차면 바닥에 남는다</li>
 <li class="todo"><span class="box"></span><strong>색 캐시를 스크롤한다 — 한 판 13.0 ms 가 프레임 예산의 78% 다</strong> (회차 17 실측).</li>
@@ -315,35 +315,35 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
     <span class="cwhat">모든 GDScript 가 파스된다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/check.sh parse</code>
-<ul class="ev"><li>PARSE 37개 스크립트, 실패 0</li></ul>
+<ul class="ev"><li>PARSE 44개 스크립트, 실패 0</li></ul>
 </div>
-<div class="card ok">
+<div class="card bad">
   <div class="chead"><span class="cid">3</span>
     <span class="cwhat">단위 테스트가 통과하고 개수가 줄지 않는다</span>
-    <span class="cmark">초록</span></div>
+    <span class="cmark">빨강</span></div>
   <code class="cmd">bash tools/loop/mintests.sh 113</code>
-<ul class="ev"><li>TESTS 113 passed, 0 failed</li></ul>
+<ul class="ev"><li>  FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0</li><li>TESTS 131 passed, 1 failed</li><li>  FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0</li><li>TESTS 131 passed, 1 failed</li></ul>
 </div>
-<div class="card ok">
+<div class="card bad">
   <div class="chead"><span class="cid">4</span>
     <span class="cwhat">색 네모 플레이어가 48px 타일 위를 속도 240 으로 4방향 이동</span>
-    <span class="cmark">초록</span></div>
+    <span class="cmark">빨강</span></div>
   <code class="cmd">tools/loop/check.sh tests</code>
-<ul class="ev"><li>TESTS 113 passed, 0 failed</li></ul>
+<ul class="ev"><li>  FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0</li><li>TESTS 131 passed, 1 failed</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">5</span>
     <span class="cwhat">매 회차 읽는 문서가 부풀지 않았다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">bash tools/loop/doclen.sh CLAUDE.md:45 docs/PROMPT.md:70 .loop/state.md:90</code>
-<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  65/70줄</li><li>DOCLEN .loop/state.md  80/90줄</li></ul>
+<ul class="ev"><li>DOCLEN CLAUDE.md  41/45줄</li><li>DOCLEN docs/PROMPT.md  65/70줄</li><li>DOCLEN .loop/state.md  86/90줄</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">6</span>
     <span class="cwhat"><strong>월드를 화면에 그린다</strong> — 보이는 칸만. <code>main.gd</code> 의 임시 격자를 걷어낸다</span>
     <span class="cmark">초록</span></div>
   <code class="cmd">tools/loop/shot.sh /tmp/w.png</code>
-<ul class="ev"><li>SHOT 960x540  색 1000개  가장 넓은 한 색 1.4%  → /tmp/w.png</li></ul>
+<ul class="ev"><li>SHOT 960x540  색 1001개  가장 넓은 한 색 1.3%  → /tmp/w.png</li></ul>
 </div>
 <div class="card ok">
   <div class="chead"><span class="cid">7</span>
@@ -370,6 +370,16 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <h2>회차 일지 — 무엇이 막았고, 왜, 그래서 무엇을 바꿨나</h2>
 <p class="lede">전체는 <a href="https://github.com/kimtuna/naru/blob/master/docs/JOURNAL.md">JOURNAL.md</a>. 아래는 그 파일을 그대로 읽어 온 것이다.</p>
 <div class="log">
+<article class="entry bad" id="t28">
+  <div class="ehead">
+    <a class="badge" href="#i28" title="진행 목록으로">회차 28</a>
+<h3><strong>벌목</strong> — 도끼로 나무를 베면 목재가 바닥에 떨어진다</h3>
+    <span class="edate">2026-09-15</span>
+    <span class="eres bad">빨강</span>
+  </div>
+<div class="row prob"><span class="k">일지</span><span class="v"><strong>세션이 안 적었다.</strong> 드라이버가 스텁만 찍었다 — 무엇이 막혔는지 남은 게 없다.</span></div>
+<div class="efoot"><span class="grade">채점 1 IMPORT ok · 2 PARSE 44개 스크립트, 실패 0 · 3 ✘   FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0 / TESTS 131 passed, 1 failed /   FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0 / TESTS 131 passed, 1 failed · 4 ✘   FAIL test_project_settings.gd :: test_texture_filter_is_nearest — 기본 텍스처 필터 — 잰 값 1 · 기대 0 / TESTS 131 passed, 1 failed · 5 DOCLEN CLAUDE.md  41/45줄 / DOCLEN docs/PROMPT.md  65/70줄 / DOCLEN .loop/state.md  86/90줄 · 6 SHOT 960x540  색 1001개  가장 넓은 한 색 1.3%  → /tmp/w.png · 7   ok   무장 파일이 없으면 exit 1 / JOURNAL SELFTEST 34 passed, 0 failed (바닥 34) · 8   ok   공백 든 경로를 통째로 지운다 / WORKTREE SELFTEST 45 passed, 0 failed (바닥 45) · 9   ok   세션에게 주는 꼬리 2 절이 남기는 3 절 안에 든다 / STATE SELFTEST 26 passed, 0 failed (바닥 26)</span><span>$98.8546 누적</span><span><code>ea0f13f</code></span></div>
+</article>
 <article class="entry ok" id="t27">
   <div class="ehead">
     <a class="badge" href="#i27" title="진행 목록으로">회차 27</a>
@@ -900,6 +910,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
   <span class="dwhy">회차 일지. <strong>무엇이 막았고 왜 그랬고 그래서 무엇을 바꿨나</strong></span></a>
 </div>
 <h2>최근 커밋</h2><ul class="commits">
+<li><a href="https://github.com/kimtuna/naru/commit/ea0f13f"><code>ea0f13f</code></a><span class="cd">2026-09-15</span>회차 27 일지 · 대시보드 갱신</li>
 <li><a href="https://github.com/kimtuna/naru/commit/1fcd5a1"><code>1fcd5a1</code></a><span class="cd">2026-09-15</span>회차 기록 롤링</li>
 <li><a href="https://github.com/kimtuna/naru/commit/360b6eb"><code>360b6eb</code></a><span class="cd">2026-09-15</span>회차 27 대조군 결과를 잰 값으로 고친다 — REDTEAM 10 잡음, 0 놓침 (3분 37초)</li>
 <li><a href="https://github.com/kimtuna/naru/commit/c3d7332"><code>c3d7332</code></a><span class="cd">2026-09-15</span>헤드리스 실측 넷을 한 프로세스로 — 프로세스 7 → 4 · <strong>부팅은 병목이 아니었다</strong></li>
@@ -911,7 +922,6 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
 <li><a href="https://github.com/kimtuna/naru/commit/d965971"><code>d965971</code></a><span class="cd">2026-09-15</span>테스트 바닥 100 → 113</li>
 <li><a href="https://github.com/kimtuna/naru/commit/49255b9"><code>49255b9</code></a><span class="cd">2026-09-15</span>상태 검사에 기준 8 추가 — <strong>세션이 손으로 깨뜨린 것을 반드시 되돌린다</strong> — 회차 24 가 대조군 하나를</li>
 <li><a href="https://github.com/kimtuna/naru/commit/fd6ca82"><code>fd6ca82</code></a><span class="cd">2026-09-15</span>회차 25 기록 · state.md 를 3회차로 굴린다</li>
-<li><a href="https://github.com/kimtuna/naru/commit/2ecee69"><code>2ecee69</code></a><span class="cd">2026-09-15</span>회차 25 기록</li>
 </ul>
 <footer><strong>이 페이지는 스냅샷이다.</strong> <code>tools/loop/report.py</code> 가 구운 시점의 값이 박혀 있고 아무것도 fetch 하지 않는다 — <code>.loop/</code> 는 <code>.gitignore</code> 라 바깥에서 읽을 방법이 없다. 드라이버가 <strong>초록으로 닫힌 회차</strong>마다 굽고 커밋하고 푸시한다 — 빨간 상태는 안 나간다.</footer>
 <button id="fresh" hidden>새 회차가 올라왔다 — 새로고침</button>
