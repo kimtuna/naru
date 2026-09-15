@@ -297,11 +297,21 @@ P0 의 전부다** — 이게 없으면 매 회차가 사람 시간에 묶인다
   > `.loop/` 는 세션이 끝난 시점에 아직 커밋 전인데 드라이버가 뒤에서 커밋한다 —
   > 이걸 「흘린 것」으로 보면 되돌리기가 **6b 가 방금 뽑은 일지를 지운다**(대조군 ③).
   > `WORKTREE SELFTEST 41 passed, 0 failed` · `REDTEAM 12 잡음, 0 놓침`(묶음).
-- [ ] **doclen 이 `roll_state` 보다 먼저 돈다** — 기준 5 는 판정(7)에서 재는데
+- [x] **doclen 이 `roll_state` 보다 먼저 돈다** — 기준 5 는 판정(7)에서 재는데
       `.loop/state.md` 를 잘라 주는 `roll_state` 는 **초록이 난 뒤에야** 돈다.
       긴 절을 붙인 회차는 트리밍 전에 빨개진다 (회차 25 가 98줄 · 상한 90 으로 걸렸다 —
       손으로 `state.py roll 3` 을 돌려 60줄로 내렸다). 판정 **앞**에서 굴리거나,
-      세션이 붙인 절 하나는 상한에서 빼고 센다 | verify: `bash tools/loop/run-contract.sh`
+      세션이 붙인 절 하나는 상한에서 빼고 센다 | verify: `bash tools/loop/state-selftest.sh`
+      > 회차 26. 앞을 골랐다 — 판정 앞에서 자르면 **채점자가 재는 것과 다음 회차가
+      > 읽는 것이 같은 파일**이다. 「한 절은 빼고 센다」는 doclen 이 파일이 아니라
+      > 파일에서 뭔가 뺀 것을 재게 만들어서, 사람이 파일을 열었을 때 숫자가 안 맞는다.
+      > `roll_state` 를 `trim_state`(자르기 · 6d) + `commit_state_roll`(커밋 · 초록 뒤)
+      > 로 갈랐다. **커밋을 같이 옮기면 안 된다** — `head_after` 가 부기 커밋을 가리켜
+      > 일지의 「커밋」 칸이 항목 커밋을 못 짚는다.
+      > **verify 를 `run-contract.sh` 에서 `state-selftest.sh` 로 바꿨다**: 앞엣것은
+      > `promote` 가 재귀라고 건너뛰어 기준으로 안 올라간다 — 즉 이 항목은 아무 게이트도
+      > 안 남기고 닫힐 참이었다. 회차 25 가 `worktree.sh` 에서 한 것과 같은 자리다.
+      > `STATE SELFTEST 26 passed, 0 failed (바닥 26)` 0.5초.
 - [ ] **헤드리스 실측 게이트를 한 프로세스로 모은다** — `check.sh tests` 가 Godot 을
       **10번** 띄운다(27초). `measure_move` · `measure_collide` · `measure_camera` ·
       `measure_world` 는 전부 헤드리스라 **한 프로세스에서 이어 잴 수 있다.**

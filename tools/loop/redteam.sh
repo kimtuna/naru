@@ -40,6 +40,9 @@ cp tools/loop/journal.sh "$BAK/" 2>/dev/null || true
 cp tools/loop/journal-selftest.sh "$BAK/" 2>/dev/null || true
 cp tools/loop/worktree.sh "$BAK/" 2>/dev/null || true
 cp tools/loop/worktree-selftest.sh "$BAK/" 2>/dev/null || true
+cp tools/loop/loop.sh "$BAK/" 2>/dev/null || true
+cp tools/loop/state.py "$BAK/" 2>/dev/null || true
+cp tools/loop/state-selftest.sh "$BAK/" 2>/dev/null || true
 restore() {
   cp "$BAK/project.godot" project.godot 2>/dev/null || true
   cp "$BAK/criteria.tsv" .loop/criteria.tsv 2>/dev/null || true
@@ -63,6 +66,9 @@ restore() {
   cp "$BAK/journal-selftest.sh" tools/loop/journal-selftest.sh 2>/dev/null || true
   cp "$BAK/worktree.sh" tools/loop/worktree.sh 2>/dev/null || true
   cp "$BAK/worktree-selftest.sh" tools/loop/worktree-selftest.sh 2>/dev/null || true
+  cp "$BAK/loop.sh" tools/loop/loop.sh 2>/dev/null || true
+  cp "$BAK/state.py" tools/loop/state.py 2>/dev/null || true
+  cp "$BAK/state-selftest.sh" tools/loop/state-selftest.sh 2>/dev/null || true
   rm -f scripts/_redteam.gd scripts/_redteam.gd.uid
   rm -rf "$BAK"
 }
@@ -869,6 +875,118 @@ expect 1 "매 회차 읽는 문서를 부풀리면 잡는다"
 cp "$BAK/PROMPT.md" docs/PROMPT.md
 
 expect 0 "원복하면 다시 초록이다"
+
+# ── 회차 26 판정 앞에서 회차 기록을 굴린다 ──────────────────────────
+section "회차 26 판정 앞에서 회차 기록을 굴린다"
+#
+# 겨누는 것은 하나다: **채점자가 재는 `.loop/state.md` 와 다음 회차가 읽는 것이 달라지는 길.**
+# 자르기가 초록 **뒤**에 있으면 세션이 방금 붙인 절 하나가 상한을 넘겨 그 회차만 빨갛고,
+# 다음 회차엔 저절로 초록이 된다 — 고칠 것이 없는데 빨간 회차라 정지 규칙 3(같은 실패
+# 두 회차)이 엉뚱하게 울린다. 회차 25 가 98줄 · 상한 90 으로 그 길을 갔다.
+#
+# **여기도 `run-contract.sh` 가 아니라 `state-selftest.sh` 로 잰다** — 자르는 자리는
+# 게임 코드가 아니라 드라이버의 회차 진행이라 상태 검사가 볼 수 있는 데가 아니다
+# (회차 25 의 `worktree-selftest.sh` 와 같은 자리다).
+expect_state() {   # expect_state <기대 exit> <이름>
+  local want="$1" name="$2" rc
+  if skip_section; then SKIP=$((SKIP+1)); return; fi
+  N=$((N+1))
+  if [ "$want" -ne 0 ] && [ -z "$(git status --porcelain)" ]; then
+    printf '  \033[33m헛돌았다\033[0m  %s  — 워킹트리가 그대로다. 대조군이 아무것도 안 깨뜨렸다\n' "$name"
+    MISS=$((MISS+1)); return
+  fi
+  bash tools/loop/state-selftest.sh >"$EV/state.txt" 2>&1; rc=$?
+  if [ "$rc" -eq "$want" ]; then
+    printf '  \033[32m잡았다\033[0m  %s  (exit %d)\n' "$name" "$rc"; PASS=$((PASS+1))
+  else
+    printf '  \033[31m놓쳤다\033[0m  %s  (기대 exit %d · 잰 값 %d)\n' "$name" "$want" "$rc"; MISS=$((MISS+1))
+    grep -E '^  FAIL|^STATE SELFTEST' "$EV/state.txt" | sed 's/^/      /'
+  fi
+}
+
+expect_state 0 "손 안 댄 자르기는 초록이다"
+
+# **회차 25 를 그대로 되풀이하는 길** — 자르기를 판정 뒤(초록 자리)로 도로 옮긴다.
+# 자르기 자체는 멀쩡해서 state.py 검사는 전부 초록이다. 순서만 틀린다.
+python3 - <<'PYX'
+import io
+p='tools/loop/loop.sh'; s=io.open(p,encoding='utf-8').read()
+s = s.replace('  trim_state\n\n  # 7) 판정', '  # 7) 판정', 1)
+s = s.replace('    commit_state_roll\n', '    trim_state\n    commit_state_roll\n', 1)
+io.open(p,'w',encoding='utf-8').write(s)
+PYX
+expect_state 1 "자르기를 판정 뒤로 옮기면 잡는다 (회차 25 가 간 길)"
+cp "$BAK/loop.sh" tools/loop/loop.sh
+
+# **자르기가 커밋까지 하는 길.** 둘을 도로 합치면 `head_after` 가 「회차 기록 롤링」을
+# 가리켜서, 일지의 커밋 칸이 항목을 만든 커밋을 못 짚는다 (회차 12 · 21 이 잃은 것).
+python3 - <<'PYX'
+import io
+p='tools/loop/loop.sh'; s=io.open(p,encoding='utf-8').read()
+s = s.replace('  say "$(python3 tools/loop/state.py roll "$STATE_KEEP")"\n',
+              '  say "$(python3 tools/loop/state.py roll "$STATE_KEEP")"\n'
+              '  git add .loop/state.md .loop/archive 2>/dev/null || true\n', 1)
+io.open(p,'w',encoding='utf-8').write(s)
+PYX
+expect_state 1 "자르기가 커밋까지 하면 잡는다"
+cp "$BAK/loop.sh" tools/loop/loop.sh
+
+# **아무것도 안 자르는 길** — 제일 비싼 고장이다. 순서를 앞으로 옮겨 놓고 자르기가
+# 헛돌면, 판정은 통째로 자란 파일을 재고 회차는 영영 빨갛다.
+python3 - <<'PYX'
+import io
+p='tools/loop/state.py'; s=io.open(p,encoding='utf-8').read()
+s = s.replace('        if len(cycles) <= n:', '        if True:', 1)
+io.open(p,'w',encoding='utf-8').write(s)
+PYX
+expect_state 1 "아무것도 안 자르면 잡는다"
+cp "$BAK/state.py" tools/loop/state.py
+
+# **반대쪽 고장 — 통째로 비우는 길.** doclen 은 기뻐하지만 다음 회차가 읽을 꼬리가
+# 없어진다. 「짧으면 초록」만 재면 이 길이 열린다.
+python3 - <<'PYX'
+import io
+p='tools/loop/state.py'; s=io.open(p,encoding='utf-8').read()
+s = s.replace('        old, keep = cycles[:-n], cycles[-n:]', '        old, keep = cycles, []', 1)
+io.open(p,'w',encoding='utf-8').write(s)
+PYX
+expect_state 1 "통째로 비우면 잡는다 (짧아지기만 하면 된다가 아니다)"
+cp "$BAK/state.py" tools/loop/state.py
+
+# **아카이브를 덮어쓰는 길.** 잘린 회차가 조용히 사라진다 — 초록이라 아무도 안 본다.
+python3 - <<'PYX'
+import io
+p='tools/loop/state.py'; s=io.open(p,encoding='utf-8').read()
+s = s.replace('with io.open(ARCH, "a", encoding="utf-8") as f:',
+              'with io.open(ARCH, "w", encoding="utf-8") as f:', 1)
+io.open(p,'w',encoding='utf-8').write(s)
+PYX
+expect_state 1 "아카이브를 덮어쓰면 잡는다"
+cp "$BAK/state.py" tools/loop/state.py
+
+# 머리말을 같이 버리는 길 — 파일이 짧아져서 doclen 은 초록이다.
+python3 - <<'PYX'
+import io
+p='tools/loop/state.py'; s=io.open(p,encoding='utf-8').read()
+s = s.replace('io.open(STATE, "w", encoding="utf-8").write(head + "".join(keep))',
+              'io.open(STATE, "w", encoding="utf-8").write("".join(keep))', 1)
+io.open(p,'w',encoding='utf-8').write(s)
+PYX
+expect_state 1 "머리말을 버리면 잡는다"
+cp "$BAK/state.py" tools/loop/state.py
+
+# 검사 자신을 무르게 만드는 길 — 실패가 0 이어도 **개수가 줄면** 빨개진다.
+python3 - <<'PYX'
+import io
+p='tools/loop/state-selftest.sh'; s=io.open(p,encoding='utf-8').read()
+s = s.replace('doclen 90 && bad "남은 절이 두꺼우면 자른 뒤에도 빨갛다" \\\n           || ok "남은 절이 두꺼우면 자른 뒤에도 빨갛다"', 'true', 1)
+io.open(p,'w',encoding='utf-8').write(s)
+PYX
+expect_state 1 "무뎌짐 검사를 지우면 검사 바닥이 잡는다"
+cp "$BAK/state-selftest.sh" tools/loop/state-selftest.sh
+
+expect_state 0 "원복하면 자르기도 다시 초록이다"
+
 
 echo
 SKIPMSG=""

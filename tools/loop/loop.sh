@@ -110,10 +110,20 @@ bump_mintests() {
 # ── 회차 기록을 잘라낸다 ─────────────────────────────────────────────
 # state.md 는 회차마다 자란다. 통째로 읽게 두면 회차 비용이 계속 는다
 # (1판은 매 회차 읽는 문서가 758+1012+826 줄까지 갔다).
-roll_state() {
+#
+# **자르기와 커밋을 갈랐다** (회차 26). 기준 5(doclen)는 판정(7)에서 `.loop/state.md`
+# 를 재는데 굴리기는 초록이 난 **뒤**에야 돌았다 — 세션이 절을 하나 붙인 회차는
+# 트리밍 전 길이로 재여서 그 회차만 빨개지고 다음 회차엔 저절로 사라진다.
+# 자르기는 판정 **앞**(6d)으로, 커밋은 초록 뒤에 그대로 둔다.
+STATE_KEEP=3
+trim_state() {
   [ "$DRY" = "1" ] && return 0
-  local out; out="$(python3 tools/loop/state.py roll 3)"
-  say "$out"
+  say "$(python3 tools/loop/state.py roll "$STATE_KEEP")"
+}
+# **여기서 커밋한다 — 자를 때가 아니라.** 자를 때 커밋하면 `head_after` 가 이 부기
+# 커밋을 가리켜서 일지의 「커밋」 칸이 항목을 만든 커밋을 못 짚는다.
+commit_state_roll() {
+  [ "$DRY" = "1" ] && return 0
   if [ -n "$(git status --porcelain .loop/state.md .loop/archive 2>/dev/null)" ]; then
     git add .loop/state.md .loop/archive 2>/dev/null || true
     git -c user.name=loop -c user.email=loop@local commit -q -m "회차 기록 롤링" || true
@@ -127,7 +137,7 @@ roll_state() {
 # 아니라 자기 보고가 된다. 채점 칸에는 `results.json` — 채점자가 쓴 것 — 만 들어간다.
 finish_journal() {                        # finish_journal <회차> <항목> <결과> <커밋>
   [ "$DRY" = "1" ] && return 0
-  # 찍히는 커밋은 **항목을 만든 커밋**이다. 이 함수는 roll_state 뒤에 도는데
+  # 찍히는 커밋은 **항목을 만든 커밋**이다. 이 함수는 부기 커밋 뒤에 도는데
   # 그 사이 부기 커밋(기준 승격 · 바닥 올림 · 롤링)이 끼면 그게 찍힌다.
   bash tools/loop/journal.sh stamp "$1" "$2" "$3" "${4:-$(git rev-parse --short HEAD)}" | sed 's/^/    /'
   # **대시보드가 안 구워지면 멈춘다.** 바깥에서 볼 수 있는 유일한 창인데
@@ -390,6 +400,16 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
       || stop "세션이 남긴 변경을 되돌리지 못했다 — 사람이 봐야 한다 ($RD/leftover.patch)"
   fi
 
+  # 6d) **회차 기록을 판정 앞에서 굴린다** (회차 26). 기준 5 는 `.loop/state.md` 를
+  # 판정 시점에 재는데, 세션이 방금 절을 하나 붙였다 — 굴리기가 초록 뒤에 있으면
+  # 그 한 절 때문에 상한을 넘어 빨개지고, 다음 회차에는 아무 일 없었다는 듯 초록이
+  # 된다 (회차 25 가 98줄 · 상한 90 으로 걸렸다. 사람이 손으로 굴려 60줄로 내렸다).
+  # 판정 앞에서 자르면 **채점자가 재는 것과 다음 회차가 읽는 것이 같은 파일**이다.
+  # 게이트가 무뎌지지는 않는다 — 자른 뒤에도 남는 STATE_KEEP 회차가 상한을 넘으면 빨갛다.
+  # 커밋은 안 한다: 초록이면 아래 `commit_state_roll`, 빨갛면 `git checkout -- .`
+  # 이 되돌린다 (`.loop/state.md` · `.loop/archive/state.md` 는 둘 다 추적된다).
+  trim_state
+
   # 7) 판정 — 세션이 아니라 채점자가 한다
   [ -f "$ROOT/.loop/results.json" ] && cp "$ROOT/.loop/results.json" "$PREV"
   bash tools/loop/run-contract.sh > "$RD/contract.txt" 2>&1
@@ -447,7 +467,7 @@ s=float(open('$SPEND').read().strip() or 0); print(round(s+float('$cost'),4))" >
     say "✔ 초록"
     promote "$(desc_of "$item")" "$vcmd"
     bump_mintests
-    roll_state
+    commit_state_roll
     finish_journal "$turn" "$item" "초록" "$(git rev-parse --short "$head_after")"
     if [ "$DRY" = "0" ] && ! jmsg="$(bash tools/loop/journal.sh check "$turn")"; then
       stop "초록인데 일지를 안 적었다 — $jmsg (docs/JOURNAL.md 회차 $turn)"
