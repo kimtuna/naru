@@ -1,0 +1,40 @@
+{
+	"parts": [
+		{
+			"id": "body",
+			"label": "APPEARANCE_BODY",
+			"options": [
+				{"id": "body_1", "label": "APPEARANCE_BODY_1", "color": "#f1c27d"},
+				{"id": "body_2", "label": "APPEARANCE_BODY_2", "color": "#c68642"},
+				{"id": "body_3", "label": "APPEARANCE_BODY_3", "color": "#8d5524"}
+			]
+		},
+		{
+			"id": "hair_style",
+			"label": "APPEARANCE_HAIR_STYLE",
+			"options": [
+				{"id": "hair_short", "label": "APPEARANCE_HAIR_SHORT", "color": "#5a5a5a"},
+				{"id": "hair_long", "label": "APPEARANCE_HAIR_LONG", "color": "#9a9a9a"},
+				{"id": "hair_none", "label": "APPEARANCE_HAIR_NONE", "color": "#dddddd"}
+			]
+		},
+		{
+			"id": "hair_color",
+			"label": "APPEARANCE_HAIR_COLOR",
+			"options": [
+				{"id": "hair_black", "label": "APPEARANCE_HAIR_BLACK", "color": "#1b1b1b"},
+				{"id": "hair_brown", "label": "APPEARANCE_HAIR_BROWN", "color": "#6b3e1f"},
+				{"id": "hair_blond", "label": "APPEARANCE_HAIR_BLOND", "color": "#e5c76b"}
+			]
+		},
+		{
+			"id": "outfit",
+			"label": "APPEARANCE_OUTFIT",
+			"options": [
+				{"id": "outfit_1", "label": "APPEARANCE_OUTFIT_1", "color": "#3b6fb6"},
+				{"id": "outfit_2", "label": "APPEARANCE_OUTFIT_2", "color": "#4f9a4a"},
+				{"id": "outfit_3", "label": "APPEARANCE_OUTFIT_3", "color": "#b64a3b"}
+			]
+		}
+	]
+}

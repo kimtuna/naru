@@ -44,3 +44,72 @@ msgstr "Create Character"
 
 msgid "WORLD_SELECT_TITLE"
 msgstr "Select World"
+
+msgid "CHARACTER_NAME"
+msgstr "Name"
+
+msgid "CHARACTER_NAME_EMPTY"
+msgstr "Please enter a name."
+
+msgid "CHARACTER_SLOTS_FULL"
+msgstr "No empty character slot."
+
+msgid "CHARACTER_CREATE"
+msgstr "Create"
+
+msgid "CHARACTER_PREVIEW"
+msgstr "Preview"
+
+msgid "APPEARANCE_PREV"
+msgstr "Prev"
+
+msgid "APPEARANCE_NEXT"
+msgstr "Next"
+
+msgid "APPEARANCE_BODY"
+msgstr "Body"
+
+msgid "APPEARANCE_BODY_1"
+msgstr "Body 1"
+
+msgid "APPEARANCE_BODY_2"
+msgstr "Body 2"
+
+msgid "APPEARANCE_BODY_3"
+msgstr "Body 3"
+
+msgid "APPEARANCE_HAIR_STYLE"
+msgstr "Hair Style"
+
+msgid "APPEARANCE_HAIR_SHORT"
+msgstr "Short"
+
+msgid "APPEARANCE_HAIR_LONG"
+msgstr "Long"
+
+msgid "APPEARANCE_HAIR_NONE"
+msgstr "Bald"
+
+msgid "APPEARANCE_HAIR_COLOR"
+msgstr "Hair Color"
+
+msgid "APPEARANCE_HAIR_BLACK"
+msgstr "Black"
+
+msgid "APPEARANCE_HAIR_BROWN"
+msgstr "Brown"
+
+msgid "APPEARANCE_HAIR_BLOND"
+msgstr "Blond"
+
+msgid "APPEARANCE_OUTFIT"
+msgstr "Outfit"
+
+msgid "APPEARANCE_OUTFIT_1"
+msgstr "Outfit 1"
+
+msgid "APPEARANCE_OUTFIT_2"
+msgstr "Outfit 2"
+
+msgid "APPEARANCE_OUTFIT_3"
+msgstr "Outfit 3"

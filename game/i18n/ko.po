@@ -44,3 +44,72 @@ msgstr "캐릭터 만들기"
 
 msgid "WORLD_SELECT_TITLE"
 msgstr "월드 선택"
+
+msgid "CHARACTER_NAME"
+msgstr "이름"
+
+msgid "CHARACTER_NAME_EMPTY"
+msgstr "이름을 입력하세요."
+
+msgid "CHARACTER_SLOTS_FULL"
+msgstr "빈 캐릭터 칸이 없습니다."
+
+msgid "CHARACTER_CREATE"
+msgstr "만들기"
+
+msgid "CHARACTER_PREVIEW"
+msgstr "미리보기"
+
+msgid "APPEARANCE_PREV"
+msgstr "이전"
+
+msgid "APPEARANCE_NEXT"
+msgstr "다음"
+
+msgid "APPEARANCE_BODY"
+msgstr "몸"
+
+msgid "APPEARANCE_BODY_1"
+msgstr "몸 1"
+
+msgid "APPEARANCE_BODY_2"
+msgstr "몸 2"
+
+msgid "APPEARANCE_BODY_3"
+msgstr "몸 3"
+
+msgid "APPEARANCE_HAIR_STYLE"
+msgstr "머리 모양"
+
+msgid "APPEARANCE_HAIR_SHORT"
+msgstr "짧은 머리"
+
+msgid "APPEARANCE_HAIR_LONG"
+msgstr "긴 머리"
+
+msgid "APPEARANCE_HAIR_NONE"
+msgstr "민머리"
+
+msgid "APPEARANCE_HAIR_COLOR"
+msgstr "머리 색"
+
+msgid "APPEARANCE_HAIR_BLACK"
+msgstr "검정"
+
+msgid "APPEARANCE_HAIR_BROWN"
+msgstr "갈색"
+
+msgid "APPEARANCE_HAIR_BLOND"
+msgstr "금색"
+
+msgid "APPEARANCE_OUTFIT"
+msgstr "옷"
+
+msgid "APPEARANCE_OUTFIT_1"
+msgstr "옷 1"
+
+msgid "APPEARANCE_OUTFIT_2"
+msgstr "옷 2"
+
+msgid "APPEARANCE_OUTFIT_3"
+msgstr "옷 3"
