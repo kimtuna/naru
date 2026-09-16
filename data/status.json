@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 00:55:19 KST",
- "updated_epoch": 1789574119,
+ "updated": "2026-09-17 01:00:08 KST",
+ "updated_epoch": 1789574408,
  "progress": {
   "groups_total": 14,
   "groups_done": 8,
@@ -8,11 +8,11 @@
   "steps_total": 44,
   "steps_done": 26
  },
- "state": "running",
- "reason": "",
+ "state": "waiting",
+ "reason": "토큰 한도 — 09-17 02:22 에 자동 재개",
  "started": "2026-09-16 21:47:30",
  "ended": "",
- "resume_at": "",
+ "resume_at": "09-17 02:22",
  "pid": "99697",
  "group": "G-012",
  "group_title": "ESC 설정 창",
