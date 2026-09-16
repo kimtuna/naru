@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 22:20:01 KST",
- "updated_epoch": 1789564801,
+ "updated": "2026-09-16 22:21:22 KST",
+ "updated_epoch": 1789564882,
  "progress": {
   "groups_total": 9,
   "groups_done": 2,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 9
+  "steps_done": 10
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-003",
  "group_title": "조작",
- "step": "2",
+ "step": "3",
  "step_total": "4",
- "step_title": "캐릭터와 8방향 이동",
+ "step_title": "마우스 조준",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 22:20:01"
+ "phase": "구현",
+ "phase_since": "2026-09-16 22:21:22"
 }

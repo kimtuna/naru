@@ -643,5 +643,67 @@
   "attempt": "1",
   "title": "G-003 1/4 입력 액션과 Pointer — 통과 (시도 1)",
   "commit": "695e03e"
+ },
+ {
+  "time": "2026-09-16 22:21:21 KST",
+  "epoch": 1789564881,
+  "report": {
+   "status": "done",
+   "summary": "G-003.2 캐릭터와 8방향 이동 — 게임 씬에 플레이어 · 따라가는 카메라 · 속력은 movement_tuning.tres 한 곳",
+   "problem": "게임 씬이 빈 자리였다. 캐릭터를 놓고 WASD 로 8방향 이동시키며 카메라가 따라가야 하고, 대각선이 1.41배 빨라지면 안 되며, 이동 속력 값은 한 곳에만 있어야 했다. 테스트 중 부딪힌 문제: move_and_slide 를 물리 프레임 밖에서 부르면 물리 delta 가 아니라 process delta 를 써서, 움직인 거리 ÷ 물리 delta 로 잰 속력이 33.3(기대 80)으로 나왔다.",
+   "feedback_applied": "",
+   "approach": "game/player/ 에 Player(CharacterBody2D, 색 네모 + 충돌 모양 + 자식 Camera2D)를 만들고 게임 씬에 땅(색 네모)과 함께 넣었다. _physics_process 에서 velocity = InputActions.move_vector() * tuning.move_speed 후 move_and_slide. move_vector 는 1단계의 Input.get_vector 라 대각선이 길이 1로 정규화된다. 속력은 MovementTuning Resource(player/movement_tuning.tres, 임시 80px/s)에만 있고 Player 는 tuning 이 비면 그걸 불러 쓴다. 테스트(tests/player/test_player_movement.gd)는 WASD 키 이벤트를 Input.parse_input_event 로 흉내 내고, 실제 물리 루프에서 physics_frame 신호 두 번 사이(= 정확히 한 걸음)의 이동 거리 × 틱 수로 실제 속력을 잰다: 8방향 각각 속력 = move_speed · 방향 일치, 대각 = 직선, 입력 없음/반대 키 = 정지, 기본 tuning 은 공유 tres, tuning 을 137 로 바꾸면 직선·대각 모두 137, player.tscn 에 속력 덮어쓰기 없음. 카메라는 게임 씬에서 현재 카메라가 플레이어 카메라인지, 실제 루프에서 이동 후 화면 중심이 플레이어 위치인지 확인한다. tools/test.sh 97/97 통과, guard 통과.",
+   "why": "속력을 const 대신 Resource(.tres)로 둔 것은 사람이 나중에 에디터에서 코드 없이 값을 바꿀 수 있고, 테스트가 다른 tuning 을 끼워 '플레이어가 정말 그 값을 쓰는지'를 검사할 수 있어서다(const 면 하드코딩 여부를 검사하기 어렵다). 속력 측정은 move_step 을 직접 부르는 방식을 버렸다 — 물리 프레임 밖에서는 move_and_slide 의 delta 가 달라 측정이 틀어진다. 신호 두 번 사이 한 걸음 측정은 프레임 수 오차가 없어 결정적이다. 카메라 zoom 3 · 캐릭터 16px 네모 · 속력 80 은 모두 임시 값이다(spec 에 미정, 나중에 바꾸기 싸다). 땅 색 네모는 이동이 화면에서 보이게 하는 최소한의 배경이다.",
+   "files": [
+    "game/player/movement_tuning.gd",
+    "game/player/movement_tuning.tres",
+    "game/player/player.gd",
+    "game/player/player.tscn",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/player/test_player_movement.gd",
+    "game/player/.gitkeep (삭제)"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "게임 씬에 캐릭터가 나오고 카메라가 따라간다",
+     "ok": true,
+     "evidence": "game/world/game.tscn 에 player.tscn 인스턴스(%Player)가 있고, player.tscn 의 자식 Camera2D(%Camera)가 따라간다. test_game_scene_has_player_with_current_camera 는 게임 씬에서 플레이어·Body 가 보이고 viewport 의 현재 카메라가 플레이어 카메라인지 확인한다. test_camera_follows_player_when_moving 은 실제 물리 루프에서 10프레임 이동한 뒤 화면 중심이 플레이어 위치인지 확인한다. 직접 돌린 tools/test.sh 에서 둘 다 통과했다."
+    },
+    {
+     "criterion": "8방향 모두 움직이고, 대각선 속력이 직선 속력과 같다 (입력 흉내 테스트)",
+     "ok": true,
+     "evidence": "player.gd:_physics_process 에서 InputActions.move_vector()(Input.get_vector, 정규화됨)에 move_speed 를 곱한다. test_all_eight_directions_move_at_same_speed 는 Input.parse_input_event 로 WASD 키를 흉내 내고, 8방향 각각의 실제 이동 속력과 방향을 검사한다. test_diagonal_speed_equals_straight_speed 도 있다. 변이 검사: 정규화를 뺀 Vector2(get_axis, get_axis) 로 바꾸자 이동 테스트 3개(8방향 · 대각=직선 · tuning 변경)가 실패했다. 원본은 복구했다."
+    },
+    {
+     "criterion": "이동 속력 값은 한 곳에 있다",
+     "ok": true,
+     "evidence": "속력 값은 game/player/movement_tuning.tres(move_speed = 80.0)에만 있다. movement_tuning.gd 의 @export 기본값은 같은 값이다. player.gd 는 tuning 이 비어 있으면 load_default() 로 이 파일을 불러 쓴다. 관련 테스트는 test_default_speed_comes_from_tuning_resource, test_changing_tuning_changes_speed(137), test_player_scene_does_not_override_speed 다. 변이 검사: player.gd 에 * 80.0 을 직접 쓰자 test_changing_tuning_changes_speed 가 실패했다. 원본은 복구했다."
+    }
+   ],
+   "issues": [
+    "(경미) movement_tuning.gd 의 @export 기본값 80.0 과 .tres 의 80.0 에 같은 숫자가 두 번 적혀 있다. 실제로 쓰이는 곳은 .tres 하나지만, 사람이 값을 바꿀 때 헷갈릴 수 있다. 판정에는 반영하지 않았다.",
+    "(경미) test_player_scene_does_not_override_speed 는 player.tscn 에 'tuning' 이라는 글자가 있는지 문자열로 검사해서 깨지기 쉽다. 나중에 노드 이름 같은 곳에 이 단어가 들어가면 엉뚱하게 실패할 수 있다.",
+    "(참고) 카메라 zoom 3, 캐릭터 크기 16px/충돌 12px 는 씬 파일에 있는 임시 값이다. report 에 임시라고 적혀 있고 이동 수치가 아니므로 규칙 위반으로 보지 않았다."
+   ],
+   "good": [
+    "속력 측정 방식이 결정적이다. physics_frame 신호 두 번 사이의 한 걸음을 재므로, 물리 루프 밖에서 move_and_slide 를 부를 때 생기는 delta 문제를 피한다.",
+    "입력 없음 · 반대 키 동시 입력 때 멈추는지도 테스트한다.",
+    "속력을 Resource 로 빼서 '플레이어가 정말 그 값을 쓰는지'를 테스트로 검증할 수 있다. 변이 검사로도 확인했다.",
+    "파일이 모두 짧고(최대 158줄), 화면 글자 하드코딩이 없으며, 마우스 조준 · 핫바 같은 단계 밖 기능도 넣지 않았다. tools/test.sh 97/97, guard 통과. report 내용이 실제 diff 와 맞는다."
+   ],
+   "feedback": ""
+  },
+  "test": "\n* test_prev_next_cycle_options\n* test_screen_parts_match_data_file\n* test_added_part_in_data_file_appears_on_screen\n* test_added_option_in_data_file_appears_on_screen\n* test_preview_follows_choice\n* test_create_saves_to_chosen_slot_and_shows_in_select\n* test_empty_name_is_rejected\n* test_cancel_returns_without_saving\n* test_new_character_inventory_is_empty\n* test_labels_translate_in_each_language\n11/11 passed.\n\n\nres://tests/ui/menu/test_character_select.gd\n* test_three_slots\n* test_filled_slot_shows_name_empty_slot_shows_new\n* test_slot_text_in_each_language\n* test_empty_slot_goes_to_character_create\n* test_filled_slot_goes_to_world_select_with_character\n* test_delete_button_only_on_filled_slots\n* test_delete_asks_first_and_cancel_keeps_character\n* test_confirmed_delete_empties_slot\n* test_back_goes_to_main_menu\n9/9 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_project_main_scene_is_main_menu\n* test_main_menu_has_start_settings_quit_in_order\n* test_start_goes_to_character_select\n* test_settings_goes_to_settings\n* test_settings_back_goes_to_main_menu\n* test_quit_requests_quit\n* test_target_screens_load\n* test_real_flow_in_separate_process\n* test_all_screen_text_is_translated_in_ko_and_en\n* test_buttons_render_in_each_language\n10/10 passed.\n\n\nres://tests/ui/menu/test_world_select.gd\n* test_lists_saved_worlds\n* test_empty_list_says_so\n* test_create_with_name_and_seed\n* test_text_seed_is_stable\n* test_empty_seed_is_random\n    30 Orphans\n        * [World_0:<HBoxContainer#177603610835>] + 2\n        * [World_1:<HBoxContainer#179449104663>] + 2\n        * [World_0:<HBoxContainer#179264555295>] + 2\n        * [World_3:<HBoxContainer#179818203458>] + 2\n        * [World_0:<HBoxContainer#177972709707>] + 2\n        * [World_1:<HBoxContainer#178157259087>] + 2\n        * [World_2:<HBoxContainer#179633654114>] + 2\n        * [World_1:<HBoxContainer#178710907236>] + 2\n        * [World_0:<HBoxContainer#178526357868>] + 2\n        * [World_2:<HBoxContainer#178895456630>] + 2\n* test_create_needs_name\n* test_delete_asks_first_and_cancel_keeps_world\n* test_confirmed_delete_removes_world\n    6 Orphans\n        * [World_1:<HBoxContainer#185790892381>] + 2\n        * [World_0:<HBoxContainer#185606343006>] + 2\n* test_back_goes_to_character_select\n* test_pick_world_enters_game_with_character_and_world\n* test_pick_world_without_character_goes_back_to_select\n* test_game_scene_loads\n* test_world_screen_text_in_each_language\n36 orphans\n13/13 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              13\nTests                97\nPassing Tests        97\nAsserts             696\nTime              12.359s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-003",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-003 2/4 캐릭터와 8방향 이동 — 통과 (시도 1)",
+  "commit": "c8c7c69"
  }
 ]
