@@ -3203,5 +3203,106 @@
   "attempt": "1",
   "title": "G-013 3/4 경사 이동 속도 — 통과 (시도 1)",
   "commit": "05be161"
+ },
+ {
+  "time": "2026-09-17 05:28:19 KST",
+  "epoch": 1789590499,
+  "report": {
+   "status": "done",
+   "summary": "G-013.4 지형별 자원 — 지형마다 채울 %·비 규칙(DepositRule), 광물 1종→철(설산)·유황(화산), 약초는 절벽에만, 스폰 옆 나무·돌 덩이 보장",
+   "problem": "자원 배치가 섬 전체 한 규칙(채울 30% · 나무3:돌2:광물1)이었고, 광물 1종이 솟은 지형(산·화산·설산) 아무 데나 났다. 이번 단계는 (1) 숲=나무·산=돌, (2) 광물을 설산=철·화산=유황으로 나누기, (3) 약초를 절벽 칸에만, (4) 비율 규칙을 지형마다 따로, (5) 첫 도구·첫 제작대 재료를 반드시 주기, (6) 새 자원에도 재생 규칙이 맞는지 확인하기였다. 기존 규칙은 '섬 전체 비'를 맞추려고 광물 확률을 역산했는데(ratio_reachable 등), 지형별 규칙에서는 이 계산이 필요 없어졌다.",
+   "feedback_applied": "",
+   "approach": "새 Resource DepositRule(채울 % + 나무/돌/철/유황/약초 비)을 만들고, IslandConfig 에 지형마다 하나씩(grass·forest·mountain·volcano·snow·beach) + 절벽 칸용 cliff_deposits 를 둔다(값은 island_config.tres 한 곳). IslandConfig.ALLOWED_DEPOSITS 표가 지형마다 날 수 있는 종류를 정한다 — 철은 설산, 유황은 화산, 약초는 절벽에만 허용되고, 다른 지형 규칙에 비를 적어도 무시된다. IslandGenerator.deposit_on 은 칸마다 해시 하나를 그 칸 규칙(절벽이면 절벽 규칙)의 누적 몫에 대어 종류를 고른다 — 그래서 지형마다 센 비가 설정에 가깝다. Deposit enum 은 NONE·TREE·STONE·IRON·SULFUR·HERB (IRON 이 예전 ORE 자리 값 3 이라 저장된 표시와 호환), 드롭 id 는 ore→iron_ore 로 바꾸고 철 주괴 레시피도 따라 바꿨다. 보장: 설산·화산 보장 봉우리 한가운데에 철·유황을 하나씩 반드시 두고(mineral_anchor), 스폰 빈터 한 칸 바깥 동쪽에 나무 3×5, 서쪽에 돌 3×5 덩이(starter_patch)를 반드시 둔다. 약초는 HarvestConfig 에 드롭 'herb' 로 넣되, 등반이 아직 없어 필요한 도구 목록을 비워 지금은 못 딴다. 재생 주기에 herb_days(임시 3일)를 넣고 철·유황은 광물 주기(ore_days)를 쓴다. 번역 키 ITEM_IRON_ORE·ITEM_SULFUR·ITEM_HERB 를 한/영에 추가, 색 네모 색도 추가. 테스트: test_island_deposits.gd(지형별 채운 몫·비가 규칙에 3σ 안, 설정을 바꾸면 따라감, 허용 밖 종류는 0, 숲 나무·산 돌 밀도가 가장 높음, 철=설산·유황=화산·약초=절벽 밖에 없음, 300 시드 철·유황 보장, 약초 씨앗·재배 레시피 없음), test_island_starter.gd(레시피 파일에서 첫 도구+제작대 필요량을 계산해 덩이만으로 충분, 200 시드에서 맨손으로 걸어 닿는 나무·돌이 충분), test_regrowth 에 철·유황·약초를 넣어 재생 후 시드 원래 값과 같은지 확인. tools/test.sh 446개 전부 통과, guard 통과.",
+   "why": "종류마다 문턱을 두지 않고 '채울 % 하나 + 비'를 지형마다 두는 방식은 spec(island-generation.md)이 요구한 모양 그대로이고, 규칙 하나를 만져도 다른 지형이 흔들리지 않는다. 허용 표를 코드 상수로 둔 것은 '광물은 지정 지형 밖에 안 난다'를 설정 실수로도 깨지 않게 하려는 것 — 비는 설정에서 바꾸되 어디에 나는지는 spec 결정이라 코드에 고정했다. '설산 둘레·화산 둘레'는 그 지형 덩어리 자체로 해석했다(둘레 링까지 넓히는 건 허용 표·규칙 키만 바꾸면 되는 싼 변경). 절벽 칸은 지형과 따로 절벽 규칙을 쓰게 해서 약초 비율도 따로 셀 수 있게 했다. 빈손 시작 보장은 확률에 기대지 않고 고정 덩이로 했다 — 해시만으로는 '반드시'를 증명할 수 없다. 덩이를 동·서에만 두어 남·북·대각선 길은 막지 않는다. 광물 보장은 봉우리 한가운데(높이 최고, 절벽 아님을 300 시드로 확인)라 지형 생성 보장을 그대로 재사용한다. 약초를 지금 맨손으로 따게 하면 '직접 올라야 나온다'(gathering.md)와 어긋나서, 등반 단계가 열 때까지 못 따게 뒀다. 버린 대안: 섬 전체 비를 유지하고 지형마다 가중치만 곱하기 — 합계를 맞추려면 역산이 다시 필요하고 '지형마다 센 비가 설정에 가깝다'를 직접 보장하지 못한다. 드롭 id 를 'ore' 로 남기기 — 유황이 생기면 이름이 모호해져 iron_ore 로 바꿨다. 수치(지형별 채울 %·비, 덩이 크기, 약초 재생 3일)는 전부 임시 값이며 island_config.tres·regrowth_config.tres 한 곳에 있다.",
+   "files": [
+    "game/world/island/deposit_rule.gd",
+    "game/world/island/island_config.gd",
+    "game/world/island/island_config.tres",
+    "game/world/island/island_generator.gd",
+    "game/world/island/island_map.gd",
+    "game/world/island/island_terrain.gd",
+    "game/world/island/island_chunk.gd",
+    "game/life/harvest/harvest_config.gd",
+    "game/world/regrowth/regrowth_config.gd",
+    "game/world/regrowth/regrowth_config.tres",
+    "game/craft/recipes/recipes.json",
+    "game/player/pickup/dropped_item.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/world/island/test_island_deposits.gd",
+    "game/tests/world/island/test_island_starter.gd",
+    "game/tests/world/island/test_island_generator.gd",
+    "game/tests/world/island/test_island_view.gd",
+    "game/tests/world/regrowth/test_regrowth.gd",
+    "game/tests/life/harvest/test_harvester.gd",
+    "game/tests/life/harvest/test_harvest_save.gd",
+    "game/tests/player/swing/test_swinger.gd",
+    "game/tests/player/pickup/test_pickup.gd",
+    "game/tests/player/inventory/test_inventory.gd",
+    "game/tests/craft/stations/test_craft_timer.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "숲은 나무가, 산은 돌이 많다. 광물은 설산 둘레(철) · 화산 둘레(유황)에만 나온다 — 지금의 「광물 1종」은 철로 옮긴다",
+     "ok": true,
+     "evidence": "island_config.tres: forest 45% 나무8:돌1, mountain 40% 나무1:돌6. IslandConfig.ALLOWED_DEPOSITS 에서 IRON 은 SNOW, SULFUR 는 VOLCANO 에만 허용. Deposit enum 의 ORE(3) 자리가 IRON 으로 바뀌고 드롭 ore→iron_ore, 철 주괴 레시피도 iron_ore 로 바뀜. 테스트: test_island_deposits.gd test_forest_is_mostly_trees_and_mountain_mostly_stone, test_minerals_only_on_their_terrain_and_herbs_only_on_cliffs (7/7 통과). QA 임시 테스트로 다른 시드 4개(5, 8888, -777777, 1<<40)의 전체 맵을 훑어 봄: 철은 모두 설산, 유황은 모두 화산이고 둘 다 수가 0보다 큼. 옛 이름(ORE, \"ore\", ore_anchor, ratio_reachable)은 game/ 안에 남아 있지 않음"
+    },
+    {
+     "criterion": "약초는 절벽 칸에만 생긴다 (재배 불가 — 씨앗이 없다)",
+     "ok": true,
+     "evidence": "CLIFF_DEPOSITS=[HERB]이고 절벽 칸은 cliff_deposits 규칙만 씀(IslandGenerator.deposit_on). 테스트: test_cliffs_hold_nothing_but_herbs, test_minerals_only_on_their_terrain_and_herbs_only_on_cliffs, test_herbs_cannot_be_farmed(밭 작물 · 레시피 출력에 약초가 없음). QA 임시 테스트: 시드 4개에서 약초는 전부 절벽 칸에 있고 절벽 칸에는 약초 말고는 아무것도 없음. REQUIRED_TOOLS[HERB]=[] 이라 맨손 · 도끼 · 곡괭이 · 삽 무엇으로도 못 캠 (등반 단계 전까지)"
+    },
+    {
+     "criterion": "비율 규칙(채울 % + 종류 사이의 비)은 지형마다 따로 있고, 지형마다 센 비가 설정에 가깝다",
+     "ok": true,
+     "evidence": "DepositRule 리소스(fill_percent + 종류별 weight)를 지형 6개 + 절벽에 하나씩 두고, 값은 island_config.tres 한 곳에 있음. test_each_terrain_counts_near_its_own_rule: 기본 설정, 시드 4개에서 지형 · 절벽마다 채운 몫과 종류 비가 3σ+0.005 안. test_rules_follow_changed_config: 설정을 바꾸면 센 값이 따라가고, 허용 밖 종류(평지에 적은 철 · 약초)는 0개. 보장 칸(스폰 빈터 · 덩이 · 광물 앵커)은 세지 않음. QA 임시 테스트: 모든 규칙의 채울 %를 0으로 두면 보장 칸 말고는 자원이 하나도 없음"
+    },
+    {
+     "criterion": "첫 도구 · 첫 제작대에 필요한 재료가 시작 섬에서 반드시 나온다 (빈손 시작이 막히지 않는다)",
+     "ok": true,
+     "evidence": "IslandGenerator.starter_deposit: 스폰 빈터에서 한 칸 띄운 동쪽에 나무 3×5, 서쪽에 돌 3×5 덩이를 시드와 상관없이 둠(15칸씩). 가장 비싼 맨손 도구 + 제작대에 드는 재료는 나무 13 · 돌 7이라 이것으로 충분함. test_island_starter.gd(3/3): 레시피 파일에서 필요량을 계산하고, 덩이만으로 충분한지(50 시드), 맨손으로 걸어서 닿는지(200 시드)를 확인. QA 임시 테스트: 400 시드에서 덩이 칸이 모두 평지 · 절벽 아님 · 해당 자원임"
+    },
+    {
+     "criterion": "기존 재생 규칙(시드의 원래 값으로 돌아간다)이 새 자원에도 그대로 맞다",
+     "ok": true,
+     "evidence": "RegrowthConfig.period_of 에 IRON · SULFUR(ore_days)와 HERB(herb_days 3일, regrowth_config.tres)가 들어감. test_regrowth.gd test_regrown_cells_match_the_seed_original 에 철 · 유황 · 약초 칸을 5개씩 추가해, 가장 긴 주기가 지난 뒤 새로 만든 섬의 값과 같은지 비교함. test_periods_order_tree_stone_ore 는 나무<돌<철, 유황=철을 확인. 13/13 통과"
+    }
+   ],
+   "issues": [
+    "(참고) 「설산 둘레 · 화산 둘레」를 그 지형 칸 자체로 해석했다. spec(island-generation.md 「유황은 화산」)과 어긋나지는 않지만, 사람이 「둘레」를 주변 링으로 뜻했다면 ALLOWED_DEPOSITS 를 넓혀야 한다. report 의 why 에 적혀 있음",
+    "(참고) starter_deposit 는 지형을 보지 않고 덩이를 둔다(바다만 제외). 지금은 spawn_flat_radius=8 이 덩이(스폰에서 최대 x 7 · y 2 떨어짐)를 덮어서 늘 평지이지만, starter_patch 를 키우거나 spawn_flat_radius 를 줄이면 화산 위 나무처럼 ALLOWED_DEPOSITS 를 어기는 칸이 생길 수 있다. 두 값 사이에 검사나 경고가 없다",
+    "(참고) test_island_generator.gd 에서 섬 전체 비율 · ratio_reachable · ore_ground_share 테스트를 지웠다. 모두 없어진 기능이거나 test_island_deposits.gd 에서 더 세게 다시 검사하므로 테스트를 약하게 만든 것으로 보지 않는다. 다만 test_fill_zero_leaves_island_empty 에 맞는 새 테스트(모든 규칙 0% → 보장 칸 말고는 없음)가 없다. QA 임시 테스트로는 통과함",
+    "(참고) 예전 세이브의 인벤토리에 있는 \"ore\" 아이템 id 는 옮겨지지 않아 레시피에 못 쓴다. 프로토타입이라 넘어가지만, 세이브 호환이 필요해지면 옮기는 처리가 있어야 한다",
+    "(참고) IslandConfig.deposit_rule(terrain, cliff) 는 cliff=true 이면 terrain 을 보지 않는데, 부르는 쪽이 Terrain.GRASS 를 아무 값으로 넘긴다(IslandGenerator._init, 테스트). API 가 조금 어색하다",
+    "(참고) 약초 재생 주기(3일)는 spec 에 없는 임시 값이다. regrowth_config.gd 주석에 적혀 있음"
+   ],
+   "good": [
+    "종류별 문턱 없이 「칸마다 해시 하나 → 채울 몫 → 누적 몫」으로 골라서 spec 의 비율 모양을 그대로 따르고, 지형 사이에 값이 서로 엮이지 않는다",
+    "허용 표(ALLOWED_DEPOSITS)를 코드 상수로 두어, 설정을 잘못 적어도 광물이 제 지형 밖에 나지 않는다. 이 동작도 테스트로 확인함",
+    "빈손 시작 보장을 확률이 아닌 고정 덩이로 하고, 필요량은 레시피 파일에서 계산해서 레시피가 바뀌어도 테스트가 따라간다",
+    "비율 테스트의 허용 오차를 표본 수에 맞춘 3σ로 잡았다 (고정 2%보다 엄격함)",
+    "IRON 이 예전 ORE 의 enum 값(3)을 이어받아, 저장된 제거 표시와 호환된다",
+    "모든 파일이 300줄 아래, 새 화면 글자는 번역 키(ITEM_IRON_ORE · ITEM_SULFUR · ITEM_HERB)로 한/영에 넣음, guard 통과, 전체 446개 테스트 통과"
+   ],
+   "feedback": ""
+  },
+  "test": "hysics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 123.7 ms (game _ready 104.1 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              63\nTests               446\nPassing Tests       446\nAsserts           29769\nTime              167.083s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-013",
+  "step": "4",
+  "attempt": "1",
+  "title": "G-013 4/4 지형별 자원 — 통과 (시도 1)",
+  "commit": "ad57320"
+ },
+ {
+  "time": "2026-09-17 05:28:23 KST",
+  "epoch": 1789590503,
+  "type": "group_done",
+  "group": "G-013",
+  "title": "G-013 지형 확장 — 산 · 화산 · 설산 · 절벽 — 묶음 완료, main 에 합침"
  }
 ]
