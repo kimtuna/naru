@@ -10,7 +10,7 @@ Godot 4.7 로 만드는 2D 탑다운 생활 시뮬레이션 + 협동 PvE 원정 
 | `decisions.md` | 사람 결정 대기 (git 밖, 대시보드에 올라감) |
 | `prompt.md` · `qa.md` | 구현 세션 · QA 세션이 처음 읽는 지시 |
 | `loop.sh` | 루프 — `start` · `stop` · `status` · `log` |
-| `harness/` | loop.sh 도우미 |
+| `harness/` | loop.sh 도우미 · 세션용 godot(강제 headless) · 금지 명령 차단 · 커서 직접 읽기 검사(guard) · 캡처 도구(shot) |
 | `dashboard/` | 진행 상황 페이지 원본 (gh-pages 로 복사됨) |
 | `game/` | Godot 프로젝트 |
 | `archive/` | 옛 기획서 원본 — 루프는 읽지 않는다 |
