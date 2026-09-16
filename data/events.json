@@ -3304,5 +3304,69 @@
   "type": "group_done",
   "group": "G-013",
   "title": "G-013 지형 확장 — 산 · 화산 · 설산 · 절벽 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-17 05:37:44 KST",
+  "epoch": 1789591064,
+  "report": {
+   "status": "done",
+   "summary": "G-014.1 신발 칸과 스파이크 — 장비 칸 구조 · 끼우기/빼기 · 캐릭터 저장 · 스파이크 레시피",
+   "problem": "장비 시스템이 아직 없다. 신발 칸 하나만 만들되 나중에 다른 부위가 붙을 수 있어야 하고, 스파이크를 끼우고 뺄 수 있어야 하며, 캐릭터 저장에 남고, 스파이크 레시피가 있어야 했다. 가방 화면에는 아직 클릭 조작이 하나도 없어서 게임 안에서 끼울 방법도 새로 필요했다.",
+   "feedback_applied": "",
+   "approach": "game/player/equipment/ 를 새로 만들었다. EquipmentConfig 에 칸 목록(SLOTS = [feet])과 아이템→칸 표(ITEM_SLOTS: spikes→feet)를 두고, Equipment 가 CharacterData.equipment(칸 이름→아이템 또는 null)를 다룬다. equip_from_bag(가방 칸)은 한 개를 빼서 맞는 칸에 끼우고 원래 끼던 것은 가방에 돌려놓는다. unequip(칸)은 가방에 넣는다. 가방이 가득 차 돌려놓을 자리가 없으면 아무것도 바꾸지 않는다(아이템이 사라지지 않게). 가방 칸 하나에서 개수를 빼는 Inventory.remove_at 을 더했다. CharacterData 는 to_dict/from_dict 에 equipment 를 넣었고, equipment 가 없는 옛 저장은 빈 장비로 읽는다. 게임 안에서는 가방 화면(Tab)에 신발 칸 버튼을 붙였다. 비었을 때 누르면 핫바에서 고른 스파이크를 끼우고, 찼을 때 누르면 빼서 가방에 넣는다(키보드 포커스는 잡지 않는다). recipes.json 에 spikes(작업대, 철 주괴 2 + 돌 2, 임시 5초, 가공 2단계)를 더했고, 번역 키 ITEM_SPIKES · EQUIP_FEET 를 한국어·영어로 넣었다. 테스트 12개(test_equipment 9 · test_equipment_view 3)를 더했고 tools/test.sh 458/458 통과, guard 통과.",
+   "why": "부위를 늘릴 때 코드를 고치지 않고 설정 표만 늘리면 되게 '칸 이름 → 아이템' 사전으로 만들었다. 칸마다 필드를 따로 두는 방식(var feet)은 부위가 늘 때마다 저장 코드도 고쳐야 해서 버렸다. 스탯 · 등급 · 세트 효과는 equipment.md 에서 미정이고 이번 단계 밖이라 넣지 않았다. 게임 안에서 끼우는 방법은 '가방 화면의 칸을 누른다'로 정했다. 좌클릭은 손에 든 것의 공격이고 우클릭은 월드 상호작용이라 둘 다 이미 쓰이고, 끌어 옮기기는 가방 옮기기 단계에서 할 일이라서다. 나중에 바꾸기 싼 UI 라 사람에게 묻지 않았다. 스파이크 재료는 기존 철 주괴를 써서 가공 단계 3 이하를 지키고, 수량은 다른 레시피처럼 임시 값이다. 죽을 때 장비를 떨어뜨리는지는 이번 단계 밖이라 건드리지 않았다.",
+   "files": [
+    "game/player/equipment/equipment_config.gd",
+    "game/player/equipment/equipment.gd",
+    "game/player/inventory/inventory.gd",
+    "game/player/player.gd",
+    "game/settings/save/character_data.gd",
+    "game/craft/recipes/recipes.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/ui/hud/inventory_view.gd",
+    "game/ui/hud/inventory_view.tscn",
+    "game/world/game.gd",
+    "game/tests/player/equipment/test_equipment.gd",
+    "game/tests/player/equipment/test_equipment_view.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "캐릭터에 신발 칸이 있고, 스파이크를 끼우고 뺄 수 있다. 캐릭터 저장에 남는다",
+     "ok": true,
+     "evidence": "EquipmentConfig.SLOTS=[feet], ITEM_SLOTS spikes→feet (game/player/equipment/equipment_config.gd). Equipment.equip_from_bag/unequip (equipment.gd) — 가방에서 1개 빠지고 되돌아옴, 가방 가득 차면 실패하고 아이템 보존. CharacterData.to_dict/from_dict 에 equipment 추가, 옛 저장은 빈 장비. 테스트 test_equipment.gd 9개 · test_equipment_view.gd 3개 직접 실행 12/12 통과. QA 임시 테스트(삭제함)로 실제 게임 씬에서 확인: 핫바에서 스파이크 고르고 inventory_view().press_equipment_slot(\"feet\") → character.equipment.feet 저장 → 메인 화면으로 나간 뒤 load_character 에 남음 → 다른 월드 Y 에 들어가도 is_wearing(spikes) 참 · 신발 칸 표시 · 다시 눌러 빼면 가방에 1개. 7/7 통과"
+    },
+    {
+     "criterion": "스파이크 레시피가 있다",
+     "ok": true,
+     "evidence": "game/craft/recipes/recipes.json 에 spikes (workbench, iron_ingot 2 + stone 2, time_temp). test_spikes_have_a_recipe_within_depth 가 RecipeBook.recipe_for · 작업대 존재 · depth 1..MAX_DEPTH · tr(ITEM_SPIKES) 번역을 검사, 통과"
+    }
+   ],
+   "issues": [
+    "(비차단) 신발 칸이 찼을 때 칸을 누르면 언제나 빼기만 한다 — 손에 든 다른 스파이크로 바로 바꿔 끼우는 동작은 UI 에서 불가 (Equipment.equip_from_bag 은 교체를 지원). 스파이크 등급이 생기는 단계에서 필요하면 고려",
+    "(비차단) CharacterData.from_dict 는 equipment 사전을 그대로 복사해 SLOTS 에 없는 칸 이름이나 Dictionary 가 아닌 값도 남긴다. 지금은 Equipment.item 이 Dictionary 만 인정해서 문제는 없음",
+    "(비차단) 죽을 때 장비 처리(떨어뜨림 여부)는 아직 없음 — 이번 단계 밖이라고 report 에 명시됨"
+   ],
+   "good": [
+    "칸 이름 → 아이템 사전 구조라 부위를 SLOTS/ITEM_SLOTS 표만 늘려 붙일 수 있다 (단계 요구 충족)",
+    "가방이 가득 찼을 때 아이템이 사라지거나 복제되지 않도록 사전 검사하고 테스트로 고정했다 (교체 · 가득 참 · 1개 남은 칸 경우)",
+    "옛 저장 호환(equipment 없음 → 빈 장비)을 테스트로 확인",
+    "화면 글자는 번역 키(EQUIP_FEET, ITEM_SPIKES) 한국어·영어 모두 추가, 수치는 기존 레시피 방식(time_temp) 그대로",
+    "기존 테스트 삭제·완화 없음, 전체 458/458 통과, guard 통과, 모든 파일 300줄 이하 (game.gd 272줄)",
+    "report 내용이 실제 diff 와 일치"
+   ],
+   "feedback": ""
+  },
+  "test": "physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 120.1 ms (game _ready 103.6 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              65\nTests               458\nPassing Tests       458\nAsserts           29888\nTime              166.47s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-014",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-014 1/4 신발 칸과 스파이크 — 통과 (시도 1)",
+  "commit": "b58277b"
  }
 ]
