@@ -214,5 +214,11 @@
   "type": "group_done",
   "group": "G-001",
   "title": "G-001 프로젝트 기반 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-16 21:43:32 KST",
+  "epoch": 1789562612,
+  "type": "stop",
+  "title": "루프 종료 — 목록 완료 — list.md 의 할 일을 모두 처리함"
  }
 ]

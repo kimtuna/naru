@@ -1,17 +1,17 @@
 {
- "updated": "2026-09-16 21:42:05 KST",
- "updated_epoch": 1789562525,
+ "updated": "2026-09-16 21:43:32 KST",
+ "updated_epoch": 1789562612,
  "progress": {
   "groups_total": 1,
-  "groups_done": 0,
+  "groups_done": 1,
   "groups_waiting": 0,
   "steps_total": 3,
-  "steps_done": 2
+  "steps_done": 3
  },
- "state": "running",
- "reason": "",
+ "state": "done",
+ "reason": "목록 완료 — list.md 의 할 일을 모두 처리함",
  "started": "2026-09-16 21:40:04",
- "ended": "",
+ "ended": "2026-09-16 21:43:32",
  "resume_at": "",
  "pid": "97434",
  "group": "G-001",
@@ -20,6 +20,6 @@
  "step_total": "3",
  "step_title": "번역 뼈대",
  "attempt": "2",
- "phase": "QA",
+ "phase": "",
  "phase_since": "2026-09-16 21:42:05"
 }
