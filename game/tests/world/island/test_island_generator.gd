@@ -1,5 +1,6 @@
 extends GutTest
 ## G-004 1단계 — 시드로 섬 만들기: 재현 · 스폰 빈터 · 비율 · 광물 지형 · 월드 시드 사용.
+## G-013 1단계부터 광물 지형 = 솟은 지형(산 · 화산 · 설산), 채울 % 는 땅(바다 아닌 칸)에서 센다.
 
 const Terrain := IslandConfig.Terrain
 const Deposit := IslandConfig.Deposit
@@ -7,12 +8,29 @@ const Deposit := IslandConfig.Deposit
 const RATIO_TOLERANCE := 0.02
 
 
-func _count(map: IslandMap, terrain: int) -> Dictionary:
+## 고르는 지형: ALL 전부 · LAND 바다 아닌 곳 · ORE_GROUND 솟은 지형 · 그 밖은 그 지형 하나.
+const ALL := -1
+const LAND := -2
+const ORE_GROUND := -3
+
+
+func _picked(terrain: int, pick: int) -> bool:
+	match pick:
+		ALL:
+			return true
+		LAND:
+			return terrain != Terrain.SEA
+		ORE_GROUND:
+			return IslandConfig.is_elevated(terrain)
+	return terrain == pick
+
+
+func _count(map: IslandMap, pick: int) -> Dictionary:
 	var counts := {"cells": 0, Deposit.NONE: 0, Deposit.TREE: 0, Deposit.STONE: 0, Deposit.ORE: 0}
 	for y in map.size:
 		for x in map.size:
 			var cell := Vector2i(x, y)
-			if terrain >= 0 and map.terrain_at(cell) != terrain:
+			if not _picked(map.terrain_at(cell), pick):
 				continue
 			counts["cells"] += 1
 			counts[map.deposit_at(cell)] += 1
@@ -109,7 +127,7 @@ func test_ratio_follows_changed_config() -> void:
 	cfg.tree_weight = 1.0
 	cfg.stone_weight = 4.0
 	cfg.ore_weight = 5.0
-	cfg.ore_ground_percent = 40.0  # 채울 55% × 광물 몫 1/2 = 27.5% 보다 넓어야 맞출 수 있다
+	cfg.elevated_percent = 40.0  # 채울 55% × 광물 몫 1/2 = 27.5% 보다 넓어야 맞출 수 있다
 	for seed_value in [31337, 99999, 2026]:
 		_assert_ratio(IslandGenerator.generate(seed_value, cfg), cfg)
 
@@ -117,7 +135,7 @@ func test_ratio_follows_changed_config() -> void:
 func test_fill_zero_leaves_island_empty() -> void:
 	var cfg: IslandConfig = IslandConfig.load_default().duplicate()
 	cfg.fill_percent = 0.0
-	cfg.ore_patch_radius = 0
+	cfg.peak_patch_radius = 0
 	var gen := IslandGenerator.new(5, cfg)
 	for i in 500:
 		var c := Vector2i((i * 53) % 256, (i * 17) % 256)
@@ -129,8 +147,8 @@ func test_ore_ground_area_is_same_share_for_every_seed() -> void:
 	var cfg := IslandConfig.load_default()
 	for i in 50:
 		var gen := IslandGenerator.new(i * 65537 - 1234567, cfg)
-		# 얼룩 20% (표본 4096칸이라 819/4096) + 보장 원 (반지름 8 ≈ 0.3%, 얼룩과 겹칠 수 있다).
-		assert_between(gen.ore_ground_share(), 819.0 / 4096.0, 0.21)
+		# 땅의 20% — 보장 봉우리까지 넣어 센 값이다 (블록 하나 = 땅의 1/9000 쯤).
+		assert_almost_eq(gen.ore_ground_share(), 0.2, 0.001)
 		assert_true(gen.ratio_reachable())
 
 
@@ -140,16 +158,20 @@ func test_too_narrow_ore_ground_is_reported() -> void:
 	cfg.tree_weight = 1.0
 	cfg.stone_weight = 4.0
 	cfg.ore_weight = 5.0
-	cfg.ore_ground_percent = 10.0
+	cfg.elevated_percent = 10.0
 	assert_false(IslandGenerator.new(1, cfg).ratio_reachable(), "10% 땅에 27.5% 광물은 못 넣는다")
-	cfg.ore_ground_percent = 30.0
+	cfg.elevated_percent = 30.0
 	assert_true(IslandGenerator.new(1, cfg).ratio_reachable())
 
 
-## 섬 전체: 채운 % 와 나무:돌:광물 비 (설정 비 그대로). 광물 지형 밖 광물은 0.
+## 땅 전체: 채운 % 와 나무:돌:광물 비 (설정 비 그대로). 광물 지형 밖 광물 · 바다의 자원은 0.
 func _assert_ratio(map: IslandMap, cfg: IslandConfig) -> void:
-	var all := _count(map, -1)
-	assert_eq(all["cells"], cfg.size * cfg.size, "섬 전체를 센다")
+	var everything := _count(map, ALL)
+	assert_eq(everything["cells"], cfg.size * cfg.size, "섬 전체를 센다")
+	var all := _count(map, LAND)
+	assert_gt(all["cells"], cfg.size * cfg.size / 3, "땅이 넉넉하다")
+	for kind in [Deposit.TREE, Deposit.STONE, Deposit.ORE]:
+		assert_eq(everything[kind], all[kind], "seed %d 바다에는 자원이 없다" % map.world_seed)
 	var filled: int = all[Deposit.TREE] + all[Deposit.STONE] + all[Deposit.ORE]
 	assert_almost_eq(float(filled) / all["cells"], cfg.fill_percent / 100.0, RATIO_TOLERANCE,
 		"seed %d 채운 %%" % map.world_seed)
@@ -159,7 +181,7 @@ func _assert_ratio(map: IslandMap, cfg: IslandConfig) -> void:
 		assert_almost_eq(_share(all, kind[0], tso), kind[1] / total, RATIO_TOLERANCE,
 			"seed %d 섬 전체의 비 (종류 %d)" % [map.world_seed, kind[0]])
 
-	var ore_ground := _count(map, Terrain.ORE_GROUND)
+	var ore_ground := _count(map, ORE_GROUND)
 	assert_gt(ore_ground["cells"], 2000, "광물 지형을 셀 만큼 넓다")
 	assert_eq(ore_ground[Deposit.ORE], all[Deposit.ORE], "seed %d 광물은 모두 광물 지형에" % map.world_seed)
 
@@ -175,7 +197,7 @@ func test_ore_only_on_ore_ground() -> void:
 				var c := Vector2i(x, y)
 				if map.deposit_at(c) == Deposit.ORE:
 					ore += 1
-					if map.terrain_at(c) != Terrain.ORE_GROUND:
+					if not IslandConfig.is_elevated(map.terrain_at(c)):
 						fail_test("seed %d %s 광물 지형 밖 광물" % [seed_value, c])
 						return
 		assert_gt(ore, 0, "seed %d 에 광물이 있다" % seed_value)
@@ -183,13 +205,13 @@ func test_ore_only_on_ore_ground() -> void:
 
 func test_every_island_has_ore_ground_with_ore() -> void:
 	var cfg: IslandConfig = IslandConfig.load_default().duplicate()
-	cfg.ore_ground_percent = 0.0  # 얼룩이 하나도 안 생겨도 보장은 남는다
+	cfg.elevated_percent = 0.0  # 얼룩이 하나도 안 솟아도 보장은 남는다
 	for i in 300:
 		var seed_value := i * 104729 - 5000
 		var gen := IslandGenerator.new(seed_value, cfg)
 		var a := gen.ore_anchor()
 		var inside := a.x >= 0 and a.y >= 0 and a.x < cfg.size and a.y < cfg.size
-		if not inside or gen.terrain_at(a.x, a.y) != Terrain.ORE_GROUND or gen.deposit_at(a.x, a.y) != Deposit.ORE:
+		if not inside or gen.terrain_at(a.x, a.y) != Terrain.MOUNTAIN or gen.deposit_at(a.x, a.y) != Deposit.ORE:
 			fail_test("seed %d 에 광물 지형 · 광물이 없다 (%s)" % [seed_value, a])
 			return
 		if gen.in_spawn_clear(a):
@@ -200,9 +222,10 @@ func test_every_island_has_ore_ground_with_ore() -> void:
 
 func test_ore_ground_exists_on_full_map_without_noise() -> void:
 	var cfg: IslandConfig = IslandConfig.load_default().duplicate()
-	cfg.ore_ground_percent = 0.0
+	cfg.elevated_percent = 0.0
 	var map := IslandGenerator.generate(2026, cfg)
-	var counts := _count(map, Terrain.ORE_GROUND)
+	var counts := _count(map, ORE_GROUND)
 	assert_gt(counts["cells"], 100)
 	assert_gt(counts[Deposit.ORE], 0)
-	assert_eq(_count(map, Terrain.GRASS)[Deposit.ORE], 0)
+	for flat in [Terrain.GRASS, Terrain.FOREST, Terrain.BEACH, Terrain.SEA]:
+		assert_eq(_count(map, flat)[Deposit.ORE], 0, "지형 %d 에 광물" % flat)

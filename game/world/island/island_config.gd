@@ -2,11 +2,12 @@ class_name IslandConfig
 extends Resource
 ## 섬 생성 수치 — 한 곳에 모은다 (값은 world/island/island_config.tres).
 ## spec/03_world/island-generation.md: 배치는 「채울 %」 하나 + 종류 사이의 비. 광물은 지형이 정한다.
-## 지형 목록 · 광물-지형 대응은 spec 미정 — 프로토타입 값이다 (풀밭 + 광물 지형 1종).
+## 지형 종류 · 높이 규칙은 spec/03_world/terrain.md. 광물-지형 대응은 아직 프로토타입 — 솟은 지형(산 · 화산 · 설산)에만 광물.
 
 const DEFAULT_PATH := "res://world/island/island_config.tres"
 
-enum Terrain { GRASS, ORE_GROUND }
+## GRASS 가 평지. MOUNTAIN · VOLCANO · SNOW 가 솟은 지형이다.
+enum Terrain { GRASS, FOREST, MOUNTAIN, VOLCANO, SNOW, BEACH, SEA }
 enum Deposit { NONE, TREE, STONE, ORE }
 
 ## 섬 한 변의 타일 수.
@@ -30,16 +31,40 @@ enum Deposit { NONE, TREE, STONE, ORE }
 @export var stone_weight := 2.0
 @export var ore_weight := 1.0
 
-## 광물 지형 얼룩 — 격자 한 칸의 타일 수와, 섬에서 얼룩이 덮는 %.
-## 문턱은 시드마다 이 %가 되게 정한다 — 시드에 따라 광물 지형이 좁아져 비율을 못 맞추는 일이 없다.
+@export_group("Terrain")
+## 지형을 정하는 가장 작은 네모 한 변 (칸). 2 이상이면 어느 칸이든 같은 지형 이웃이 3칸 이상이다.
+@export_range(2, 8) var terrain_block := 2
+## 섬(바다 아닌 곳)이 지도에서 덮는 %.
+@export_range(0.0, 100.0) var land_percent := 55.0
+## 지도 가장자리에서 이 칸 수 안은 반드시 바다.
+@export var sea_margin := 12
+## 바다에서 이 블록 수 안의 땅이 해안이다.
+@export_range(1, 8) var beach_width := 1
+## 섬 모양 얼룩 — 큰 얼룩 한 변 · 잔 얼룩 한 변 (칸) · 잔 얼룩 몫 · 가운데에서 멀어질수록 깎는 세기.
+@export var shape_noise_cell := 64
+@export var shape_detail_cell := 16
+@export_range(0.0, 1.0) var shape_detail := 0.35
+@export var shape_falloff := 1.2
+## 솟은 지형 · 숲 얼룩 한 변 (칸).
+@export var relief_noise_cell := 24
+@export var forest_noise_cell := 20
+## 땅 가운데 솟은 지형(산 · 화산 · 설산)이 덮는 %. 광물은 여기에만 나므로 광물 지형 넓이이기도 하다.
 ## 채울 % × 광물 몫 보다 좁으면 비율을 맞출 수 없다 (ratio_reachable).
-@export var ore_noise_cell := 32
-@export_range(0.0, 100.0) var ore_ground_percent := 20.0
-## 얼룩 넓이를 잴 때 이 간격마다 한 칸씩 본다 (얼룩이 부드러워 전체를 셀 필요가 없다).
-@export var ore_sample_step := 4
-## 반드시 있는 광물 지형 — 스폰에서 이만큼 떨어진 곳에 이 반지름의 원.
-@export var ore_patch_distance := 24
-@export var ore_patch_radius := 8
+@export_range(0.0, 100.0) var elevated_percent := 20.0
+## 솟은 덩어리 하나가 어느 지형이 될지의 비 — 산 : 화산 : 설산.
+@export var mountain_weight := 2.0
+@export var volcano_weight := 1.0
+@export var snow_weight := 1.0
+## 땅 가운데 숲이 덮는 %.
+@export_range(0.0, 100.0) var forest_percent := 25.0
+## 높이 단 수 — 솟은 지형 가장자리가 1, 안으로 한 블록마다 1씩, 이 값까지. 개인 섬 산은 낮다.
+@export_range(1, 16) var max_height := 3
+## 스폰 둘레 이 칸 수 안은 평지(풀밭).
+@export var spawn_flat_radius := 8
+## 반드시 있는 산 · 화산 · 설산 — 스폰에서 이만큼 떨어진 곳에 이 반지름(칸)의 원 하나씩.
+@export var peak_patch_distance := 24
+@export var peak_patch_radius := 8
+@export_group("")
 
 
 static func load_default() -> IslandConfig:
@@ -68,3 +93,12 @@ func ore_share() -> float:
 func tree_share_of_rest() -> float:
 	var rest := maxf(tree_weight, 0.0) + maxf(stone_weight, 0.0)
 	return maxf(tree_weight, 0.0) / rest if rest > 0.0 else 0.0
+
+
+## 솟은 지형(산 · 화산 · 설산)인가. 광물은 여기에만 난다.
+static func is_elevated(terrain: int) -> bool:
+	return terrain == Terrain.MOUNTAIN or terrain == Terrain.VOLCANO or terrain == Terrain.SNOW
+
+
+func elevated_weights() -> Array[float]:
+	return [maxf(mountain_weight, 0.0), maxf(volcano_weight, 0.0), maxf(snow_weight, 0.0)]

@@ -88,11 +88,13 @@ func test_regrown_cells_match_the_seed_original() -> void:
 
 func test_regrow_restores_cells_in_chunks_not_built_yet() -> void:
 	var full := IslandGenerator.generate(SEED)
-	# 스폰에서 먼 덩어리의 나무 — 아직 안 만들었다.
+	# 스폰에서 먼 덩어리의 나무 — 아직 안 만들었다. (섬 가장자리는 바다라 덩어리 거리로 찾는다)
 	var far := Vector2i(-1, -1)
-	for y in range(5, 20):
-		for x in range(5, 20):
-			if full.deposit_at(Vector2i(x, y)) == Deposit.TREE:
+	var home := full.chunk_of(full.spawn())
+	for y in full.size:
+		for x in full.size:
+			var d := (full.chunk_of(Vector2i(x, y)) - home).abs()
+			if maxi(d.x, d.y) >= 3 and full.deposit_at(Vector2i(x, y)) == Deposit.TREE:
 				far = Vector2i(x, y)
 				break
 		if far.x >= 0:

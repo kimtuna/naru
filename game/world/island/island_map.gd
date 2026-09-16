@@ -1,6 +1,6 @@
 class_name IslandMap
 extends RefCounted
-## 섬 — 칸마다 지형과 자원. 값은 IslandGenerator 의 해시에서 온다.
+## 섬 — 칸마다 지형 · 높이 · 자원. 값은 IslandGenerator 의 해시에서 온다.
 ## 덩어리(chunk_size × chunk_size) 단위로 처음 읽을 때 만든다 — 게임은 보이는 곳만 만들어 빨리 들어간다.
 ## 어느 순서로 만들어도 값이 같다 (칸 값이 좌표의 해시라서).
 ## 채취로 없앤 칸은 표시(removed)로 남긴다 — 저장은 이 표시만 한다. 재생은 표시를 지우는 것이다.
@@ -14,6 +14,7 @@ var chunk_size: int
 var generator: IslandGenerator
 var _terrain := PackedByteArray()
 var _deposit := PackedByteArray()
+var _height := PackedByteArray()
 var _chunk_count := 0
 var _built := PackedByteArray()
 var _built_total := 0
@@ -37,6 +38,7 @@ func _init(gen: IslandGenerator, lazy := false, removed_cells: Variant = null,
 	chunk_size = maxi(gen.config.chunk_size, 1)
 	_terrain.resize(size * size)
 	_deposit.resize(size * size)
+	_height.resize(size * size)
 	_chunk_count = ceili(float(size) / chunk_size)
 	_built.resize(_chunk_count * _chunk_count)
 	if not lazy:
@@ -87,6 +89,7 @@ func ensure_chunk(chunk: Vector2i) -> void:
 		for x in range(rect.position.x, rect.end.x):
 			var t := generator.terrain_at(x, y)
 			_terrain[y * size + x] = t
+			_height[y * size + x] = generator.height_at(x, y)
 			var d := generator.deposit_on(x, y, t)
 			if removed.has(Vector2i(x, y)):
 				d = IslandConfig.Deposit.NONE
@@ -104,6 +107,12 @@ func build_all() -> void:
 func terrain_at(cell: Vector2i) -> IslandConfig.Terrain:
 	ensure_chunk(chunk_of(cell))
 	return _terrain[cell.y * size + cell.x] as IslandConfig.Terrain
+
+
+## 높이 단 (0 = 평지 높이). 이웃 칸끼리 1 넘게 다르지 않다.
+func height_at(cell: Vector2i) -> int:
+	ensure_chunk(chunk_of(cell))
+	return _height[cell.y * size + cell.x]
 
 
 func deposit_at(cell: Vector2i) -> IslandConfig.Deposit:
@@ -157,6 +166,11 @@ func is_blocked(cell: Vector2i) -> bool:
 func terrain_bytes() -> PackedByteArray:
 	build_all()
 	return _terrain
+
+
+func height_bytes() -> PackedByteArray:
+	build_all()
+	return _height
 
 
 func deposit_bytes() -> PackedByteArray:
