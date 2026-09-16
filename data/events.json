@@ -3149,5 +3149,59 @@
   "attempt": "1",
   "title": "G-013 2/4 절벽 — 통과 (시도 1)",
   "commit": "39feecf"
+ },
+ {
+  "time": "2026-09-17 05:11:10 KST",
+  "epoch": 1789589470,
+  "report": {
+   "status": "done",
+   "summary": "G-013.3 경사 이동 속력 — 오르막 0.7배 · 내리막 1.3배 (MovementTuning 한 곳), 섬 높이로 경사를 읽어 플레이어 속력에 곱함",
+   "problem": "플레이어 속력이 지형 높이와 상관없이 늘 같았다. 섬 높이는 2×2 블록 단위 계단(0,0,1,1,2,2,3,3)이라, 지금 칸과 바로 앞 칸만 비교하면 같은 높이 블록 안에서 오르막·평지가 번갈아 나와 속력이 끊긴다. 대각선 정규화도 지켜야 했다.",
+   "feedback_applied": "",
+   "approach": "MovementTuning 에 uphill_multiplier(0.7) · downhill_multiplier(1.3) 와 slope_multiplier(경사) 를 더했다. IslandView.slope_along(pos, dir) 은 이동 방향 앞뒤로 블록 한 변 × 0.75 만큼 떨어진 두 칸의 높이를 비교해 +1/0/-1 을 돌려준다. Player 에 slope Callable 을 두고(게임 씬이 island_view().slope_along 을 꽂는다) move_speed(dir) 에 배율을 곱한다. 방향은 여전히 InputActions.move_vector() 의 정규화된 벡터라 대각선 속력은 직선과 같다. 테스트(test_island_slope.gd): 가짜 경사를 준 플레이어에서 입력을 흉내 내 오르막<평지<내리막 · 대각선 정규화 · 튜닝 값 변경 반영을 확인하고, 실제 시드 섬에서 8방향마다 걸을 수 있는 경사 칸을 찾아 오르내린 속력을 스폰(평지) 속력과 비교한다. 전체 444개 테스트 · guard 통과.",
+   "why": "경사를 앞뒤 두 점의 높이 차로 보면 계단 한가운데에서도 끊기지 않는다 — 앞뒤 사이 거리(1.5블록)가 블록 한 변보다 길고, 대각선이어도 한 축에 1.06블록이 걸려 역시 끊기지 않는다. 버린 대안: 지금 칸 대 앞 칸 비교(블록 안에서 오르막·평지가 깜빡임), 기울기 크기에 비례한 배율(높이가 한 단씩만 바뀌어 크기가 늘 같으니 이득이 없고 값이 늘어난다). Player 가 섬을 직접 알지 않게 blocked 처럼 Callable 로 받아 혼자 띄운 플레이어·기존 테스트는 평지로 그대로 돈다. 배율 0.7/1.3 은 임시 값이다 — 사람이 플레이해 보고 movement_tuning.tres 에서 바꾸면 된다. 경사 끝 1.5칸 앞부터 느려지고, 절벽 쪽으로 걸어도 절벽 앞에서 조금 느려지는데, 절벽은 어차피 막혀 있어 그대로 두었다.",
+   "files": [
+    "game/player/movement_tuning.gd",
+    "game/player/movement_tuning.tres",
+    "game/player/player.gd",
+    "game/world/island/island_view.gd",
+    "game/world/game.gd",
+    "game/tests/world/island/test_island_slope.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "오르막 이동 속력 < 평지 < 내리막 (입력 흉내 테스트)",
+     "ok": true,
+     "evidence": "game/tests/world/island/test_island_slope.gd — test_uphill_slower_downhill_faster_than_flat(가짜 경사 Callable, Input.action_press 로 실제 물리 프레임 이동)와 test_real_island_slope_speeds(시드 섬에서 8방향마다 실제 경사 칸을 찾아 높이가 오르는지 확인한 뒤 걸어서 up<flat<down, up=base×0.7, down=base×1.3 확인). game.gd 의 player().slope 연결이 없으면 실제 섬 테스트가 실패하도록 짜여 있음. QA가 단독 실행 5/5 통과, test.log 전체 444/444 통과"
+    },
+    {
+     "criterion": "배율 값은 한 곳에 있고, 대각선 속력 정규화 규칙은 그대로 지켜진다",
+     "ok": true,
+     "evidence": "배율은 game/player/movement_tuning.gd 의 uphill_multiplier/downhill_multiplier + movement_tuning.tres 에만 있음(diff 확인, test_multipliers_live_in_tuning_resource 가 다른 파일에서 값 설정 금지 검사, test_changing_tuning_changes_slope_speed 가 리소스 값 변경이 실제 속력에 반영됨을 확인). 방향은 여전히 InputActions.move_vector() 정규화 벡터, move_speed(dir) 는 방향 무관 스칼라 — test_diagonal_on_slope_keeps_speed_normalized 와 실제 섬 테스트의 대각선=직선 오르막 속력 assert 로 확인"
+    }
+   ],
+   "issues": [
+    "island_view.slope_along 은 앞뒤 ±0.75블록 두 점의 높이만 비교하므로, 고원 위 평지에서 절벽/경사 가장자리를 막 벗어나 멀어지는 동안(뒤쪽 점이 아래 단) 오르막으로 읽혀 약 0.75블록 동안 느려진다. report 에 절벽 쪽 접근 시 감속은 적혀 있으나 이 경우는 없다. 기준 밖이라 판정에는 반영하지 않음 — 사람이 플레이해 보고 거슬리면 조정",
+    "Player.move_speed(dir := Vector2.ZERO) 의 기본 인자 때문에 인자 없이 부르면 경사가 빠진 속력이 나온다. 지금은 _physics_process 한 곳만 부르므로 문제 없음"
+   ],
+   "good": [
+    "Player 가 섬을 직접 모르게 Callable 로 경사를 주입해 기존 테스트·단독 플레이어는 평지로 그대로 동작",
+    "블록 단위 계단 높이에서 속력이 깜빡이지 않도록 앞뒤 두 점 비교를 쓰고, 대각선에서도 끊기지 않는 거리 조건을 주석으로 남김",
+    "실제 시드 섬에서 8방향 모두 경사를 찾아 높이 상승까지 검증하는 테스트 — 연결 누락을 잡을 수 있음",
+    "기존 테스트 수정·삭제 없음, 파일 모두 300줄 이하, 화면 글자 추가 없음, 4단계(지형별 자원) 기능 침범 없음"
+   ],
+   "feedback": ""
+  },
+  "test": "physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 121.3 ms (game _ready 103.6 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              61\nTests               444\nPassing Tests       444\nAsserts           25664\nTime              152.15s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-013",
+  "step": "3",
+  "attempt": "1",
+  "title": "G-013 3/4 경사 이동 속도 — 통과 (시도 1)",
+  "commit": "05be161"
  }
 ]
