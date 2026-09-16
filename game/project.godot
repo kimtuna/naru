@@ -19,3 +19,8 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://i18n/ko.po", "res://i18n/en.po")
+locale/fallback="en"
