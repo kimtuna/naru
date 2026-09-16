@@ -1409,5 +1409,71 @@
   "attempt": "2",
   "title": "G-005 1/2 하루 20분 시계 — 통과 (시도 2)",
   "commit": "5540c8d"
+ },
+ {
+  "time": "2026-09-16 23:50:40 KST",
+  "epoch": 1789570240,
+  "report": {
+   "status": "done",
+   "summary": "G-005.2 밤과 반경 조명 — 밤이면 월드가 어두워지고, 램프 자리 광원이 제 반경만 되돌린다",
+   "problem": "밤에 화면을 어둡게 하되 밝기 값은 한 곳에 두고, 광원(램프 자리)을 놓을 수 있으며 광원 반경 밖의 밝기는 광원이 없을 때와 같아야 했다. 헤드리스라 실제 픽셀을 읽을 수 없어서, 처음 쓴 GradientTexture2D 는 get_image() 가 null 이라 그린 원이 반경 안에만 있는지 검사하지 못했다.",
+   "feedback_applied": "",
+   "approach": "world/lighting/ 에 LightingConfig(.tres: 낮 밝기 1.0 · 밤 밝기 0.3 · 램프 반경 96px)와 Lighting 노드를 두었다. Lighting 은 CanvasModulate 로 월드 캔버스만 어둡게 하고(HUD 는 CanvasLayer 라 그대로), WorldClock.night_changed 를 받아 다시 맞춘다. add_light(pos) 는 LightSource(PointLight2D, ADD 모드)를 놓는다. 광원 그림은 CPU 에서 지름 2×반경 이미지로 직접 만들어(가운데 1 → 반경에서 0, 밖은 0) 테스트가 그린 그대로 읽는다. brightness_at(pos) = 어둠 + 반경 안 선형 감쇠 × 세기 로 같은 규칙을 계산하고, 테스트는 이 값과 이미지 픽셀이 일치하는지, 반경 밖은 광원 유무와 값이 정확히 같은지, 모서리 픽셀이 0 인지 검사한다. 광원 세기는 1 − 현재 어둠이라 밤에 가운데가 딱 원래 밝기로 돌아오고 낮에는 0 이다. GameScene 에 Lighting 노드를 넣고 clock 과 연결했다.",
+   "why": "spec(lighting.md)이 '어둠은 그대로 두고 그 위에 반경만 되돌린다'라고 하므로 Godot 표준인 CanvasModulate + 가산 PointLight2D 가 규칙과 그대로 맞는다. 셰이더로 화면 전체를 다시 그리는 방식은 헤드리스에서 검증이 더 어렵고 HUD 분리도 따로 해야 해서 버렸다. GradientTexture2D 는 헤드리스에서 이미지를 못 읽어 CPU Image → ImageTexture 로 바꿨다. 밤 밝기 0.3 · 반경 96px(대략 몇 칸)은 spec 미정이라 임시 값으로 설정 파일 한 곳에 두었다 — 나중에 바꾸기 싸다. 낮↔밤 전환은 지금은 즉시 바뀐다(점진 전환은 이번 기준 밖).",
+   "files": [
+    "game/world/lighting/lighting_config.gd",
+    "game/world/lighting/lighting_config.tres",
+    "game/world/lighting/lighting.gd",
+    "game/world/lighting/light_source.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/world/lighting/test_lighting.gd",
+    "game/tests/world/lighting/test_lighting_game.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "밤이 되면 화면이 어두워진다. 밝기 값은 한 곳에 있다",
+     "ok": true,
+     "evidence": "game/world/lighting/lighting.gd refresh() 가 CanvasModulate(Dark) 색을 ambient() 로 맞추고 WorldClock.night_changed 에 연결됨. 밝기 수치는 game/world/lighting/lighting_config.tres(day 1.0 · night 0.3 · lamp_radius 96) 한 곳. test_lighting.gd 의 test_screen_darkens_when_night_comes / test_screen_brightens_again_in_the_morning / test_night_brightness_comes_from_config, test_lighting_game.gd 의 test_game_darkens_at_night(게임 씬에서 월드 캔버스는 어두워지고 HUD 캔버스는 다름) 통과. tools/test.sh 직접 실행 213/213 통과. 임시 씬을 harness/shot.sh 로 렌더링해 보니 광원 없는 곳 픽셀이 0.298(= 0.3) — 실제로 어두워짐."
+    },
+    {
+     "criterion": "광원 하나(램프 자리)를 둘 수 있고, 광원 반경 밖의 밝기는 광원이 없을 때와 같다",
+     "ok": true,
+     "evidence": "Lighting.add_light(pos, radius) 가 LightSource(PointLight2D, BLEND_MODE_ADD, CPU 로 만든 방사형 텍스처, 반경 밖 0)를 둔다. test_light_can_be_placed / test_outside_radius_is_same_as_without_light / test_light_texture_covers_only_the_radius(모서리 픽셀 0) / test_drawn_light_matches_brightness_model / test_game_lamp_only_lights_its_radius 통과. 직접 확인: 흰 배경 + 밤 + (300,300) 램프(반경 96) 임시 씬을 렌더링해 픽셀을 읽음 — 중심 0.996, 40px 0.706(모델 0.708), 90px 0.337, 97px · 120px · 300px · (10,10) · 위쪽 97px 모두 0.298 로 광원 없는 곳과 같음. 임시 파일은 지웠고 git status 에 흔적 없음."
+    }
+   ],
+   "issues": [
+    "light_source.gd:7 `var radius := 96.0` 이 lighting_config.tres 의 lamp_radius 값을 한 번 더 적는다. add_light 는 항상 반경을 넘기므로 동작엔 문제없지만 수치가 두 곳에 있다 — 기본값을 0 으로 두거나 config 에서 읽게 하면 깔끔하다 (통과에 반영 안 함)",
+    "Lighting.setup() 을 두 번 부르면 night_changed 에 람다가 중복 연결된다 (지금은 한 번만 불러 문제 없음)",
+    "놓은 광원은 저장되지 않는다 — 램프 아이템/설치가 생길 단계에서 다뤄야 한다 (이번 기준 밖)",
+    "brightness_at() 은 렌더링과 따로 계산하는 모델이다. 헤드리스에서 픽셀을 못 읽어 이미지-모델 일치 테스트로 이었고, QA 렌더링으로 일치를 확인했다"
+   ],
+   "good": [
+    "CanvasModulate + 가산 PointLight2D 조합으로 spec(lighting.md) '어둠은 그대로 두고 반경만 되돌린다' 를 그대로 구현 — 실제 렌더 결과가 모델과 소수 둘째 자리까지 맞음",
+    "광원 세기 = 1 − 어둠 이라 밤에 램프 중심이 원래 밝기로 돌아오고 낮에는 아무것도 더하지 않음",
+    "GradientTexture2D 대신 CPU Image 로 텍스처를 만들어 테스트가 그린 그림 자체를 검사할 수 있게 함",
+    "HUD(CanvasLayer)가 어두워지지 않는 것까지 게임 씬 테스트로 확인",
+    "기존 테스트 변경 없음, 파일 모두 300줄 이하, 화면 글자 없음, report 내용이 실제 diff 와 일치"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 24.2 ms (game _ready 19.5 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              31\nTests               213\nPassing Tests       213\nAsserts            9695\nTime              38.696s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-005",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-005 2/2 밤과 반경 조명 — 통과 (시도 1)",
+  "commit": "7b25c5c"
+ },
+ {
+  "time": "2026-09-16 23:50:45 KST",
+  "epoch": 1789570245,
+  "type": "group_done",
+  "group": "G-005",
+  "title": "G-005 시간 — 묶음 완료, main 에 합침"
  }
 ]
