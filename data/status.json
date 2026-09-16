@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 22:41:13 KST",
- "updated_epoch": 1789566073,
+ "updated": "2026-09-16 22:43:13 KST",
+ "updated_epoch": 1789566193,
  "progress": {
   "groups_total": 9,
   "groups_done": 3,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 12
+  "steps_done": 13
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-004",
  "group_title": "섬 · 자원",
- "step": "1",
+ "step": "2",
  "step_total": "5",
- "step_title": "시드로 섬 만들기",
- "attempt": "2",
- "phase": "QA",
- "phase_since": "2026-09-16 22:41:13"
+ "step_title": "섬을 그리고 걸어 다니기",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-16 22:43:13"
 }

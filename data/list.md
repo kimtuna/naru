@@ -81,7 +81,7 @@ Claude 루프 세션은 이 파일을 읽지 않는다 — `loop.sh` 가 지금 
 ## [ ] G-004 섬 · 자원
 - spec: spec/03_world/island-generation.md, spec/03_world/resources-regrowth.md, spec/02_player/pickup.md, spec/04_life/logging.md, spec/04_life/mining.md, spec/04_life/gathering.md
 - 프로토타입 자원은 나무 · 돌 · 광물 1종. 지형은 최소 2종이고 그중 하나가 광물 지형
-- [ ] 1. 시드로 섬 만들기
+- [x] 1. 시드로 섬 만들기
   - 기준: 같은 시드로 두 번 만들면 모든 칸이 같다
   - 기준: 어떤 시드든 스폰 둘레 7×7 에 장애물이 없다
   - 기준: 넓은 영역에서 센 종류별 개수의 비가 설정한 비율에 가깝다. 비율은 「채울 %」 하나와 「종류 사이의 비」로 정한다
