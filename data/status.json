@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 02:42:40 KST",
- "updated_epoch": 1789580560,
+ "updated": "2026-09-17 02:46:59 KST",
+ "updated_epoch": 1789580819,
  "progress": {
   "groups_total": 14,
-  "groups_done": 9,
+  "groups_done": 10,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 28
+  "steps_done": 29
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-007",
- "group_title": "농사",
- "step": "2",
- "step_total": "2",
- "step_title": "심기 · 물 주기 · 성장 · 수확",
+ "group": "G-008",
+ "group_title": "보급",
+ "step": "1",
+ "step_total": "1",
+ "step_title": "버프 음식 1종",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 02:42:40"
+ "phase": "구현",
+ "phase_since": "2026-09-17 02:46:59"
 }
