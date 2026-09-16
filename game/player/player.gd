@@ -7,6 +7,9 @@ extends CharacterBody2D
 ## 비워 두면 movement_tuning.tres 를 쓴다.
 @export var tuning: MovementTuning
 
+## 핫바 — 숫자키로 칸을 고르고, 고른 칸의 아이템이 손에 든 것이다.
+## 게임 씬이 캐릭터의 핫바로 바꿔 끼운다. 혼자 띄우면 새 캐릭터(빈손)의 핫바.
+var hotbar := Hotbar.new()
 ## 바라보는 방향 (길이 1). 커서가 캐릭터 한가운데에 있으면 앞서 보던 방향을 그대로 둔다.
 var facing := Vector2.RIGHT
 
@@ -28,6 +31,17 @@ func update_facing() -> void:
 	if not to_pointer.is_zero_approx():
 		facing = to_pointer.normalized()
 	%Aim.rotation = facing.angle()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	var slot := InputActions.hotbar_slot_pressed(event)
+	if slot > 0 and hotbar.select(slot):
+		get_viewport().set_input_as_handled()
+
+
+## 손에 든 것 — 핫바에서 고른 칸의 아이템. 빈손이면 null.
+func held_item() -> Variant:
+	return hotbar.held_item()
 
 
 func camera() -> Camera2D:

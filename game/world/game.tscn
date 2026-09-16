@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://world/game.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://ui/hud/hotbar_view.tscn" id="3"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
@@ -48,3 +49,6 @@ auto_translate_mode = 2
 offset_left = 20.0
 offset_top = 110.0
 text = "GAME_EXIT_HINT"
+
+[node name="Hotbar" parent="Hud" instance=ExtResource("3")]
+unique_name_in_owner = true
