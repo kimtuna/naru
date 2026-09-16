@@ -2933,5 +2933,70 @@
   "attempt": "1",
   "title": "G-009 5/6 총과 투사체 — 통과 (시도 1)",
   "commit": "3c0a1b0"
+ },
+ {
+  "time": "2026-09-17 04:20:45 KST",
+  "epoch": 1789586445,
+  "report": {
+   "status": "done",
+   "summary": "G-009.6 몹 기본 AI — 발견하면 쫓아와 공격, 코드로 자리·마릿수를 정해 떼로 부르기",
+   "problem": "지금까지 몹(Mob)은 체력만 있고 움직이지 않았다. 원정 「몰려오는 적」의 바탕으로 ① 플레이어를 발견하면 쫓아와 때리는 기본 AI 와 ② 코드에서 스폰 자리와 수를 정해 떼로 부르는 길이 필요했다. 테스트 중 부딪힌 문제: 섬에 자원이 빽빽해 몹이 곧장 다가올 만큼 트인 자리(놓침 거리 144px ≈ 반경 11칸)를 찾지 못했다.",
+   "feedback_applied": "",
+   "approach": "① combat/mob_ai/mob_config.gd(.tres) 에 AI 수치(발견 96px · 놓침 144px · 속력 50 · 공격 거리 16 · 피해 5 · 간격 1초 · 떼 간격 16px)를 모았다. ② Mob 에 IDLE/CHASE/ATTACK 상태를 넣었다: 매 물리 프레임 think() 가 발견 거리 안 가장 가까운 살아 있는 대상을 고르고, 공격 거리 밖이면 곧장 다가가며(move_and_slide, 막히면 미끄러짐), 안이면 멈춰 간격마다 take_damage 로 때린다(attacked 신호). 놓침 거리 밖이면 대상을 버리고 멈춘다. 죽은 몹은 아무것도 안 한다. ③ MobSpawner(game.tscn 의 %MobSpawner) 가 spawn(at, count) — 첫 마리는 그 자리, 나머지는 겹치지 않게 고리마다 16px 간격으로 늘어섬 — 와 spawn_at(자리 목록), alive() 를 준다. 부른 몹은 %Mobs 아래에 들어가 기존 근접 공격 · 투사체가 그대로 맞힌다. 노릴 대상은 GameScene.mob_targets()(지금은 플레이어 하나) 를 Callable 로 넘긴다. ④ 테스트 9개(test_mob_chase 6 · test_mob_spawner 3): 시야 밖이면 가만히 있음, 발견→추격→닿으면 공격(피해량 · 간격 안에 두 번 안 때림 · 간격마다 계속), 움직인 플레이어 따라가기, 발견~놓침 사이는 계속 쫓고 놓침 밖이면 멈춤, 죽은 몹은 안 때림, 1·5·13마리 자리·겹침·부모, 정확한 자리 목록, 떼가 플레이어를 다치게 하고 근접·투사체 대상이 됨. 트인 자리 문제는 테스트 준비에서 스폰 둘레 자원을 remove_deposit 으로 치워 해결했다. tools/test.sh 418개 전부 통과, guard.sh 통과.",
+   "why": "길찾기(NavigationAgent)는 스폰 규칙 · 몹 목록이 미정인 지금 비싸고, 떼 몹의 바탕으로는 곧장 다가가기 + 미끄러짐이면 충분해 나중에 바꾸기 싸다. 대상을 Callable 로 받은 것은 멀티플레이에서 플레이어가 여럿이 될 때 GameScene 한 곳만 고치면 되게 하려는 것(그룹 검색은 전역 상태라 테스트끼리 섞일 위험이 있어 버렸다). 놓침 거리를 발견 거리보다 넓게 둔 것은 경계에서 쫓다 멈추다를 반복하지 않게 하려는 것. 몹 속력(50)을 플레이어(80)보다 느리게 한 것은 임시 값 — 「전투가 만능이 아닌」 순간에 도망칠 수 있게 — 이고 mob_config.tres 에서 바꾼다. 섬에 몹이 저절로 나오게 하는 스폰 규칙은 spec 에서 미정이라 만들지 않았다(코드에서 부르는 길만 열었다). 트인 자리를 찾는 대신 자원을 치운 것은 시드에 따라 자리가 없을 수 있어 테스트가 흔들리지 않게 하려는 것.",
+   "files": [
+    "game/combat/mob_ai/mob.gd",
+    "game/combat/mob_ai/mob_config.gd",
+    "game/combat/mob_ai/mob_config.tres",
+    "game/combat/mob_ai/mob_spawner.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/combat/mob_ai/mob_test_base.gd",
+    "game/tests/combat/mob_ai/test_mob_chase.gd",
+    "game/tests/combat/mob_ai/test_mob_spawner.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "몹이 플레이어를 발견하면 쫓아와 공격한다",
+     "ok": true,
+     "evidence": "game/combat/mob_ai/mob.gd think()/_update_target()/attack(): 발견 거리(96) 안 가장 가까운 살아 있는 대상 → CHASE(move_and_slide) → 공격 거리(16) 안이면 ATTACK, 간격(1초)마다 take_damage. test_mob_chase.gd 6개(시야 밖 무시, 발견·추격·공격·간격, 움직인 플레이어 따라가기, 놓침 거리, 죽은 몹) 직접 실행 6/6 통과. 변이 확인: attack() 호출을 지우면 5/6·2/3, 추격 velocity 를 0 으로 바꾸면 4/6·2/3 로 테스트가 잡아냄(원본 복원 확인)"
+    },
+    {
+     "criterion": "몹 스폰 위치와 수를 코드에서 정할 수 있다 (원정에서 떼로 부르기 위해)",
+     "ok": true,
+     "evidence": "game/combat/mob_ai/mob_spawner.gd spawn(at, count) · spawn_at(points) · alive(), game.tscn 의 %MobSpawner, GameScene.mob_spawner()/mob_targets(). test_mob_spawner.gd 3개: 1·5·13마리 수 · 첫 자리 · 겹치지 않음 · 부모, 정확한 자리 목록, 부른 떼가 플레이어를 다치게 하고 근접(targets_near) · 투사체에 맞음 — 직접 실행 3/3 통과"
+    }
+   ],
+   "issues": [
+    "(사소) MobSpawner.spawn_at 이 몹마다 load(SCENE) 를 부른다 — 캐시되니 동작 문제는 없지만 preload 나 한 번 load 로 올리면 깔끔하다",
+    "(사소) Mob 은 ai 를 _init 시점에 MobConfig.load_default() 로 받고 스포너가 다시 덮어쓴다 — 중복이지만 무해",
+    "(참고) 몹은 대화 · 상자 UI 등 게임 흐름과 무관하게 계속 움직이고 때린다. 이번 기준 밖이라 판정에 넣지 않음"
+   ],
+   "good": [
+    "AI 수치를 mob_config.tres 한 곳에 모았고 놓침 거리 > 발견 거리로 경계 떨림을 막음",
+    "대상을 Callable 로 받아 멀티플레이 확장 지점이 GameScene.mob_targets() 한 곳",
+    "테스트가 시간 · 거리 값을 config 에서 계산하고, 시드에 따라 흔들리지 않게 스폰 둘레를 치움",
+    "기존 테스트 삭제 · 완화 없음, 전체 418개 통과(test.log), guard.sh 통과, 파일 모두 300줄 이하, 화면 글자 추가 없음, report 내용이 diff 와 일치"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 53.9 ms (game _ready 35.9 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              56\nTests               418\nPassing Tests       418\nAsserts           18811\nTime              63.776s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-009",
+  "step": "6",
+  "attempt": "1",
+  "title": "G-009 6/6 몹 기본 AI — 통과 (시도 1)",
+  "commit": "47c6bd0"
+ },
+ {
+  "time": "2026-09-17 04:20:49 KST",
+  "epoch": 1789586449,
+  "type": "group_done",
+  "group": "G-009",
+  "title": "G-009 전투 — 묶음 완료, main 에 합침"
  }
 ]
