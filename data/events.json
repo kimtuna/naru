@@ -1590,5 +1590,70 @@
   "attempt": "1",
   "title": "G-006 2/3 제작대 설치와 열기 — 재시도 (시도 1)",
   "detail": "- QA 피드백:\n구현 코드는 그대로 둬도 된다. 테스트만 고쳐서 '도구 동작 대신'을 실제로 검사하게 하라.\n1) game/tests/craft/stations/test_station_open.gd test_click_on_station_in_reach_opens_crafting_instead_of_swinging: _click_cell 을 쓰지 말고, test_tool_still_swings_when_click_is_not_on_station 처럼 Pointer.simulate(제작대 칸 중심) → _click(true, screen_mid) → await wait_physics_frames(1) 한 뒤 **버튼을 쥔 상태에서** assert_false(game.harvester().is_holding(), ...) 와 assert_true(game.crafting_view().is_open()) 를 검사하고, 그 다음에 _click(false, screen_mid) 하라.\n2) game/tests/craft/stations/test_station_place.gd test_left_click_with_workbench_places_on_empty_cell 의 \"placing is not a tool swing\" 도 같은 방식으로 버튼을 쥔 상태에서 검사하라.\n3) 가능하면 입력을 먹지 않았을 때 눈에 보이는 결과로도 검사하라. 예: 도끼를 든 채 제작대를 누른 상태에서 가방 · 제작 화면이 닫혀도(game.crafting_view().close()) 쥐고 있는 동안 Harvester 가 휘두르지 않는다(is_holding() == false 가 몇 물리 프레임 뒤에도 유지).\n4) 확인 방법: game/craft/stations/stations.gd _unhandled_input 의 get_viewport().set_input_as_handled() 를 잠깐 지우면 위 테스트가 실패해야 한다 (확인 뒤 되돌린다).\n5) report.json 의 테스트 개수를 실제 수(고친 뒤의 수)로 적어라."
+ },
+ {
+  "time": "2026-09-17 00:08:52 KST",
+  "epoch": 1789571332,
+  "report": {
+   "status": "done",
+   "summary": "G-006.2 제작대 설치와 열기 — 도구 동작을 막는지 버튼을 쥔 채 검사하도록 테스트 보강",
+   "problem": "QA 지적: '도구 동작 대신'을 검사하는 assert 가 _click_cell 로 버튼을 뗀 뒤에 있어서 항상 참이었다. 버튼을 떼면 Harvester._physics_process 가 _holding 을 false 로 돌리므로, 제작대가 입력을 먹지 않아도 is_holding() == false 로 통과했다.",
+   "feedback_applied": "1) test_station_open 의 test_click_on_station_in_reach_opens_crafting_instead_of_swinging: Pointer.simulate(제작대 칸) → 누름 → 물리 1프레임 → 버튼을 쥔 채 is_holding() false · 제작 화면 열림 검사 → 뗌. 2) test_station_place 의 test_left_click_with_workbench_places_on_empty_cell: 'placing is not a tool swing' 도 같은 방식으로 쥔 채 검사. 3) 새 테스트 test_click_that_opens_station_never_reaches_the_tool: 나무 옆에 제작대를 두고 도끼로 제작대를 누른 채 제작 화면을 닫고(close) 커서를 닿는 나무로 옮긴 뒤 물리 5프레임 — is_holding() false 유지, 나무 progress_at == 0, 나무 그대로. 4) stations.gd _unhandled_input 의 set_input_as_handled() 를 잠깐 pass 로 바꾸니 위 세 테스트가 실패함을 확인하고 되돌렸다 (구현 코드 변경 없음). 5) 테스트 수: 제작대 테스트 17개(open 8 · place 9), 전체 242개 모두 통과.",
+   "approach": "구현은 그대로 두고 테스트만 고쳤다. 기존 대조 테스트(test_tool_still_swings_when_click_is_not_on_station)와 같은 누름→대기→쥔 채 검사→뗌 순서를 썼고, 눈에 보이는 결과로 '입력이 도구에 가지 않음'을 확인하려고 화면을 닫은 뒤에도 누른 채 나무를 겨누어 나무가 맞지 않는지 본다.",
+   "why": "제작 화면이 열려 있으면 Harvester 가 blocked 로 휘두르지 않으므로 화면을 닫아야 입력 소비 여부만 드러난다. 이 방법은 set_input_as_handled 제거 변이로 실제로 실패함을 확인했다. _click_cell 헬퍼를 고치는 대안은 다른 테스트의 타이밍을 바꾸므로 버렸다.",
+   "files": [
+    "game/tests/craft/stations/test_station_open.gd",
+    "game/tests/craft/stations/test_station_place.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "핫바에서 제작대를 들고 빈 칸에 좌클릭하면 설치된다. 막힌 칸에는 안 된다",
+     "ok": true,
+     "evidence": "game/craft/stations/stations.gd try_place: 든 아이템이 제작 장소 id 인지, 손이 닿는지, is_free(섬 안 · 자원 없음 · 설치물 없음 · 몸이 걸치지 않음)인지 확인한 뒤 설치하고 하나를 쓴다. 실제 좌클릭 입력을 쓰는 test_station_place.gd 의 test_left_click_with_workbench_places_on_empty_cell(설치 · 충돌 상자 · 수량 2→1 · 재생장 막힘, 버튼을 쥔 채 is_holding()==false 확인), test_not_placed_on_resource_cell · test_not_placed_on_own_cell · test_not_placed_on_existing_station · test_not_placed_out_of_reach_or_off_island · test_other_items_are_not_placed · test_not_placed_while_bag_is_open · test_placed_station_survives_saving 가 모두 통과한다. tools/test.sh 를 직접 돌려 242/242 통과, exit 0."
+    },
+    {
+     "criterion": "손이 닿는 거리에서 제작대를 좌클릭하면 도구 동작 대신 제작 화면이 열린다",
+     "ok": true,
+     "evidence": "stations.gd _unhandled_input → try_open → craft_view.open_station, 그리고 set_input_as_handled() 로 입력을 먹는다(Stations 가 트리에서 Harvester 보다 뒤라 먼저 받는다). test_station_open.gd test_click_on_station_in_reach_opens_crafting_instead_of_swinging 은 버튼을 쥔 채 is_holding()==false 와 is_open() 을 검사하고, test_click_that_opens_station_never_reaches_the_tool 은 화면을 닫고 커서를 나무로 옮긴 뒤 5 물리 프레임 동안 휘두르지 않음(progress_at==0)을 본다. 대조 테스트(제작대 밖 · 닿지 않는 제작대 → is_holding()==true)도 있다. 변이 확인: set_input_as_handled() 를 pass 로 바꾸고 res://tests/craft/stations 만 돌리니 위 두 테스트와 'placing is not a tool swing' 이 실패(17 중 14 통과)했고, 파일을 원래대로 되돌렸다(cmp 로 동일 확인)."
+    },
+    {
+     "criterion": "이전 QA 피드백 1~5 반영",
+     "ok": true,
+     "evidence": "1) · 2) 버튼을 쥔 채 검사하도록 바뀜. 3) test_click_that_opens_station_never_reaches_the_tool 추가. 4) 변이 테스트를 직접 재현해 실패 확인. 5) report 의 테스트 수(제작대 17 = open 8 · place 9, 전체 242)가 실행 결과와 같다."
+    },
+    {
+     "criterion": "테스트 약화 · 규칙 위반 없음",
+     "ok": true,
+     "evidence": "git diff HEAD 에 기존 테스트 삭제 · 완화 · skip 없음(기존 테스트 파일은 바뀌지 않았다). 화면 글자는 번역 키(STATION_WORKBENCH, ITEM_*, CRAFT_CLOSE_HINT)이고 ko/en.po 에 들어 있다. 도달 거리는 HarvestConfig.reach_tiles 를 다시 쓴다. 가장 긴 파일은 stations.gd 153줄이다. 제작 시작 · 타이머 · 버퍼는 넣지 않았다(3단계 몫)."
+    },
+    {
+     "criterion": "report 가 사실과 맞나",
+     "ok": true,
+     "evidence": "files 에 적힌 두 테스트 파일만 이전 시도에서 바뀐 것과 맞고, 구현 코드를 바꾸지 않았다는 설명도 현재 코드와 어긋나지 않는다. 테스트 수도 맞다."
+    }
+   ],
+   "issues": [
+    "(통과에 영향 없음) test_station_open.gd test_clicks_do_not_swing_while_crafting_is_open 은 3 프레임 뒤 deposit_at==TREE 만 본다. 나무는 한 번 휘둘러서는 베어지지 않으므로 휘둘렀어도 통과할 수 있다. assert_eq(game.harvester().progress_at(found[0]), 0) 을 더하면 진짜 검사가 된다.",
+    "(통과에 영향 없음) test_station_open.gd 의 _free_neighbor 도우미가 테스트 함수들 사이에 끼어 있다. station_test_base.gd 로 옮기거나 파일 끝으로 옮기면 읽기 쉽다.",
+    "(통과에 영향 없음) 설치 가능한 아이템인지를 RecipeBook.stations 로 정한다(hand 만 뺀다). 나중에 설치하지 않는 장소가 stations 에 생기면 다시 봐야 한다."
+   ],
+   "good": [
+    "이전 피드백을 모두 반영했다. '도구 동작 대신'을 버튼을 쥔 채로 검사하고, 변이 테스트에서 실제로 실패한다.",
+    "화면을 닫고 커서를 나무로 옮겨도 휘두르지 않는지 보는 새 테스트로, 입력을 먹었는지를 눈에 보이는 결과로 확인한다.",
+    "구현을 건드리지 않고 테스트만 고쳐 범위를 지켰다. 대조 테스트(제작대 밖 · 닿지 않는 제작대)가 함께 있어서 입력을 막기만 하는 구현으로는 통과할 수 없다."
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 26.8 ms (game _ready 20.9 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              34\nTests               242\nPassing Tests       242\nAsserts            9915\nTime              39.841s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-006",
+  "step": "2",
+  "attempt": "2",
+  "title": "G-006 2/3 제작대 설치와 열기 — 통과 (시도 2)",
+  "commit": "f7c2ac2"
  }
 ]
