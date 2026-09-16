@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 23:18:01 KST",
- "updated_epoch": 1789568281,
+ "updated": "2026-09-16 23:31:02 KST",
+ "updated_epoch": 1789569062,
  "progress": {
   "groups_total": 9,
   "groups_done": 3,
@@ -20,6 +20,6 @@
  "step_total": "5",
  "step_title": "자원 재생",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 23:18:01"
+ "phase": "QA",
+ "phase_since": "2026-09-16 23:31:02"
 }
