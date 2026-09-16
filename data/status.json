@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 06:02:45 KST",
- "updated_epoch": 1789592565,
+ "updated": "2026-09-17 06:17:59 KST",
+ "updated_epoch": 1789593479,
  "progress": {
   "groups_total": 14,
   "groups_done": 13,
@@ -20,6 +20,6 @@
  "step_total": "4",
  "step_title": "갈고리총",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 06:02:45"
+ "phase": "QA",
+ "phase_since": "2026-09-17 06:17:59"
 }
