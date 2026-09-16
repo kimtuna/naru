@@ -155,3 +155,6 @@ msgstr "월드"
 
 msgid "GAME_EXIT_HINT"
 msgstr "Esc: 저장하고 메인 화면으로"
+
+msgid "INVENTORY_TITLE"
+msgstr "가방"

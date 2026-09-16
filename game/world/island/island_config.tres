@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="IslandConfig" format=3]
+
+[ext_resource type="Script" path="res://world/island/island_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+size = 256
+spawn_clear = 7
+chunk_size = 16
+tile_px = 16
+view_margin_px = 160.0
+fill_percent = 30.0
+tree_weight = 3.0
+stone_weight = 2.0
+ore_weight = 1.0
+ore_noise_cell = 32
+ore_ground_percent = 20.0
+ore_sample_step = 4
+ore_patch_distance = 24
+ore_patch_radius = 8

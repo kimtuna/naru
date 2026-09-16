@@ -3,17 +3,33 @@
 [ext_resource type="Script" path="res://world/game.gd" id="1"]
 [ext_resource type="PackedScene" path="res://player/player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://ui/hud/hotbar_view.tscn" id="3"]
+[ext_resource type="Script" path="res://world/island/island_view.gd" id="4"]
+[ext_resource type="Script" path="res://life/harvest/harvester.gd" id="5"]
+[ext_resource type="Script" path="res://player/pickup/picker.gd" id="6"]
+[ext_resource type="PackedScene" path="res://ui/hud/inventory_view.tscn" id="7"]
+[ext_resource type="Script" path="res://world/regrowth/regrowth.gd" id="8"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
 
-[node name="Ground" type="ColorRect" parent="."]
-offset_left = -480.0
-offset_top = -480.0
-offset_right = 480.0
-offset_bottom = 480.0
-mouse_filter = 2
-color = Color(0.3, 0.5, 0.3, 1)
+[node name="Island" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4")
+
+[node name="Drops" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Harvester" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("5")
+
+[node name="Picker" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6")
+
+[node name="Regrowth" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("8")
 
 [node name="Player" parent="." instance=ExtResource("2")]
 unique_name_in_owner = true
@@ -25,6 +41,7 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = 320.0
 offset_bottom = 100.0
+mouse_filter = 2
 columns = 2
 
 [node name="CharacterLabel" type="Label" parent="Hud/Info"]
@@ -51,4 +68,7 @@ offset_top = 110.0
 text = "GAME_EXIT_HINT"
 
 [node name="Hotbar" parent="Hud" instance=ExtResource("3")]
+unique_name_in_owner = true
+
+[node name="Inventory" parent="Hud" instance=ExtResource("7")]
 unique_name_in_owner = true
