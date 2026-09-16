@@ -1126,5 +1126,83 @@
   "attempt": "1",
   "title": "G-004 3/5 좌클릭 채취 → 바닥에 떨어짐 — 통과 (시도 1)",
   "commit": "f370c18"
+ },
+ {
+  "time": "2026-09-16 23:18:01 KST",
+  "epoch": 1789568281,
+  "report": {
+   "status": "done",
+   "summary": "G-004.4 밟으면 줍기와 인벤토리 (가방 30칸 · 넘치면 바닥에 남김 · Tab 으로 가방 화면)",
+   "problem": "떨어진 아이템을 클릭 없이 밟아서 줍고, 가방이 차면 못 넣은 몫만 바닥에 남기고, 가방 화면(칸 목록)을 InputMap 액션으로 열고 닫아야 했다. 지금까지는 핫바 10칸만 있어 가방 칸 · 쌓기 규칙이 없었다. spec(inventory-hotbar.md)의 사람 결정에 따라 가방이 열려 있는 동안 좌클릭으로 휘두르면 안 되고, 좌클릭을 쥔 채 닫으면 이어서 휘둘러야 했다.",
+   "feedback_applied": "",
+   "approach": "1) Inventory(player/inventory/inventory.gd): CharacterData.inventory 위에서 BAG_SIZE 칸을 다룬다. add() 는 같은 아이템 칸을 STACK_MAX 까지 먼저 채우고 남으면 앞쪽 빈칸부터 쓰며, 못 넣은 개수를 돌려준다. Hotbar 는 이제 같은 Inventory 를 들고 칸 읽기·쓰기를 맡기고 changed 를 이어 받는다 — 줍기가 가방에 넣으면 핫바 화면도 바로 바뀐다. 2) Picker(player/pickup/picker.gd): 게임 씬의 노드로, 물리 프레임마다 플레이어 한가운데에서 반 칸(PickupConfig.RADIUS_TILES) 안의 DroppedItem 을 가방에 넣는다. 다 들어가면 드롭을 지우고, 일부만 들어가면 DroppedItem.set_count 로 남은 수만 바닥에 둔다(월드 저장에도 남은 수로 들어간다). 가방에 자리가 나면 그 위에 있는 동안 마저 줍는다. 3) 가방 화면: InputActions.INVENTORY(project.godot 에 Tab), ui/hud/inventory_view.tscn(제목 번역 키 INVENTORY_TITLE + 칸 그리드). 핫바와 칸 네모를 같이 쓰도록 ItemSlot 으로 뽑아냈다. 4) Harvester.blocked(Callable) 를 게임 씬이 inventory_view.is_open 으로 채워, 열려 있는 동안 휘두르기만 건너뛴다 — 쥔 상태(_holding)는 그대로 두므로 쥔 채 닫으면 이어서 휘두른다. 테스트: tests/player/inventory/test_inventory.gd(쌓기·넘침·가득 참), tests/player/pickup/test_pickup.gd(이동 액션으로 실제로 걸어서 줍기, 옆 칸에선 안 주움, 채취 드롭 줍기, 가득 차면 그대로, 일부만 들어가면 나머지가 바닥·월드 저장에 남음, 자리가 나면 마저 줍기), tests/ui/hud/test_inventory_view.gd(Tab 키 입력으로 열고 닫기, 칸 수, 내용 표시, 열린 동안 클릭해도 안 벰, 쥔 채 닫으면 벰). tools/test.sh 172/172 통과, guard 통과.",
+   "why": "줍기 반경은 spec 미정이라 반 칸으로 두었다 — 캐릭터(12px)와 드롭(6px)이 실제로 겹칠 때쯤이고, 채취할 때 서 있는 옆 칸(16px 떨어짐)에서는 줍지 않아 '밟아야 줍는다'가 지켜진다. Area2D 충돌 대신 거리 검사를 고른 것은 드롭에 물리 몸을 붙이지 않아도 되고 저장·불러오기 드롭도 그대로 쓰이기 때문(나중에 일손 펫 반경도 같은 거리 값만 늘리면 된다). 가방 칸 수 30 · 스택 99 · 가방 키 Tab 은 spec 미정이라 InventoryConfig · InputMap 한 곳에 임시 값으로 두었다(바꾸기 싸다). 핫바를 가방의 앞 10칸으로 둔 것은 기존 CharacterData 구조(앞 칸들이 핫바) 그대로라 저장 형식이 안 바뀐다. 빈칸 채우기는 핫바 칸부터 — 마인크래프트식으로 주운 것이 바로 손에 잡힌다. 가방 화면은 마우스를 가로채지 않게 하고 휘두르기 막기는 Harvester 에서 했다; GUI 가 클릭을 삼키게 하면 '쥔 채 닫으면 이어서 휘두른다'가 깨진다. 이동은 가방이 열려도 막지 않았다(spec 에 없음, 코어 키퍼식).",
+   "files": [
+    "game/player/inventory/inventory.gd",
+    "game/player/inventory/inventory_config.gd",
+    "game/player/inventory/hotbar.gd",
+    "game/player/pickup/picker.gd",
+    "game/player/pickup/pickup_config.gd",
+    "game/player/pickup/dropped_item.gd",
+    "game/core/input/input_actions.gd",
+    "game/project.godot",
+    "game/life/harvest/harvester.gd",
+    "game/ui/hud/item_slot.gd",
+    "game/ui/hud/hotbar_view.gd",
+    "game/ui/hud/inventory_view.gd",
+    "game/ui/hud/inventory_view.tscn",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/player/inventory/test_inventory.gd",
+    "game/tests/player/pickup/test_pickup.gd",
+    "game/tests/ui/hud/test_inventory_view.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "떨어진 아이템 위를 지나가면 클릭 없이 인벤토리에 들어간다",
+     "ok": true,
+     "evidence": "game/player/pickup/picker.gd 가 _physics_process 마다 반경(PickupConfig.RADIUS_TILES × 칸 크기) 안의 DroppedItem 을 Inventory.add 로 넣는다. tests/player/pickup/test_pickup.gd 의 test_walking_over_a_drop_picks_it_up_without_clicking 은 이동 액션을 눌러 실제로 걸어가게 하고, USE 를 누르지 않은 것 · 가방 개수 · 드롭이 사라진 것 · 핫바 화면을 확인한다. test_standing_next_to_a_drop_does_not_pick_it_up(옆 칸에서는 줍지 않음), test_harvested_drop_is_picked_by_stepping_on_its_cell(실제 채취 드롭)도 통과. tools/test.sh 를 직접 돌려 172/172 통과 확인"
+    },
+    {
+     "criterion": "인벤토리가 가득 차면 넣지 못한 수량은 바닥에 남는다",
+     "ok": true,
+     "evidence": "Inventory.add 가 못 넣은 개수를 돌려주고, Picker 는 0 이면 드롭을 지우고 아니면 DroppedItem.set_count(left) 로 남긴다. test_full_bag_leaves_the_drop_on_the_ground(가득 참 → 4개 그대로), test_partly_full_bag_leaves_the_rest_and_saves_it(2개만 들어감 → 3개가 바닥과 월드 저장에 남음), test_room_in_bag_later_picks_up_the_rest, test_inventory.gd 의 test_full_inventory_returns_everything · test_nearly_full_inventory_returns_the_rest. 변이 검사: picker.gd 의 `if left <= 0:` 을 임시로 `if true:` 로 바꾸자 test_pickup 에서 1개가 실패(171/172)했고, 원래대로 되돌렸다"
+    },
+    {
+     "criterion": "인벤토리 화면을 열고 닫을 수 있다 (InputMap 액션). 칸 목록만 있으면 된다",
+     "ok": true,
+     "evidence": "project.godot 에 inventory 액션(Tab)이 있고 InputActions.INVENTORY · all() 에도 들어 있다. ui/hud/inventory_view.gd 의 _unhandled_input 이 이 액션으로 toggle 한다. 제목은 번역 키 INVENTORY_TITLE(ko/en.po 둘 다 있음). test_inventory_view.gd 의 test_bag_key_opens_and_closes_the_slot_list 는 Tab 키 이벤트를 Input.parse_input_event 로 넣어 열기 → 닫기 → 다시 열기와 칸 BAG_SIZE 개를 확인한다. test_slot_list_shows_inventory_contents 는 칸 내용 표시를 확인한다"
+    }
+   ],
+   "issues": [
+    "(기준 밖) spec/02_player/inventory-hotbar.md 의 '가방이 열려 있는 동안 좌클릭은 휘두르지 않는다 / 쥔 채 닫으면 이어서 휘두른다' 도 Harvester.blocked 로 구현했고 테스트 2개가 있다 — 잘 지켰다",
+    "(참고) 가방 키가 Tab 이다. Tab 은 Godot 의 기본 ui_focus_next 이기도 해서, 나중에 게임 화면에 포커스를 받는 Control(버튼 등)이 생기면 GUI 가 Tab 을 먼저 먹어 _unhandled_input 까지 오지 않을 수 있다. 지금 게임 씬에는 그런 Control 이 없어 문제없다",
+    "(참고) STACK_MAX 가 모든 아이템에 똑같이 적용돼 도끼 · 곡괭이 같은 도구도 99개까지 한 칸에 쌓인다. spec 미정이라 불합격 사유는 아니다",
+    "(참고) 빠진 count 의 기본값이 Inventory/DroppedItem 에서는 0, ItemSlot.show_item 에서는 1 로 서로 다르다. 지금은 모든 아이템이 count 를 가지고 만들어져 문제없다",
+    "(참고) Picker 가 물리 프레임마다 드롭 전체를 훑는다. 지금 드롭 수에서는 괜찮지만, 드롭이 많아지면 칸 단위 조회로 바꿀 여지가 있다"
+   ],
+   "good": [
+    "기존 테스트 삭제나 완화가 없다 (git diff 에 tests/ 수정 없음. 새 테스트 3개 파일만 추가)",
+    "걷기 테스트가 위치를 직접 옮기지 않고 이동 액션으로 실제로 걸어가게 한다. 옆 칸에서는 줍지 않는다는 음성 검사도 있다",
+    "일부만 주웠을 때 남은 수가 월드 저장에, 주운 수가 캐릭터 저장에 들어가는지 끝까지 확인한다",
+    "핫바와 가방 화면의 칸 네모를 ItemSlot 하나로 모아 hotbar_view.gd 가 줄었다. 핫바는 Inventory 위에 얹혀 저장 형식이 그대로다",
+    "수치는 InventoryConfig · PickupConfig 에 모았고, 화면 글자는 번역 키만 쓴다. 300줄을 넘는 파일이 없고 guard 도 통과한다",
+    "report 의 내용(파일 목록 · 방식 · 172/172)이 실제 diff 와 실행 결과에 맞는다"
+   ],
+   "feedback": ""
+  },
+  "test": "e_ground_with_ore (res://tests/world/island/test_island_generator.gd:189)\n         [2] _run_test (res://addons/gut/gut.gd:622)\n         [3] _test_the_scripts (res://addons/gut/gut.gd:835)\nWARNING: IslandGenerator: 광물 지형(0.003)이 채울 % × 광물 몫(0.050)보다 좁아 비율을 맞출 수 없다\n     at: push_warning (core/variant/variant_utility.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] test_every_island_has_ore_ground_with_ore (res://tests/world/island/test_island_generator.gd:189)\n         [2] _run_test (res://addons/gut/gut.gd:622)\n         [3] _test_the_scripts (res://addons/gut/gut.gd:835)\n* test_ore_ground_exists_on_full_map_without_noise\nWARNING: IslandGenerator: 광물 지형(0.003)이 채울 % × 광물 몫(0.050)보다 좁아 비율을 맞출 수 없다\n     at: push_warning (core/variant/variant_utility.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] generate (res://world/island/island_generator.gd:48)\n         [2] test_ore_ground_exists_on_full_map_without_noise (res://tests/world/island/test_island_generator.gd:204)\n         [3] _run_test (res://addons/gut/gut.gd:622)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:835)\n14/14 passed.\n\n\nres://tests/world/island/test_island_view.gd\n* test_island_is_shown_around_player_at_spawn\n* test_camera_follows_player_over_island\n* test_chunk_collision_matches_obstacles\n* test_blocked_by_tree_stone_ore_in_every_direction\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 26.7 ms (game _ready 21.3 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              25\nTests               172\nPassing Tests       172\nAsserts            6868\nTime              35.174s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-004",
+  "step": "4",
+  "attempt": "1",
+  "title": "G-004 4/5 밟으면 줍기와 인벤토리 — 통과 (시도 1)",
+  "commit": "2faba5e"
  }
 ]
