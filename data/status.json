@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 00:14:08 KST",
- "updated_epoch": 1789571648,
+ "updated": "2026-09-17 00:15:32 KST",
+ "updated_epoch": 1789571732,
  "progress": {
   "groups_total": 12,
-  "groups_done": 5,
+  "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 36,
-  "steps_done": 21
+  "steps_done": 22
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-006",
- "group_title": "제작",
- "step": "3",
- "step_total": "3",
- "step_title": "제작 타이머와 출력 버퍼",
+ "group": "G-010",
+ "group_title": "화면 배율 — 보이는 범위 고정",
+ "step": "1",
+ "step_total": "2",
+ "step_title": "기준 화면과 배율",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 00:14:08"
+ "phase": "구현",
+ "phase_since": "2026-09-17 00:15:32"
 }
