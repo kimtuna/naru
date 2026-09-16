@@ -64,7 +64,7 @@ Claude 루프 세션은 이 파일을 읽지 않는다 — `loop.sh` 가 지금 
 
 ## [ ] G-003 조작
 - spec: spec/02_player/movement-controls.md, spec/01_settings/input.md, spec/02_player/inventory-hotbar.md
-- [ ] 1. 입력 액션과 Pointer
+- [x] 1. 입력 액션과 Pointer
   - 기준: 이동 · 좌클릭 · 핫바 슬롯 선택이 InputMap 액션이고, 코드는 키 코드가 아니라 액션 이름을 쓴다
   - 기준: `game/core/input/` 에 Pointer 가 있다. 테스트에서 흉내 낸 위치가 그대로 나오고, `NARU_SHOT=1` 이면 실제 커서를 읽지 않는다
 - [ ] 2. 캐릭터와 8방향 이동

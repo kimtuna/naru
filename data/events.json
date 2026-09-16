@@ -586,5 +586,62 @@
   "type": "group_done",
   "group": "G-002",
   "title": "G-002 메인 화면 · 캐릭터 · 월드 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-16 22:16:57 KST",
+  "epoch": 1789564617,
+  "report": {
+   "status": "done",
+   "summary": "G-003.1 입력 액션(이동·좌클릭·핫바)과 Pointer",
+   "problem": "이동(WASD)·좌클릭·숫자키 핫바 선택을 InputMap 액션으로 정의하고, 게임 코드가 키 코드 대신 액션 이름을 쓰게 해야 했다. 또 사람이 같은 맥을 쓰므로 마우스 위치를 읽는 유일한 통로 Pointer 가 필요했다 — 테스트에선 흉내 값, NARU_SHOT=1 에선 실제 커서를 읽지 않아야 한다. 도중에 기존 test_world_select.test_lists_saved_worlds 가 간헐적으로 실패하는 것을 발견했다: 월드 id 가 world_<초>_<난수> 라서 같은 초에 만든 두 월드가 난수 순으로 정렬되어 목록 순서가 만든 순서와 달라졌다.",
+   "feedback_applied": "",
+   "approach": "project.godot 에 move_up/down/left/right(W/S/A/D, physical keycode), use(마우스 왼쪽), hotbar_1~hotbar_10(숫자키 1~9, 0) 액션을 추가. game/core/input/input_actions.gd(InputActions)에 액션 이름 상수·hotbar_action(n)·hotbar_slot_pressed(event)·move_vector()(Input.get_vector 로 대각선도 길이 1)를 모았다. game/core/input/pointer.gd(Pointer)는 global_position(item) 하나로 읽는다: simulate(pos) 값이 있으면 그 값, NARU_SHOT=1 이면 실제 커서 대신 화면 가운데(캔버스 좌표), 아니면 real_reader(기본 get_global_mouse_position). 테스트는 real_reader 를 스파이로 바꿔 NARU_SHOT=1 일 때 호출 0회임을 확인한다. 게임 코드(.gd, addons·tests 제외)에 KEY_*·MOUSE_BUTTON_*·keycode·InputEventKey 등이 없는지 훑는 테스트도 넣었다. 월드 id 는 같은 초의 가장 큰 번호 + 1 로 바꿔(형식 world_<초>_NNNN 유지) 만든 순서 = 정렬 순서가 되게 고쳤다.",
+   "why": "InputMap 은 project.godot 에 두는 것이 Godot 기본이고 리바인딩(미정)이 생겨도 그대로 쓴다. 핫바 칸 수는 미정이라 숫자키 10개를 전부 액션으로 묶어 두고 핫바 단계가 그 안에서 쓰게 했다(나중에 줄이기 쉬움). Pointer 를 정적 클래스로 한 것은 autoload 없이 어디서든 부를 수 있고 테스트에서 simulate/clear 가 간단해서다. NARU_SHOT 에서 화면 가운데를 고른 것은 (0,0) 보다 조준 방향이 자연스럽게 나오기 때문. 실제 커서 호출 여부는 headless 에서 값으로 구분이 안 되므로 reader 주입으로 검사했다. 월드 정렬 버그는 이번 단계 밖이지만 테스트를 약하게 하지 않고 실패를 남기지 않으려면 원인을 고쳐야 했다 — 난수를 유지하고 정렬을 created_at 으로 바꾸는 안은 저장 포맷·목록 코드까지 건드려 버렸다.",
+   "files": [
+    "game/project.godot",
+    "game/core/input/input_actions.gd",
+    "game/core/input/pointer.gd",
+    "game/tests/core/input/test_input_actions.gd",
+    "game/tests/core/input/test_pointer.gd",
+    "game/settings/save/save_store.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "이동 · 좌클릭 · 핫바 슬롯 선택이 InputMap 액션이고, 코드는 키 코드가 아니라 액션 이름을 쓴다",
+     "ok": true,
+     "evidence": "game/project.godot 에 move_up/down/left/right(W/S/A/D physical), use(마우스 왼쪽), hotbar_1~10(숫자 1~9, 0) 추가 (git diff). 이름은 game/core/input/input_actions.gd 상수로 모음. tests/core/input/test_input_actions.gd 의 test_all_actions_are_in_input_map · test_wasd_bound_to_move_actions · test_left_click_bound_to_use(우클릭은 아님까지) · test_number_key_n_selects_hotbar_slot_n · test_simulated_key_press_reaches_move_action 통과. test_game_code_uses_action_names_not_key_codes 가 진짜로 잡는지 QA 가 임시 파일(game/qa_tmp/bad.gd, KEY_E·InputEventKey 사용)을 넣어 돌려 실패하는 것을 확인 후 삭제. 게임 코드 grep 결과 입력 읽기는 is_action_pressed / Input.get_vector 뿐."
+    },
+    {
+     "criterion": "`game/core/input/` 에 Pointer 가 있다. 테스트에서 흉내 낸 위치가 그대로 나오고, `NARU_SHOT=1` 이면 실제 커서를 읽지 않는다",
+     "ok": true,
+     "evidence": "game/core/input/pointer.gd (class_name Pointer). tests/core/input/test_pointer.gd: test_simulated_position_comes_back_unchanged (값 두 번 바꿔 그대로 나옴), test_shot_mode_never_reads_real_cursor (real_reader 스파이 호출 0회 + 화면 가운데 값), test_shot_env_other_than_1_is_normal_mode (대조군: 호출 1회). 실제 커서 읽기(get_global_mouse_position)는 게임 코드 전체에서 pointer.gd:46 한 곳뿐. tools/test.sh 직접 실행: 88/88 통과, git status 에 QA 흔적 없음."
+    }
+   ],
+   "issues": [
+    "단계 밖 변경: game/settings/save/save_store.gd 의 _new_world_id 를 난수 → 같은 초의 최대 번호+1 로 바꿈. report 에 원인(같은 초 생성 시 test_world_select.test_lists_saved_worlds 간헐 실패)과 이유가 적혀 있고, 테스트를 약하게 하지 않고 원인을 고친 것이라 불합격 사유로 보지 않음. id 형식(world_<초>_NNNN)은 유지됨",
+    "Pointer 는 정적 전역 상태(_simulated, real_reader)라 simulate 후 clear_simulation 을 빼먹은 테스트가 다른 테스트에 새어 나갈 수 있다. 다음 단계 테스트에서 after_each 로 Pointer.clear_simulation() 을 꼭 부를 것",
+    "test_default_reader_is_real_mouse 는 반환 타입만 본다 — 약하지만 기준 검사는 스파이 테스트가 맡고 있어 문제 아님",
+    "HOTBAR_ACTION_COUNT=10 은 핫바 칸 수 미정 상태의 임시 상한. 4단계(핫바)에서 실제 칸 수와 맞출 것"
+   ],
+   "good": [
+    "키 코드 스캔 테스트가 실제로 위반을 잡는다 (QA 가 임시 위반 파일로 확인)",
+    "NARU_SHOT 검사를 값 비교가 아니라 reader 주입 스파이 호출 횟수로 해서, headless 에서도 '읽지 않음' 을 실제로 증명한다. 대조군 테스트(NARU_SHOT=0 이면 읽음)도 있다",
+    "대각선 정규화(move_vector)를 미리 액션 기반으로 준비해 2단계가 바로 얹을 수 있다",
+    "기존 테스트를 건드리지 않고 간헐 실패의 원인을 고쳤고 report 에 과정을 기록했다. report 의 files 목록과 실제 diff 가 일치한다",
+    "새 파일 모두 짧다 (최대 102줄), 화면 글자 · 흩어진 수치 없음"
+   ],
+   "feedback": ""
+  },
+  "test": "\n* test_prev_next_cycle_options\n* test_screen_parts_match_data_file\n* test_added_part_in_data_file_appears_on_screen\n* test_added_option_in_data_file_appears_on_screen\n* test_preview_follows_choice\n* test_create_saves_to_chosen_slot_and_shows_in_select\n* test_empty_name_is_rejected\n* test_cancel_returns_without_saving\n* test_new_character_inventory_is_empty\n* test_labels_translate_in_each_language\n11/11 passed.\n\n\nres://tests/ui/menu/test_character_select.gd\n* test_three_slots\n* test_filled_slot_shows_name_empty_slot_shows_new\n* test_slot_text_in_each_language\n* test_empty_slot_goes_to_character_create\n* test_filled_slot_goes_to_world_select_with_character\n* test_delete_button_only_on_filled_slots\n* test_delete_asks_first_and_cancel_keeps_character\n* test_confirmed_delete_empties_slot\n* test_back_goes_to_main_menu\n9/9 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_project_main_scene_is_main_menu\n* test_main_menu_has_start_settings_quit_in_order\n* test_start_goes_to_character_select\n* test_settings_goes_to_settings\n* test_settings_back_goes_to_main_menu\n* test_quit_requests_quit\n* test_target_screens_load\n* test_real_flow_in_separate_process\n* test_all_screen_text_is_translated_in_ko_and_en\n* test_buttons_render_in_each_language\n10/10 passed.\n\n\nres://tests/ui/menu/test_world_select.gd\n* test_lists_saved_worlds\n* test_empty_list_says_so\n* test_create_with_name_and_seed\n* test_text_seed_is_stable\n* test_empty_seed_is_random\n    30 Orphans\n        * [World_3:<HBoxContainer#170372630595>] + 2\n        * [World_1:<HBoxContainer#170003531949>] + 2\n        * [World_1:<HBoxContainer#168711686325>] + 2\n        * [World_0:<HBoxContainer#168527136979>] + 2\n        * [World_0:<HBoxContainer#169818982644>] + 2\n        * [World_0:<HBoxContainer#168158038263>] + 2\n        * [World_2:<HBoxContainer#170188081466>] + 2\n        * [World_1:<HBoxContainer#169265334588>] + 2\n        * [World_0:<HBoxContainer#169080785220>] + 2\n        * [World_2:<HBoxContainer#169449883982>] + 2\n* test_create_needs_name\n* test_delete_asks_first_and_cancel_keeps_world\n* test_confirmed_delete_removes_world\n    6 Orphans\n        * [World_1:<HBoxContainer#176345319733>] + 2\n        * [World_0:<HBoxContainer#176160770358>] + 2\n* test_back_goes_to_character_select\n* test_pick_world_enters_game_with_character_and_world\n* test_pick_world_without_character_goes_back_to_select\n* test_game_scene_loads\n* test_world_screen_text_in_each_language\n36 orphans\n13/13 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              12\nTests                88\nPassing Tests        88\nAsserts             659\nTime              11.825s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-003",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-003 1/4 입력 액션과 Pointer — 통과 (시도 1)",
+  "commit": "695e03e"
  }
 ]
