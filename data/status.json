@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 21:38:17 KST",
- "updated_epoch": 1789562297,
+ "updated": "2026-09-16 21:38:39 KST",
+ "updated_epoch": 1789562319,
  "progress": {
   "groups_total": 1,
   "groups_done": 0,
@@ -8,10 +8,10 @@
   "steps_total": 3,
   "steps_done": 2
  },
- "state": "running",
- "reason": "",
+ "state": "stopped",
+ "reason": "사용자 중지",
  "started": "2026-09-16 21:31:19",
- "ended": "",
+ "ended": "2026-09-16 21:38:39",
  "resume_at": "",
  "pid": "93658",
  "group": "G-001",
@@ -20,6 +20,6 @@
  "step_total": "3",
  "step_title": "번역 뼈대",
  "attempt": "1",
- "phase": "구현",
+ "phase": "",
  "phase_since": "2026-09-16 21:38:17"
 }
