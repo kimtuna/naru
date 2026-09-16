@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 21:56:52 KST",
- "updated_epoch": 1789563412,
+ "updated": "2026-09-16 21:59:26 KST",
+ "updated_epoch": 1789563566,
  "progress": {
   "groups_total": 9,
   "groups_done": 1,
@@ -20,6 +20,6 @@
  "step_total": "5",
  "step_title": "캐릭터 선택 — 슬롯 3개",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 21:56:52"
+ "phase": "QA",
+ "phase_since": "2026-09-16 21:59:26"
 }
