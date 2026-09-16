@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 23:56:22 KST",
- "updated_epoch": 1789570582,
+ "updated": "2026-09-17 00:02:03 KST",
+ "updated_epoch": 1789570923,
  "progress": {
   "groups_total": 9,
   "groups_done": 5,
@@ -20,6 +20,6 @@
  "step_total": "3",
  "step_title": "제작대 설치와 열기",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 23:56:22"
+ "phase": "QA",
+ "phase_since": "2026-09-17 00:02:03"
 }
