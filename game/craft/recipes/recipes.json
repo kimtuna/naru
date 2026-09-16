@@ -33,6 +33,9 @@
 		{"id": "spikes", "station": "workbench", "time": 5.0, "time_temp": true,
 			"inputs": [{"id": "iron_ingot", "count": 2}, {"id": "stone", "count": 2}],
 			"output": {"id": "spikes", "count": 1}},
+		{"id": "anchor", "station": "workbench", "time": 5.0, "time_temp": true,
+			"inputs": [{"id": "iron_ingot", "count": 1}, {"id": "wood", "count": 1}],
+			"output": {"id": "anchor", "count": 2}},
 		{"id": "bread", "station": "workbench", "time": 5.0, "time_temp": true,
 			"inputs": [{"id": "wheat", "count": 3}],
 			"output": {"id": "bread", "count": 1}}

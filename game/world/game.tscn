@@ -24,6 +24,7 @@
 [ext_resource type="Script" path="res://combat/mob_ai/mob_spawner.gd" id="22"]
 [ext_resource type="Script" path="res://life/climbing/climber.gd" id="23"]
 [ext_resource type="PackedScene" path="res://ui/hud/stamina_view.tscn" id="24"]
+[ext_resource type="Script" path="res://life/climbing/anchors.gd" id="25"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
@@ -35,6 +36,10 @@ script = ExtResource("4")
 [node name="Farm" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("16")
+
+[node name="Anchors" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("25")
 
 [node name="Drops" type="Node2D" parent="."]
 unique_name_in_owner = true

@@ -53,7 +53,10 @@ func _ready() -> void:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
 		player().slope = island_view().slope_along
-		climber().setup(player(), island_view())
+		anchors().setup(player(), island_view())
+		anchors().register(interactor())
+		anchors().load_list(world.anchors)
+		climber().setup(player(), island_view(), anchors())
 		player().spawn_point = island_view().cell_center(island.spawn())
 		player().global_position = player().spawn_point
 		island_view().update_around(player().global_position)
@@ -152,6 +155,11 @@ func lighting() -> Lighting:
 ## 절벽 등반 — 기력과 낙하.
 func climber() -> Climber:
 	return %Climber
+
+
+## 절벽에 단 앵커 — 그 칸에서 기력이 차오른다.
+func anchors() -> Anchors:
+	return %Anchors
 
 
 func stamina_view() -> StaminaView:
@@ -280,4 +288,5 @@ func store_world_state() -> void:
 	world.tilled = farm().to_list()
 	world.crops = farm().crops_to_list()
 	world.death_chests = death_chests().to_list()
+	world.anchors = anchors().to_list()
 	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())

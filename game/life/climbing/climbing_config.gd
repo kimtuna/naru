@@ -13,6 +13,8 @@ const CLIFF_LAYER := 2
 @export var drain_per_second := 20.0
 ## 절벽 밖에서 초당 차오르는 기력 (임시).
 @export var regen_per_second := 40.0
+## 앵커가 달린 칸에서 초당 차오르는 기력 (임시).
+@export var anchor_regen_per_second := 30.0
 ## 남은 기력 비율이 이보다 낮으면 주황, red_below 보다 낮으면 빨강. 그 위는 초록.
 @export_range(0.0, 1.0) var orange_below := 0.6
 @export_range(0.0, 1.0) var red_below := 0.3

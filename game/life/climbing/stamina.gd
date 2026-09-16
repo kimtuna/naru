@@ -1,6 +1,7 @@
 class_name Stamina
 extends RefCounted
 ## 등반 기력 — 절벽에서 움직이는 동안 줄고, 절벽 밖에서 차오른다. 멈춰 있으면 그대로다 (spec/04_life/climbing.md).
+## 앵커가 달린 칸에서는 절벽이어도 (움직여도) 차오른다.
 ## 0 이 된 뒤에도 config.grace 만큼은 더 움직일 수 있다(빨강 여유). 그 여유를 넘기면 떨어져야 한다.
 
 enum Zone { GREEN, ORANGE, RED }
@@ -16,11 +17,13 @@ func _init(cfg: ClimbingConfig = null) -> void:
 	current = config.max_stamina
 
 
-## delta 초 흘린다. 여유까지 다 써서 떨어져야 하면 true.
-func tick(delta: float, on_cliff: bool, moving: bool) -> bool:
+## delta 초 흘린다. anchored 는 앵커가 달린 칸에 있나. 여유까지 다 써서 떨어져야 하면 true.
+func tick(delta: float, on_cliff: bool, moving: bool, anchored := false) -> bool:
+	if anchored:
+		_regen(config.anchor_regen_per_second * delta)
+		return false
 	if not on_cliff:
-		overdraw = 0.0
-		current = minf(current + config.regen_per_second * delta, config.max_stamina)
+		_regen(config.regen_per_second * delta)
 		return false
 	if not moving:
 		return false
@@ -29,6 +32,11 @@ func tick(delta: float, on_cliff: bool, moving: bool) -> bool:
 	current -= from_current
 	overdraw += use - from_current
 	return overdraw > config.grace
+
+
+func _regen(amount: float) -> void:
+	overdraw = 0.0
+	current = minf(current + amount, config.max_stamina)
 
 
 func fraction() -> float:

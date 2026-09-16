@@ -20,6 +20,8 @@ var stations: Array = []
 var tilled: Array = []
 ## 밭에 심은 작물 — {"cell": Vector2i, "id", "days", "watered"} (Crop.to_dict).
 var crops: Array = []
+## 절벽에 단 앵커 — Vector2i 목록.
+var anchors: Array = []
 ## 데스 상자 — {"owner", "pos": Vector2, "items", "left": 남은 초} (DeathChest.to_dict).
 var death_chests: Array = []
 ## 월드 설정 — 서버장만 바꾼다.
@@ -47,6 +49,7 @@ func to_dict() -> Dictionary:
 		"tilled": tilled.duplicate(),
 		"crops": crops.duplicate(true),
 		"death_chests": death_chests.duplicate(true),
+		"anchors": anchors.duplicate(),
 		"settings": settings.to_dict(),
 	}
 
@@ -93,5 +96,10 @@ static func from_dict(d: Dictionary) -> WorldData:
 		for c in chests:
 			if DeathChest.is_valid_dict(c):
 				w.death_chests.append(c.duplicate(true))
+	var anchors = d.get("anchors", [])
+	if anchors is Array:
+		for cell in anchors:
+			if cell is Vector2i:
+				w.anchors.append(cell)
 	w.settings = WorldSettings.from_dict(d.get("settings"))
 	return w

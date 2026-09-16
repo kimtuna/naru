@@ -192,6 +192,9 @@ msgstr "Feet"
 msgid "ITEM_SPIKES"
 msgstr "Spikes"
 
+msgid "ITEM_ANCHOR"
+msgstr "Anchor"
+
 msgid "ITEM_HERB"
 msgstr "Herb"
 
