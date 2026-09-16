@@ -165,6 +165,12 @@ msgstr "Workbench"
 msgid "ITEM_WHEAT_SEED"
 msgstr "Wheat Seeds"
 
+msgid "ITEM_WHEAT"
+msgstr "Wheat"
+
+msgid "ITEM_BREAD"
+msgstr "Bread"
+
 msgid "ITEM_IRON_INGOT"
 msgstr "Iron Ingot"
 

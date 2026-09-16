@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FoodConfig" format=3]
+
+[ext_resource type="Script" path="res://expedition/supply/food_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+foods = {
+"bread": {
+"buff": "swift",
+"seconds": 120.0
+}
+}
+buffs = {
+"swift": {
+"move_speed": 1.25
+}
+}

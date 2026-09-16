@@ -39,6 +39,8 @@ func _ready() -> void:
 		farm().load_crops(world.crops)
 		stations().farm = farm()
 		farm().register(interactor())
+		eater().setup(player())
+		eater().register(interactor())
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
@@ -95,6 +97,11 @@ func interactor() -> Interactor:
 ## 밭과 작물 — 개간 · 심기 · 물 · 수확.
 func farm() -> Farm:
 	return %Farm
+
+
+## 버프 음식 먹기 — 들고 우클릭.
+func eater() -> Eater:
+	return %Eater
 
 
 func regrowth() -> Regrowth:

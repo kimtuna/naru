@@ -14,6 +14,8 @@ var hotbar := Hotbar.new()
 var facing := Vector2.RIGHT
 ## 참을 돌려주는 동안(설정 창이 열려 있는 동안) 이동 입력을 받지 않는다. 게임 씬이 채운다.
 var blocked := Callable()
+## 걸린 버프 — 버프 음식을 먹으면 걸리고 시간이 지나면 풀린다. 이동 속력에 곱해진다.
+var buffs := Buffs.new()
 
 
 func _ready() -> void:
@@ -22,10 +24,16 @@ func _ready() -> void:
 	DisplayConfig.lock_camera(%Camera)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	buffs.tick(delta)
 	update_facing()
-	velocity = Vector2.ZERO if is_blocked() else InputActions.move_vector() * tuning.move_speed
+	velocity = Vector2.ZERO if is_blocked() else InputActions.move_vector() * move_speed()
 	move_and_slide()
+
+
+## 지금 이동 속력 — 기본 속력에 버프 배수를 곱한다.
+func move_speed() -> float:
+	return tuning.move_speed * buffs.move_speed_multiplier()
 
 
 func is_blocked() -> bool:
