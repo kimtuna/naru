@@ -1,6 +1,7 @@
 extends Control
 ## 캐릭터 선택 — 슬롯 SaveConfig.CHARACTER_SLOTS 개.
 ## 빈 칸 → 캐릭터 생성, 찬 칸 → 그 캐릭터를 들고 월드 선택. 삭제는 확인을 한 번 거친다.
+## Esc — 삭제 확인이 떠 있으면 그것만 닫고, 아니면 뒤로(메인 화면).
 
 const EMPTY_TEXT := "CHARACTER_NEW"
 ## 슬롯 버튼 너비 (기준 화면 640×360 픽셀) — 긴 이름은 말줄임으로 자른다.
@@ -13,12 +14,26 @@ var _pending_delete := -1
 func _ready() -> void:
 	for slot in SaveConfig.CHARACTER_SLOTS:
 		_build_slot(slot)
-	%Back.pressed.connect(func(): Screens.go(self, Screens.MAIN_MENU))
+	%Back.pressed.connect(back)
 	%ConfirmYes.pressed.connect(_confirm_delete)
 	%ConfirmNo.pressed.connect(_close_confirm)
 	%Confirm.hide()
 	refresh()
 	slot_button(0).grab_focus()
+
+
+func back() -> void:
+	Screens.go(self, Screens.MAIN_MENU)
+
+
+func _input(event: InputEvent) -> void:
+	if not event.is_action_pressed(InputActions.MENU_EXIT) or event.is_echo():
+		return
+	get_viewport().set_input_as_handled()
+	if %Confirm.visible:
+		_close_confirm()
+	else:
+		back()
 
 
 func slot_button(slot: int) -> Button:

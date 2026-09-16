@@ -1,9 +1,10 @@
 class_name GameScene
 extends Node2D
 ## 게임 씬 — 섬과 플레이어 캐릭터 · 제작대 · 화면 아래 핫바 · 가방 · 제작 화면 (나머지는 다음 묶음들이 채운다).
-## Session 이 들고 온 캐릭터와 월드를 받아 두고, menu_exit 액션으로 둘을 저장한 뒤 메인 화면으로 나간다.
+## Session 이 들고 온 캐릭터와 월드를 받아 둔다. menu_exit(Esc) 는 열린 창을 닫거나, 열린 창이 없으면 설정 창을 연다.
+## 설정 창의 「메인 화면으로」 · 「게임 종료」가 둘을 저장한 뒤 나간다.
 
-const EXIT_ACTION := "menu_exit"
+const EXIT_ACTION := InputActions.MENU_EXIT
 
 var character: CharacterData
 var world: WorldData
@@ -48,6 +49,11 @@ func _ready() -> void:
 	crafting_view().bind(player().hotbar.inventory)
 	swinger().blocked = ui_blocks_click
 	interactor().blocked = ui_blocks_click
+	player().blocked = game_menu().is_open
+	inventory_view().blocked = game_menu().is_open
+	game_menu().set_host(Session.is_host)
+	game_menu().main_menu_requested.connect(exit_to_menu)
+	game_menu().quit_requested.connect(exit_game)
 	load_usec = Time.get_ticks_usec() - started
 
 
@@ -129,23 +135,50 @@ func crafting_view() -> CraftingView:
 	return %Crafting
 
 
-## 가방이나 제작 화면이 열려 있으면 좌클릭은 휘두르지 않고 우클릭은 열거나 놓지 않는다.
+## Esc 설정 창.
+func game_menu() -> GameMenu:
+	return %GameMenu
+
+
+## 가방 · 제작 화면 · 설정 창이 열려 있으면 좌클릭은 휘두르지 않고 우클릭은 열거나 놓지 않는다.
 func ui_blocks_click() -> bool:
-	return inventory_view().is_open() or crafting_view().is_open()
+	return inventory_view().is_open() or crafting_view().is_open() or game_menu().is_open()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(EXIT_ACTION):
+	if event.is_action_pressed(EXIT_ACTION) and not event.is_echo():
 		get_viewport().set_input_as_handled()
-		exit_to_menu()
+		on_escape()
+
+
+## Esc — 설정 창이 열려 있으면 그 창에서 뒤로, 아니면 열린 창(제작 → 가방)을 하나 닫고, 열린 창이 없으면 설정 창을 연다.
+func on_escape() -> void:
+	if game_menu().is_open():
+		game_menu().back()
+	elif crafting_view().is_open():
+		crafting_view().close()
+	elif inventory_view().is_open():
+		inventory_view().set_open(false)
+	else:
+		game_menu().open()
 
 
 ## 캐릭터와 월드를 저장하고 메인 화면으로 나간다.
 func exit_to_menu() -> void:
+	save_and_leave()
+	Screens.go(self, Screens.MAIN_MENU)
+
+
+## 캐릭터와 월드를 저장하고 게임을 끝낸다.
+func exit_game() -> void:
+	save_and_leave()
+	Screens.quit(self)
+
+
+func save_and_leave() -> void:
 	store_world_state()
 	Session.save_all()
 	Session.clear()
-	Screens.go(self, Screens.MAIN_MENU)
 
 
 ## 저장할 월드 상태를 WorldData 에 옮긴다. 없앤 칸 · 시각은 섬과 같은 사전이라 이미 들어 있다.

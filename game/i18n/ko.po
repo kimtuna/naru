@@ -154,7 +154,7 @@ msgid "GAME_WORLD"
 msgstr "월드"
 
 msgid "GAME_EXIT_HINT"
-msgstr "Esc: 저장하고 메인 화면으로"
+msgstr "Esc: 메뉴"
 
 msgid "INVENTORY_TITLE"
 msgstr "가방"
@@ -188,3 +188,21 @@ msgstr "%s ×%d"
 
 msgid "CRAFT_COLLECT"
 msgstr "수령"
+
+msgid "GAME_MENU_TITLE"
+msgstr "메뉴"
+
+msgid "GAME_MENU_CONTINUE"
+msgstr "계속하기"
+
+msgid "GAME_MENU_WORLD_SETTINGS"
+msgstr "월드 설정"
+
+msgid "GAME_MENU_MAIN_MENU"
+msgstr "메인 화면으로"
+
+msgid "GAME_MENU_QUIT"
+msgstr "게임 종료"
+
+msgid "WORLD_SETTINGS_TITLE"
+msgstr "월드 설정"
