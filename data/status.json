@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 04:11:57 KST",
- "updated_epoch": 1789585917,
+ "updated": "2026-09-17 04:19:03 KST",
+ "updated_epoch": 1789586343,
  "progress": {
   "groups_total": 14,
   "groups_done": 11,
@@ -20,6 +20,6 @@
  "step_total": "6",
  "step_title": "몹 기본 AI",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 04:11:57"
+ "phase": "QA",
+ "phase_since": "2026-09-17 04:19:03"
 }
