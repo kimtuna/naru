@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 21:38:39 KST",
- "updated_epoch": 1789562319,
+ "updated": "2026-09-16 21:40:04 KST",
+ "updated_epoch": 1789562404,
  "progress": {
   "groups_total": 1,
   "groups_done": 0,
@@ -8,12 +8,12 @@
   "steps_total": 3,
   "steps_done": 2
  },
- "state": "stopped",
- "reason": "사용자 중지",
- "started": "2026-09-16 21:31:19",
- "ended": "2026-09-16 21:38:39",
+ "state": "running",
+ "reason": "",
+ "started": "2026-09-16 21:40:04",
+ "ended": "",
  "resume_at": "",
- "pid": "93658",
+ "pid": "97434",
  "group": "G-001",
  "group_title": "프로젝트 기반",
  "step": "3",
