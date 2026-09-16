@@ -47,10 +47,20 @@ func _enter(slot: int, world_id: String) -> Node:
 	select.world_button(world_id).pressed.emit()
 	assert_eq(Screens.last_request, Screens.GAME)
 	Screens.last_request = ""
+	# 실제로는 화면 전환으로 사라진다 — 남겨 두면 그 화면이 Esc(뒤로)를 먼저 받는다.
+	remove_child(select)
+	select.queue_free()
 	return add_child_autofree((load(Screens.GAME) as PackedScene).instantiate())
 
 
-func _press_exit() -> void:
+## Esc 로 설정 창을 열고 「메인 화면으로」를 누른다 (G-012 부터 Esc 는 바로 나가지 않는다).
+func _press_exit(game: Node) -> void:
+	await _press_escape()
+	assert_true(game.game_menu().is_open(), "Esc opens the game menu")
+	game.game_menu().button("MainMenu").pressed.emit()
+
+
+func _press_escape() -> void:
 	var ev := InputEventKey.new()
 	ev.physical_keycode = KEY_ESCAPE
 	ev.pressed = true
@@ -76,7 +86,7 @@ func test_game_knows_character_and_world_names() -> void:
 	assert_eq(game.get_node("%CharacterName").auto_translate_mode, Node.AUTO_TRANSLATE_MODE_DISABLED)
 
 
-# --- 나가기: InputMap 액션 → 저장하고 메인 화면 ---
+# --- 나가기: InputMap 액션 → 설정 창 → 저장하고 메인 화면 ---
 
 func test_exit_action_is_in_input_map() -> void:
 	assert_true(InputMap.has_action(GameScene.EXIT_ACTION), "missing InputMap action")
@@ -89,7 +99,7 @@ func test_exit_key_saves_and_goes_to_main_menu() -> void:
 	var game := _enter(0, ids[0])
 	game.character.appearance["body"] = "changed"
 	game.world.world_seed = 999
-	await _press_exit()
+	await _press_exit(game)
 	assert_eq(Screens.last_request, Screens.MAIN_MENU)
 	assert_eq(Session.store.load_character(0).appearance.get("body"), "changed", "character not saved")
 	assert_eq(Session.store.load_world(ids[0]).world_seed, 999, "world not saved")
@@ -120,7 +130,7 @@ func test_inventory_follows_character_across_worlds() -> void:
 	var in_x := _enter(0, ids[0])
 	assert_eq(in_x.world_name(), "X")
 	in_x.character.inventory.append_array(items.duplicate(true))
-	await _press_exit()
+	await _press_exit(in_x)
 	assert_eq(Screens.last_request, Screens.MAIN_MENU)
 	in_x.queue_free()
 	await wait_process_frames(1)

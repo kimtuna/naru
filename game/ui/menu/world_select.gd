@@ -1,6 +1,7 @@
 extends Control
 ## 월드 선택 · 생성 — 저장된 월드 목록, 새 월드(이름 · 시드), 삭제(확인 한 번), 뒤로 → 캐릭터 선택.
 ## 월드를 고르면 Session 의 캐릭터와 그 월드를 들고 게임 씬으로 간다.
+## Esc — 삭제 확인이 떠 있으면 그것만 닫고, 아니면 뒤로.
 
 ## 월드 버튼 너비 (기준 화면 640×360 픽셀) — 긴 이름은 말줄임으로 자른다.
 const ROW_WIDTH := 180
@@ -82,6 +83,16 @@ static func seed_from_text(text: String) -> int:
 func back() -> void:
 	Session.clear_world()
 	Screens.go(self, Screens.CHARACTER_SELECT)
+
+
+func _input(event: InputEvent) -> void:
+	if not event.is_action_pressed(InputActions.MENU_EXIT) or event.is_echo():
+		return
+	get_viewport().set_input_as_handled()
+	if %Confirm.visible:
+		_close_confirm()
+	else:
+		back()
 
 
 func _row(id: String) -> Control:

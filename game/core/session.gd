@@ -12,6 +12,9 @@ static var character: CharacterData = null
 static var world_id := ""
 ## 고른 월드. 없으면 null.
 static var world: WorldData = null
+## 들고 있는 월드의 서버장인가 — 월드를 만든 사람이 서버장이고, 혼자 할 때는 자기가 서버장이다.
+## 남의 월드에 들어가는 길(리슨 서버)이 아직 없어 늘 참이다 — 손님 접속이 생기면 그 단계가 false 로 둔다.
+static var is_host := true
 
 
 static func select_character(slot: int) -> void:
@@ -46,6 +49,7 @@ static func save_all() -> Error:
 static func clear_world() -> void:
 	world_id = ""
 	world = null
+	is_host = true
 
 
 static func clear() -> void:

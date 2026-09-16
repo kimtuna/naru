@@ -11,6 +11,8 @@ const MOVE_RIGHT := &"move_right"
 const USE := &"use"
 ## 우클릭 — 상호작용 (제작대 열기 · 설치 · 든 아이템의 동작).
 const INTERACT := &"interact"
+## Esc — 게임 중엔 열린 창 닫기 · 설정 창, 메뉴 화면에선 뒤로.
+const MENU_EXIT := &"menu_exit"
 ## 가방 화면 열기 · 닫기 — 키는 spec 미정, 임시로 Tab.
 const INVENTORY := &"inventory"
 const HOTBAR_PREFIX := "hotbar_"

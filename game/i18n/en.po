@@ -154,7 +154,7 @@ msgid "GAME_WORLD"
 msgstr "World"
 
 msgid "GAME_EXIT_HINT"
-msgstr "Esc: save and return to main menu"
+msgstr "Esc: menu"
 
 msgid "INVENTORY_TITLE"
 msgstr "Bag"
@@ -188,3 +188,21 @@ msgstr "%s ×%d"
 
 msgid "CRAFT_COLLECT"
 msgstr "Collect"
+
+msgid "GAME_MENU_TITLE"
+msgstr "Menu"
+
+msgid "GAME_MENU_CONTINUE"
+msgstr "Continue"
+
+msgid "GAME_MENU_WORLD_SETTINGS"
+msgstr "World settings"
+
+msgid "GAME_MENU_MAIN_MENU"
+msgstr "Main menu"
+
+msgid "GAME_MENU_QUIT"
+msgstr "Quit game"
+
+msgid "WORLD_SETTINGS_TITLE"
+msgstr "World settings"

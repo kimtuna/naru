@@ -160,6 +160,8 @@ func test_hotbar_survives_exit_and_reenter() -> void:
 	game.player().hotbar.set_item(7, {"id": "seed", "count": 4})
 	await _tap(KEY_7)
 	await _tap(KEY_ESCAPE)
+	assert_true(game.game_menu().is_open(), "Esc opens the game menu")
+	game.game_menu().button("MainMenu").pressed.emit()
 	assert_eq(Screens.last_request, Screens.MAIN_MENU)
 	game.queue_free()
 	await wait_process_frames(1)

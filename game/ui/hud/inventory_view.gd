@@ -9,6 +9,8 @@ signal toggled(open: bool)
 const COLUMNS := 10
 
 var inventory: Inventory
+## 참을 돌려주는 동안(설정 창이 열려 있는 동안) 가방 키로 열지 않는다. 게임 씬이 채운다.
+var blocked := Callable()
 
 
 func _ready() -> void:
@@ -43,7 +45,8 @@ func toggle() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(InputActions.INVENTORY) and not event.is_echo():
+	if event.is_action_pressed(InputActions.INVENTORY) and not event.is_echo() \
+			and not (blocked.is_valid() and blocked.call()):
 		get_viewport().set_input_as_handled()
 		toggle()
 

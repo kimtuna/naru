@@ -12,6 +12,8 @@ extends CharacterBody2D
 var hotbar := Hotbar.new()
 ## 바라보는 방향 (길이 1). 커서가 캐릭터 한가운데에 있으면 앞서 보던 방향을 그대로 둔다.
 var facing := Vector2.RIGHT
+## 참을 돌려주는 동안(설정 창이 열려 있는 동안) 이동 입력을 받지 않는다. 게임 씬이 채운다.
+var blocked := Callable()
 
 
 func _ready() -> void:
@@ -22,8 +24,12 @@ func _ready() -> void:
 
 func _physics_process(_delta: float) -> void:
 	update_facing()
-	velocity = InputActions.move_vector() * tuning.move_speed
+	velocity = Vector2.ZERO if is_blocked() else InputActions.move_vector() * tuning.move_speed
 	move_and_slide()
+
+
+func is_blocked() -> bool:
+	return blocked.is_valid() and blocked.call()
 
 
 ## 커서 쪽으로 바라보는 방향을 맞추고 조준 표시를 돌린다. 이번 걸음에서 움직이기 전 위치 기준이다.

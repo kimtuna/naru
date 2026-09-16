@@ -1,6 +1,6 @@
 extends Control
 ## 캐릭터 생성 — 이름과 외형 항목(데이터 파일 AppearanceCatalog)을 고른다.
-## 만들기 → Session.character_slot 칸에 저장하고 캐릭터 선택으로. 취소 → 저장 없이 캐릭터 선택으로.
+## 만들기 → Session.character_slot 칸에 저장하고 캐릭터 선택으로. 취소 · Esc → 저장 없이 캐릭터 선택으로.
 ## 모양 · 배치는 자리만 — 디자인은 사람이 나중에 넣는다.
 
 const PREVIEW_SIZE := Vector2(80, 20)
@@ -73,6 +73,12 @@ func create() -> void:
 func cancel() -> void:
 	Session.clear()
 	Screens.go(self, Screens.CHARACTER_SELECT)
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(InputActions.MENU_EXIT) and not event.is_echo():
+		get_viewport().set_input_as_handled()
+		cancel()
 
 
 func _build_part(i: int) -> void:
