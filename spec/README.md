@@ -5,11 +5,11 @@
 - roadmap.md — 로드맵 · 프로토타입 범위(넣는 것/빼는 것)  ·  tech.md — 엔진 · 2D · 시드 생성 · 번역 키 원칙
 - art-sound.md — 아트·사운드 (보류)
 ## 01_settings
-- display.md — 해상도 · 창 모드 (대부분 미정)  ·  world-settings.md — 월드 설정 (서버장만 · 데스 페널티)  ·  input.md — 키 배치 · InputMap
+- display.md — 기준 화면 640×360 · 보이는 범위 고정 · 검은 띠  ·  world-settings.md — 월드 설정 (서버장만 · 데스 페널티)  ·  input.md — 키 배치 · InputMap
 - save.md — 캐릭터/월드 분리 저장  ·  language.md — 한국어·영어, 문자열 하드코딩 금지
 - audio.md — 음량 (미정)
 ## 02_player
-- movement-controls.md — 8방향 이동 · 마우스 조준 · 좌클릭 하나 규칙  ·  inventory-hotbar.md — 핫바 · 빈손 시작
+- movement-controls.md — 8방향 이동 · 마우스 조준 · 좌클릭 평타 · 우클릭 상호작용  ·  inventory-hotbar.md — 핫바 · 빈손 시작
 - pickup.md — 밟으면 줍기 · 펫 반경  ·  level-skills.md — 캐릭터 레벨·스킬 (대부분 미정)
 - equipment.md — 장비 스탯 · 포인트 예산제 · 세트
 ## 03_world
