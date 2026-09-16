@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 02:54:56 KST",
- "updated_epoch": 1789581296,
+ "updated": "2026-09-17 02:59:23 KST",
+ "updated_epoch": 1789581563,
  "progress": {
   "groups_total": 14,
   "groups_done": 11,
@@ -20,6 +20,6 @@
  "step_total": "6",
  "step_title": "체력 · 피해 · 죽음",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 02:54:56"
+ "phase": "QA",
+ "phase_since": "2026-09-17 02:59:23"
 }
