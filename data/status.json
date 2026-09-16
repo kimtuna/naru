@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 00:34:04 KST",
- "updated_epoch": 1789572844,
+ "updated": "2026-09-17 00:36:05 KST",
+ "updated_epoch": 1789572965,
  "progress": {
   "groups_total": 14,
   "groups_done": 6,
@@ -20,6 +20,6 @@
  "step_total": "2",
  "step_title": "모든 화면이 기준 화면 안에 들어간다",
  "attempt": "3",
- "phase": "구현",
- "phase_since": "2026-09-17 00:34:04"
+ "phase": "QA",
+ "phase_since": "2026-09-17 00:36:05"
 }
