@@ -15,7 +15,7 @@
 ## 03_world
 - island-generation.md — 시드 생성 · 비율 배치 · 지형별 광물 · 보장  ·  resources-regrowth.md — 재생 규칙 · 설치물 둘레 금지
 - day-night.md — 하루 20분 · 밤의 의미  ·  lighting.md — 반경 조명
-- weather-season.md — 날씨·계절 (나중에 한 덩어리)  ·  spawn-conditions.md — 조건부 스폰 · 이로치
+- terrain.md — 지형 종류 · 높이 · 경사 속도 · 절벽 · 지형별 자원  ·  weather-season.md — 날씨·계절 (나중에 한 덩어리)  ·  spawn-conditions.md — 조건부 스폰 · 이로치
 ## 04_life
 - gathering.md — 타이밍 스킬체크 · 빈손 시작  ·  logging.md — 벌목 · 수액
 - mining.md — 야생 채광  ·  farming.md — 개간·파종·물·수확
