@@ -38,11 +38,11 @@ func test_add_stacks_onto_same_item_before_using_empty_slot() -> void:
 
 func test_overflowing_stack_spills_into_first_empty_slot() -> void:
 	var c := CharacterData.new()
-	c.inventory = [{"id": "ore", "count": MAX - 2}]
+	c.inventory = [{"id": "iron_ore", "count": MAX - 2}]
 	var inv := Inventory.new(c)
-	assert_eq(inv.add({"id": "ore", "count": 5}), 0)
-	assert_eq(inv.slot(0), {"id": "ore", "count": MAX})
-	assert_eq(inv.slot(1), {"id": "ore", "count": 3})
+	assert_eq(inv.add({"id": "iron_ore", "count": 5}), 0)
+	assert_eq(inv.slot(0), {"id": "iron_ore", "count": MAX})
+	assert_eq(inv.slot(1), {"id": "iron_ore", "count": 3})
 
 
 func test_full_inventory_returns_everything() -> void:

@@ -5,3 +5,5 @@
 [resource]
 script = ExtResource("1")
 move_speed = 80.0
+uphill_multiplier = 0.7
+downhill_multiplier = 1.3

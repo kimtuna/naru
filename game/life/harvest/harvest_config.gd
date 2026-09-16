@@ -3,7 +3,8 @@ extends Resource
 ## 채취(벌목 · 채광) 규칙과 수치 — 한 곳에 모은다 (값은 life/harvest/harvest_config.tres).
 ## spec/04_life/logging.md · mining.md: 좌클릭 평타로 치면 채취가 진행된다.
 ## 맞는 도구(도끼 → 나무, 곡괭이 → 돌 · 광물)는 빠르고, 맞지 않는 도구 · 맨손은 느리다.
-## 광물은 곡괭이가 있어야 캐진다 — 임시 규칙 (spec: 곡괭이 등급별 채굴 가능 대상 미정).
+## 광물(철 · 유황)은 곡괭이가 있어야 캐진다 — 임시 규칙 (spec: 곡괭이 등급별 채굴 가능 대상 미정).
+## 약초는 절벽에만 난다 — 사람이 올라야 딴다 (spec/04_life/gathering.md). 등반(climbing.md)이 아직 없어 지금은 무엇으로도 못 딴다.
 ## 내구도 · 드롭 수량은 spec 미정 — 임시 값이다. 사람이 플레이해 보고 바꾼다.
 ## 휘두르는 간격 · 손이 닿는 거리는 평타 수치(SwingConfig)에 있다.
 
@@ -19,19 +20,24 @@ const PICKAXE := &"pickaxe"
 const RIGHT_TOOLS := {
 	Deposit.TREE: [AXE],
 	Deposit.STONE: [PICKAXE],
-	Deposit.ORE: [PICKAXE],
+	Deposit.IRON: [PICKAXE],
+	Deposit.SULFUR: [PICKAXE],
 }
 
 ## 자원 → 이것을 들어야만 캐진다. 여기 없는 자원은 무엇으로든(맨손 포함) 캐진다.
 const REQUIRED_TOOLS := {
-	Deposit.ORE: [PICKAXE],
+	Deposit.IRON: [PICKAXE],
+	Deposit.SULFUR: [PICKAXE],
+	Deposit.HERB: [],
 }
 
 ## 자원 → 떨어지는 아이템 id.
 const DROPS := {
 	Deposit.TREE: "wood",
 	Deposit.STONE: "stone",
-	Deposit.ORE: "ore",
+	Deposit.IRON: "iron_ore",
+	Deposit.SULFUR: "sulfur",
+	Deposit.HERB: "herb",
 }
 
 ## 자원을 없애려면 쌓아야 하는 힘.

@@ -1,6 +1,49 @@
-[gd_resource type="Resource" script_class="IslandConfig" format=3]
+[gd_resource type="Resource" script_class="IslandConfig" load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://world/island/island_config.gd" id="1"]
+[ext_resource type="Script" path="res://world/island/deposit_rule.gd" id="2"]
+
+[sub_resource type="Resource" id="grass"]
+script = ExtResource("2")
+fill_percent = 20.0
+tree_weight = 1.0
+stone_weight = 1.0
+
+[sub_resource type="Resource" id="forest"]
+script = ExtResource("2")
+fill_percent = 45.0
+tree_weight = 8.0
+stone_weight = 1.0
+
+[sub_resource type="Resource" id="mountain"]
+script = ExtResource("2")
+fill_percent = 40.0
+tree_weight = 1.0
+stone_weight = 6.0
+
+[sub_resource type="Resource" id="volcano"]
+script = ExtResource("2")
+fill_percent = 35.0
+stone_weight = 3.0
+sulfur_weight = 2.0
+
+[sub_resource type="Resource" id="snow"]
+script = ExtResource("2")
+fill_percent = 35.0
+tree_weight = 1.0
+stone_weight = 2.0
+iron_weight = 3.0
+
+[sub_resource type="Resource" id="beach"]
+script = ExtResource("2")
+fill_percent = 10.0
+tree_weight = 1.0
+stone_weight = 1.0
+
+[sub_resource type="Resource" id="cliff"]
+script = ExtResource("2")
+fill_percent = 25.0
+herb_weight = 1.0
 
 [resource]
 script = ExtResource("1")
@@ -9,12 +52,32 @@ spawn_clear = 7
 chunk_size = 16
 tile_px = 16
 view_margin_px = 160.0
-fill_percent = 30.0
-tree_weight = 3.0
-stone_weight = 2.0
-ore_weight = 1.0
-ore_noise_cell = 32
-ore_ground_percent = 20.0
-ore_sample_step = 4
-ore_patch_distance = 24
-ore_patch_radius = 8
+grass_deposits = SubResource("grass")
+forest_deposits = SubResource("forest")
+mountain_deposits = SubResource("mountain")
+volcano_deposits = SubResource("volcano")
+snow_deposits = SubResource("snow")
+beach_deposits = SubResource("beach")
+cliff_deposits = SubResource("cliff")
+starter_patch = Vector2i(3, 5)
+terrain_block = 2
+land_percent = 55.0
+sea_margin = 12
+beach_width = 1
+shape_noise_cell = 64
+shape_detail_cell = 16
+shape_detail = 0.35
+shape_falloff = 1.2
+relief_noise_cell = 24
+forest_noise_cell = 20
+elevated_percent = 20.0
+mountain_weight = 2.0
+volcano_weight = 1.0
+snow_weight = 1.0
+forest_percent = 25.0
+max_height = 3
+cliff_percent = 50.0
+cliff_noise_cell = 12
+spawn_flat_radius = 8
+peak_patch_distance = 24
+peak_patch_radius = 8

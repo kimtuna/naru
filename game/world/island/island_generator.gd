@@ -1,6 +1,7 @@
 class_name IslandGenerator
 extends RefCounted
-## 시드 → 섬. 칸의 값은 (시드, 좌표)만으로 정해지는 해시다 — 만드는 순서와 상관없다.
+## 시드 → 섬. 칸의 값은 (시드, 좌표)만으로 정해진다 — 만드는 순서와 상관없다.
+## 지형 · 높이는 IslandTerrain, 자원은 칸마다 해시 하나를 그 칸 지형의 규칙(DepositRule)에 대어 정한다.
 ## 재생(「없앤 표시를 지우기」)은 deposit_at 으로 원래 값을 다시 얻는다.
 
 const Terrain := IslandConfig.Terrain
@@ -9,38 +10,28 @@ const Deposit := IslandConfig.Deposit
 const MASK32 := 0xFFFFFFFF
 ## 해시 용도마다 다른 소금 — 같은 칸이라도 용도끼리 값이 엮이지 않게.
 const SALT_DEPOSIT := 0x1B873593
-const SALT_TERRAIN := 0x68E31DA4
-const SALT_PATCH := 0x2545F491
+## 절벽 칸 규칙을 _rules 에서 찾는 열쇠 (지형 값과 겹치지 않게).
+const CLIFF_KEY := -1
 
 var world_seed: int
 var config: IslandConfig
-var _anchor: Vector2i
-## 이 시드에서 얼룩이 광물 지형이 되는 문턱과, 섬에서 광물 지형이 덮는 몫.
-var _ore_threshold := 2.0
-var _ore_ground_share := 0.0
-## 광물 지형 칸이 광물일 확률 · 광물 아닌 칸이 나무/돌일 확률.
-var _ore_chance := 0.0
-var _rest_chance := 0.0
-## 섬 안 격자 꼭짓점의 해시값 — 얼룩을 매번 해시로 구하지 않게.
-var _lattice := PackedFloat64Array()
-var _lattice_w := 0
+## 지형 · 높이 (섬 전체를 한 번에 정한 블록 격자).
+var terrain: IslandTerrain
+## 광물 → 반드시 그 광물이 있는 칸 (그 지형 보장 봉우리의 한가운데).
+var _mineral_anchors := {}
+## 지형(또는 CLIFF_KEY) → [채울 몫, [[종류, 누적 몫]]].
+var _rules := {}
 
 
 func _init(seed_value: int, cfg: IslandConfig = null) -> void:
 	world_seed = seed_value
 	config = cfg if cfg else IslandConfig.load_default()
-	# 스폰에서 맨해튼 거리 ore_patch_distance 인 칸 하나. 정수만 써서 기계마다 같다.
-	var dist := config.ore_patch_distance
-	var along := int(hash01(world_seed, 0, 0, SALT_PATCH) * (2 * dist + 1))
-	var dx := along - dist
-	var dy := (dist - absi(dx)) * (1 if hash01(world_seed, 1, 0, SALT_PATCH) < 0.5 else -1)
-	_anchor = config.spawn() + Vector2i(dx, dy)
-	_build_lattice()
-	_measure_ore_ground()
-	_compute_chances()
-	if not ratio_reachable():
-		push_warning("IslandGenerator: 광물 지형(%.3f)이 채울 %% × 광물 몫(%.3f)보다 좁아 비율을 맞출 수 없다"
-			% [_ore_ground_share, config.fill() * config.ore_share()])
+	terrain = IslandTerrain.new(world_seed, config)
+	for mineral in IslandConfig.MINERAL_TERRAIN:
+		_mineral_anchors[mineral] = terrain.peak(IslandConfig.MINERAL_TERRAIN[mineral])
+	for kind in IslandConfig.ALLOWED_DEPOSITS:
+		_rules[kind] = _compile(config.deposit_rule(kind), IslandConfig.allowed_deposits(kind))
+	_rules[CLIFF_KEY] = _compile(config.deposit_rule(Terrain.GRASS, true), IslandConfig.CLIFF_DEPOSITS)
 
 
 ## 섬 전체를 만든다.
@@ -49,51 +40,65 @@ static func generate(seed_value: int, cfg: IslandConfig = null) -> IslandMap:
 	return IslandMap.new(gen)
 
 
-## 반드시 있는 광물 지형의 한가운데. 이 칸에는 광물이 반드시 있다.
-func ore_anchor() -> Vector2i:
-	return _anchor
+## 이 광물(철 · 유황)이 반드시 있는 칸.
+func mineral_anchor(mineral: Deposit) -> Vector2i:
+	return _mineral_anchors[mineral]
+
+
+## 반드시 있는 산 · 화산 · 설산의 한가운데.
+func peak(kind: Terrain) -> Vector2i:
+	return terrain.peak(kind)
 
 
 func terrain_at(x: int, y: int) -> Terrain:
-	var cell := Vector2i(x, y)
-	if cell.distance_squared_to(_anchor) <= config.ore_patch_radius * config.ore_patch_radius:
-		return Terrain.ORE_GROUND
-	if _ore_noise(x, y) >= _ore_threshold:
-		return Terrain.ORE_GROUND
-	return Terrain.GRASS
+	return terrain.terrain_at(x, y)
+
+
+func height_at(x: int, y: int) -> int:
+	return terrain.height_at(x, y)
+
+
+func cliff_at(x: int, y: int) -> bool:
+	return terrain.cliff_at(x, y)
 
 
 func deposit_at(x: int, y: int) -> Deposit:
-	return deposit_on(x, y, terrain_at(x, y))
+	return deposit_on(x, y, terrain_at(x, y), cliff_at(x, y))
 
 
-## 지형을 이미 알 때 — 섬 전체를 만들 때 지형 계산을 두 번 하지 않는다.
-## 칸마다 해시값 하나로 정한다. 광물 지형: 광물 확률 _ore_chance, 그 나머지에서 나무/돌 확률 _rest_chance.
-## 풀밭: 나무/돌 확률 _rest_chance. 그래서 섬 전체의 채운 % 와 나무:돌:광물 비가 설정대로 나온다.
-func deposit_on(x: int, y: int, terrain: Terrain) -> Deposit:
+## 지형 · 절벽을 이미 알 때 — 섬 전체를 만들 때 지형 계산을 두 번 하지 않는다.
+## 칸마다 해시값 하나: 그 칸 규칙의 채울 몫 안이면 누적 몫으로 종류를 고른다. 그래서 지형마다 센 비가 설정대로 나온다.
+func deposit_on(x: int, y: int, kind: Terrain, cliff: bool) -> Deposit:
 	var cell := Vector2i(x, y)
-	if in_spawn_clear(cell):
+	if kind == Terrain.SEA or in_spawn_clear(cell):
 		return Deposit.NONE
-	if cell == _anchor:
-		return Deposit.ORE
+	if not cliff:
+		var starter := starter_deposit(cell)
+		if starter != Deposit.NONE:
+			return starter
+		for mineral in _mineral_anchors:
+			if _mineral_anchors[mineral] == cell and kind == IslandConfig.MINERAL_TERRAIN[mineral]:
+				return mineral
+	var rule: Array = _rules[CLIFF_KEY if cliff else kind]
 	var r := hash01(world_seed, x, y, SALT_DEPOSIT)
-	if terrain == Terrain.ORE_GROUND:
-		if r < _ore_chance:
-			return Deposit.ORE
-		r = (r - _ore_chance) / (1.0 - _ore_chance)
-	if r >= _rest_chance:
+	if r >= rule[0]:
 		return Deposit.NONE
-	return Deposit.TREE if r / _rest_chance < config.tree_share_of_rest() else Deposit.STONE
+	r /= rule[0]
+	var picks: Array = rule[1]
+	for pick in picks:
+		if r < pick[1]:
+			return pick[0]
+	return picks[picks.size() - 1][0]
 
 
-## 섬에서 광물 지형이 덮는 몫 (표본으로 잰 값).
-func ore_ground_share() -> float:
-	return _ore_ground_share
-
-
-## 광물 지형이 넉넉해 섬 전체 비율을 맞출 수 있나.
-func ratio_reachable() -> bool:
-	return _ore_ground_share + 1e-9 >= config.fill() * config.ore_share()
+## 빈손 시작 보장 덩이 — 스폰 동쪽은 나무, 서쪽은 돌. 덩이 밖이면 NONE.
+func starter_deposit(cell: Vector2i) -> Deposit:
+	var d := cell - config.spawn()
+	var near := config.spawn_clear / 2 + 2
+	var patch := config.starter_patch
+	if absi(d.y) > patch.y / 2 or absi(d.x) < near or absi(d.x) >= near + patch.x:
+		return Deposit.NONE
+	return Deposit.TREE if d.x > 0 else Deposit.STONE
 
 
 func in_spawn_clear(cell: Vector2i) -> bool:
@@ -102,65 +107,13 @@ func in_spawn_clear(cell: Vector2i) -> bool:
 	return d.x <= half and d.y <= half
 
 
-func _compute_chances() -> void:
-	var fill := config.fill()
-	var ore := fill * config.ore_share()
-	_ore_chance = minf(ore / _ore_ground_share, 1.0) if _ore_ground_share > 0.0 else 0.0
-	if _ore_chance >= 1.0:
-		_ore_chance = 1.0 - 1e-9  # 나머지를 나눌 때 0 으로 나누지 않게
-	var room := 1.0 - _ore_ground_share * _ore_chance
-	_rest_chance = clampf((fill - ore) / room, 0.0, 1.0) if room > 0.0 else 0.0
-
-
-## 표본 칸의 얼룩값에서 ore_ground_percent 번째 문턱을 고르고, 보장 원까지 넣어 넓이를 잰다.
-func _measure_ore_ground() -> void:
-	var step := maxi(config.ore_sample_step, 1)
-	var samples := PackedFloat64Array()
-	var cells: Array[Vector2i] = []
-	for y in range(0, config.size, step):
-		for x in range(0, config.size, step):
-			samples.append(_ore_noise(x, y))
-			cells.append(Vector2i(x, y))
-	var sorted := samples.duplicate()
-	sorted.sort()
-	var n := sorted.size()
-	var k := roundi(n * clampf(config.ore_ground_percent / 100.0, 0.0, 1.0))
-	_ore_threshold = 2.0 if k <= 0 else float(sorted[n - k])
-	var r2 := config.ore_patch_radius * config.ore_patch_radius
-	var inside := 0
-	for i in n:
-		if samples[i] >= _ore_threshold or cells[i].distance_squared_to(_anchor) <= r2:
-			inside += 1
-	_ore_ground_share = float(inside) / n if n > 0 else 0.0
-
-
-func _build_lattice() -> void:
-	var s := maxi(config.ore_noise_cell, 1)
-	_lattice_w = ceili(float(config.size) / s) + 2
-	_lattice.resize(_lattice_w * _lattice_w)
-	for gy in _lattice_w:
-		for gx in _lattice_w:
-			_lattice[gy * _lattice_w + gx] = hash01(world_seed, gx, gy, SALT_TERRAIN)
-
-
-func _lattice_at(gx: int, gy: int) -> float:
-	if gx >= 0 and gy >= 0 and gx < _lattice_w and gy < _lattice_w:
-		return _lattice[gy * _lattice_w + gx]
-	return hash01(world_seed, gx, gy, SALT_TERRAIN)
-
-
-## 격자 꼭짓점마다 해시값을 두고 부드럽게 이은 얼룩 (0 ~ 1).
-func _ore_noise(x: int, y: int) -> float:
-	var s := maxi(config.ore_noise_cell, 1)
-	var gx := floori(float(x) / s)
-	var gy := floori(float(y) / s)
-	var tx := smoothstep(0.0, 1.0, float(x - gx * s) / s)
-	var ty := smoothstep(0.0, 1.0, float(y - gy * s) / s)
-	var a := _lattice_at(gx, gy)
-	var b := _lattice_at(gx + 1, gy)
-	var c := _lattice_at(gx, gy + 1)
-	var d := _lattice_at(gx + 1, gy + 1)
-	return lerpf(lerpf(a, b, tx), lerpf(c, d, tx), ty)
+static func _compile(rule: DepositRule, allowed: Array) -> Array:
+	var picks := []
+	var sum := 0.0
+	for share in rule.shares(allowed):
+		sum += share[1]
+		picks.append([share[0], sum])
+	return [rule.fill() if not picks.is_empty() else 0.0, picks]
 
 
 ## (시드, x, y, 소금) → [0, 1). 64비트 곱셈 넘침에 기대지 않게 32비트로 나눠 섞는다.

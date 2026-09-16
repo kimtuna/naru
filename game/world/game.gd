@@ -52,6 +52,7 @@ func _ready() -> void:
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
+		player().slope = island_view().slope_along
 		player().spawn_point = island_view().cell_center(island.spawn())
 		player().global_position = player().spawn_point
 		island_view().update_around(player().global_position)

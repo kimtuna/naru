@@ -86,10 +86,11 @@ func _find_in(map: IslandMap, deposit: Deposit, skip: Array = []) -> Array:
 		for y in range(s.y - r, s.y + r + 1):
 			for x in range(s.x - r, s.x + r + 1):
 				var cell := Vector2i(x, y)
-				if cell in skip or not map.has_cell(cell) or map.deposit_at(cell) != deposit:
+				# 절벽 칸의 자원은 캐도 칸이 막혀 있다 — 걸어 설 수 있는 평범한 칸만.
+				if cell in skip or not map.has_cell(cell) or map.deposit_at(cell) != deposit or map.is_cliff(cell):
 					continue
 				for n in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
-					if map.has_cell(cell + n) and map.deposit_at(cell + n) == Deposit.NONE:
+					if not map.is_blocked(cell + n):
 						return [cell, cell + n]
 	fail_test("no %s near spawn" % deposit)
 	return [Vector2i.ZERO, Vector2i.ZERO]

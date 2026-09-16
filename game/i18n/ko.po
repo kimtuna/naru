@@ -180,6 +180,15 @@ msgstr "총"
 msgid "ITEM_AMMO"
 msgstr "탄약"
 
+msgid "ITEM_IRON_ORE"
+msgstr "철광석"
+
+msgid "ITEM_SULFUR"
+msgstr "유황"
+
+msgid "ITEM_HERB"
+msgstr "약초"
+
 msgid "CRAFT_CLOSE_HINT"
 msgstr "Esc: 닫기"
 

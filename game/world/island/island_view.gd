@@ -5,6 +5,10 @@ extends Node2D
 
 ## 이 노드 둘레를 보이는 곳으로 삼는다 (보통 플레이어).
 var follow: Node2D
+## 경사를 볼 때 앞뒤로 떨어뜨리는 거리 (블록 한 변 단위). 앞뒤 사이가 블록 한 변보다 길어야
+## (대각선이면 한 축에 1/√2 만 걸리니 0.5 × √2 보다 커야) 계단 한가운데에서도 경사가 끊기지 않는다.
+const SLOPE_REACH := 0.75
+
 var map: IslandMap
 var config: IslandConfig
 var _chunks := {}
@@ -31,6 +35,19 @@ func cell_rect(cell: Vector2i) -> Rect2:
 
 func world_to_cell(pos: Vector2) -> Vector2i:
 	return Vector2i((pos / tile_px()).floor())
+
+
+## pos 에서 dir 쪽 경사 — +1 오르막 · 0 평지 · -1 내리막 (Player.slope 로 쓴다).
+## 높이는 블록 단위로 바뀌므로 앞뒤로 블록 SLOPE_REACH 개만큼 떨어진 두 곳의 높이를 비교한다.
+func slope_along(pos: Vector2, dir: Vector2) -> int:
+	if map == null or dir.is_zero_approx():
+		return 0
+	var reach := dir.normalized() * tile_px() * config.terrain_block * SLOPE_REACH
+	var ahead := world_to_cell(pos + reach)
+	var behind := world_to_cell(pos - reach)
+	if not map.has_cell(ahead) or not map.has_cell(behind):
+		return 0
+	return signi(map.height_at(ahead) - map.height_at(behind))
 
 
 func chunk_node(chunk: Vector2i) -> IslandChunk:

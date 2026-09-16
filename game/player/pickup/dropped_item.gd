@@ -6,7 +6,9 @@ extends Node2D
 const COLORS := {
 	"wood": Color(0.6, 0.4, 0.2),
 	"stone": Color(0.7, 0.7, 0.72),
-	"ore": Color(0.95, 0.75, 0.2),
+	"iron_ore": Color(0.62, 0.45, 0.38),
+	"sulfur": Color(0.95, 0.9, 0.25),
+	"herb": Color(0.45, 0.8, 0.45),
 	"wheat": Color(0.95, 0.85, 0.4),
 	"wheat_seed": Color(0.55, 0.45, 0.25),
 }

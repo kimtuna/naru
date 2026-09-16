@@ -25,6 +25,8 @@ var buffs := Buffs.new()
 var health := Health.new(DamageConfig.load_default().player_max_health)
 ## 죽은 뒤 다시 시작하는 자리. 게임 씬이 섬의 스폰 칸으로 채운다.
 var spawn_point := Vector2.ZERO
+## (위치, 이동 방향) → 경사 (+1 오르막 · 0 평지 · -1 내리막). 게임 씬이 섬으로 채운다. 비어 있으면 평지.
+var slope := Callable()
 
 
 func _init() -> void:
@@ -40,13 +42,22 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	buffs.tick(delta)
 	update_facing()
-	velocity = Vector2.ZERO if is_blocked() else InputActions.move_vector() * move_speed()
+	var dir := InputActions.move_vector()
+	velocity = Vector2.ZERO if is_blocked() else dir * move_speed(dir)
 	move_and_slide()
 
 
-## 지금 이동 속력 — 기본 속력에 버프 배수를 곱한다.
-func move_speed() -> float:
-	return tuning.move_speed * buffs.move_speed_multiplier()
+## 지금 이동 속력 — 기본 속력에 버프 배수와 dir 쪽 경사 배율을 곱한다.
+## dir 은 방향만 본다 — 대각선도 속력은 같다 (정규화는 InputActions.move_vector 가 한다).
+func move_speed(dir := Vector2.ZERO) -> float:
+	return tuning.move_speed * buffs.move_speed_multiplier() * tuning.slope_multiplier(slope_along(dir))
+
+
+## 지금 자리에서 dir 쪽 경사. 방향이 없거나 경사를 모르면 0.
+func slope_along(dir: Vector2) -> int:
+	if dir.is_zero_approx() or not slope.is_valid():
+		return 0
+	return slope.call(global_position, dir)
 
 
 func is_blocked() -> bool:
