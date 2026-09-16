@@ -113,3 +113,45 @@ msgstr "옷 2"
 
 msgid "APPEARANCE_OUTFIT_3"
 msgstr "옷 3"
+
+msgid "WORLD_EMPTY"
+msgstr "저장된 월드가 없습니다."
+
+msgid "WORLD_NEW"
+msgstr "새 월드"
+
+msgid "WORLD_NAME"
+msgstr "이름"
+
+msgid "WORLD_NAME_PLACEHOLDER"
+msgstr "월드 이름"
+
+msgid "WORLD_SEED"
+msgstr "시드"
+
+msgid "WORLD_SEED_PLACEHOLDER"
+msgstr "비우면 무작위"
+
+msgid "WORLD_NAME_REQUIRED"
+msgstr "이름을 입력하세요."
+
+msgid "WORLD_CREATE_FAILED"
+msgstr "월드를 만들지 못했습니다."
+
+msgid "WORLD_CREATE"
+msgstr "만들기"
+
+msgid "WORLD_DELETE"
+msgstr "삭제"
+
+msgid "WORLD_DELETE_CONFIRM"
+msgstr "이 월드를 삭제할까요? 되돌릴 수 없습니다."
+
+msgid "GAME_CHARACTER"
+msgstr "캐릭터"
+
+msgid "GAME_WORLD"
+msgstr "월드"
+
+msgid "GAME_EXIT_HINT"
+msgstr "Esc: 저장하고 메인 화면으로"

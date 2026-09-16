@@ -113,3 +113,45 @@ msgstr "Outfit 2"
 
 msgid "APPEARANCE_OUTFIT_3"
 msgstr "Outfit 3"
+
+msgid "WORLD_EMPTY"
+msgstr "No saved worlds."
+
+msgid "WORLD_NEW"
+msgstr "New World"
+
+msgid "WORLD_NAME"
+msgstr "Name"
+
+msgid "WORLD_NAME_PLACEHOLDER"
+msgstr "World name"
+
+msgid "WORLD_SEED"
+msgstr "Seed"
+
+msgid "WORLD_SEED_PLACEHOLDER"
+msgstr "Leave empty for random"
+
+msgid "WORLD_NAME_REQUIRED"
+msgstr "Enter a name."
+
+msgid "WORLD_CREATE_FAILED"
+msgstr "Could not create the world."
+
+msgid "WORLD_CREATE"
+msgstr "Create"
+
+msgid "WORLD_DELETE"
+msgstr "Delete"
+
+msgid "WORLD_DELETE_CONFIRM"
+msgstr "Delete this world? This cannot be undone."
+
+msgid "GAME_CHARACTER"
+msgstr "Character"
+
+msgid "GAME_WORLD"
+msgstr "World"
+
+msgid "GAME_EXIT_HINT"
+msgstr "Esc: save and return to main menu"

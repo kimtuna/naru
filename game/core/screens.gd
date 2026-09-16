@@ -8,6 +8,8 @@ const CHARACTER_SELECT := "res://ui/menu/character_select.tscn"
 const SETTINGS := "res://ui/menu/settings.tscn"
 const CHARACTER_CREATE := "res://ui/menu/character_create.tscn"
 const WORLD_SELECT := "res://ui/menu/world_select.tscn"
+## 게임 씬 — 지금은 빈 자리 (다음 묶음들이 채운다).
+const GAME := "res://world/game.tscn"
 const QUIT := "quit"
 
 static var simulate := false
