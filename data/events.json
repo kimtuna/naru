@@ -1276,5 +1276,80 @@
   "type": "group_done",
   "group": "G-004",
   "title": "G-004 섬 · 자원 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-16 23:40:01 KST",
+  "epoch": 1789569601,
+  "report": {
+   "status": "done",
+   "summary": "G-005.1 하루 20분 시계 — WorldClock 이 날짜 · 낮/밤을 계산하고 시각은 월드 저장에 남는다",
+   "problem": "게임 시간(island.time)은 이미 재생(Regrowth)이 _process 에서 흘리고 world_time 으로 저장하고 있었지만, 날짜 · 낮/밤 개념이 없었다. 시계를 따로 두면 시간이 두 번 흐르거나 두 값이 어긋날 수 있었고, 하루 길이(1200초)도 RegrowthConfig 에 따로 적혀 있었다.",
+   "feedback_applied": "",
+   "approach": "game/world/day_night/ 에 DayNightConfig(.tres: 하루 1200초 · 낮 600초)와 WorldClock 노드를 만들었다. WorldClock 은 섬의 시간(IslandMap.time)을 직접 흘리고(speed 배속 × delta), day()(1부터) · time_of_day() · is_night() 를 그 시간에서 계산한다. advance(seconds) 는 한 번에 며칠을 넘겨도 지나간 경계마다 day_changed · night_changed 신호를 낸다. 게임 씬에 Clock 노드를 넣고 섬에 연결했다. Regrowth._process 는 이제 시간을 더하지 않고 훑기만 한다(tick). advance() 는 시계 없이 재생만 시험하는 기존 테스트를 위해 그대로 둔다. RegrowthConfig.load_default 는 하루 길이를 DayNightConfig 에서 받아 온다. 테스트: tests/world/day_night/test_world_clock.gd(20분 경계, 10분 경계, 한 번에 여러 날 넘기기, speed 배속과 멈춤, 섬 시간 사용), test_world_clock_game.gd(게임 안 연결, 재생이 시간을 두 번 더하지 않음, 저장 후 다시 들어가도 날짜 · 시각 · 밤이 이어짐). tools/test.sh 198/198 통과, guard 통과.",
+   "why": "날짜와 시각은 저장하지 않고 world_time 하나에서 계산한다. 날짜 · 시각을 따로 저장하면 서로 어긋날 수 있고, world_time 은 이미 저장되며 재생 주기도 같은 시간으로 잰다. 시간을 흘리는 곳도 시계 하나로 모았다. 재생과 시계가 둘 다 흘리면 두 배로 흐른다. '빠르게 돌리기'는 두 가지로 된다: speed 배속(프레임 안에서 실제로 흐르게)과 advance(초)(바로 건너뛰기). 경계 신호를 빠뜨리지 않도록 advance 는 경계마다 끊어서 흘린다. 다음 단계(밤 조명)는 이 신호를 받아서 쓸 수 있다. RegrowthConfig.day_seconds 필드는 지우지 않았다. 기존 재생 테스트가 이 값을 바꿔 쓰기 때문이다. 대신 기본 설정은 DayNightConfig 값을 따르게 했다. 버린 대안: 시계가 자기 시간을 따로 들고 섬 시간과 맞추는 방식은 값이 두 곳에 생겨서 버렸다. 시계 UI(HUD 표시)는 이번 수용 기준 밖이라 만들지 않았다.",
+   "files": [
+    "game/world/day_night/day_night_config.gd",
+    "game/world/day_night/day_night_config.tres",
+    "game/world/day_night/world_clock.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/world/regrowth/regrowth.gd",
+    "game/world/regrowth/regrowth_config.gd",
+    "game/world/regrowth/regrowth_config.tres",
+    "game/world/island/island_map.gd",
+    "game/tests/world/day_night/test_world_clock.gd",
+    "game/tests/world/day_night/test_world_clock_game.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "criterion": "게임 시간 20분이 지나면 날짜가 넘어가고, 10분 경계에서 낮/밤이 바뀐다",
+     "ok": true,
+     "evidence": "game/world/day_night/world_clock.gd 의 day() · is_night() · advance() (경계마다 끊어서 신호를 냄). 수치는 day_night_config.tres (1200 / 600). 테스트: test_world_clock.gd 의 test_day_turns_after_twenty_minutes (1199.9초면 1일, 1200초면 2일), test_night_starts_at_ten_minutes_and_ends_at_twenty, test_big_jump_reports_every_boundary. 모두 통과를 직접 확인했다."
+    },
+    {
+     "criterion": "시각과 날짜가 월드 저장에 남는다",
+     "ok": true,
+     "evidence": "날짜 · 시각은 island.time 에서 계산하고, island.time 은 game.gd:118 에서 world.world_time 으로 저장되며 game.gd:24 에서 다시 읽힌다. test_world_clock_game.gd::test_time_and_day_survive_saving 이 저장 파일의 world_time, 다시 들어간 뒤의 day() · time_of_day() · is_night() 를 확인한다. 통과."
+    },
+    {
+     "criterion": "테스트는 시간을 빠르게 돌릴 수 있다",
+     "ok": true,
+     "evidence": "WorldClock.speed (배속, 0 이면 멈춤) 와 WorldClock.advance(초). test_speed_runs_time_fast_in_process 가 몇 프레임 안에 하루가 넘어가는지, speed 0 이면 멈추는지 확인한다. 통과."
+    },
+    {
+     "criterion": "테스트가 진짜인가 (qa.md 3.2)",
+     "ok": false,
+     "evidence": "변이 시험을 해 봤다. regrowth.gd 의 _process 를 잠시 advance(delta) 로 되돌려 시간이 두 번 흐르게 만들었는데도, test_world_clock_game.gd::test_clock_ticks_in_game_without_regrowth_doubling_it 가 통과했다 (10/10). 재생이 한 번 더 더하는 양은 배속이 안 걸린 delta(0.3초쯤)뿐인데, 허용 오차가 +5.0초라 잡히지 않는다. 이 assert 는 사실상 늘 참이다. 시험 뒤 원래대로 되돌렸고, git status 가 처음과 같은 것을 확인했다."
+    },
+    {
+     "criterion": "기존 테스트 약화 · spec · 규칙 위반",
+     "ok": true,
+     "evidence": "기존 테스트 파일에는 diff 가 없다. 화면 글자 하드코딩 없음, 수치는 .tres 에 있음, 가장 긴 파일이 world_clock.gd 105줄. tools/test.sh 198/198 통과, harness/guard.sh 통과. report 에 적힌 files 와 approach 는 실제 diff 와 맞는다."
+    }
+   ],
+   "issues": [
+    "test_clock_ticks_in_game_without_regrowth_doubling_it 는 이름과 달리 시간이 두 번 흐르는 것을 잡지 못한다. Regrowth._process 를 advance(delta) 로 되돌려도 통과한다. 게임 시간이 실제보다 두 배 빨리 흐르는 버그가 생겨도 이 테스트로는 모른다",
+    "(참고, 판정에는 반영하지 않음) Regrowth.tick 은 배속이 안 걸린 실제 delta 로 check_interval 을 센다. 그래서 WorldClock.speed 를 크게 올려도 재생 검사는 실제 시간 간격으로만 돈다. 다음 단계에서 빠른 시간으로 재생까지 시험하려면 알아 둘 것",
+    "(참고, 판정에는 반영하지 않음) RegrowthConfig.load_default 는 load() 가 캐시한 공유 리소스의 day_seconds 를 덮어쓴다. RegrowthConfig.day_seconds 필드도 남아 있어 하루 길이가 형식상 두 곳에 있다"
+   ],
+   "good": [
+    "시간을 island.time 한 곳에만 두고 날짜 · 낮밤은 계산으로 얻는다. 저장값끼리 어긋날 일이 없다",
+    "advance 가 경계마다 끊어서 흘려, 한 번에 여러 날을 건너뛰어도 day_changed · night_changed 가 빠지지 않는다. 다음 단계(밤 조명)가 바로 받아 쓸 수 있다",
+    "불러올 때는 _sync 로 기준만 맞추고 신호를 내지 않는다 (test_time_lives_in_island_map)",
+    "하루 길이의 원본을 DayNightConfig 로 모으고, 재생 설정도 그 값을 따른다"
+   ],
+   "feedback": "구현은 수용 기준을 모두 채운다. 고칠 것은 테스트 하나다. game/tests/world/day_night/test_world_clock_game.gd 의 test_clock_ticks_in_game_without_regrowth_doubling_it 는 시간이 두 번 흐르는 것을 잡지 못한다. QA 가 game/world/regrowth/regrowth.gd 의 _process 를 `advance(delta)` 로 되돌려 봤는데도 이 테스트가 통과했다. 재생이 더하는 양은 배속이 안 걸린 delta(0.3초쯤)뿐인데, 허용 오차 `+ 5.0` 이 이를 덮는다. 고치는 법: 결정적인 검사로 바꿔라. 예를 들어 게임에 들어간 뒤 `game.clock().speed = 0.0` 으로 두고 `await wait_process_frames(5)` 한 다음 `assert_eq(game.island.time, before, \"only the clock moves time\")` 를 확인한다. 시계를 멈췄으니 재생이 시간을 더하면 바로 실패한다. 배속으로 시간이 흐르는지 보려면 같은 테스트나 따로 떼어 낸 테스트에서 speed 를 올리고 `assert_gt(passed, 0.0)` 를 확인하면 된다. 고친 뒤에는 regrowth.gd 의 _process 를 잠시 `advance(delta)` 로 바꿔 이 테스트가 실제로 실패하는지 확인하고, 되돌려 놓아라. 다른 코드는 바꿀 필요가 없다."
+  },
+  "test": "ty.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] generate (res://world/island/island_generator.gd:48)\n         [2] test_ore_ground_exists_on_full_map_without_noise (res://tests/world/island/test_island_generator.gd:204)\n         [3] _run_test (res://addons/gut/gut.gd:622)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:835)\n14/14 passed.\n\n\nres://tests/world/island/test_island_view.gd\n* test_island_is_shown_around_player_at_spawn\n* test_camera_follows_player_over_island\n* test_chunk_collision_matches_obstacles\n* test_blocked_by_tree_stone_ore_in_every_direction\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 24.0 ms (game _ready 17.8 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              29\nTests               198\nPassing Tests       198\nAsserts            9637\nTime              38.783s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_fail",
+  "group": "G-005",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-005 1/2 하루 20분 시계 — 재시도 (시도 1)",
+  "detail": "- QA 피드백:\n구현은 수용 기준을 모두 채운다. 고칠 것은 테스트 하나다. game/tests/world/day_night/test_world_clock_game.gd 의 test_clock_ticks_in_game_without_regrowth_doubling_it 는 시간이 두 번 흐르는 것을 잡지 못한다. QA 가 game/world/regrowth/regrowth.gd 의 _process 를 `advance(delta)` 로 되돌려 봤는데도 이 테스트가 통과했다. 재생이 더하는 양은 배속이 안 걸린 delta(0.3초쯤)뿐인데, 허용 오차 `+ 5.0` 이 이를 덮는다. 고치는 법: 결정적인 검사로 바꿔라. 예를 들어 게임에 들어간 뒤 `game.clock().speed = 0.0` 으로 두고 `await wait_process_frames(5)` 한 다음 `assert_eq(game.island.time, before, \"only the clock moves time\")` 를 확인한다. 시계를 멈췄으니 재생이 시간을 더하면 바로 실패한다. 배속으로 시간이 흐르는지 보려면 같은 테스트나 따로 떼어 낸 테스트에서 speed 를 올리고 `assert_gt(passed, 0.0)` 를 확인하면 된다. 고친 뒤에는 regrowth.gd 의 _process 를 잠시 `advance(delta)` 로 바꿔 이 테스트가 실제로 실패하는지 확인하고, 되돌려 놓아라. 다른 코드는 바꿀 필요가 없다."
  }
 ]
