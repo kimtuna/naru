@@ -215,3 +215,6 @@ msgstr "Quit game"
 
 msgid "WORLD_SETTINGS_TITLE"
 msgstr "World settings"
+
+msgid "WORLD_SETTINGS_DEATH_PENALTY"
+msgstr "Death penalty"

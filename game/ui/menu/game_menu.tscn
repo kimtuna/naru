@@ -97,6 +97,11 @@ layout_mode = 2
 text = "WORLD_SETTINGS_TITLE"
 horizontal_alignment = 1
 
+[node name="DeathPenalty" type="CheckButton" parent="Panel/Pages/WorldSettingsPage"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "WORLD_SETTINGS_DEATH_PENALTY"
+
 [node name="WorldSettingsBack" type="Button" parent="Panel/Pages/WorldSettingsPage"]
 unique_name_in_owner = true
 layout_mode = 2

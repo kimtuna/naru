@@ -60,6 +60,8 @@ func _ready() -> void:
 	player().blocked = game_menu().is_open
 	inventory_view().blocked = game_menu().is_open
 	game_menu().set_host(Session.is_host)
+	if world:
+		game_menu().bind_world_settings(world.settings)
 	game_menu().main_menu_requested.connect(exit_to_menu)
 	game_menu().quit_requested.connect(exit_game)
 	load_usec = Time.get_ticks_usec() - started
@@ -71,6 +73,11 @@ func character_name() -> String:
 
 func world_name() -> String:
 	return world.name if world else ""
+
+
+## 지금 데스 페널티가 켜져 있나 — 월드 설정을 그때그때 읽어 바뀐 값이 바로 적용된다.
+func death_penalty_on() -> bool:
+	return world.settings.death_penalty if world else WorldSettings.DEFAULT_DEATH_PENALTY
 
 
 func player() -> Player:

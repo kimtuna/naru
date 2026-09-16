@@ -215,3 +215,6 @@ msgstr "게임 종료"
 
 msgid "WORLD_SETTINGS_TITLE"
 msgstr "월드 설정"
+
+msgid "WORLD_SETTINGS_DEATH_PENALTY"
+msgstr "데스 페널티"
