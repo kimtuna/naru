@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 03:06:22 KST",
- "updated_epoch": 1789581982,
+ "updated": "2026-09-17 03:12:21 KST",
+ "updated_epoch": 1789582341,
  "progress": {
   "groups_total": 14,
   "groups_done": 11,
@@ -20,6 +20,6 @@
  "step_total": "6",
  "step_title": "데스 상자",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 03:06:22"
+ "phase": "QA",
+ "phase_since": "2026-09-17 03:12:21"
 }
