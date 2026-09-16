@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 00:47:12 KST",
- "updated_epoch": 1789573632,
+ "updated": "2026-09-17 00:53:20 KST",
+ "updated_epoch": 1789574000,
  "progress": {
   "groups_total": 14,
   "groups_done": 7,
@@ -20,6 +20,6 @@
  "step_total": "2",
  "step_title": "우클릭 상호작용",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 00:47:12"
+ "phase": "QA",
+ "phase_since": "2026-09-17 00:53:20"
 }
