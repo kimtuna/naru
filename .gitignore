@@ -9,3 +9,4 @@ current.md
 game/.godot/
 *.import.tmp
 .DS_Store
+game/override.cfg

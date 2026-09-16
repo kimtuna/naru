@@ -14,7 +14,9 @@
 
 set -uo pipefail
 
-ROOT="$(cd "$(dirname "$0")" && pwd)"
+# start 는 이 파일을 .loop/running.sh 로 복사해서 돌린다 — 도는 중에 loop.sh 가 바뀌어도
+# (브랜치 전환 · 수정) bash 가 반쯤 바뀐 파일을 읽지 않게. 그래서 ROOT 는 환경변수로 받는다.
+ROOT="${NARU_ROOT:-$(cd "$(dirname "$0")" && pwd)}"
 L="$ROOT/.loop"
 OUT="$L/out"
 PAGES="$L/pages"
@@ -22,6 +24,17 @@ PY="python3 $ROOT/harness/naru.py"
 
 STEP_TIMEOUT="${NARU_STEP_TIMEOUT:-5400}"   # 세션 하나 최대 90분
 STUCK_AFTER="${NARU_STUCK_AFTER:-9}"         # 이 횟수만큼 실패하면 묶음을 decisions 로 넘긴다
+# 사람이 이 맥을 같이 쓴다 — 세션은 화면·마우스·포커스에 닿지 못한다.
+#   harness/shims: godot 은 강제 headless, screencapture·cliclick·osascript·open 은 거부
+#   --disallowedTools: 같은 명령과 git 쓰기를 도구 단계에서 한 번 더 막는다
+#   --strict-mcp-config: 브라우저·컴퓨터 조작 같은 MCP 도구를 싣지 않는다
+export NARU_REAL_GODOT="${NARU_REAL_GODOT:-$(command -v godot)}"
+SHIM_PATH="$ROOT/harness/shims:$PATH"
+DENY=(
+  "Bash(screencapture:*)" "Bash(cliclick:*)" "Bash(osascript:*)" "Bash(open:*)"
+  "Bash(git commit:*)" "Bash(git push:*)" "Bash(git checkout:*)" "Bash(git switch:*)"
+  "Bash(git reset:*)" "Bash(git stash:*)" "Bash(git merge:*)" "Bash(git rebase:*)" "Bash(git clean:*)"
+)
 MODEL_ARGS=()
 [ -n "${NARU_MODEL:-}" ] && MODEL_ARGS=(--model "$NARU_MODEL")
 
@@ -101,7 +114,8 @@ LAST_RUN=""
 run_claude() {
   local role="$1" msg="$2"
   LAST_RUN="$L/runs/$(date +%Y%m%d-%H%M%S)-$role"
-  claude -p "$msg" --output-format json --dangerously-skip-permissions ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} \
+  PATH="$SHIM_PATH" claude -p "$msg" --output-format json --dangerously-skip-permissions \
+    --strict-mcp-config --disallowedTools "${DENY[@]}" ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} \
     > "$LAST_RUN.json" 2> "$LAST_RUN.err" < /dev/null &
   CHILD=$!
   (  # 시간 초과 감시 — 세션이 끝나면 5초 안에 스스로 사라진다
@@ -273,8 +287,9 @@ do_step() {  # $1 gid $2 title $3 step번호 $4 단계제목 $5 단계수
     # 2) 기계 테스트
     local test_ok=1
     {
+      echo "\$ harness/guard.sh"; harness/guard.sh; echo "exit=$?"
       if [ -x tools/test.sh ]; then
-        echo "\$ tools/test.sh"; tools/test.sh; echo "exit=$?"
+        echo "\$ tools/test.sh"; PATH="$SHIM_PATH" tools/test.sh; echo "exit=$?"
       fi
       case "$gid" in T-*)
         echo "\$ 문서 정리 검사"; $PY tidygate "$gid"; echo "exit=$?";;
@@ -406,7 +421,8 @@ case "${1:-help}" in
     fi
     rm -rf "$L/lock" "$L/STOP"
     mkdir "$L/lock"
-    nohup caffeinate -is "$0" _run >> "$L/loop.log" 2>&1 < /dev/null &
+    cp "$0" "$L/running.sh"
+    NARU_ROOT="$ROOT" nohup caffeinate -is /bin/bash "$L/running.sh" _run >> "$L/loop.log" 2>&1 < /dev/null &
     for _ in $(seq 50); do [ -s "$L/lock/pid" ] && break; sleep 0.1; done
     echo "시작함 (pid $(cat "$L/lock/pid" 2>/dev/null)) — 대시보드: https://kimtuna.github.io/naru/ · 로그: ./loop.sh log"
     ;;
