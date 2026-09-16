@@ -1,17 +1,17 @@
 {
- "updated": "2026-09-17 06:17:59 KST",
- "updated_epoch": 1789593479,
+ "updated": "2026-09-17 06:21:37 KST",
+ "updated_epoch": 1789593697,
  "progress": {
   "groups_total": 14,
-  "groups_done": 13,
+  "groups_done": 14,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 43
+  "steps_done": 44
  },
- "state": "running",
- "reason": "",
+ "state": "done",
+ "reason": "목록 완료 — list.md 의 할 일을 모두 처리함",
  "started": "2026-09-16 21:47:30",
- "ended": "",
+ "ended": "2026-09-17 06:21:37",
  "resume_at": "",
  "pid": "99697",
  "group": "G-014",
@@ -20,6 +20,6 @@
  "step_total": "4",
  "step_title": "갈고리총",
  "attempt": "1",
- "phase": "QA",
+ "phase": "",
  "phase_since": "2026-09-17 06:17:59"
 }
