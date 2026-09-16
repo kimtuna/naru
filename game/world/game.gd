@@ -32,6 +32,7 @@ func _ready() -> void:
 		island_view().follow = player()
 		player().global_position = island_view().cell_center(island.spawn())
 		island_view().update_around(player().global_position)
+	lighting().setup(clock())
 	%CharacterName.text = character_name()
 	%WorldName.text = world_name()
 	if character:
@@ -69,6 +70,11 @@ func regrowth() -> Regrowth:
 ## 날짜 · 낮밤 시계. 시간은 섬(island.time)에 있다.
 func clock() -> WorldClock:
 	return %Clock
+
+
+## 밤의 어둠과 광원(램프 자리).
+func lighting() -> Lighting:
+	return %Lighting
 
 
 func picker() -> Picker:
