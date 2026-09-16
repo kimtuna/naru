@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 21:40:06 KST",
- "updated_epoch": 1789562406,
+ "updated": "2026-09-16 21:42:05 KST",
+ "updated_epoch": 1789562525,
  "progress": {
   "groups_total": 1,
   "groups_done": 0,
@@ -20,6 +20,6 @@
  "step_total": "3",
  "step_title": "번역 뼈대",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-16 21:40:06"
+ "phase": "QA",
+ "phase_since": "2026-09-16 21:42:05"
 }
