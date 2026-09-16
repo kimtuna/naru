@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 04:44:05 KST",
- "updated_epoch": 1789587845,
+ "updated": "2026-09-17 04:57:57 KST",
+ "updated_epoch": 1789588677,
  "progress": {
   "groups_total": 14,
   "groups_done": 12,
@@ -20,6 +20,6 @@
  "step_total": "4",
  "step_title": "절벽",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 04:44:05"
+ "phase": "QA",
+ "phase_since": "2026-09-17 04:57:57"
 }
