@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 02:35:48 KST",
- "updated_epoch": 1789580148,
+ "updated": "2026-09-17 02:42:40 KST",
+ "updated_epoch": 1789580560,
  "progress": {
   "groups_total": 14,
   "groups_done": 9,
@@ -20,6 +20,6 @@
  "step_total": "2",
  "step_title": "심기 · 물 주기 · 성장 · 수확",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 02:35:48"
+ "phase": "QA",
+ "phase_since": "2026-09-17 02:42:40"
 }
