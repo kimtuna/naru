@@ -76,5 +76,68 @@
   "attempt": "1",
   "title": "G-001 1/3 Godot 프로젝트 만들기 — 통과 (시도 1)",
   "commit": "94e5b2b"
+ },
+ {
+  "time": "2026-09-16 21:38:17 KST",
+  "epoch": 1789562297,
+  "report": {
+   "status": "done",
+   "summary": "G-001.2 테스트 실행기 — GUT 9.7.1 설치 · tools/test.sh · 예제/실행기 자체 테스트",
+   "problem": "game/tests/ 아래 테스트를 headless 로 한 번에 돌리고, 결과를 종료 코드로 알려 주는 실행기가 없었다. 1단계 테스트(test_project_setup.gd)는 이미 GutTest 를 상속하고 있어 GUT 가 필요했다. 만드는 중에 두 가지 문제를 만났다: (1) GUT 는 문법 오류로 못 읽은 테스트 파일을 건너뛰고도 0 으로 끝날 수 있고, 테스트가 0개여도 실패로 치지 않는다. (2) 실행기 자체 테스트가 안쪽 실행 출력을 로그에 찍자 그 안의 'SCRIPT ERROR' 가 바깥 검사에 걸려 전체가 실패했다.",
+   "feedback_applied": "",
+   "approach": "GUT v9.7.1(태그 고정, LICENSE.md 포함)을 game/addons/gut/ 에 복사했다. Godot 4.7.2 에서 그대로 돈다. tools/test.sh 는 먼저 --import 로 class_name 캐시를 만들고(.godot/ 가 없는 새 체크아웃에서도 GutTest 를 찾게), gut_cmdln.gd 를 -gdir=res://tests -ginclude_subdirs -gexit 로 돌린다. GUT 종료 코드에 더해, 줄 머리의 'SCRIPT ERROR' / 'ERROR: Failed to load script' 가 있거나 통과한 테스트가 0개면 1 로 끝낸다. 예제 테스트 test_example.gd(2개)와, 실행기를 검증하는 test_runner.gd(5개)를 추가했다. test_runner 는 user://runner_selftest 에 임시 테스트를 만들고 TEST_DIR 환경변수로 tools/test.sh 를 그 폴더에 돌려 전부 통과→0, 실패 하나→비0, 하위 폴더의 실패→비0, 문법 오류→비0, 테스트 없음→비0 을 확인한다. 안쪽 출력은 기대와 다를 때만 assert 메시지로 보여 준다. 직접 확인: 전체 11개 통과 exit=0, game/tests/ 에 실패 테스트를 임시로 넣으면 exit=1, 문법 오류 테스트를 넣어도 exit=1, 다른 폴더에서 실행해도 동작.",
+   "why": "GUT 가 4.7.2 에서 문제없이 돌아서 자체 러너는 만들지 않았다. 버전은 main 브랜치가 아니라 태그 v9.7.1 로 고정해 재현성을 챙겼다. 문법 오류 검사를 추가한 건 QA 가 '일부러 실패하는 테스트'를 깨진 코드로 넣을 수도 있고, 실제 개발 중에도 문법 오류 파일이 조용히 빠지면 통과로 오인하기 때문이다. 오류 문자열은 줄 머리에만 맞춰 안쪽 실행 출력 같은 들여쓴 텍스트에 속지 않게 했다. 실행기 자체 테스트의 임시 파일은 res:// 대신 user:// 에 만들었다 — 저장소에 일부러 깨진 픽스처를 두면 에디터·import 에 오류가 뜨고 메인 실행에도 섞이기 때문이다. 에디터 플러그인 활성화(project.godot)는 CLI 실행에 필요 없고 이번 단계 밖이라 하지 않았다. Godot 가 만든 .uid 파일은 Godot 4.4+ 권장대로 함께 둔다.",
+   "files": [
+    "tools/test.sh",
+    "game/addons/gut/",
+    "game/tests/core/test_example.gd",
+    "game/tests/core/test_example.gd.uid",
+    "game/tests/core/test_runner.gd",
+    "game/tests/core/test_runner.gd.uid",
+    "game/tests/core/test_project_setup.gd.uid"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "`tools/test.sh` 가 `game/tests/` 아래 테스트를 headless 로 전부 돌린다",
+     "ok": true,
+     "evidence": "tools/test.sh:17-19 가 godot --headless -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs 로 실행. QA 가 직접 돌림: Scripts 3 / Tests 11 (test_example 2, test_project_setup 4, test_runner 5) 전부 실행. 하위 폴더 game/tests/qa_tmp/ 에 임시로 넣은 테스트도 잡혔다. /tmp 에서 절대 경로로 실행해도 exit=0 으로 동작."
+    },
+    {
+     "criterion": "테스트가 모두 통과하면 0, 하나라도 실패하면 0 이 아닌 값으로 끝난다 — QA 는 일부러 실패하는 테스트를 임시로 넣어 확인한다",
+     "ok": true,
+     "evidence": "QA 직접 실행: 모두 통과 → exit=0. game/tests/qa_tmp/test_qa_fail.gd (assert_eq(1, 2)) 임시 추가 → exit=1 (Failing Tests 1). 실행 중 오류(null.foo()) 테스트 임시 추가 → exit=1 + 'test.sh: 스크립트 오류가 있다'. 임시 파일은 지웠고 git status 에 흔적 없음. test_runner.gd 가 통과/실패/하위 폴더 실패/문법 오류/테스트 0개 다섯 경우를 user:// 에서 실제 실행으로 검사하고, 기대 exit 와 다르면 실패하도록 assert 한다(항상 참 아님)."
+    },
+    {
+     "criterion": "예제 테스트가 1개 이상 있고 통과한다",
+     "ok": true,
+     "evidence": "game/tests/core/test_example.gd — test_arithmetic, test_array_contains 두 개, 실제 값 비교 assert. 실행 결과 2/2 passed."
+    }
+   ],
+   "issues": [
+    "기준 밖(통과에 반영 안 함): test_runner.gd 는 실행 중인 같은 프로젝트에 대해 tools/test.sh 를 다시 부르므로 안쪽에서 --import 가 동시에 돈다. 지금은 문제없지만 프로젝트가 커지면 .godot/ 캐시 경합으로 흔들릴 수 있다. 느려지거나 불안정해지면 안쪽 실행에서 import 를 건너뛰는 옵션(예: SKIP_IMPORT=1)을 고려할 것.",
+    "기준 밖: tools/test.sh:12 의 --import 출력과 종료 코드를 버린다. import 가 깨져도 원인이 로그에 남지 않는다 (뒤 실행이 실패하긴 하므로 판정은 맞다).",
+    "기준 밖: 실행기 자체 테스트 5개가 전체 실행 시간(약 11초)의 대부분을 차지한다. 테스트가 늘면 전체 실행이 느려지는 요인이 된다.",
+    "기준 밖: test_runner.gd:59 의 명령 조립이 경로에 작은따옴표가 있으면 깨진다. 지금 환경에는 해당 없음."
+   ],
+   "good": [
+    "GUT 를 태그 v9.7.1 로 고정하고 LICENSE.md 를 함께 넣었다.",
+    "GUT 가 문법 오류 파일을 건너뛰고 0 으로 끝나는 구멍과 테스트 0개 통과를 직접 막았고, 이를 실행기 자체 테스트로 고정했다.",
+    "임시 픽스처를 res:// 가 아니라 user:// 에 만들고 after_all 에서 지워서 저장소와 본 실행을 더럽히지 않는다 (실행 후 user 폴더에 runner_selftest 남지 않음 확인).",
+    "report 내용이 실제 파일·실행 결과와 일치한다. 기존 테스트(test_project_setup.gd)는 바뀌지 않았다(git diff HEAD 비어 있음).",
+    "파일 모두 짧다 (test.sh 32줄, test_runner.gd 81줄). 화면 글자·단계 밖 기능 없음."
+   ],
+   "feedback": ""
+  },
+  "test": "$ tools/test.sh\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/test_example.gd\n* test_arithmetic\n* test_array_contains\n2/2 passed.\n\n\nres://tests/core/test_project_setup.gd\n* test_spec_folders_exist\n* test_main_scene_is_set_and_loads\n* test_headless_quit_exits_clean\n* test_gitignore_excludes_godot_cache\n4/4 passed.\n\n\nres://tests/core/test_runner.gd\n* test_all_passing_exits_zero\n* test_one_failing_exits_nonzero\n* test_failing_in_subfolder_exits_nonzero\n* test_script_error_exits_nonzero\n* test_no_tests_exits_nonzero\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               3\nTests                11\nPassing Tests        11\nAsserts              38\nTime              11.044s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-001",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-001 2/3 테스트 실행기 — 통과 (시도 1)",
+  "commit": "5ebdbd5"
  }
 ]

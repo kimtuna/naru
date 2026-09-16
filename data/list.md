@@ -20,7 +20,7 @@ Claude 루프 세션은 이 파일을 읽지 않는다 — `loop.sh` 가 지금 
   - 기준: `godot --headless --path game --quit` 가 오류 없이 0 으로 끝난다
   - 기준: `game/` 아래 폴더가 spec/ 과 같은 이름으로 있다 (core, settings, player, world, life, craft, build, automation, combat, expedition, economy, multiplayer, ui, tests, i18n)
   - 기준: `.gitignore` 가 `game/.godot/` 를 제외한다
-- [ ] 2. 테스트 실행기
+- [x] 2. 테스트 실행기
   - GUT 를 `game/addons/gut/` 에 설치한다. Godot 4.7.2 에서 안 돌면 GUT 대신 최소한의 자체 러너를 만들고 report 에 이유를 적는다
   - 기준: `tools/test.sh` 가 `game/tests/` 아래 테스트를 headless 로 전부 돌린다
   - 기준: 테스트가 모두 통과하면 0, 하나라도 실패하면 0 이 아닌 값으로 끝난다 — QA 는 일부러 실패하는 테스트를 임시로 넣어 확인한다

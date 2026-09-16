@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 21:36:25 KST",
- "updated_epoch": 1789562185,
+ "updated": "2026-09-16 21:38:17 KST",
+ "updated_epoch": 1789562297,
  "progress": {
   "groups_total": 1,
   "groups_done": 0,
   "groups_waiting": 0,
   "steps_total": 3,
-  "steps_done": 1
+  "steps_done": 2
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "93658",
  "group": "G-001",
  "group_title": "프로젝트 기반",
- "step": "2",
+ "step": "3",
  "step_total": "3",
- "step_title": "테스트 실행기",
+ "step_title": "번역 뼈대",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 21:36:25"
+ "phase": "구현",
+ "phase_since": "2026-09-16 21:38:17"
 }
