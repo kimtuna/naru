@@ -506,5 +506,85 @@
   "attempt": "1",
   "title": "G-002 4/5 캐릭터 생성 · 커스터마이징 (칸만) — 통과 (시도 1)",
   "commit": "c15733f"
+ },
+ {
+  "time": "2026-09-16 22:11:07 KST",
+  "epoch": 1789564267,
+  "report": {
+   "status": "done",
+   "summary": "G-002.5 월드 선택 · 생성 → 게임 들어가기 — 월드 목록/생성(이름·시드)/삭제 확인, 빈 게임 씬, Esc(menu_exit)로 저장 후 메인 화면",
+   "problem": "월드 선택 화면은 제목만 있는 빈 씬이었고, 게임 씬 · 나가기 입력 · 세션의 월드 보관 · 캐릭터+월드 동시 저장이 없었다. 캐릭터 인벤토리가 월드를 바꿔도 따라오는지도 검사가 필요했다.",
+   "feedback_applied": "",
+   "approach": "Session 에 world_id/world, select_world, ready_to_play, save_all, clear_world 를 더했다. world_select.gd/tscn: 저장소의 월드를 행(이름 버튼 + 삭제)으로 나열, 비었으면 안내 문구, 새 월드 칸(이름 필수 · 시드 비우면 randi()), 삭제는 확인 패널을 한 번 거친다, 뒤로 → 캐릭터 선택. 월드 버튼 → Session.select_world 후 Screens.GAME 으로(캐릭터가 없으면 캐릭터 선택으로 돌려보낸다). world/game.tscn(GameScene)은 빈 자리: Session 의 캐릭터 · 월드를 받아 이름을 라벨로 보이고, InputMap 액션 menu_exit(Esc, project.godot)을 _unhandled_input 에서 받아 Session.save_all → clear → 메인 화면. 테스트: test_world_select.gd(목록 · 생성 · 무작위 시드 · 이름 필수 · 삭제 확인/취소 · 뒤로 · 들어가기 · 번역), tests/world/test_game.gd(이름 앎, 액션 존재, Input.parse_input_event 로 Esc → 캐릭터·월드 저장 + 메인 화면, 다른 키는 안 나감, 월드 X 에서 넣은 인벤토리가 나가기·재선택 후 월드 Y 에서 그대로). tools/test.sh 74개 전부 통과, guard 통과.",
+   "why": "나가기 키는 spec(input.md)에서 미정이라 가장 흔한 Esc 로 정했다 — 액션 이름만 코드에 쓰므로 나중에 바꾸기 싸다. 글자 시드는 버리지 않고 String.hash() 로 정수화했다(같은 글자=같은 월드, tech.md 의 시드 원칙과 맞음). 새 월드를 만들면 바로 들어가지 않고 목록에 추가만 한다 — 수용 기준이 '월드를 고르면 들어간다'이고, 바로 들어가기로 바꾸는 것도 한 줄이라 싸다. 월드 목록 순서는 id(생성 시각 포함) 정렬 = 만든 순서. 게임 씬은 Screens 에 GAME 경로로 두고 game/world/ 에 넣었다(다음 묶음의 섬 생성이 이 자리를 채움). 나갈 때 Session 을 비워 다음 진입은 저장소에서 다시 읽게 해, 인벤토리 이동이 메모리가 아니라 저장 파일로 검증되게 했다.",
+   "files": [
+    "game/core/session.gd",
+    "game/core/screens.gd",
+    "game/project.godot",
+    "game/ui/menu/world_select.gd",
+    "game/ui/menu/world_select.tscn",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/world/.gitkeep (삭제 — 폴더에 파일이 생김)",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/ui/menu/test_world_select.gd",
+    "game/tests/world/test_game.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "저장된 월드 목록이 보인다. 새 월드 만들기(이름 · 시드, 시드를 비우면 무작위), 삭제(확인 한 번), 뒤로 → 캐릭터 선택",
+     "ok": true,
+     "evidence": "game/ui/menu/world_select.gd refresh()/create()/seed_from_text()/_ask_delete→_confirm_delete/back(). 테스트 tests/ui/menu/test_world_select.gd: test_lists_saved_worlds, test_empty_list_says_so, test_create_with_name_and_seed(저장소에서 name·world_seed 확인), test_empty_seed_is_random(5개 중 시드가 2개 이상 다름), test_create_needs_name, test_delete_asks_first_and_cancel_keeps_world(확인 전 저장소에 남아 있음), test_confirmed_delete_removes_world, test_back_goes_to_character_select. 직접 tools/test.sh 실행: 74/74 통과"
+    },
+    {
+     "criterion": "월드를 고르면 고른 캐릭터와 월드를 들고 게임 씬에 들어간다. 게임 씬은 지금 캐릭터 이름과 월드 이름을 알고 있다",
+     "ok": true,
+     "evidence": "world_select.gd _on_world_pressed → Session.select_world → Screens.GAME. world/game.gd _ready 에서 Session.character/world 를 받아 character_name()/world_name() 과 %CharacterName/%WorldName 라벨에 넣음. 테스트 test_pick_world_enters_game_with_character_and_world, test_game_knows_character_and_world_names. 추가로 QA 가 임시 SceneTree 스크립트(simulate=false, 실제 change_scene)로 캐릭터 선택 → 월드 선택 → 게임 씬까지 가서 라벨이 'QA/X' 인 것을 확인했다 (임시 파일은 삭제함)"
+    },
+    {
+     "criterion": "게임 씬에서 메인 화면으로 나갈 수 있다 (InputMap 액션). 나갈 때 캐릭터와 월드가 저장된다",
+     "ok": true,
+     "evidence": "project.godot [input] menu_exit(physical Esc). game.gd _unhandled_input 에서 is_action_pressed(EXIT_ACTION) → Session.save_all() → Session.clear() → Screens.MAIN_MENU. 키 코드는 코드에 없고 액션 이름만 씀. 테스트 test_exit_action_is_in_input_map, test_exit_key_saves_and_goes_to_main_menu(Input.parse_input_event 로 Esc → 저장소에서 캐릭터 appearance · 월드 world_seed 변경 확인), test_other_keys_do_not_exit. QA 임시 실행에서도 Esc 이벤트로 main_menu.tscn 으로 실제 전환되고 인벤토리가 저장 파일에 들어간 것을 확인"
+    },
+    {
+     "criterion": "같은 캐릭터로 월드 X 에서 인벤토리에 넣은 값이 월드 Y 에 들어가도 그대로다 (테스트)",
+     "ok": true,
+     "evidence": "tests/world/test_game.gd test_inventory_follows_character_across_worlds: X 에서 인벤토리 추가 → Esc 로 나가기(Session.clear 로 메모리 비움) → 저장소에서 캐릭터를 다시 골라 Y 로 들어가 inventory == items 확인, 월드 파일에 inventory 가 없음도 확인. 메모리 공유가 아니라 저장 파일을 거쳐 검증되므로 진짜 테스트. QA 임시 실행에서도 Y 에서 [{id:ore,count:5}] 확인"
+    }
+   ],
+   "issues": [
+    "game/world/game.gd exit_to_menu(): Session.save_all() 의 반환값을 무시하고 바로 Session.clear() 와 메인 화면 전환을 한다. 저장이 실패하면 알리지도 않고 진행분을 잃는다. 지금 기준 밖이지만 다음에 저장 실패 처리(머무르며 안내 등)를 넣는 게 좋다",
+    "i18n GAME_EXIT_HINT 문구에 'Esc' 가 박혀 있다. menu_exit 키를 바꾸면 안내가 틀린다. 나중에 InputMap 에서 키 이름을 읽어 넣는 편이 낫다",
+    "test.log 에 test_world_select.gd 의 orphan 36개가 찍힌다 (refresh() 가 remove_child 후 queue_free 한 행이 프레임을 넘기기 전에 GUT 가 셈). 실제 누수는 아니지만 로그 잡음이다. 행을 free() 하거나 테스트에서 프레임을 넘기면 사라진다",
+    "새 월드를 만들어도 바로 들어가지 않고 목록에만 추가된다 — 기준에 맞지만 흐름(월드 선택·생성 → 게임)을 사람이 어떻게 원하는지는 나중에 확인할 만하다"
+   ],
+   "good": [
+    "인벤토리 이동 테스트가 Session 을 비운 뒤 저장소에서 다시 읽어 검증한다 — 메모리 공유로 통과하는 가짜 테스트가 아니다",
+    "나가기 테스트가 메서드 직접 호출이 아니라 Input.parse_input_event 로 실제 입력 경로(InputMap → _unhandled_input)를 거치고, 다른 키로는 안 나가는 것도 확인한다",
+    "기존 테스트 삭제 · 완화 없음, 파일 모두 300줄 이하, 화면 글자는 번역 키, 사용자 입력 이름은 auto_translate 끔",
+    "캐릭터 없이 월드를 누르면 캐릭터 선택으로 돌려보내는 방어, 고른 월드를 삭제하면 Session 도 비우는 처리",
+    "report 내용이 실제 diff 와 일치한다"
+   ],
+   "feedback": ""
+  },
+  "test": "\n* test_prev_next_cycle_options\n* test_screen_parts_match_data_file\n* test_added_part_in_data_file_appears_on_screen\n* test_added_option_in_data_file_appears_on_screen\n* test_preview_follows_choice\n* test_create_saves_to_chosen_slot_and_shows_in_select\n* test_empty_name_is_rejected\n* test_cancel_returns_without_saving\n* test_new_character_inventory_is_empty\n* test_labels_translate_in_each_language\n11/11 passed.\n\n\nres://tests/ui/menu/test_character_select.gd\n* test_three_slots\n* test_filled_slot_shows_name_empty_slot_shows_new\n* test_slot_text_in_each_language\n* test_empty_slot_goes_to_character_create\n* test_filled_slot_goes_to_world_select_with_character\n* test_delete_button_only_on_filled_slots\n* test_delete_asks_first_and_cancel_keeps_character\n* test_confirmed_delete_empties_slot\n* test_back_goes_to_main_menu\n9/9 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_project_main_scene_is_main_menu\n* test_main_menu_has_start_settings_quit_in_order\n* test_start_goes_to_character_select\n* test_settings_goes_to_settings\n* test_settings_back_goes_to_main_menu\n* test_quit_requests_quit\n* test_target_screens_load\n* test_real_flow_in_separate_process\n* test_all_screen_text_is_translated_in_ko_and_en\n* test_buttons_render_in_each_language\n10/10 passed.\n\n\nres://tests/ui/menu/test_world_select.gd\n* test_lists_saved_worlds\n* test_empty_list_says_so\n* test_create_with_name_and_seed\n* test_text_seed_is_stable\n* test_empty_seed_is_random\n    30 Orphans\n        * [World_3:<HBoxContainer#150424520338>] + 2\n        * [World_1:<HBoxContainer#150055422044>] + 2\n        * [World_1:<HBoxContainer#148797130852>] + 2\n        * [World_0:<HBoxContainer#148612581506>] + 2\n        * [World_0:<HBoxContainer#149870872739>] + 2\n        * [World_0:<HBoxContainer#148260260006>] + 2\n        * [World_2:<HBoxContainer#150239971561>] + 2\n        * [World_1:<HBoxContainer#149334001899>] + 2\n        * [World_0:<HBoxContainer#149149452531>] + 2\n        * [World_2:<HBoxContainer#149518551293>] + 2\n* test_create_needs_name\n* test_delete_asks_first_and_cancel_keeps_world\n* test_confirmed_delete_removes_world\n    6 Orphans\n        * [World_1:<HBoxContainer#156363655396>] + 2\n        * [World_0:<HBoxContainer#156179106021>] + 2\n* test_back_goes_to_character_select\n* test_pick_world_enters_game_with_character_and_world\n* test_pick_world_without_character_goes_back_to_select\n* test_game_scene_loads\n* test_world_screen_text_in_each_language\n36 orphans\n13/13 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              10\nTests                74\nPassing Tests        74\nAsserts             585\nTime              11.559s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-002",
+  "step": "5",
+  "attempt": "1",
+  "title": "G-002 5/5 월드 선택 · 생성 → 게임 들어가기 — 통과 (시도 1)",
+  "commit": "5d92205"
+ },
+ {
+  "time": "2026-09-16 22:11:11 KST",
+  "epoch": 1789564271,
+  "type": "group_done",
+  "group": "G-002",
+  "title": "G-002 메인 화면 · 캐릭터 · 월드 — 묶음 완료, main 에 합침"
  }
 ]
