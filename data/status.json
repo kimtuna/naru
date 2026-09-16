@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 23:31:02 KST",
- "updated_epoch": 1789569062,
+ "updated": "2026-09-16 23:33:05 KST",
+ "updated_epoch": 1789569185,
  "progress": {
   "groups_total": 9,
-  "groups_done": 3,
+  "groups_done": 4,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 16
+  "steps_done": 17
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-004",
- "group_title": "섬 · 자원",
- "step": "5",
- "step_total": "5",
- "step_title": "자원 재생",
+ "group": "G-005",
+ "group_title": "시간",
+ "step": "1",
+ "step_total": "2",
+ "step_title": "하루 20분 시계",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 23:31:02"
+ "phase": "구현",
+ "phase_since": "2026-09-16 23:33:05"
 }
