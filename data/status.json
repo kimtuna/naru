@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 22:23:57 KST",
- "updated_epoch": 1789565037,
+ "updated": "2026-09-16 22:25:21 KST",
+ "updated_epoch": 1789565121,
  "progress": {
   "groups_total": 9,
   "groups_done": 2,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 10
+  "steps_done": 11
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-003",
  "group_title": "조작",
- "step": "3",
+ "step": "4",
  "step_total": "4",
- "step_title": "마우스 조준",
+ "step_title": "핫바",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 22:23:57"
+ "phase": "구현",
+ "phase_since": "2026-09-16 22:25:21"
 }

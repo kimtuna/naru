@@ -705,5 +705,52 @@
   "attempt": "1",
   "title": "G-003 2/4 캐릭터와 8방향 이동 — 통과 (시도 1)",
   "commit": "c8c7c69"
+ },
+ {
+  "time": "2026-09-16 22:25:21 KST",
+  "epoch": 1789565121,
+  "report": {
+   "status": "done",
+   "summary": "G-003.3 마우스 조준 — 캐릭터가 Pointer 쪽을 바라보고 이동 방향과 따로 논다 (뒷걸음질 · 게걸음)",
+   "problem": "캐릭터에 '바라보는 방향'이 없었다. 방향은 마우스(Pointer) 쪽이어야 하고, 이동 방향과 섞이면 안 된다 (왼쪽으로 걸으며 오른쪽을 봐야 한다). 테스트를 짜는 중에 문제가 하나 있었다: 커서를 캐릭터 기준으로 둔 뒤 GUT wait_physics_frames 로 기다리면, 조준을 계산하기 전에 캐릭터가 한 걸음 더 움직여 각도가 조금(약 1~2도) 틀어졌다.",
+   "feedback_applied": "",
+   "approach": "Player 에 facing(길이 1 벡터, 시작값 오른쪽)을 두고, _physics_process 에서 움직이기 전에 update_facing() 이 Pointer.global_position(self) - global_position 으로 방향을 정한다. 커서가 캐릭터 한가운데(0 벡터)면 앞서 보던 방향을 그대로 둔다. 방향을 눈으로 볼 수 있게 player.tscn 에 Aim(Node2D) + Marker(흰 작은 네모)를 두고 Aim.rotation = facing.angle() 로 돌린다. 테스트(game/tests/player/test_player_aim.gd): 실제 물리 루프에서 A 키로 왼쪽으로 걸으며 커서를 오른쪽에 두면 10걸음 내내 facing = 오른쪽 · Aim 회전 0 · 실제로 x 가 줄어듦 · 실제 커서 읽기 0회 / 아래·오른쪽·왼쪽아래로 걸으며 위를 겨누면 facing = 위 / 여러 방향 커서를 따라감 / 커서는 월드 원점이 아니라 캐릭터 기준 / 커서가 캐릭터 위면 직전 방향 유지. 타이밍 문제는 physics_frame 신호 직후(노드 처리 직전)에 커서를 두어 풀었다 — 그 걸음에서 캐릭터가 읽는 커서가 정확히 테스트가 둔 자리가 된다.",
+   "why": "조준은 이동과 따로 가야 하므로(spec) velocity 에서 방향을 뽑지 않고 Pointer 만 본다. 커서는 Pointer 로만 읽어 guard 를 통과하고, 테스트는 real_reader 를 스파이로 바꿔 실제 커서를 한 번도 안 읽는지까지 확인한다. 움직이기 전에 조준하는 쪽을 골랐다 — 이번 걸음에서 커서를 읽는 시점과 기준 위치가 같아져 결과가 딱 떨어진다(움직인 뒤 조준하면 한 걸음 차이가 난다; 둘 다 바꾸기 싸다). 커서가 캐릭터와 겹칠 때 0 벡터를 정규화하면 NaN/0 이 되므로 직전 방향을 유지한다. 조준 표시는 기능 확인용 색 네모일 뿐이고 모양은 사람이 나중에 정한다. 좌클릭 동작 · 겨눈 대상 판정은 이번 단계 밖이라 만들지 않았다.",
+   "files": [
+    "game/player/player.gd",
+    "game/player/player.tscn",
+    "game/tests/player/test_player_aim.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "바라보는 방향은 Pointer 쪽이고 이동 방향과 상관없다 (왼쪽으로 가면서 오른쪽을 본다 — 테스트)",
+     "ok": true,
+     "evidence": "game/player/player.gd update_facing() 이 Pointer.global_position(self) - global_position 만으로 facing 을 정한다 (velocity 를 보지 않음). game/tests/player/test_player_aim.gd test_moving_left_while_facing_right_pointer: A 키로 실제 물리 루프 10걸음, facing 시작값을 LEFT 로 뒤집어 두고 커서를 오른쪽에 둔 뒤 매 걸음 facing=RIGHT · Aim.rotation=0 · x 실제 감소 · velocity.x<0 · 실제 커서 읽기 0회를 확인. test_facing_ignores_every_move_direction 이 아래/오른쪽/왼쪽아래 이동 중 위 조준도 확인. tools/test.sh 직접 실행 102/102 통과, tests/player 3회 반복 14/14 통과(불안정 없음). 변이 검사: update_facing 을 이동 방향 기반으로 바꾼 임시 서브클래스로 같은 테스트를 돌리자 test_moving_left_while_facing_right_pointer 가 매 걸음 실패 — 테스트가 기준을 실제로 잡는다 (임시 파일은 지웠고 git status 에 흔적 없음)."
+    }
+   ],
+   "issues": [
+    "사소: report.json files 에 새로 생긴 game/tests/player/test_player_aim.gd.uid 가 빠져 있다 (Godot 자동 생성 파일이라 판정에는 반영하지 않음)"
+   ],
+   "good": [
+    "기존 테스트 삭제·완화·skip 없음 — diff 는 player.gd · player.tscn 추가뿐",
+    "커서는 Pointer 로만 읽고, 테스트가 real_reader 스파이로 실제 커서 읽기 0회까지 검사",
+    "facing 시작값을 테스트에서 반대로 뒤집어 '아무것도 안 하는 구현'이 통과하지 못하게 했다",
+    "커서가 캐릭터 위(0 벡터)일 때 직전 방향 유지 — NaN 방지와 테스트가 함께 있다",
+    "physics_frame 직후에 커서를 두는 방식으로 이동 중 한 걸음 차이 문제를 정확히 풀었다",
+    "화면 글자 하드코딩 없음, 파일 짧음(player.gd 34줄, 테스트 122줄), 좌클릭 등 단계 밖 기능 없음"
+   ],
+   "feedback": ""
+  },
+  "test": "\n* test_prev_next_cycle_options\n* test_screen_parts_match_data_file\n* test_added_part_in_data_file_appears_on_screen\n* test_added_option_in_data_file_appears_on_screen\n* test_preview_follows_choice\n* test_create_saves_to_chosen_slot_and_shows_in_select\n* test_empty_name_is_rejected\n* test_cancel_returns_without_saving\n* test_new_character_inventory_is_empty\n* test_labels_translate_in_each_language\n11/11 passed.\n\n\nres://tests/ui/menu/test_character_select.gd\n* test_three_slots\n* test_filled_slot_shows_name_empty_slot_shows_new\n* test_slot_text_in_each_language\n* test_empty_slot_goes_to_character_create\n* test_filled_slot_goes_to_world_select_with_character\n* test_delete_button_only_on_filled_slots\n* test_delete_asks_first_and_cancel_keeps_character\n* test_confirmed_delete_empties_slot\n* test_back_goes_to_main_menu\n9/9 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_project_main_scene_is_main_menu\n* test_main_menu_has_start_settings_quit_in_order\n* test_start_goes_to_character_select\n* test_settings_goes_to_settings\n* test_settings_back_goes_to_main_menu\n* test_quit_requests_quit\n* test_target_screens_load\n* test_real_flow_in_separate_process\n* test_all_screen_text_is_translated_in_ko_and_en\n* test_buttons_render_in_each_language\n10/10 passed.\n\n\nres://tests/ui/menu/test_world_select.gd\n* test_lists_saved_worlds\n* test_empty_list_says_so\n* test_create_with_name_and_seed\n* test_text_seed_is_stable\n* test_empty_seed_is_random\n    30 Orphans\n        * [World_3:<HBoxContainer#186243876488>] + 2\n        * [World_1:<HBoxContainer#185874778350>] + 2\n        * [World_1:<HBoxContainer#184582932726>] + 2\n        * [World_0:<HBoxContainer#184398383380>] + 2\n        * [World_0:<HBoxContainer#185690229045>] + 2\n        * [World_0:<HBoxContainer#184029284664>] + 2\n        * [World_2:<HBoxContainer#186059327867>] + 2\n        * [World_1:<HBoxContainer#185136580989>] + 2\n        * [World_0:<HBoxContainer#184952031621>] + 2\n        * [World_2:<HBoxContainer#185321130383>] + 2\n* test_create_needs_name\n* test_delete_asks_first_and_cancel_keeps_world\n* test_confirmed_delete_removes_world\n    6 Orphans\n        * [World_1:<HBoxContainer#192216566134>] + 2\n        * [World_0:<HBoxContainer#192032016759>] + 2\n* test_back_goes_to_character_select\n* test_pick_world_enters_game_with_character_and_world\n* test_pick_world_without_character_goes_back_to_select\n* test_game_scene_loads\n* test_world_screen_text_in_each_language\n36 orphans\n13/13 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              14\nTests               102\nPassing Tests       102\nAsserts             765\nTime              12.693s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-003",
+  "step": "3",
+  "attempt": "1",
+  "title": "G-003 3/4 마우스 조준 — 통과 (시도 1)",
+  "commit": "3310389"
  }
 ]
