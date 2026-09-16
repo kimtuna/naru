@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 21:59:26 KST",
- "updated_epoch": 1789563566,
+ "updated": "2026-09-16 22:01:25 KST",
+ "updated_epoch": 1789563685,
  "progress": {
   "groups_total": 9,
   "groups_done": 1,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 5
+  "steps_done": 6
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-002",
  "group_title": "메인 화면 · 캐릭터 · 월드",
- "step": "3",
+ "step": "4",
  "step_total": "5",
- "step_title": "캐릭터 선택 — 슬롯 3개",
+ "step_title": "캐릭터 생성 · 커스터마이징 (칸만)",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 21:59:26"
+ "phase": "구현",
+ "phase_since": "2026-09-16 22:01:25"
 }

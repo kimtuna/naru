@@ -359,5 +359,77 @@
   "attempt": "1",
   "title": "G-002 2/5 메인 화면 — 통과 (시도 1)",
   "commit": "c14a894"
+ },
+ {
+  "time": "2026-09-16 22:01:25 KST",
+  "epoch": 1789563685,
+  "report": {
+   "status": "done",
+   "summary": "G-002.3 캐릭터 선택 — 슬롯 3개 · 빈 칸은 생성, 찬 칸은 월드 선택 · 삭제 확인",
+   "problem": "캐릭터 선택 화면(2단계에서는 제목만 있던 자리)에 슬롯 3칸을 채워야 했다. 찬 칸은 이름, 빈 칸은 「새 캐릭터」. 빈 칸은 생성 화면, 찬 칸은 그 캐릭터를 들고 월드 선택 화면으로 가야 한다. 삭제는 확인을 한 번 거치고, 뒤로는 메인 화면. 걸리는 점이 둘 있었다. (1) 고른 캐릭터를 다음 화면에 넘길 곳이 없었다. (2) 기존 번역 검사 테스트가 캐릭터 선택 화면의 글자를 모두 번역 키로 보는데, 캐릭터 이름은 사용자가 쓴 글자다. 게다가 이 테스트가 실제 사용자 저장(user://saves)을 읽으면 맥에 있는 저장 상태에 따라 결과가 흔들린다.",
+   "feedback_applied": "",
+   "approach": "game/core/session.gd(Session) 추가 — 메뉴 화면 사이에 들고 다니는 값(store, character_slot, character)을 담는다. 슬롯을 누르면 Session.select_character(slot)가 캐릭터를 불러 두고, 캐릭터가 있으면 Screens.WORLD_SELECT, 없으면 Screens.CHARACTER_CREATE 로 간다. 빈 칸도 슬롯 번호를 남겨서 4단계 생성 화면이 어느 칸에 저장할지 안다. character_select.gd 는 SaveConfig.CHARACTER_SLOTS 만큼 칸(선택 버튼 + 삭제 버튼)을 만든다. 삭제 버튼은 찬 칸에만 보인다. 삭제를 누르면 확인 패널(ConfirmYes/ConfirmNo)이 뜨고, 예를 눌러야 지워진 뒤 화면이 다시 그려진다. 캐릭터 생성·월드 선택 화면은 이번 단계 밖이라 제목만 있는 자리 씬으로 두었다. 새 번역 키 6개를 한국어·영어로 넣었다. 테스트는 test_character_select.gd 9개로, 임시 폴더 저장소를 쓴다. test_main_menu.gd 는 기대값을 그대로 두고 두 가지만 바꿨다. 임시 빈 저장소를 쓰게 해 실제 사용자 저장과 떼어 놓았고, 번역 검사 대상에 새 화면 두 개를 더했다. 전체 45개 테스트 통과, guard 통과.",
+   "why": "확인 창은 Godot ConfirmationDialog 대신 화면 안의 숨은 패널로 만들었다. 서브윈도우는 headless 에서 동작이 덜 확실하고, 내부 OK/Cancel 버튼은 번역 검사에 잡히지 않는다. 패널은 노드·상태로 바로 검사할 수 있다. 모양은 사람이 나중에 바꾸면 된다. 고른 캐릭터는 씬 전환 인자 대신 정적 Session 에 둔다. change_scene_to_file 로는 값을 넘길 수 없고, 오토로드를 새로 만드는 것보다 기존 Screens 와 같은 정적 방식이 가볍기 때문이다. 이름 버튼은 auto_translate_mode 를 DISABLED 로 두어, 이름이 우연히 번역 키와 같아도 바뀌지 않게 했다. 번역 검사 테스트에 이름을 예외로 두는 방법은 테스트를 약하게 만드는 것이라 버렸다. 대신 그 테스트가 빈 저장소를 보게 해서 결과가 늘 같게 했다. 확인 문구에 캐릭터 이름을 넣는 것은 나중에 바꾸기 싼 부분이라 지금은 고정 문구로 두었다.",
+   "files": [
+    "game/core/session.gd",
+    "game/core/screens.gd",
+    "game/ui/menu/character_select.gd",
+    "game/ui/menu/character_select.tscn",
+    "game/ui/menu/character_create.tscn",
+    "game/ui/menu/world_select.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/ui/menu/test_character_select.gd",
+    "game/tests/ui/menu/test_main_menu.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "슬롯 3칸이 있다. 저장된 캐릭터가 있는 칸은 이름을, 빈 칸은 「새 캐릭터」를 보여 준다",
+     "ok": true,
+     "evidence": "character_select.gd _ready/_build_slot 이 SaveConfig.CHARACTER_SLOTS(=3)만큼 칸을 만들고 refresh() 가 이름 또는 CHARACTER_NEW 를 넣는다. test_three_slots · test_filled_slot_shows_name_empty_slot_shows_new · test_slot_text_in_each_language 통과(ko '새 캐릭터', en 'New Character', 이름 칸은 auto_translate DISABLED). 임시 복사본에서 칸 수를 2로 바꾸면 test_three_slots 가 실패함을 확인. headless 실제 씬에서 'Q | CHARACTER_NEW → 새 캐릭터' 출력 확인"
+    },
+    {
+     "criterion": "빈 칸 → 캐릭터 생성 화면. 캐릭터가 있는 칸 → 그 캐릭터를 들고 월드 선택 화면으로",
+     "ok": true,
+     "evidence": "_on_slot_pressed → Session.select_character(slot) 후 WORLD_SELECT/CHARACTER_CREATE. test_empty_slot_goes_to_character_create · test_filled_slot_goes_to_world_select_with_character 통과(Session.character.name == 'C' 확인). 분기를 항상 생성으로 바꾸거나 Session.character 를 비우는 변형 모두 테스트가 잡음. simulate 없이 실제 전환도 확인: 빈 칸 → res://ui/menu/character_create.tscn (slot=1), 찬 칸 → res://ui/menu/world_select.tscn (char=Q)"
+    },
+    {
+     "criterion": "캐릭터 삭제는 확인을 한 번 거친다. 삭제하면 그 칸이 빈 칸이 된다",
+     "ok": true,
+     "evidence": "_ask_delete 가 %Confirm 패널만 띄우고, _confirm_delete 에서 지운 뒤 refresh(). test_delete_button_only_on_filled_slots · test_delete_asks_first_and_cancel_keeps_character · test_confirmed_delete_empties_slot 통과. 변형(확인 없이 바로 삭제 / 예를 눌러도 안 지움 / 삭제 후 refresh 생략) 모두 실패로 잡힘"
+    },
+    {
+     "criterion": "뒤로 → 메인 화면",
+     "ok": true,
+     "evidence": "%Back.pressed → Screens.go(self, Screens.MAIN_MENU). test_back_goes_to_main_menu 통과, 목적지를 SETTINGS 로 바꾼 변형은 실패로 잡힘"
+    }
+   ],
+   "issues": [
+    "확인 패널이 떠 있어도 다른 버튼이 그대로 눌린다 (패널 mouse_filter 는 자기 영역만 막고, 슬롯 · 삭제 · 뒤로 버튼은 disabled 가 아님). 삭제 대기 중에 그 캐릭터 칸을 눌러 월드 선택으로 가거나, 다른 칸의 삭제를 눌러 _pending_delete 가 조용히 바뀔 수 있다. 수용 기준(확인을 한 번 거친다)은 지키므로 불합격 사유는 아니지만, 확인 중에는 나머지 입력을 막는 편이 안전하다",
+    "Session 은 정적 전역 상태라 테스트마다 store 를 되돌려야 한다 (현재 두 테스트 파일 모두 after_each 에서 되돌림). 앞으로 Session 을 쓰는 테스트가 늘면 같은 되돌리기를 빠뜨리기 쉽다",
+    "test_main_menu 의 test_real_flow_in_separate_process 는 별도 프로세스라 Session.store 가 실제 user://saves 를 가리킨다. 읽기만 하고 캐릭터 선택 화면의 글자를 검사하지 않으므로 지금은 결과에 영향 없음",
+    "보고서의 '새 번역 키 6개'는 사실과 맞다 (CHARACTER_NEW, CHARACTER_DELETE, CHARACTER_DELETE_CONFIRM, MENU_CANCEL, CHARACTER_CREATE_TITLE, WORLD_SELECT_TITLE). 확인 창의 '예' 버튼은 CHARACTER_DELETE 를 다시 쓴다 — 문제는 아님"
+   ],
+   "good": [
+    "기존 test_main_menu 의 기대값은 그대로다. 번역 검사 대상에 새 화면 두 개를 더해 오히려 강해졌고, 임시 빈 저장소를 써서 사용자 맥의 저장 상태에 따라 결과가 흔들리지 않게 했다",
+    "캐릭터 이름을 번역 검사 예외로 두지 않고 auto_translate_mode DISABLED 로 처리했다. 테스트를 약하게 만들지 않은 좋은 선택",
+    "테스트가 진짜다 — 일부러 만든 변형 7개(확인 생략, 삭제 안 함, 분기 고정, refresh 생략, 뒤로 목적지 변경, 칸 수 변경, 캐릭터 안 넘김)를 모두 잡았다",
+    "빈 칸을 골라도 Session.character_slot 을 남겨 4단계 생성 화면이 어느 칸에 저장할지 알 수 있다",
+    "화면 경로는 Screens, 칸 수는 SaveConfig 한 곳에 있다. 글자는 모두 번역 키이고 파일은 모두 150줄 이하. 단계 밖 기능 없이 생성 · 월드 화면은 제목만 있는 자리 씬으로 두었다",
+    "tools/test.sh 45/45 통과, harness/guard.sh 통과를 직접 다시 돌려 확인했다"
+   ],
+   "feedback": ""
+  },
+  "test": "$ harness/guard.sh\nguard: 통과\nexit=0\n$ tools/test.sh\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/test_example.gd\n* test_arithmetic\n* test_array_contains\n2/2 passed.\n\n\nres://tests/core/test_i18n.gd\n* test_translation_files_exist_and_are_registered\n* test_locales_share_the_same_keys\n* test_main_scene_title_changes_with_locale\n3/3 passed.\n\n\nres://tests/core/test_project_setup.gd\n* test_spec_folders_exist\n* test_main_scene_is_set_and_loads\n* test_headless_quit_exits_clean\n* test_gitignore_excludes_godot_cache\n4/4 passed.\n\n\nres://tests/core/test_runner.gd\n* test_all_passing_exits_zero\n* test_one_failing_exits_nonzero\n* test_failing_in_subfolder_exits_nonzero\n* test_script_error_exits_nonzero\n* test_no_tests_exits_nonzero\n5/5 passed.\n\n\nres://tests/settings/save/test_save_store.gd\n* test_character_roundtrip_keeps_values\n* test_character_inventory_survives_roundtrip\n* test_world_roundtrip_keeps_values\n* test_character_and_world_are_stored_separately\n* test_character_slots_are_three\n* test_fourth_character_is_rejected\n* test_freed_slot_can_be_reused\n* test_delete_character\n* test_delete_world\n* test_default_location_is_under_user\n* test_tests_do_not_touch_user_saves\n* test_bad_world_id_is_rejected\n12/12 passed.\n\n\nres://tests/ui/menu/test_character_select.gd\n* test_three_slots\n* test_filled_slot_shows_name_empty_slot_shows_new\n* test_slot_text_in_each_language\n* test_empty_slot_goes_to_character_create\n* test_filled_slot_goes_to_world_select_with_character\n* test_delete_button_only_on_filled_slots\n* test_delete_asks_first_and_cancel_keeps_character\n* test_confirmed_delete_empties_slot\n* test_back_goes_to_main_menu\n9/9 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_project_main_scene_is_main_menu\n* test_main_menu_has_start_settings_quit_in_order\n* test_start_goes_to_character_select\n* test_settings_goes_to_settings\n* test_settings_back_goes_to_main_menu\n* test_quit_requests_quit\n* test_target_screens_load\n* test_real_flow_in_separate_process\n* test_all_screen_text_is_translated_in_ko_and_en\n* test_buttons_render_in_each_language\n10/10 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               7\nTests                45\nPassing Tests        45\nAsserts             254\nTime              11.779s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-002",
+  "step": "3",
+  "attempt": "1",
+  "title": "G-002 3/5 캐릭터 선택 — 슬롯 3개 — 통과 (시도 1)",
+  "commit": "41022cd"
  }
 ]
