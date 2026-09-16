@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 22:01:25 KST",
- "updated_epoch": 1789563685,
+ "updated": "2026-09-16 22:04:48 KST",
+ "updated_epoch": 1789563888,
  "progress": {
   "groups_total": 9,
   "groups_done": 1,
@@ -20,6 +20,6 @@
  "step_total": "5",
  "step_title": "캐릭터 생성 · 커스터마이징 (칸만)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 22:01:25"
+ "phase": "QA",
+ "phase_since": "2026-09-16 22:04:48"
 }
