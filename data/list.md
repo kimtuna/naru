@@ -15,7 +15,7 @@ Claude 루프 세션은 이 파일을 읽지 않는다 — `loop.sh` 가 지금 
 
 ## [ ] G-001 프로젝트 기반
 - spec: spec/01_settings/, spec/00_core/roadmap.md
-- [ ] 1. Godot 프로젝트 만들기
+- [x] 1. Godot 프로젝트 만들기
   - `game/project.godot`, 메인 씬 하나 (빈 화면이어도 된다)
   - 기준: `godot --headless --path game --quit` 가 오류 없이 0 으로 끝난다
   - 기준: `game/` 아래 폴더가 spec/ 과 같은 이름으로 있다 (core, settings, player, world, life, craft, build, automation, combat, expedition, economy, multiplayer, ui, tests, i18n)

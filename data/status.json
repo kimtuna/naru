@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 21:32:27 KST",
- "updated_epoch": 1789561947,
+ "updated": "2026-09-16 21:33:22 KST",
+ "updated_epoch": 1789562002,
  "progress": {
   "groups_total": 1,
   "groups_done": 0,
   "groups_waiting": 0,
   "steps_total": 3,
-  "steps_done": 0
+  "steps_done": 1
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "93658",
  "group": "G-001",
  "group_title": "프로젝트 기반",
- "step": "1",
+ "step": "2",
  "step_total": "3",
- "step_title": "Godot 프로젝트 만들기",
+ "step_title": "테스트 실행기",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 21:32:27"
+ "phase": "구현",
+ "phase_since": "2026-09-16 21:33:22"
 }
