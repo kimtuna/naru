@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 22:53:42 KST",
- "updated_epoch": 1789566822,
+ "updated": "2026-09-16 23:07:28 KST",
+ "updated_epoch": 1789567648,
  "progress": {
   "groups_total": 9,
   "groups_done": 3,
@@ -20,6 +20,6 @@
  "step_total": "5",
  "step_title": "좌클릭 채취 → 바닥에 떨어짐",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 22:53:42"
+ "phase": "QA",
+ "phase_since": "2026-09-16 23:07:28"
 }
