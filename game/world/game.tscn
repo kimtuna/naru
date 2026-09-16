@@ -17,6 +17,8 @@
 [ext_resource type="PackedScene" path="res://ui/menu/game_menu.tscn" id="15"]
 [ext_resource type="Script" path="res://life/farming/farm.gd" id="16"]
 [ext_resource type="Script" path="res://expedition/supply/eater.gd" id="17"]
+[ext_resource type="Script" path="res://combat/damage_death/death_chests.gd" id="18"]
+[ext_resource type="PackedScene" path="res://ui/combat/death_chest_view.tscn" id="19"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
@@ -31,6 +33,10 @@ script = ExtResource("16")
 
 [node name="Drops" type="Node2D" parent="."]
 unique_name_in_owner = true
+
+[node name="DeathChests" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("18")
 
 [node name="Mobs" type="Node2D" parent="."]
 unique_name_in_owner = true
@@ -120,6 +126,9 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 
 [node name="Crafting" parent="Hud" instance=ExtResource("12")]
+unique_name_in_owner = true
+
+[node name="DeathChest" parent="Hud" instance=ExtResource("19")]
 unique_name_in_owner = true
 
 [node name="GameMenu" parent="Hud" instance=ExtResource("15")]

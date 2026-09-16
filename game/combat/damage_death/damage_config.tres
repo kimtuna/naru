@@ -6,3 +6,4 @@
 script = ExtResource("1")
 player_max_health = 100.0
 mob_max_health = 30.0
+death_chest_seconds = 1800.0

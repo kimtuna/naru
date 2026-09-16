@@ -41,6 +41,9 @@ func _ready() -> void:
 		farm().register(interactor())
 		eater().setup(player())
 		eater().register(interactor())
+		death_chests().setup(player(), island_view(), death_chest_view(), death_penalty_on)
+		death_chests().register(interactor())
+		death_chests().load_list(world.death_chests)
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
@@ -148,6 +151,15 @@ func dropped_items() -> Array[DroppedItem]:
 	return out
 
 
+## 데스 상자들 — 페널티가 켜진 월드에서 죽은 자리에 떨어진다.
+func death_chests() -> DeathChests:
+	return %DeathChests
+
+
+func death_chest_view() -> DeathChestView:
+	return %DeathChest
+
+
 func hotbar_view() -> HotbarView:
 	return %Hotbar
 
@@ -172,7 +184,8 @@ func game_menu() -> GameMenu:
 
 ## 가방 · 제작 화면 · 설정 창이 열려 있으면 좌클릭은 휘두르지 않고 우클릭은 열거나 놓지 않는다.
 func ui_blocks_click() -> bool:
-	return inventory_view().is_open() or crafting_view().is_open() or game_menu().is_open()
+	return inventory_view().is_open() or crafting_view().is_open() or death_chest_view().is_open() \
+		or game_menu().is_open()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -181,12 +194,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		on_escape()
 
 
-## Esc — 설정 창이 열려 있으면 그 창에서 뒤로, 아니면 열린 창(제작 → 가방)을 하나 닫고, 열린 창이 없으면 설정 창을 연다.
+## Esc — 설정 창이 열려 있으면 그 창에서 뒤로, 아니면 열린 창(제작 → 데스 상자 → 가방)을 하나 닫고, 열린 창이 없으면 설정 창을 연다.
 func on_escape() -> void:
 	if game_menu().is_open():
 		game_menu().back()
 	elif crafting_view().is_open():
 		crafting_view().close()
+	elif death_chest_view().is_open():
+		death_chest_view().close()
 	elif inventory_view().is_open():
 		inventory_view().set_open(false)
 	else:
@@ -220,4 +235,5 @@ func store_world_state() -> void:
 	world.stations = stations().to_list()
 	world.tilled = farm().to_list()
 	world.crops = farm().crops_to_list()
+	world.death_chests = death_chests().to_list()
 	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())
