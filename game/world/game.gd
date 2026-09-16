@@ -41,6 +41,7 @@ func _ready() -> void:
 		player().hotbar = Hotbar.new(character)
 	%Hotbar.bind(player().hotbar)
 	inventory_view().bind(player().hotbar.inventory)
+	crafting_view().bind(player().hotbar.inventory)
 	harvester().blocked = ui_blocks_click
 	stations().blocked = ui_blocks_click
 	load_usec = Time.get_ticks_usec() - started

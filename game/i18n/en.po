@@ -173,3 +173,18 @@ msgstr "Ammo"
 
 msgid "CRAFT_CLOSE_HINT"
 msgstr "Esc: Close"
+
+msgid "CRAFT_IDLE"
+msgstr "Idle"
+
+msgid "CRAFT_PROGRESS"
+msgstr "Crafting %s — %ds left"
+
+msgid "CRAFT_BUFFER"
+msgstr "Output"
+
+msgid "CRAFT_BUFFER_ITEM"
+msgstr "%s ×%d"
+
+msgid "CRAFT_COLLECT"
+msgstr "Collect"

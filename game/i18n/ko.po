@@ -173,3 +173,18 @@ msgstr "탄약"
 
 msgid "CRAFT_CLOSE_HINT"
 msgstr "Esc: 닫기"
+
+msgid "CRAFT_IDLE"
+msgstr "대기 중"
+
+msgid "CRAFT_PROGRESS"
+msgstr "%s 제작 중 — %d초 남음"
+
+msgid "CRAFT_BUFFER"
+msgstr "완성품"
+
+msgid "CRAFT_BUFFER_ITEM"
+msgstr "%s ×%d"
+
+msgid "CRAFT_COLLECT"
+msgstr "수령"

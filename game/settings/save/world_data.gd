@@ -14,7 +14,7 @@ var removed_at: Dictionary = {}
 var world_time := 0.0
 ## 바닥에 떨어진 아이템 — {"id", "count", "pos": Vector2 (월드 픽셀)}.
 var drops: Array = []
-## 설치한 제작대 — {"id": 제작 장소 id, "cell": Vector2i}.
+## 설치한 제작대 — {"id": 제작 장소 id, "cell": Vector2i, "job"?: 진행 중인 제작, "buffer"?: 출력 버퍼}.
 var stations: Array = []
 
 

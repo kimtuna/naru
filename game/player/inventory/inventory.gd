@@ -60,6 +60,25 @@ func add(item: Dictionary) -> int:
 	return left
 
 
+## 이 아이템 id 를 뒤쪽 칸부터 count 개 뺀다. 모자라면 하나도 빼지 않고 false.
+func remove(id: String, count: int) -> bool:
+	if count <= 0:
+		return true
+	if count_of(id) < count:
+		return false
+	var left := count
+	for i in range(size() - 1, -1, -1):
+		var it = slot(i)
+		if left > 0 and it is Dictionary and str(it.get("id", "")) == id:
+			var take := mini(int(it.get("count", 0)), left)
+			left -= take
+			it["count"] = int(it.get("count", 0)) - take
+			if it["count"] <= 0:
+				character.inventory[i] = null
+	changed.emit()
+	return true
+
+
 ## 이 아이템 id 의 개수 합.
 func count_of(id: String) -> int:
 	var total := 0

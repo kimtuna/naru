@@ -3,9 +3,10 @@ extends RefCounted
 ## 레시피 목록 — 데이터 파일 하나(recipes.json)에서 읽는다 (spec/05_craft/recipes.md).
 ## 레시피를 늘리려면 그 파일만 고친다.
 ## 파일 모양: {"raw": [원자재 id], "stations": [제작 장소 id],
-##   "recipes": [{"id", "station", "time", "inputs": [{"id", "count"}], "output": {"id", "count"}}]}
+##   "recipes": [{"id", "station", "time", "time_temp", "inputs": [{"id", "count"}], "output": {"id", "count"}}]}
 ## station "hand" 는 제작대 없이 맨손으로 만든다 — 빈손 시작의 첫 도구 (spec/04_life/gathering.md).
-## time 은 초. 레시피마다 다르지만 아이템 목록이 정해질 때까지 전부 임시 5초다 (crafting-stations.md).
+## time 은 제작 시간(초). 레시피마다 다르지만 아이템 목록이 정해질 때까지 전부 임시 5초다 (crafting-stations.md).
+## time_temp 가 true 면 그 time 은 임시 값이다 — 사람이 정하면 값을 바꾸고 지운다.
 
 const DEFAULT_PATH := "res://craft/recipes/recipes.json"
 const HAND := "hand"
@@ -17,7 +18,7 @@ static var path := DEFAULT_PATH
 
 var raw: PackedStringArray = []
 var stations: PackedStringArray = []
-## [{"id", "station", "time", "inputs": [{"id", "count"}], "output": {"id", "count"}}]
+## [{"id", "station", "time", "time_temp", "inputs": [{"id", "count"}], "output": {"id", "count"}}]
 var recipes: Array[Dictionary] = []
 
 
@@ -50,6 +51,7 @@ static func _parse(r: Dictionary) -> Dictionary:
 		"id": str(r.get("id", "")),
 		"station": str(r.get("station", "")),
 		"time": float(r.get("time", 0.0)),
+		"time_temp": bool(r.get("time_temp", false)),
 		"inputs": inputs,
 		"output": _stack(r.get("output", {})),
 	}

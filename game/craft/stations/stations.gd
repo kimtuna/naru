@@ -132,14 +132,14 @@ func add_station(id: String, cell: Vector2i) -> CraftStation:
 	return station
 
 
-## 월드 저장 값 — [{"id", "cell"}].
+## 월드 저장 값 — [{"id", "cell", "job"?, "buffer"?}] (CraftStation.to_dict).
 func to_list() -> Array:
 	return all().map(func(s: CraftStation) -> Dictionary: return s.to_dict())
 
 
 func load_list(list: Array) -> void:
 	for d in list:
-		add_station(str(d["id"]), d["cell"])
+		add_station(str(d["id"]), d["cell"]).load_state(d)
 
 
 ## 플레이어 몸(충돌 모양)이 이 칸에 걸치나 — 걸친 채 놓으면 몸이 끼인다.
