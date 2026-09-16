@@ -20,9 +20,11 @@ func _ready() -> void:
 	world = Session.world
 	if world:
 		# 지형은 시드로 다시 만들고, 저장된 「없앤 칸」만 얹는다.
-		island = IslandMap.new(IslandGenerator.new(world.world_seed), true, world.removed_cells)
+		island = IslandMap.new(IslandGenerator.new(world.world_seed), true, world.removed_cells, world.removed_at)
+		island.time = world.world_time
 		island_view().setup(island)
 		harvester().setup(player(), island_view(), drops())
+		regrowth().setup(island, island_view(), player())
 		picker().setup(player(), drops(), island_view().tile_px())
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
@@ -57,6 +59,10 @@ func island_view() -> IslandView:
 
 func harvester() -> Harvester:
 	return %Harvester
+
+
+func regrowth() -> Regrowth:
+	return %Regrowth
 
 
 func picker() -> Picker:
@@ -98,8 +104,10 @@ func exit_to_menu() -> void:
 	Screens.go(self, Screens.MAIN_MENU)
 
 
-## 저장할 월드 상태를 WorldData 에 옮긴다. 없앤 칸은 섬과 같은 사전이라 이미 들어 있다.
+## 저장할 월드 상태를 WorldData 에 옮긴다. 없앤 칸 · 시각은 섬과 같은 사전이라 이미 들어 있다.
 func store_world_state() -> void:
 	if world == null:
 		return
+	if island:
+		world.world_time = island.time
 	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())

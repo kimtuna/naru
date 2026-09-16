@@ -19,12 +19,19 @@ var _built := PackedByteArray()
 var _built_total := 0
 ## 없앤 칸 표시 — Vector2i → true. WorldData.removed_cells 와 같은 사전을 나눠 쓴다.
 var removed: Dictionary
+## 없앤 시각 — Vector2i → 월드 시간(초). WorldData.removed_at 과 나눠 쓴다. 없으면 0 에 없앤 것으로 본다.
+var removed_at: Dictionary
+## 월드 시간 (게임 초) — 재생(Regrowth)이 흘린다. 저장은 WorldData.world_time.
+var time := 0.0
 
 
-## lazy 가 아니면 섬 전체를 바로 만든다. removed_cells 는 저장에서 온 없앤 칸 표시 (그대로 나눠 쓴다).
-func _init(gen: IslandGenerator, lazy := false, removed_cells: Variant = null) -> void:
+## lazy 가 아니면 섬 전체를 바로 만든다. removed_cells · removed_times 는 저장에서 온 없앤 칸 표시와 시각
+## (그대로 나눠 쓴다).
+func _init(gen: IslandGenerator, lazy := false, removed_cells: Variant = null,
+		removed_times: Variant = null) -> void:
 	generator = gen
 	removed = removed_cells if removed_cells is Dictionary else {}
+	removed_at = removed_times if removed_times is Dictionary else {}
 	world_seed = gen.world_seed
 	size = gen.config.size
 	chunk_size = maxi(gen.config.chunk_size, 1)
@@ -110,12 +117,35 @@ func remove_deposit(cell: Vector2i) -> bool:
 		return false
 	_deposit[cell.y * size + cell.x] = IslandConfig.Deposit.NONE
 	removed[cell] = true
+	removed_at[cell] = time
 	cell_changed.emit(cell)
 	return true
 
 
 func is_removed(cell: Vector2i) -> bool:
 	return removed.has(cell)
+
+
+func removed_time(cell: Vector2i) -> float:
+	return float(removed_at.get(cell, 0.0))
+
+
+## 시드가 이 칸에 처음 만든 자원 (없앤 표시와 상관없이).
+func original_deposit(cell: Vector2i) -> IslandConfig.Deposit:
+	return generator.deposit_at(cell.x, cell.y)
+
+
+## 재생 — 없앤 표시를 지워 칸을 시드의 원래 값으로 돌린다. 표시가 없던 칸이면 false.
+## 원래 비어 있던 칸은 표시만 지워지고 빈 채로 남는다.
+func regrow(cell: Vector2i) -> bool:
+	if not removed.has(cell):
+		return false
+	removed.erase(cell)
+	removed_at.erase(cell)
+	if is_chunk_built(chunk_of(cell)):
+		_deposit[cell.y * size + cell.x] = original_deposit(cell)
+	cell_changed.emit(cell)
+	return true
 
 
 ## 장애물(자원)이 있나. 섬 밖도 막힌 것으로 본다.
