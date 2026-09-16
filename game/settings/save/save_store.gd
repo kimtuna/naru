@@ -112,10 +112,13 @@ func _world_path(id: String) -> String:
 
 
 func _new_world_id() -> String:
-	var id := ""
-	while id.is_empty() or has_world(id):
-		id = "world_%d_%04d" % [int(Time.get_unix_time_from_system()), randi() % 10000]
-	return id
+	# 같은 초에 만든 월드도 만든 순서대로 정렬되게, 난수 대신 그 초의 가장 큰 번호 + 1.
+	var stamp := "world_%d_" % int(Time.get_unix_time_from_system())
+	var next := 0
+	for existing in world_ids():
+		if existing.begins_with(stamp):
+			next = maxi(next, existing.trim_prefix(stamp).to_int() + 1)
+	return stamp + "%04d" % next
 
 
 func _write(path: String, payload: Dictionary) -> Error:

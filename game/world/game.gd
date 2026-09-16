@@ -1,6 +1,6 @@
 class_name GameScene
 extends Node2D
-## 게임 씬 — 지금은 빈 자리 (다음 묶음들이 채운다).
+## 게임 씬 — 땅과 플레이어 캐릭터 · 화면 아래 핫바 (나머지는 다음 묶음들이 채운다).
 ## Session 이 들고 온 캐릭터와 월드를 받아 두고, menu_exit 액션으로 둘을 저장한 뒤 메인 화면으로 나간다.
 
 const EXIT_ACTION := "menu_exit"
@@ -14,6 +14,9 @@ func _ready() -> void:
 	world = Session.world
 	%CharacterName.text = character_name()
 	%WorldName.text = world_name()
+	if character:
+		player().hotbar = Hotbar.new(character)
+	%Hotbar.bind(player().hotbar)
 
 
 func character_name() -> String:
@@ -22,6 +25,14 @@ func character_name() -> String:
 
 func world_name() -> String:
 	return world.name if world else ""
+
+
+func player() -> Player:
+	return %Player
+
+
+func hotbar_view() -> HotbarView:
+	return %Hotbar
 
 
 func _unhandled_input(event: InputEvent) -> void:
