@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 22:06:13 KST",
- "updated_epoch": 1789563973,
+ "updated": "2026-09-16 22:09:32 KST",
+ "updated_epoch": 1789564172,
  "progress": {
   "groups_total": 9,
   "groups_done": 1,
@@ -20,6 +20,6 @@
  "step_total": "5",
  "step_title": "월드 선택 · 생성 → 게임 들어가기",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 22:06:13"
+ "phase": "QA",
+ "phase_since": "2026-09-16 22:09:32"
 }
