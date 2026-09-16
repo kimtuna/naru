@@ -3,14 +3,14 @@ extends Node2D
 ## 제작대 설치와 열기 — 좌클릭 하나 규칙 (spec/02_player/movement-controls.md · spec/05_craft/crafting-stations.md).
 ## - 커서가 손이 닿는 제작대 위면 도구 동작 대신 제작 화면을 연다
 ## - 아니고 손에 제작대 아이템을 들었으면 겨눈 빈 칸에 설치한다 (막힌 칸 · 닿지 않는 칸은 안 된다)
-## 이 둘 중 하나를 하면 입력을 먹어 Harvester 가 휘두르지 않는다 — 트리에서 Harvester 보다 뒤에 있어야 먼저 받는다.
-## 손이 닿는 거리는 채취와 같은 값이다 (HarvestConfig.reach_tiles).
+## 이 둘 중 하나를 하면 입력을 먹어 Swinger 가 휘두르지 않는다 — 트리에서 Swinger 보다 뒤에 있어야 먼저 받는다.
+## 손이 닿는 거리는 평타와 같은 값이다 (SwingConfig.reach_tiles).
 
 signal placed(station: CraftStation)
 signal opened(station: CraftStation)
 
-## 비워 두면 harvest_config.tres 를 쓴다 (도달 거리).
-@export var config: HarvestConfig
+## 비워 두면 swing_config.tres 를 쓴다 (도달 거리).
+@export var config: SwingConfig
 
 var player: Player
 var view: IslandView
@@ -27,7 +27,7 @@ var _by_cell := {}
 
 func _ready() -> void:
 	if config == null:
-		config = HarvestConfig.load_default()
+		config = SwingConfig.load_default()
 
 
 func setup(who: Player, island_view: IslandView, regrow: Regrowth, crafting: CraftingView,

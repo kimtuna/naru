@@ -7,7 +7,7 @@ const MOVE_UP := &"move_up"
 const MOVE_DOWN := &"move_down"
 const MOVE_LEFT := &"move_left"
 const MOVE_RIGHT := &"move_right"
-## 좌클릭 — 도구 사용 · 상호작용 · 열기를 하나로.
+## 좌클릭 — 평타 (무엇을 들든 휘두른다).
 const USE := &"use"
 ## 가방 화면 열기 · 닫기 — 키는 spec 미정, 임시로 Tab.
 const INVENTORY := &"inventory"

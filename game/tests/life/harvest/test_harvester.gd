@@ -1,6 +1,8 @@
 extends "res://tests/life/harvest/harvest_test_base.gd"
-## G-004 3단계 — 좌클릭 채취 → 바닥에 떨어짐.
-## 겨눈 칸 + 손에 든 것이 동작을 정하고, 손이 닿아야 하고, 칸은 비고 아이템이 떨어진다.
+## G-004 3단계 — 좌클릭 채취 → 바닥에 떨어짐. G-011 1단계 — 맞지 않는 도구 · 맨손은 느리게 캔다.
+## 친 칸 + 손에 든 것이 빠르기를 정하고, 손이 닿아야 하고, 칸은 비고 아이템이 떨어진다.
+
+const WORKBENCH_ITEM := {"id": "workbench", "count": 1}
 
 
 # --- 맞는 조합: 칸이 비고 해당 아이템이 떨어진다 ---
@@ -60,15 +62,41 @@ func test_hand_swing_keeps_cell_until_done() -> void:
 	assert_eq(game.dropped_items().size(), 0)
 
 
-# --- 맞지 않는 조합: 아무 일도 없다 ---
+# --- 맞지 않는 도구 · 맨손: 느리게 캔다 ---
 
-func test_mismatched_combinations_do_nothing() -> void:
+func test_mismatched_tool_is_slower_than_the_right_tool() -> void:
+	var game := _enter()
+	var wood := {"id": "wood", "count": 5}
+	var cases := [
+		[AXE, PICKAXE, Deposit.STONE], [WORKBENCH_ITEM, PICKAXE, Deposit.STONE], [wood, PICKAXE, Deposit.STONE],
+		[PICKAXE, AXE, Deposit.TREE], [wood, AXE, Deposit.TREE], [null, AXE, Deposit.TREE],
+	]
+	var used: Array = []
+	for c in cases:
+		var a := _find(game, c[2], used)
+		used.append(a[0])
+		_stand(game, a[1])
+		_hold(game, c[1])
+		var right := _swings_to_clear(game, a[0])
+		var b := _find(game, c[2], used)
+		used.append(b[0])
+		_stand(game, b[1])
+		_hold(game, c[0])
+		assert_true(game.harvester().swing(b[0]), "%s on %s must make progress" % [c[0], c[2]])
+		assert_eq(game.island.deposit_at(b[0]), c[2], "one slow hit must not clear %s" % c[2])
+		var slow := 1 + _swings_to_clear(game, b[0])
+		assert_gt(right, 0)
+		assert_gt(slow, right, "%s must need more hits than %s on %s" % [c[0], c[1], c[2]])
+		assert_eq(game.island.deposit_at(b[0]), Deposit.NONE, "slow hits still clear the cell")
+		assert_eq(_drops_at(game, b[0]).size(), 1, "slow harvest drops the item too")
+
+
+# --- 캘 수 없는 조합: 아무 일도 없다 ---
+
+func test_ore_needs_a_pickaxe_and_empty_cells_do_nothing() -> void:
 	var game := _enter()
 	var cases := [
-		[AXE, Deposit.STONE], [AXE, Deposit.ORE],
-		[PICKAXE, Deposit.TREE],
-		[null, Deposit.ORE],
-		[{"id": "wood", "count": 5}, Deposit.TREE],
+		[AXE, Deposit.ORE], [null, Deposit.ORE], [{"id": "wood", "count": 5}, Deposit.ORE],
 		[AXE, Deposit.NONE], [PICKAXE, Deposit.NONE], [null, Deposit.NONE],
 	]
 	for c in cases:
@@ -96,7 +124,7 @@ func test_out_of_reach_does_nothing_and_in_reach_works() -> void:
 	var found := _find(game, Deposit.TREE)
 	var cell: Vector2i = found[0]
 	var center := game.island_view().cell_center(cell)
-	var reach := _cfg().reach_px(game.island_view().tile_px())
+	var reach := _swing_cfg().reach_px(game.island_view().tile_px())
 	_hold(game, AXE)
 	for dir in [Vector2.RIGHT, Vector2.DOWN, Vector2(-1, -1).normalized()]:
 		game.player().global_position = center + dir * (reach + 1.0)

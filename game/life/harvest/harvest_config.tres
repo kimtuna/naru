@@ -4,9 +4,7 @@
 
 [resource]
 script = ExtResource("1")
-reach_tiles = 2.0
-swing_interval = 0.35
 deposit_hp = 3
 tool_power = 3
-hand_power = 1
+slow_power = 1
 drop_count = 1

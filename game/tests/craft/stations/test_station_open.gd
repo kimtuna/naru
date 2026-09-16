@@ -19,8 +19,8 @@ func test_click_on_station_in_reach_opens_crafting_instead_of_swinging() -> void
 	Pointer.simulate(game.island_view().cell_center(cell))
 	_click(true, screen_mid)
 	await wait_physics_frames(1)
-	# 버튼을 쥔 채로 본다 — 떼고 나면 Harvester 는 입력을 받았어도 is_holding() 이 false 가 된다.
-	assert_false(game.harvester().is_holding(), "the axe must not swing when the click opens the station")
+	# 버튼을 쥔 채로 본다 — 떼고 나면 Swinger 는 입력을 받았어도 is_holding() 이 false 가 된다.
+	assert_false(game.swinger().is_holding(), "the axe must not swing when the click opens the station")
 	assert_true(game.crafting_view().is_open(), "click on a reachable station opens the crafting screen")
 	_click(false, screen_mid)
 	await wait_physics_frames(1)
@@ -49,7 +49,7 @@ func test_click_that_opens_station_never_reaches_the_tool() -> void:
 	game.crafting_view().close()
 	Pointer.simulate(game.island_view().cell_center(found[0]))
 	await wait_physics_frames(5)
-	assert_false(game.harvester().is_holding(), "the press eaten by the station stays away from the tool")
+	assert_false(game.swinger().is_holding(), "the press eaten by the station stays away from the tool")
 	assert_eq(game.harvester().progress_at(found[0]), 0, "the tree under the cursor is not hit")
 	assert_eq(game.island.deposit_at(found[0]), Deposit.TREE)
 	_click(false, screen_mid)
@@ -67,7 +67,7 @@ func test_tool_still_swings_when_click_is_not_on_station() -> void:
 	Pointer.simulate(game.island_view().cell_center(here + Vector2i.RIGHT))
 	_click(true, screen_mid)
 	await wait_physics_frames(1)
-	assert_true(game.harvester().is_holding(), "a click elsewhere reaches the tool")
+	assert_true(game.swinger().is_holding(), "a click elsewhere reaches the tool")
 	_click(false, screen_mid)
 	assert_false(game.crafting_view().is_open())
 	await _leave_physics_frame()
@@ -96,7 +96,7 @@ func test_station_out_of_reach_does_not_open() -> void:
 	_click(true, screen_mid)
 	await wait_physics_frames(1)
 	assert_false(game.crafting_view().is_open(), "a station out of reach does not open")
-	assert_true(game.harvester().is_holding(), "the click goes to the tool as usual")
+	assert_true(game.swinger().is_holding(), "the click goes to the tool as usual")
 	_click(false, screen_mid)
 	await _leave_physics_frame()
 

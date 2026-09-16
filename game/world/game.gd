@@ -24,6 +24,8 @@ func _ready() -> void:
 		island.time = world.world_time
 		island_view().setup(island)
 		harvester().setup(player(), island_view(), drops())
+		swinger().setup(player(), island_view().tile_px())
+		swinger().add_source(harvester().targets_near)
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
@@ -42,7 +44,7 @@ func _ready() -> void:
 	%Hotbar.bind(player().hotbar)
 	inventory_view().bind(player().hotbar.inventory)
 	crafting_view().bind(player().hotbar.inventory)
-	harvester().blocked = ui_blocks_click
+	swinger().blocked = ui_blocks_click
 	stations().blocked = ui_blocks_click
 	load_usec = Time.get_ticks_usec() - started
 
@@ -65,6 +67,11 @@ func island_view() -> IslandView:
 
 func harvester() -> Harvester:
 	return %Harvester
+
+
+## 좌클릭 평타 — 무엇을 들었든 바라보는 방향으로 휘두른다.
+func swinger() -> Swinger:
+	return %Swinger
 
 
 func regrowth() -> Regrowth:

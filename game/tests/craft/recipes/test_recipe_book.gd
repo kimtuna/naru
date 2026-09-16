@@ -120,7 +120,7 @@ func test_path_can_point_at_another_file() -> void:
 # --- 빈손 시작: 첫 도구는 맨손 제작 ---
 
 func test_first_tool_is_hand_craftable_from_bare_hand_drops() -> void:
-	var hand_drops := HarvestConfig.TARGETS[HarvestConfig.HAND].map(func(d): return HarvestConfig.DROPS[d])
+	var hand_drops := HarvestConfig.harvestable_by(HarvestConfig.HAND).map(func(d): return HarvestConfig.DROPS[d])
 	var ok := []
 	for tool in [HarvestConfig.AXE, HarvestConfig.PICKAXE]:
 		var r := book.recipe_for(str(tool))
@@ -143,7 +143,7 @@ func test_fresh_character_can_gather_then_has_materials_for_first_tool() -> void
 	assert_eq(inv.count_of("axe") + inv.count_of("pickaxe"), 0, "new game starts without tools")
 	assert_false(book.has_materials(axe, inv), "empty bag cannot craft")
 	# 맨손 채취로 얻는 것만 넣는다.
-	for d in HarvestConfig.TARGETS[HarvestConfig.HAND]:
+	for d in HarvestConfig.harvestable_by(HarvestConfig.HAND):
 		inv.add({"id": HarvestConfig.DROPS[d], "count": 20})
 	var craftable := [axe, pickaxe].filter(
 		func(r): return r.station == RecipeBook.HAND and book.has_materials(r, inv))

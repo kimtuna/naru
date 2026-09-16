@@ -15,7 +15,7 @@ func test_left_click_with_workbench_places_on_empty_cell() -> void:
 	_click(true, screen_mid)
 	await wait_physics_frames(1)
 	# 버튼을 쥔 채로 본다 — 떼고 나면 is_holding() 은 늘 false 다.
-	assert_false(game.harvester().is_holding(), "placing is not a tool swing")
+	assert_false(game.swinger().is_holding(), "placing is not a tool swing")
 	_click(false, screen_mid)
 	await wait_physics_frames(1)
 	var station := game.stations().station_at(cell)

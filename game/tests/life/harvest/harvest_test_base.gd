@@ -70,6 +70,10 @@ func _cfg() -> HarvestConfig:
 	return HarvestConfig.load_default()
 
 
+func _swing_cfg() -> SwingConfig:
+	return SwingConfig.load_default()
+
+
 ## 스폰 둘레에서 이 자원이 있는 칸과, 그 옆의 빈 칸(설 자리)을 찾는다. skip 에 든 칸은 건너뛴다.
 func _find(game: GameScene, deposit: Deposit, skip: Array = []) -> Array:
 	return _find_in(game.island, deposit, skip)

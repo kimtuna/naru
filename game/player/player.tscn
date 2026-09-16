@@ -31,5 +31,15 @@ offset_bottom = 2.0
 mouse_filter = 2
 color = Color(1, 1, 1, 1)
 
+[node name="Swing" type="ColorRect" parent="Aim"]
+unique_name_in_owner = true
+visible = false
+offset_left = 8.0
+offset_top = -8.0
+offset_right = 20.0
+offset_bottom = 8.0
+mouse_filter = 2
+color = Color(1, 1, 1, 0.5)
+
 [node name="Camera" type="Camera2D" parent="."]
 unique_name_in_owner = true
