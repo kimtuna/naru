@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 22:35:07 KST",
- "updated_epoch": 1789565707,
+ "updated": "2026-09-16 22:37:18 KST",
+ "updated_epoch": 1789565838,
  "progress": {
   "groups_total": 9,
   "groups_done": 3,
@@ -19,7 +19,7 @@
  "step": "1",
  "step_total": "5",
  "step_title": "시드로 섬 만들기",
- "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 22:35:07"
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-16 22:37:18"
 }
