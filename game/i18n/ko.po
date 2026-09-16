@@ -1,0 +1,10 @@
+# 나루 — 한국어 번역. msgid 는 번역 키다.
+msgid ""
+msgstr ""
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "MAIN_TITLE"
+msgstr "나루"
