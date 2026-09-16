@@ -226,5 +226,70 @@
   "epoch": 1789562850,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-16 21:51:03 KST",
+  "epoch": 1789563063,
+  "report": {
+   "status": "done",
+   "summary": "G-002.1 저장 뼈대 — 캐릭터(슬롯 3개)와 월드를 따로 저장·불러오기·삭제",
+   "problem": "캐릭터(이름·외형 선택값·빈 인벤토리)와 월드(이름·시드·만든 시각)를 따로 저장해야 한다. 캐릭터 슬롯은 3개로 막고, 저장은 user:// 아래, 테스트는 실제 사용자 저장을 건드리면 안 된다. 첫 실행에서 월드 폴더가 아직 없을 때 목록을 읽으면 엔진 오류가 찍혀 테스트가 떨어졌다.",
+   "feedback_applied": "",
+   "approach": "game/settings/save/ 에 SaveConfig(슬롯 수 3·기본 경로 user://saves·형식 버전 상수), CharacterData·WorldData(to_dict/from_dict), SaveStore 를 만들었다. SaveStore 는 루트 경로를 받는다(기본 user://saves). 캐릭터는 characters/slot_N.sav, create_character 가 빈 슬롯을 찾고 다 찼으면 -1 로 거부, 범위 밖 슬롯 저장은 ERR_PARAMETER_RANGE_ERROR. 월드는 worlds/<id>.sav, 개수 제한 없음(F-10 미정). 삭제·목록·존재 확인 제공. 폴더가 없으면 목록을 빈 값으로 돌려 엔진 오류를 없앴다. 테스트 12개는 OS 임시 폴더를 루트로 쓰고 끝나면 지우며, 실제 user://saves 목록이 그대로인지도 확인한다.",
+   "why": "파일 형식은 FileAccess.store_var(객체 풀기 끔)로 정했다. JSON 은 정수를 float 로 바꿔 64비트 시드가 깨지고(2^53+1 로 테스트), str_to_var 는 남이 준 파일의 객체를 풀 수 있어 멀티플레이에서 캐릭터 파일을 주고받을 때 위험하다. 형식은 spec 에서 미정이고 {version, data} 로 감싸 두어 나중에 바꾸기 싸다. 월드 슬롯 수는 F-10 미정이라 제한하지 않았다. 월드 id 는 파일 이름으로 쓰므로 '../' 같은 값은 거부한다. seed 는 GDScript 내장 함수와 이름이 겹쳐 필드명을 world_seed 로 했다(저장 키는 'seed'). 오토로드는 이번 단계에 필요 없어 메뉴 단계로 미뤘다.",
+   "files": [
+    "game/settings/save/save_config.gd",
+    "game/settings/save/character_data.gd",
+    "game/settings/save/world_data.gd",
+    "game/settings/save/save_store.gd",
+    "game/tests/settings/save/test_save_store.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "캐릭터와 월드를 각각 저장하고 불러오면 값이 저장 전과 같다",
+     "ok": true,
+     "evidence": "test_character_roundtrip_keeps_values(새 SaveStore 인스턴스로 불러와 name·appearance·inventory·to_dict 비교), test_character_inventory_survives_roundtrip, test_world_roundtrip_keeps_values(시드 2^53+1 로 정수 보존 확인, created_at 비교). tools/test.sh 직접 실행해 26/26 통과 확인"
+    },
+    {
+     "criterion": "캐릭터 슬롯은 3개다. 3개가 찬 상태에서 새로 저장하려 하면 거부된다",
+     "ok": true,
+     "evidence": "SaveConfig.CHARACTER_SLOTS=3 (save_config.gd:5). create_character 는 빈 슬롯이 없으면 -1 (save_store.gd:17-21), 범위 밖 슬롯 save_character 는 ERR_PARAMETER_RANGE_ERROR. test_fourth_character_is_rejected 가 4번째 거부 + 기존 A·B·C 유지까지 확인, test_character_slots_are_three 가 슬롯 3·-1 거부 확인"
+    },
+    {
+     "criterion": "캐릭터 · 월드를 삭제할 수 있다",
+     "ok": true,
+     "evidence": "delete_character / delete_world (save_store.gd:42, 82). test_delete_character · test_delete_world 가 삭제 후 has_*=false, load_*=null, 목록에서 빠짐, 재삭제 ERR_DOES_NOT_EXIST 확인. test_freed_slot_can_be_reused, test_character_and_world_are_stored_separately(월드 삭제가 캐릭터에 영향 없음)"
+    },
+    {
+     "criterion": "저장 위치는 user:// 아래다. 테스트는 임시 경로를 써서 실제 사용자 저장을 건드리지 않는다",
+     "ok": true,
+     "evidence": "SaveConfig.DEFAULT_ROOT=\"user://saves\", SaveStore.new() 기본값 (test_default_location_is_under_user). 테스트는 OS.get_temp_dir() 아래 고유 폴더를 쓰고 after_each 에서 지운다. 테스트 실행 후 ~/Library/Application Support/Godot/app_userdata/Naru/ 에 saves 폴더가 생기지 않았고, 임시 폴더 잔여물도 없음을 직접 확인"
+    }
+   ],
+   "issues": [
+    "save_world(\"..\") 가 OK 를 돌려주지만 파일이 worlds/...sav (점으로 시작하는 숨김 파일)로 써져 world_ids() 에 나오지 않는다 (DirAccess.get_files_at 은 숨김 파일 제외). 자동 생성 id 에선 생기지 않으니 기준 밖이지만, id 검증에 '.' 으로 시작하는 값 거부를 더하면 좋다 (save_store.gd:66, 79)",
+    "손상된 .sav 파일을 load_character 하면 null 은 돌려주지만 엔진이 'buff.size() != len' ERROR 를 찍는다 (QA 임시 테스트로 확인, GUT 에선 실패로 잡힘). 손상 파일 처리는 이번 기준 밖 — 나중에 저장 형식을 굳힐 때 다룰 것",
+    "report.json 과 실제 diff 는 일치한다 (새 파일 5개 + .uid). 기존 테스트 변경 없음"
+   ],
+   "good": [
+    "JSON 의 정수→float 문제를 2^53+1 시드로 실제 테스트한 점",
+    "store_var/get_var 에서 객체 풀기를 끄고 {version, data} 로 감싸 형식 변경에 대비한 점",
+    "수치·경로를 SaveConfig 한 곳에 모았고 파일이 모두 150줄 이하, 화면 글자 없음, 단계 밖 기능(오토로드·UI) 없음",
+    "불러오기 테스트가 같은 인스턴스가 아니라 새 SaveStore 로 읽어 캐시 착시를 막은 점",
+    "월드 id 경로 탈출('../') 거부"
+   ],
+   "feedback": ""
+  },
+  "test": "$ harness/guard.sh\nguard: 통과\nexit=0\n$ tools/test.sh\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/test_example.gd\n* test_arithmetic\n* test_array_contains\n2/2 passed.\n\n\nres://tests/core/test_i18n.gd\n* test_translation_files_exist_and_are_registered\n* test_locales_share_the_same_keys\n* test_main_scene_title_changes_with_locale\n3/3 passed.\n\n\nres://tests/core/test_project_setup.gd\n* test_spec_folders_exist\n* test_main_scene_is_set_and_loads\n* test_headless_quit_exits_clean\n* test_gitignore_excludes_godot_cache\n4/4 passed.\n\n\nres://tests/core/test_runner.gd\n* test_all_passing_exits_zero\n* test_one_failing_exits_nonzero\n* test_failing_in_subfolder_exits_nonzero\n* test_script_error_exits_nonzero\n* test_no_tests_exits_nonzero\n5/5 passed.\n\n\nres://tests/settings/save/test_save_store.gd\n* test_character_roundtrip_keeps_values\n* test_character_inventory_survives_roundtrip\n* test_world_roundtrip_keeps_values\n* test_character_and_world_are_stored_separately\n* test_character_slots_are_three\n* test_fourth_character_is_rejected\n* test_freed_slot_can_be_reused\n* test_delete_character\n* test_delete_world\n* test_default_location_is_under_user\n* test_tests_do_not_touch_user_saves\n* test_bad_world_id_is_rejected\n12/12 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               5\nTests                26\nPassing Tests        26\nAsserts             105\nTime              10.778s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-002",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-002 1/5 저장 뼈대 — 캐릭터와 월드를 따로 — 통과 (시도 1)",
+  "commit": "db9bff5"
  }
 ]

@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 21:49:51 KST",
- "updated_epoch": 1789562991,
+ "updated": "2026-09-16 21:51:03 KST",
+ "updated_epoch": 1789563063,
  "progress": {
   "groups_total": 9,
   "groups_done": 1,
   "groups_waiting": 0,
   "steps_total": 29,
-  "steps_done": 3
+  "steps_done": 4
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-002",
  "group_title": "메인 화면 · 캐릭터 · 월드",
- "step": "1",
+ "step": "2",
  "step_total": "5",
- "step_title": "저장 뼈대 — 캐릭터와 월드를 따로",
+ "step_title": "메인 화면",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 21:49:51"
+ "phase": "구현",
+ "phase_since": "2026-09-16 21:51:03"
 }
