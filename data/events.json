@@ -151,5 +151,68 @@
   "epoch": 1789562404,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-16 21:43:25 KST",
+  "epoch": 1789562605,
+  "report": {
+   "status": "done",
+   "summary": "G-001.3 번역 뼈대 — ko/en PO 파일 등록 · 메인 씬 Title 라벨(MAIN_TITLE) · 언어 전환 테스트",
+   "problem": "game/i18n/ 에 한국어·영어 번역 파일을 두고 프로젝트에 등록해야 했다. 메인 씬에 번역 키로 된 글자를 하나 두고, 언어를 바꾸면 글자가 바뀌는 것을 테스트로 확인해야 했다. spec/01_settings/language.md 는 파일 형식(CSV/PO)을 미정으로 두고 있다.",
+   "feedback_applied": "current.md 에 이전 시도 피드백이 적혀 있지 않았다. 수용 기준을 처음부터 다시 구현했다.",
+   "approach": "game/i18n/ko.po · en.po 를 만들고(msgid = 번역 키, MAIN_TITLE → 나루 / Naru), project.godot 의 [internationalization] locale/translations 에 등록했다. fallback 은 en 으로 했다. core/main.tscn 에는 text=\"MAIN_TITLE\" 인 Label 'Title' 을 추가했다. tests/core/test_i18n.gd 는 세 가지를 검사한다. (1) 등록된 번역 중 res://i18n/ 아래에 ko·en 로케일이 각각 있는지 (2) 두 언어의 키 목록이 같은지 (3) 메인 씬을 트리에 올린 뒤 로케일을 ko→en 으로 바꾸면 라벨 번역값(atr)이 나루→Naru 로 바뀌는지. (3)은 라벨이 실제로 그리는 글자 수(get_total_character_count)도 함께 확인한다. 라벨 text 가 문자열이 아니라 키인지도 본다. en.po 값을 일부러 틀리게 바꾸면 테스트가 실패하는 것을 확인한 뒤 되돌렸다. tools/test.sh 결과는 14/14 통과다.",
+   "why": "형식은 PO 로 정했다. 나중에 바꾸기 싸서 스스로 정했다. PO 는 언어마다 파일이 하나라 기준의 '한국어·영어 번역 파일'과 그대로 맞는다. 번역 도구(Poedit, Weblate 등)도 바로 쓸 수 있다. CSV 도 검토했지만, Godot 이 import 할 때 CSV 옆에 .translation 파일을 따로 만들어 저장소가 지저분해진다. 표 하나에 언어가 섞여 있어 언어를 추가할 때 충돌이 나기도 쉬워서 버렸다. Label.text 는 키 그대로 남으므로, 화면 글자는 번역값(atr)과 실제로 그리는 글자 수로 확인했다. 글자 수로 확인하면 창을 띄우지 않고도(headless) 볼 수 있다.",
+   "files": [
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/i18n/.gitkeep (삭제)",
+    "game/project.godot",
+    "game/core/main.tscn",
+    "game/tests/core/test_i18n.gd",
+    "game/tests/core/test_i18n.gd.uid"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "`game/i18n/` 에 한국어 · 영어 번역 파일이 있고 프로젝트에 등록되어 있다",
+     "ok": true,
+     "evidence": "game/i18n/ko.po (Language: ko, MAIN_TITLE→나루) · en.po (Language: en, MAIN_TITLE→Naru) 존재. project.godot [internationalization] locale/translations=[res://i18n/ko.po, res://i18n/en.po], fallback=en. test_i18n.gd::test_translation_files_exist_and_are_registered 가 등록 목록을 load 해서 locale ko·en 을 각각 찾는다. test_locales_share_the_same_keys 가 키 목록 일치를 확인. tools/test.sh 14/14 통과를 직접 재현."
+    },
+    {
+     "criterion": "메인 씬에 번역 키로 된 글자가 하나 있고, 언어를 바꾸면 글자가 바뀌는 것을 테스트가 확인한다",
+     "ok": true,
+     "evidence": "core/main.tscn 에 Label 'Title' text=\"MAIN_TITLE\". test_main_scene_title_changes_with_locale 가 메인 씬을 트리에 올리고 ko→en 전환 시 atr 값 나루→Naru 와 실제 렌더 글자 수(2→4)를 확인. QA 검증: en.po 를 임시로 \"Nar\" 로 바꾸면 이 테스트가 실패(exit=1)하고, 되돌린 뒤 파일 동일 확인. 임시 테스트로 auto_translate 를 끄면 렌더 글자 수가 키 길이(10)가 되는 것을 확인 → 글자 수 assert 가 실제 번역 적용을 검사함. 로케일 fr 에서 en fallback(Naru) 동작도 확인. 임시 파일은 삭제, git status 에 흔적 없음."
+    }
+   ],
+   "issues": [
+    "current.md 는 '시도 2' 인데 .loop/out/feedback.md 가 비어 있어 구현 세션이 이전 피드백을 받지 못했다 (하네스 쪽 문제로 보임, 이번 판정에는 반영하지 않음)",
+    "game/i18n/.gitkeep 삭제는 폴더에 파일이 생겼으므로 문제 없음 — 참고용"
+   ],
+   "good": [
+    "번역 파일 형식(PO)을 스스로 정하고 이유를 report 에 남겼다 (spec 미정 항목)",
+    "atr 값뿐 아니라 실제 렌더 글자 수까지 검사해 라벨의 자동 번역 적용을 headless 로 확인했다",
+    "라벨 text 가 리터럴이 아닌 키인지 검사해 하드코딩 회귀를 막는다",
+    "before_each/after_each 로 로케일을 복원해 다른 테스트에 영향이 없다",
+    "기존 테스트 삭제·완화 없음, report 내용이 diff 와 일치"
+   ],
+   "feedback": ""
+  },
+  "test": "$ harness/guard.sh\nguard: 통과\nexit=0\n$ tools/test.sh\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/test_example.gd\n* test_arithmetic\n* test_array_contains\n2/2 passed.\n\n\nres://tests/core/test_i18n.gd\n* test_translation_files_exist_and_are_registered\n* test_locales_share_the_same_keys\n* test_main_scene_title_changes_with_locale\n3/3 passed.\n\n\nres://tests/core/test_project_setup.gd\n* test_spec_folders_exist\n* test_main_scene_is_set_and_loads\n* test_headless_quit_exits_clean\n* test_gitignore_excludes_godot_cache\n4/4 passed.\n\n\nres://tests/core/test_runner.gd\n* test_all_passing_exits_zero\n* test_one_failing_exits_nonzero\n* test_failing_in_subfolder_exits_nonzero\n* test_script_error_exits_nonzero\n* test_no_tests_exits_nonzero\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               4\nTests                14\nPassing Tests        14\nAsserts              52\nTime              11.181s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-001",
+  "step": "3",
+  "attempt": "2",
+  "title": "G-001 3/3 번역 뼈대 — 통과 (시도 2)",
+  "commit": "031af3d"
+ },
+ {
+  "time": "2026-09-16 21:43:29 KST",
+  "epoch": 1789562609,
+  "type": "group_done",
+  "group": "G-001",
+  "title": "G-001 프로젝트 기반 — 묶음 완료, main 에 합침"
  }
 ]
