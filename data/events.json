@@ -3080,5 +3080,74 @@
   "attempt": "1",
   "title": "G-013 1/4 높이와 지형 종류 — 통과 (시도 1)",
   "commit": "df7eb97"
+ },
+ {
+  "time": "2026-09-17 05:02:35 KST",
+  "epoch": 1789588955,
+  "report": {
+   "status": "done",
+   "summary": "G-013.2 절벽 — 솟은 지형 높이 경계의 일부를 절벽으로, 덩어리마다 꼭대기까지 절벽 없는 길 보장, 절벽·바다는 못 들어감",
+   "problem": "산·화산·설산의 높이 경계 가운데 일부만 절벽으로 두고, 나머지는 걸어 오르는 경사로 남겨야 했다. 절벽을 아무렇게나 두면 꼭대기가 절벽에 둘러싸여 못 오를 수 있다. 전에는 바다가 막히지 않아 걸어 들어갈 수 있었다. 바다·절벽을 막는 칸으로 바꾸자 기존 테스트 두 개가 깨졌다: 섬 가장자리 벽 테스트는 걸을 수 있는 가장자리 칸을 찾는데 이제 그런 칸이 없다. 채취 테스트는 절벽 위 광물을 골라, 캔 뒤에도 칸이 막혀 실패했다.",
+   "feedback_applied": "",
+   "approach": "새 IslandCliffs(game/world/island/island_cliffs.gd)가 블록 격자에서 절벽을 정한다. (1) 경계 블록 = 솟은 블록 가운데 8방향 이웃에 더 낮은 블록이 있는 것. 절벽 얼룩 값이 높은 쪽부터 cliff_percent(임시 50%)만큼 절벽으로 골라, 절벽이 줄지어 이어진다. (2) 0-1 BFS: 스폰에서 바다가 아닌 블록으로 4방향 나아가고, 절벽에 들어갈 때만 비용 1이 든다. 같은 종류 솟은 덩어리마다 절벽이 가장 적게 걸리는 꼭대기(최고 높이) 블록을 고른다. 그 길 위 절벽은 경사로 되돌리고, 길 블록은 보호한다. (3) 그래도 절벽이 없는 덩어리는 보호되지 않은 경계 블록 가운데 얼룩이 가장 높은 곳을 절벽으로 둔다. 칸 단위 절벽 = 절벽 블록 안에서 8방향 이웃에 더 낮은 칸이 있는 칸(경계의 높은 쪽 한 줄)이다(IslandTerrain.cliff_at). IslandMap.is_cliff / cliff_bytes를 더했고, is_blocked는 이제 바다·절벽도 막는다. 청크 충돌이 이를 그대로 따라 플레이어가 못 들어가고, 제작대·밭도 그런 칸에 못 놓는다. 절벽 칸은 바닥 색 위에 어두운 테두리로 그린다(임시). 수치 cliff_percent · cliff_noise_cell은 island_config.tres에 모았다. island_terrain.gd가 300줄을 넘어 높이 계산을 IslandField.rise로 옮겼다(동작 같음).",
+   "why": "블록 단위로 정하면 1단계의 덩어리·높이 규칙과 어긋나지 않고, 섬 전체를 한 번에 정해도 칸 값은 (시드, 좌표)로만 정해진다. 길 보장은 절벽을 먼저 뿌린 뒤 최소 개수만 걷어 내는 방식으로 했다. 절벽 비율이 설정값에서 크게 흔들리지 않고, 걷어 낸 길을 보호하니 뒤에 절벽을 더해도 길이 끊기지 않는다. 버린 대안: 절벽을 뿌리지 않을 경사 방향을 미리 한쪽으로 정하기 — 섬 모양에 따라 그 방향이 스폰과 이어지지 않을 수 있다. 버린 대안: 블록 전체를 절벽으로 — 경계에서 먼 칸까지 막혀 '높이 경계의 일부'라는 기준에서 벗어난다. 임시 결정(spec 미정 항목, 나중에 바꾸기 쉬움): 산꼭대기까지 장비 없이 걸어 오르는 길을 보장한다. 대상은 스폰에서 이어진 모든 솟은 덩어리이고, 한 덩어리의 최고 높이 칸 가운데 하나에 닿으면 된다. 길은 4방향으로 이어진다. 나무·돌 같은 자원은 캐면 치워지므로 길을 막는 것으로 보지 않았다. 등반 장비는 아직 없어 절벽은 무조건 막는다(04_life/climbing.md 단계에서 푼다). 테스트 조정(약화 아님): test_island_view의 섬 가장자리 테스트는 가장자리가 이제 바다라 막혀 있다. 그래서 가장자리 청크의 충돌을 끈 채 섬 밖 벽만으로 막히는지 본다. 바다가 막는 것은 새 test_island_cliffs_game.gd가 방향 4개로 검사한다. harvest_test_base._find는 절벽 칸 자원과 설 수 없는 칸을 고르지 않게 했다 — 절벽 위 광물은 캐도 칸이 절벽이라 막힌다. 확인: 경로 보장 코드를 끄면 경로 테스트 2개가 실패한다. 전체 439개 테스트 통과, guard 통과.",
+   "files": [
+    "game/world/island/island_cliffs.gd",
+    "game/world/island/island_terrain.gd",
+    "game/world/island/island_field.gd",
+    "game/world/island/island_config.gd",
+    "game/world/island/island_config.tres",
+    "game/world/island/island_generator.gd",
+    "game/world/island/island_map.gd",
+    "game/world/island/island_chunk.gd",
+    "game/tests/world/island/test_island_cliffs.gd",
+    "game/tests/world/island/test_island_cliffs_game.gd",
+    "game/tests/world/island/test_island_view.gd",
+    "game/tests/life/harvest/harvest_test_base.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "산 · 화산 · 설산의 높이 경계 가운데 일부가 절벽 칸이고, 나머지는 걸어 오르는 경사다",
+     "ok": true,
+     "evidence": "IslandCliffs._pick(island_cliffs.gd:42)이 경계 블록 가운데 cliff_percent 만큼을 절벽으로 고르고, IslandTerrain.cliff_at 이 절벽 블록 안에서 더 낮은 이웃이 있는 칸만 절벽으로 둔다. test_island_cliffs.gd::test_cliffs_are_part_of_height_boundaries 는 시드 6개에서 절벽이 모두 높이 경계 위에 있는지, 종류마다 절벽과 경사가 둘 다 있는지, 절벽 비율이 0.15~0.85 인지 본다. test_cliff_share_follows_config 는 20%와 80%를 비교한다. 내가 직접 돌린 tools/test.sh 는 439/439 통과했고 guard.sh 도 통과했다."
+    },
+    {
+     "criterion": "각 산 · 화산 · 설산의 꼭대기까지 절벽을 지나지 않고 걸어 오르는 길이 하나 이상 있다 (임시 — report 에 적는다)",
+     "ok": true,
+     "evidence": "IslandCliffs._open_paths(0-1 BFS)가 덩어리마다 꼭대기까지 가는 길을 열고 그 블록을 보호한다(_kept). test_every_elevated_blob_has_walkable_path_to_its_top 은 칸 단위로 모든 솟은 덩어리를 검사한다(시드 6개). test_path_to_top_holds_across_many_seeds 는 시드 30개의 보장 봉우리를 검사한다. 내가 임시 탐색 테스트로 새 시드 25개와 cliff_percent 0/100 을 더 돌렸는데, 꼭대기에 못 닿는 덩어리는 0개였다. 임시 결정은 report 의 why 에 적혀 있다."
+    },
+    {
+     "criterion": "절벽 칸과 바다에는 걸어서 들어갈 수 없다",
+     "ok": true,
+     "evidence": "IslandMap.is_blocked(island_map.gd:170)가 이제 바다와 절벽도 막는다. 청크 충돌(_build_body)과 제작대(stations.gd:69) · 밭(farm.gd:99)이 이 함수를 그대로 쓴다. test_cliff_and_sea_cells_are_blocked, test_chunk_collision_covers_cliff_and_sea(충돌 면적이 막힌 칸 수와 같다)가 이를 본다. test_island_cliffs_game.gd::test_player_cannot_walk_into_cliff_or_sea 는 실제 게임에서 절벽과 바다를 4방향으로 걸어 본다. 플레이어가 실제로 움직였는지(moved>8)와 몸이 경계를 넘지 않았는지를 둘 다 확인한다."
+    }
+   ],
+   "issues": [
+    "island_cliffs.gd 3~5행 주석은 '솟은 덩어리마다 … 절벽이 하나 이상 있다'를 보장한다고 적었지만 사실이 아니다. 임시 탐색 결과, 새 시드 25개 가운데 9개에 절벽 없는 솟은 덩어리가 있었다(1~5개씩). 모두 4칸(블록 1개) 또는 8칸(블록 2개)짜리 작은 덩어리다. 블록 1개짜리 덩어리는 그 블록이 곧 꼭대기이자 보호된 길이라 _ensure_one 이 고를 블록이 없다. 종류별로는 절벽이 있어 수용 기준은 충족한다. 다만 spec 의 '산 · 화산 · 설산에는 전부 절벽'을 덩어리 단위로 읽으면 어긋나고, 약초가 절벽 칸에만 자라는 4단계와도 얽힌다.",
+    "island_terrain.gd 38~47행에서 cliff_at 함수가 var 선언들 사이(_height 와 _peaks 사이)에 끼어 있다. terrain_at · height_at 옆으로 옮기는 편이 읽기 좋다.",
+    "_open_paths 는 dist 가 같을 때 blob 순서상 앞 블록을 고른다. 그래서 블록 2개짜리 덩어리에서 두 블록이 모두 길에 포함되어, 절벽을 둘 곳이 없어지는 경우가 있다(탐색에서 8칸 덩어리 1건).",
+    "test_island_view.gd::test_island_edge_blocks 는 가장자리 청크 충돌을 끄고 섬 밖 벽만 검사하도록 바뀌었다. 가장자리가 바다가 된 데 따른 조정이고, 바다가 막는지는 새 게임 테스트가 맡으므로 약화로 보지 않았다.",
+    "길 보장은 자원(나무 · 돌 · 광물)을 치울 수 있는 것으로 보고 무시한다. 캐는 데 도구 단계가 필요한 광물이 길을 막는 경우는 아직 검사하지 않는다(임시 결정으로 report 에 적혀 있다)."
+   ],
+   "good": [
+    "절벽을 블록 단위로 정하고 칸 단위로 경계의 높은 쪽 한 줄만 막는 방식이다. 1단계의 높이 규칙(이웃 차 1 이하)과 어긋나지 않는다.",
+    "길 보장을 0-1 BFS 로 최소한만 걷어 내서 절벽 비율이 설정값을 잘 따른다. 수치는 island_config.tres 에 모았다.",
+    "테스트가 진짜다. 칸 단위로 독립 구현한 도달 검사, 여러 시드, 설정 변화, 충돌 면적 대조, 실제 게임에서 4방향 보행까지 본다.",
+    "300줄을 넘기 전에 높이 계산을 IslandField.rise 로 옮겨 island_terrain.gd 를 281줄로 줄였다.",
+    "report 가 테스트 조정 이유와 임시 결정을 솔직하게 적었다."
+   ],
+   "feedback": ""
+  },
+  "test": "hysics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 122.0 ms (game _ready 104.3 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              60\nTests               439\nPassing Tests       439\nAsserts           25576\nTime              149.286s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-013",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-013 2/4 절벽 — 통과 (시도 1)",
+  "commit": "39feecf"
  }
 ]

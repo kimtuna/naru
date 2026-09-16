@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 04:57:57 KST",
- "updated_epoch": 1789588677,
+ "updated": "2026-09-17 05:02:35 KST",
+ "updated_epoch": 1789588955,
  "progress": {
   "groups_total": 14,
   "groups_done": 12,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 37
+  "steps_done": 38
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-013",
  "group_title": "지형 확장 — 산 · 화산 · 설산 · 절벽",
- "step": "2",
+ "step": "3",
  "step_total": "4",
- "step_title": "절벽",
+ "step_title": "경사 이동 속도",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 04:57:57"
+ "phase": "구현",
+ "phase_since": "2026-09-17 05:02:35"
 }
