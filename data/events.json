@@ -2297,5 +2297,61 @@
   "type": "group_done",
   "group": "G-012",
   "title": "G-012 ESC 설정 창 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-17 02:35:48 KST",
+  "epoch": 1789580148,
+  "report": {
+   "status": "done",
+   "summary": "G-007.1 삽 · 개간 · 되돌리기 — 삽 우클릭으로 맨땅↔밭, 삽 레시피",
+   "problem": "삽을 들고 우클릭하면 맨땅이 밭이 되고, 밭에 다시 우클릭하면 맨땅으로 돌아가야 한다. 삽 아이템과 레시피가 아직 없었고, 밭 상태를 둘 곳 · 그릴 곳 · 저장할 곳도 없었다. 제작대와 밭이 한 칸에 겹치는 문제, 밭 둘레에 나무가 다시 자라는 문제도 막아야 했다.",
+   "feedback_applied": "",
+   "approach": "game/life/farming/farm.gd(Farm 노드)를 새로 만들었다. G-011 에서 만든 Interactor 의 '아이템 id 별 우클릭 동작'(set_item_action) 자리에 shovel → dig(cell) 을 붙였다. dig 는 손이 닿는 칸(평타와 같은 SwingConfig.reach_tiles)에서만 동작하고, 밭이면 맨땅으로 되돌리고, 맨땅(섬 안 · 자원 없음 · 제작대 없음)이면 밭으로 만든다. 밭은 Regrowth 에 설치물로 알려 둘레 재생을 막고 되돌리면 뺀다. 밭은 임시 흙색 네모로 그리며 충돌은 없다(밟고 지나간다). 제작대는 밭 위에 놓이지 않게 Stations.is_free 에 밭 검사를 더했다. 월드 저장에 tilled(칸 목록)를 더해 나갔다 들어와도 밭이 남는다. recipes.json 에 shovel(맨손 제작, 나무 2 · 돌 1, 임시 5초)을 넣었다. 테스트 11개(game/tests/life/farming/test_farm.gd): 실제 우클릭 입력으로 개간→되돌리기→재개간, 삽이 아닌 것(맨손 · 도끼 · 곡괭이 · 나무)은 개간 · 되돌리기 안 됨, 좌클릭은 휘두르기만, 나무 · 돌 칸 · 섬 밖 불가, 닿지 않는 칸 불가, 제작대와 밭이 겹치지 않음, 재생 보호, 저장 · 불러오기, 삽 레시피(원자재에서 3단계 이하, 재료로 만들 수 있음). tools/test.sh 333개 전부 통과, guard 통과.",
+   "why": "우클릭 경로는 G-011 에서 '겨눈 오브젝트 먼저 → 든 아이템 동작' 순서로 이미 만들어 두었으므로, 삽을 그 자리에 붙이면 제작대가 겨눠졌을 때 제작대가 먼저 열리는 규칙이 저절로 지켜진다. 밭 상태를 IslandMap(시드 지형 + 없앤 표시)에 넣는 안은 버렸다 — 지형 생성과 섞이고, 다음 단계(작물 · 물 · 성장)가 밭 칸마다 상태를 더 붙여야 하므로 농사 전용 노드에 두는 편이 넓히기 쉽다. 삽 레시피를 맨손 제작으로 둔 것은 농사가 초반 활동이고 도끼 · 곡괭이와 같은 급의 기본 도구이기 때문이다(재료 · 시간은 임시 값, recipes.json 한 곳에서 바꾼다). 맨땅은 지형 종류(풀 · 광물 지형)를 가리지 않고 '자원 없는 칸'으로 정했다 — spec 에 제한이 없고 나중에 바꾸기 싸다. 손 닿는 거리는 따로 수치를 만들지 않고 평타 · 제작대와 같은 값을 썼다(movement-controls.md 의 도달 거리 하나).",
+   "files": [
+    "game/life/farming/farm.gd",
+    "game/tests/life/farming/test_farm.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/settings/save/world_data.gd",
+    "game/craft/stations/stations.gd",
+    "game/craft/recipes/recipes.json"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "삽을 들고 맨땅에 우클릭하면 밭이 되고, 밭에 다시 우클릭하면 맨땅으로 돌아간다",
+     "ok": true,
+     "evidence": "game/life/farming/farm.gd dig()/till()/untill(), Interactor.set_item_action('shovel') 로 연결(register). test_farm.gd test_shovel_right_click_tills_then_reverts 가 실제 우클릭 입력(_right_click_cell)으로 개간→되돌리기→재개간을 확인. 삽이 아닌 아이템(맨손·도끼·곡괭이·나무)은 개간·되돌리기 불가, 좌클릭은 휘두르기만, 자원 칸·섬 밖·손 안 닿는 칸 불가도 테스트됨. 직접 tools/test.sh 실행: 333/333 통과, harness/guard.sh 통과"
+    },
+    {
+     "criterion": "삽 레시피가 있다",
+     "ok": true,
+     "evidence": "game/craft/recipes/recipes.json 에 shovel(hand, 나무 2·돌 1, time_temp). test_shovel_has_a_recipe_made_from_raw_materials(원자재에서 depth ≤ MAX_DEPTH), test_shovel_recipe_is_craftable_with_its_materials 통과"
+    }
+   ],
+   "issues": [
+    "제작대가 겨눠진 칸에서 삽 우클릭 시 제작대가 먼저 열리는지는 Interactor 공통 순서에 기대며 삽 전용 테스트는 없다 (기준 밖, 참고)",
+    "Farm.SOIL_COLOR 는 임시 색 상수 — 아트가 들어올 때 교체 필요 (디자인, 판정 제외)"
+   ],
+   "good": [
+    "기존 Interactor 의 아이템 동작 자리를 그대로 써서 우클릭 우선순위 규칙을 새로 만들지 않았다",
+    "밭을 Regrowth 설치물로 등록·해제하고, 제작대와 밭이 한 칸에 겹치지 않게 양쪽(is_bare, Stations.is_free)에서 막았다",
+    "월드 저장·불러오기에 tilled 를 넣고 잘못된 항목을 걸러내는 테스트까지 있다",
+    "도달 거리를 새 수치로 만들지 않고 SwingConfig.reach_tiles 를 재사용했다",
+    "기존 테스트 삭제·완화 없음, 모든 파일 300줄 이하 (game.gd 201줄), 화면 글자 하드코딩 없음, report 내용이 diff 와 일치"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 53.8 ms (game _ready 41.0 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              45\nTests               333\nPassing Tests       333\nAsserts           13506\nTime              49.942s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-007",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-007 1/2 삽 · 개간 · 되돌리기 — 통과 (시도 1)",
+  "commit": "1aa3927"
  }
 ]
