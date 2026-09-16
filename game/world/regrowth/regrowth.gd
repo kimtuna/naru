@@ -1,6 +1,6 @@
 class_name Regrowth
 extends Node
-## 자원 재생 — 월드 시간을 흘리고, 주기가 지난 칸의 없앤 표시를 지운다 (칸은 시드의 원래 값으로 돌아간다).
+## 자원 재생 — 주기가 지난 칸의 없앤 표시를 지운다 (칸은 시드의 원래 값으로 돌아간다).
 ## spec/03_world/resources-regrowth.md: 설치물 둘레 · 플레이어가 선 칸에는 자라지 않는다 — 비켜날 때까지 기다린다.
 ## 「부족한 만큼 채우기」는 하지 않는다 — 원래 값으로만 돌아가니 비율이 저절로 지켜진다.
 
@@ -37,15 +37,23 @@ func remove_structure(cell: Vector2i) -> void:
 	structures.erase(cell)
 
 
+## 게임에서 시간은 WorldClock 이 흘린다 — 여기서는 check_interval 마다 훑기만 한다.
 func _process(delta: float) -> void:
-	advance(delta)
+	tick(delta)
 
 
-## 월드 시간을 delta 초 흘리고, check_interval 이 쌓이면 한 번 훑는다.
+## 월드 시간을 delta 초 흘리고 훑는다 (시계 없이 재생만 시험할 때).
 func advance(delta: float) -> void:
 	if map == null:
 		return
 	map.time += delta
+	tick(delta)
+
+
+## check_interval 이 쌓이면 한 번 훑는다.
+func tick(delta: float) -> void:
+	if map == null:
+		return
 	_since_check += delta
 	if _since_check >= config.check_interval:
 		_since_check = 0.0

@@ -4,7 +4,6 @@
 
 [resource]
 script = ExtResource("1")
-day_seconds = 1200.0
 tree_days = 2.0
 stone_days = 4.0
 ore_days = 8.0
