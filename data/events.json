@@ -2195,5 +2195,107 @@
   "epoch": 1789579335,
   "type": "resume",
   "title": "토큰 한도 대기 끝 — 재개"
+ },
+ {
+  "time": "2026-09-17 02:29:33 KST",
+  "epoch": 1789579773,
+  "report": {
+   "status": "done",
+   "summary": "G-012.1 게임 중 Esc = 설정 창 (열린 창 먼저 닫기 · 저장 후 나가기 · 입력 막기) · 메뉴 화면 Esc = 뒤로",
+   "problem": "게임 중 Esc 가 곧바로 저장하고 메인 화면으로 나갔다. Esc 를 설정 창으로 바꾸되, 가방 · 제작 화면이 열려 있으면 그 창부터 닫고, 설정 창이 열린 동안에는 클릭 · 이동이 게임에 들어가지 않아야 했다. 메뉴 화면에는 Esc 뒤로 가기가 없었다. 작업 중 부딪힌 문제: 기존 test_game.gd 는 월드 선택 화면을 트리에 남겨 둔 채 게임 씬을 여는데, 새로 넣은 월드 선택 화면의 Esc(뒤로)가 게임보다 먼저 키를 받아 게임 메뉴가 열리지 않았다.",
+   "feedback_applied": "",
+   "approach": "새 GameMenu(game/ui/menu/game_menu.tscn/.gd): 계속하기 · 설정(빈 페이지 + 뒤로) · 월드 설정(빈 페이지 + 뒤로, is_host 일 때만 보임) · 메인 화면으로 · 게임 종료. GameScene._unhandled_input 한 곳에서 Esc 를 고른다 — 설정 창이 열려 있으면 뒤로(안쪽 페이지→목록→닫기), 아니면 제작 → 가방 순으로 하나 닫고, 열린 창이 없으면 설정 창을 연다(CraftingView 의 자체 Esc 닫기는 뺐다). 「메인 화면으로」 · 「게임 종료」는 store_world_state + Session.save_all 뒤 Screens.go / Screens.quit. 입력 막기: Swinger · Interactor 의 blocked 에 설정 창을 더하고, Player 와 InventoryView 에 blocked Callable 을 두어 이동 · 가방 키를 무시한다. 트리를 멈추지 않아 월드 시간은 흐른다. Session.is_host 추가(지금은 늘 참 — 손님 접속 경로가 아직 없음). 캐릭터 선택 · 캐릭터 생성 · 월드 선택 · 설정 화면은 _input 에서 Esc → 뒤로(삭제 확인이 떠 있으면 그것만 닫음, 입력칸에 포커스가 있어도 동작). 번역 키 GAME_MENU_* · WORLD_SETTINGS_TITLE 을 ko/en 에 추가. 테스트: test_game_menu.gd(열기/닫기 · 창 우선 닫기 · 항목 순서 · 서버장 전용 · 저장 후 나가기 · 번역 키), test_game_menu_input.gd(좌클릭 · 우클릭 · 이동 · 가방 키 막힘, 시간 흐름), test_menu_escape.gd(메뉴 화면 뒤로). 기존 test_game.gd · test_hotbar_view.gd 는 Esc → 설정 창 → 「메인 화면으로」 경로로 바꿨고, test_game.gd 의 _enter 는 월드 선택 화면을 게임 씬을 열기 전에 트리에서 뺀다(실제로는 화면 전환으로 사라지는 화면이다 — 기대값은 그대로).",
+   "why": "Esc 판단을 게임 씬 한 곳에 모은 이유: 창마다 Esc 를 따로 받으면 입력 순서에 따라 가방을 닫으면서 설정 창까지 열리는 이중 처리가 생긴다. 트리 pause 는 버렸다 — spec 이 '월드는 멈추지 않는다(세션 서버)'고 정했고, pause 하면 시간도 멈춘다. 서버장 판정은 월드 저장에 소유자 필드를 넣는 대안도 있었지만 리슨 서버가 없는 지금은 혼자=서버장이라 Session.is_host 플래그 하나로 두고 접속 단계에서 채우게 했다(나중에 바꾸기 싸다). 메뉴 화면 Esc 는 _unhandled_input 이 아니라 _input 으로 받는다 — LineEdit 에 포커스가 있으면 Esc 가 소비되어 뒤로 가지 않기 때문. 300줄 규칙 때문에 설정 창 테스트를 공용 base + 두 파일로 나눴다.",
+   "files": [
+    "game/core/input/input_actions.gd",
+    "game/core/session.gd",
+    "game/i18n/en.po",
+    "game/i18n/ko.po",
+    "game/player/player.gd",
+    "game/ui/craft/crafting_view.gd",
+    "game/ui/hud/inventory_view.gd",
+    "game/ui/menu/game_menu.gd",
+    "game/ui/menu/game_menu.tscn",
+    "game/ui/menu/character_create.gd",
+    "game/ui/menu/character_select.gd",
+    "game/ui/menu/settings.gd",
+    "game/ui/menu/world_select.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/ui/menu/game_menu_test_base.gd",
+    "game/tests/ui/menu/test_game_menu.gd",
+    "game/tests/ui/menu/test_game_menu_input.gd",
+    "game/tests/ui/menu/test_menu_escape.gd",
+    "game/tests/ui/hud/test_hotbar_view.gd",
+    "game/tests/world/test_game.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "게임 중 열린 창이 없을 때 ESC → 설정 창이 열린다. 설정 창에서 ESC 또는 「계속하기」 → 닫힌다",
+     "ok": true,
+     "evidence": "game.gd on_escape() · GameMenu.back()/close(). test_game_menu.gd test_escape_opens_and_closes_menu · test_continue_closes_menu 통과. QA 임시 스크립트로 simulate 없이 실제 change_scene 흐름(월드 선택 → 게임)에서 Esc 열기/닫기 확인"
+    },
+    {
+     "criterion": "가방 · 제작 화면이 열려 있으면 ESC 는 그 창만 닫고 설정 창은 열리지 않는다",
+     "ok": true,
+     "evidence": "on_escape 가 제작 → 가방 순으로 하나만 닫음. test_escape_closes_bag_first · test_escape_closes_crafting_first · test_escape_closes_crafting_and_bag_one_at_a_time 통과. 기존 test_station_open.gd test_escape_closes_crafting_without_leaving_game 도 손대지 않고 통과"
+    },
+    {
+     "criterion": "설정 창 항목 — 계속하기 · 설정(빈 자리, 뒤로 가기) · 월드 설정(빈 자리, 서버장에게만 보인다) · 메인 화면으로 · 게임 종료",
+     "ok": true,
+     "evidence": "game_menu.tscn 버튼 순서 · SettingsPage/WorldSettingsPage 에 뒤로 버튼. test_menu_items_are_shown_in_order(y 좌표 순서) · test_settings_is_an_empty_page_with_back · test_world_settings_is_an_empty_page_with_back_for_host · test_world_settings_hidden_for_non_host(Session.is_host=false 로 씬 생성) 통과"
+    },
+    {
+     "criterion": "「메인 화면으로」 · 「게임 종료」는 캐릭터와 월드를 저장한 뒤에 나간다",
+     "ok": true,
+     "evidence": "game.gd save_and_leave() 후 Screens.go / Screens.quit. test_main_menu_saves_then_leaves · test_quit_saves_then_quits 가 외형 · 가방 · 월드 시간이 저장소에 들어갔는지 확인. 실제 흐름 스크립트에서도 메인 화면 도착 + 캐릭터 저장 확인"
+    },
+    {
+     "criterion": "설정 창이 열려 있는 동안 좌클릭 평타 · 우클릭 상호작용 · 이동 입력이 게임에 들어가지 않는다. 월드 시간은 계속 흐른다",
+     "ok": true,
+     "evidence": "ui_blocks_click 에 game_menu().is_open() 추가, Player.blocked · InventoryView.blocked, GameMenu 루트가 전체 화면 mouse_filter STOP, 트리 pause 안 함. test_game_menu_input.gd 5개(좌클릭 → 나무 그대로 · 닫은 뒤 다시 베어짐, 우클릭 → 설치 안 됨 · 닫은 뒤 설치됨, 이동 → 위치 그대로 · 닫은 뒤 이동, 가방 키 막힘, 시간 증가 + paused=false) 통과. 각 테스트가 닫은 뒤 다시 동작하는지까지 봐서 항상 참인 테스트가 아님"
+    },
+    {
+     "criterion": "메뉴 화면(캐릭터 선택 · 캐릭터 생성 · 월드 선택 · 설정)에서 ESC → 뒤로",
+     "ok": true,
+     "evidence": "네 화면에 _input 의 MENU_EXIT 처리. test_menu_escape.gd 6개 통과(입력칸 포커스 상태 · 삭제 확인 먼저 닫기 · 생성 취소 시 저장 안 됨 포함). 실제 흐름 스크립트에서 설정 → 메인, 월드 선택 → 캐릭터 선택이 한 단계만 뒤로 가는 것 확인"
+    },
+    {
+     "criterion": "모든 글자가 번역 키",
+     "ok": true,
+     "evidence": "game_menu.tscn 의 Label/Button 텍스트가 모두 키(GAME_MENU_* · MENU_SETTINGS · MENU_BACK · SETTINGS_TITLE · WORLD_SETTINGS_TITLE), ko.po · en.po 에 모두 있음. test_all_menu_texts_are_translation_keys 가 ko/en 번역 존재까지 확인"
+    }
+   ],
+   "issues": [
+    "설정 창이 열려 있어도 핫바 숫자 키(Player._unhandled_input 의 hotbar_slot_pressed)로 든 칸이 바뀐다 — 수용 기준(클릭 · 이동)에는 없지만 '게임 입력이 들어가지 않는다'는 취지와 어긋난다. 다음에 입력 막기를 넓힐 때 같이 보면 좋다",
+    "test_game.gd _enter 가 게임 씬을 열기 전에 월드 선택 화면을 트리에서 뺀다 — 실제 흐름에서는 change_scene 으로 사라지므로 타당함을 QA 가 실제 흐름 실행으로 확인했다. 기대값은 약해지지 않았다",
+    "Session.is_host 는 지금 늘 참이다(손님 접속 경로 없음) — 리슨 서버 단계에서 반드시 채워야 한다"
+   ],
+   "good": [
+    "Esc 판단을 GameScene.on_escape 한 곳에 모아 가방 닫기와 설정 창 열기가 동시에 일어나는 이중 처리를 막았다",
+    "입력 막기 테스트가 막힘과 닫은 뒤 복구를 함께 검사해 속 빈 테스트가 아니다",
+    "트리 pause 대신 입력만 막아 spec(월드는 멈추지 않는다)을 지켰고 테스트로 paused=false 까지 확인했다",
+    "기존 테스트는 Esc → 설정 창 → 메인 화면으로 경로로 바뀌었을 뿐 저장 기대값은 그대로다. 파일은 모두 300줄 이하"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 50.5 ms (game _ready 38.6 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              44\nTests               322\nPassing Tests       322\nAsserts           13416\nTime              48.669s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-012",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-012 1/1 ESC 설정 창 — 통과 (시도 1)",
+  "commit": "390bb06"
+ },
+ {
+  "time": "2026-09-17 02:29:37 KST",
+  "epoch": 1789579777,
+  "type": "group_done",
+  "group": "G-012",
+  "title": "G-012 ESC 설정 창 — 묶음 완료, main 에 합침"
  }
 ]
