@@ -1,6 +1,6 @@
 class_name GameScene
 extends Node2D
-## 게임 씬 — 섬과 플레이어 캐릭터 · 제작대 · 화면 아래 핫바 · 가방 · 제작 화면 (나머지는 다음 묶음들이 채운다).
+## 게임 씬 — 섬과 플레이어 캐릭터 · 제작대 · 밭 · 화면 아래 핫바 · 가방 · 제작 화면 (나머지는 다음 묶음들이 채운다).
 ## Session 이 들고 온 캐릭터와 월드를 받아 둔다. menu_exit(Esc) 는 열린 창을 닫거나, 열린 창이 없으면 설정 창을 연다.
 ## 설정 창의 「메인 화면으로」 · 「게임 종료」가 둘을 저장한 뒤 나간다.
 
@@ -34,6 +34,11 @@ func _ready() -> void:
 		stations().load_list(world.stations)
 		interactor().setup(player(), island_view())
 		stations().register(interactor())
+		farm().setup(player(), island_view(), regrowth(), stations(), clock(), drops())
+		farm().load_list(world.tilled)
+		farm().load_crops(world.crops)
+		stations().farm = farm()
+		farm().register(interactor())
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
@@ -85,6 +90,11 @@ func swinger() -> Swinger:
 ## 우클릭 상호작용 — 겨눈 오브젝트가 먼저, 없으면 손에 든 아이템의 동작.
 func interactor() -> Interactor:
 	return %Interactor
+
+
+## 밭과 작물 — 개간 · 심기 · 물 · 수확.
+func farm() -> Farm:
+	return %Farm
 
 
 func regrowth() -> Regrowth:
@@ -188,4 +198,6 @@ func store_world_state() -> void:
 	if island:
 		world.world_time = island.time
 	world.stations = stations().to_list()
+	world.tilled = farm().to_list()
+	world.crops = farm().crops_to_list()
 	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())

@@ -162,6 +162,9 @@ msgstr "가방"
 msgid "STATION_WORKBENCH"
 msgstr "작업대"
 
+msgid "ITEM_WHEAT_SEED"
+msgstr "밀 씨앗"
+
 msgid "ITEM_IRON_INGOT"
 msgstr "철 주괴"
 
