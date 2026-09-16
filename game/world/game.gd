@@ -7,11 +7,15 @@ const EXIT_ACTION := "menu_exit"
 
 var character: CharacterData
 var world: WorldData
+## 월드를 만들 때 정한 시드로 만든 섬. 월드가 없으면 null.
+var island: IslandMap
 
 
 func _ready() -> void:
 	character = Session.character
 	world = Session.world
+	if world:
+		island = IslandGenerator.generate(world.world_seed)
 	%CharacterName.text = character_name()
 	%WorldName.text = world_name()
 	if character:
