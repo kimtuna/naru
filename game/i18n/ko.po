@@ -186,6 +186,15 @@ msgstr "철광석"
 msgid "ITEM_SULFUR"
 msgstr "유황"
 
+msgid "EQUIP_FEET"
+msgstr "신발"
+
+msgid "ITEM_SPIKES"
+msgstr "스파이크"
+
+msgid "ITEM_ANCHOR"
+msgstr "앵커"
+
 msgid "ITEM_HERB"
 msgstr "약초"
 
@@ -236,3 +245,9 @@ msgstr "사라지기까지 %d:%02d"
 
 msgid "DEATH_CHEST_TAKE_ALL"
 msgstr "모두 꺼내기"
+
+msgid "ITEM_GRAPPLE_GUN"
+msgstr "갈고리총"
+
+msgid "ITEM_GRAPPLE_GUN_2"
+msgstr "갈고리총 II"

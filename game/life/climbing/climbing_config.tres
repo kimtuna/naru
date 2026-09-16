@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ClimbingConfig" format=3]
+
+[ext_resource type="Script" path="res://life/climbing/climbing_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+max_stamina = 100.0
+drain_per_second = 20.0
+hang_drain_per_second = 10.0
+regen_per_second = 40.0
+anchor_regen_per_second = 30.0
+orange_below = 0.6
+red_below = 0.3
+grace = 20.0
+climb_speed = 40.0
+fall_speed = 240.0
+fall_damage = 20.0

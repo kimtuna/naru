@@ -230,7 +230,7 @@ func test_chunk_collision_covers_cliff_and_sea() -> void:
 			if map.is_blocked(Vector2i(x, y)):
 				blocked += 1
 	var area := 0.0
-	for col in chunk.body().get_children():
+	for col in chunk.collision_shapes():
 		area += col.shape.size.x * col.shape.size.y
 	assert_almost_eq(area / 256.0, float(blocked), 0.001)
 	chunk.free()

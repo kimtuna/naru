@@ -15,6 +15,8 @@ const INTERACT := &"interact"
 const MENU_EXIT := &"menu_exit"
 ## 가방 화면 열기 · 닫기 — 키는 spec 미정, 임시로 Tab.
 const INVENTORY := &"inventory"
+## 갈고리총 줄 끊기 — 키는 spec 미정, 임시로 Space.
+const CUT_ROPE := &"cut_rope"
 const HOTBAR_PREFIX := "hotbar_"
 ## 숫자키 1~9, 0 을 hotbar_1 ~ hotbar_10 에 묶었다. 핫바 칸 수는 미정 — 핫바가 이 안에서 쓴다.
 const HOTBAR_ACTION_COUNT := 10
@@ -40,7 +42,7 @@ static func hotbar_slot_pressed(event: InputEvent) -> int:
 
 ## 게임이 쓰는 액션 이름 전부.
 static func all() -> Array[StringName]:
-	var names: Array[StringName] = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, USE, INTERACT, INVENTORY]
+	var names: Array[StringName] = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, USE, INTERACT, INVENTORY, CUT_ROPE]
 	for slot in range(1, HOTBAR_ACTION_COUNT + 1):
 		names.append(hotbar_action(slot))
 	return names

@@ -31,7 +31,7 @@ func _ready() -> void:
 		swinger().add_source(melee().targets_near)
 		gunner().setup(player(), mobs(), projectiles())
 		mob_spawner().setup(mobs(), mob_targets)
-		swinger().alternate = gunner().try_fire
+		swinger().add_alternate(gunner().try_fire)
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
@@ -53,6 +53,12 @@ func _ready() -> void:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
 		player().slope = island_view().slope_along
+		anchors().setup(player(), island_view())
+		anchors().register(interactor())
+		anchors().load_list(world.anchors)
+		climber().setup(player(), island_view(), anchors())
+		grappler().setup(player(), island_view(), climber())
+		swinger().add_alternate(grappler().try_fire)
 		player().spawn_point = island_view().cell_center(island.spawn())
 		player().global_position = player().spawn_point
 		island_view().update_around(player().global_position)
@@ -61,8 +67,11 @@ func _ready() -> void:
 	%WorldName.text = world_name()
 	if character:
 		player().hotbar = Hotbar.new(character)
+		player().equipment = Equipment.new(player().hotbar.inventory)
 	%Hotbar.bind(player().hotbar)
+	stamina_view().bind(climber())
 	inventory_view().bind(player().hotbar.inventory)
+	inventory_view().bind_equipment(player().equipment, player().hotbar)
 	crafting_view().bind(player().hotbar.inventory)
 	swinger().blocked = ui_blocks_click
 	interactor().blocked = ui_blocks_click
@@ -143,6 +152,25 @@ func clock() -> WorldClock:
 ## 밤의 어둠과 광원(램프 자리).
 func lighting() -> Lighting:
 	return %Lighting
+
+
+## 절벽 등반 — 기력과 낙하.
+func climber() -> Climber:
+	return %Climber
+
+
+## 절벽에 단 앵커 — 그 칸에서 기력이 차오른다.
+func anchors() -> Anchors:
+	return %Anchors
+
+
+## 갈고리총 — 들고 좌클릭하면 쏜 쪽으로 날아가 절벽에 매달린다.
+func grappler() -> Grappler:
+	return %Grappler
+
+
+func stamina_view() -> StaminaView:
+	return %Stamina
 
 
 func picker() -> Picker:
@@ -267,4 +295,5 @@ func store_world_state() -> void:
 	world.tilled = farm().to_list()
 	world.crops = farm().crops_to_list()
 	world.death_chests = death_chests().to_list()
+	world.anchors = anchors().to_list()
 	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())

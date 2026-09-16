@@ -79,6 +79,18 @@ func remove(id: String, count: int) -> bool:
 	return true
 
 
+## i번 칸에서 count 개 뺀다. 모자라거나 빈칸이면 하나도 빼지 않고 false.
+func remove_at(i: int, count: int) -> bool:
+	var it = slot(i)
+	if not (it is Dictionary) or count <= 0 or int(it.get("count", 0)) < count:
+		return false
+	it["count"] = int(it.get("count", 0)) - count
+	if it["count"] <= 0:
+		character.inventory[i] = null
+	changed.emit()
+	return true
+
+
 ## 이 아이템 id 의 개수 합.
 func count_of(id: String) -> int:
 	var total := 0
