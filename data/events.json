@@ -1475,5 +1475,58 @@
   "type": "group_done",
   "group": "G-005",
   "title": "G-005 시간 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-16 23:56:22 KST",
+  "epoch": 1789570582,
+  "report": {
+   "status": "done",
+   "summary": "G-006.1 레시피 데이터 — recipes.json + RecipeBook (가공 단계 검사 · 맨손 첫 도구)",
+   "problem": "도끼 · 곡괭이 · 총 · 제작대 · 탄약 레시피를 코드가 아닌 데이터 파일에 두고, (1) 어떤 결과물도 원자재에서 가공 단계 3 이하임을 기계로 검사하고 (2) 빈손 시작에서 제작대 없이 첫 도구를 만들 수 있음을 보장해야 했다. 원자재는 기존 채취(HarvestConfig.DROPS)의 wood · stone · ore 뿐이고, 맨손으로는 wood · stone 만 얻는다.",
+   "feedback_applied": "",
+   "approach": "game/craft/recipes/recipes.json 에 raw(원자재) · stations(hand, workbench) · recipes(id, station, time, inputs, output) 를 둔다. 레시피: 도끼 · 곡괭이 · 제작대 = 맨손(wood+stone, 1단계), 철 주괴 = 제작대(ore+wood, 1단계), 총 · 탄약(10발) = 제작대(철 주괴 + wood/stone, 2단계). RecipeBook(recipe_book.gd)이 파일을 읽고 depth_of(원자재 0, 레시피는 1+재료 최대 단계, 만들 길이 없거나 순환이면 -1), recipe_for, recipes_at, has_materials(가방 재료 확인)를 준다. 테스트 12개: 파일에서 읽는지 · 필수 5개 레시피 · 형식(장소 · 수량 · 시간 · 중복) · 원자재가 실제 채취 드롭인지 · 모든 결과물 단계 1~3 · 4단계/순환/없는 재료를 잡아내는지(임시 파일) · 맨손 채취 드롭(HarvestConfig.TARGETS[HAND])만으로 맨손 레시피의 도끼/곡괭이 재료가 채워지는지 · 새 캐릭터는 도구가 없는지 · 제작대 자체가 맨손 제작인지.",
+   "why": "외형 목록(appearance.json + AppearanceCatalog)과 같은 JSON + 로더 방식을 따라 사람이 파일만 고쳐 레시피를 늘릴 수 있게 했다. 원자재 · 맨손 채취 목록은 HarvestConfig 에서 가져와 채취 규칙이 바뀌면 테스트가 바로 알린다. 제작대를 맨손 제작으로 둔 것은 제작대가 제작대를 요구하면 영영 열리지 않기 때문. 총 · 탄약의 금속은 제련로가 spec 상 별도 계통이지만 F-16(제작대 계통 · 단계)이 미정이라 임시로 제작대에서 철 주괴를 만든다 — station 값 하나만 바꾸면 되는 싼 결정이라 묻지 않았다. 수량 · 시간(전부 5초)은 spec 대로 임시 값이며 파일 _note 와 로더 주석에 적었다. 실제 제작 실행(재료 소모 · 타이머 · 버퍼)은 3단계 범위라 만들지 않고 has_materials 까지만 두었다. 아이템 표시 이름(번역 키)은 아직 아이템 이름을 보여 주는 화면이 없어 넣지 않았다.",
+   "files": [
+    "game/craft/recipes/recipes.json",
+    "game/craft/recipes/recipe_book.gd",
+    "game/tests/craft/recipes/test_recipe_book.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "레시피는 데이터 파일에 있고, 어떤 결과물도 원자재에서 가공 단계가 3 이하다 (데이터 검사 테스트)",
+     "ok": true,
+     "evidence": "game/craft/recipes/recipes.json 에 6개 레시피(axe · pickaxe · workbench · iron_ingot · gun · ammo), RecipeBook.load_file 이 읽음. test_recipes_live_in_a_data_file 은 파일 존재 · 로드 수 일치 · recipe_book.gd 에 필수 id 문자열이 없음을 검사. test_every_output_is_at_most_three_steps_from_raw 가 모든 결과물의 depth_of 가 1~3 인지 검사(실제 최대 2: gun · ammo). QA 가 임시로 ammo 를 plate→casing 경유 4단계로 바꾸자 'ammo: 4 steps from raw (max 3)' 로 실패함을 확인 후 원복. depth 계산 자체도 test_depth_counts_processing_steps(4단계 검출) · test_depth_rejects_unmakeable_and_cycles 로 검사."
+    },
+    {
+     "criterion": "첫 도구(도끼 또는 곡괭이)는 제작대 없이 맨손 제작으로 만들 수 있다 — 빈손 시작이 막히지 않는다",
+     "ok": true,
+     "evidence": "axe · pickaxe 모두 station \"hand\", 재료 wood · stone 뿐. test_first_tool_is_hand_craftable_from_bare_hand_drops 는 HarvestConfig.TARGETS[HAND] 의 드롭(wood · stone)만으로 재료가 구성되는지, test_fresh_character_can_gather_then_has_materials_for_first_tool 은 빈 가방에 맨손 드롭만 넣고 has_materials 가 참인지 검사. test_workbench_itself_is_hand_craftable 로 제작대 순환 막힘도 방지. QA 가 임시로 axe · pickaxe 를 station workbench 로 바꾸자 두 테스트가 실패함을 확인 후 원복."
+    }
+   ],
+   "issues": [
+    "(경미) test_fresh_character_can_gather_then_has_materials_for_first_tool 의 '새 게임은 도구가 없다' 검사는 Inventory.new(CharacterData.new()) 로만 확인한다 — 실제 새 게임 생성 흐름을 거치지 않는다. 이번 단계 기준 밖이라 pass 에 반영하지 않음",
+    "(경미) RecipeBook._depth 는 -1 로 빠질 때 visiting 에서 항목을 지우지 않는다. 결과가 -1 로 전파되므로 지금은 무해하지만, 나중에 한 visiting 사전을 여러 호출에 재사용하면 오답이 날 수 있다",
+    "(참고) iron_ingot 을 제작대에서 만드는 것은 spec 의 제련로(열) 계통과 다르다 — report 에 F-16 미정으로 임시 결정이라고 적혀 있고 station 값 하나로 바꿀 수 있어 수용"
+   ],
+   "good": [
+    "데이터 JSON + 정적 로더 구조가 기존 AppearanceCatalog 방식과 일관되고, 레시피 추가가 파일 수정만으로 된다",
+    "원자재 · 맨손 드롭을 HarvestConfig 에서 가져와 채취 규칙이 바뀌면 테스트가 바로 알린다",
+    "가공 단계 검사기가 4단계 · 순환 · 만들 수 없는 재료를 임시 파일로 직접 검증한다 — 항상 참인 테스트가 아님을 QA 변형 실험으로도 확인",
+    "제작 실행(소모 · 타이머 · 버퍼)을 만들지 않아 단계 범위를 지켰고, 임시 5초 값이 파일 _note 와 코드 주석에 적혀 있다",
+    "기존 테스트 변경 없음(추적 파일 diff 없음), 파일 모두 300줄 이하, 화면 글자 없음, 전체 225/225 통과"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 25.9 ms (game _ready 19.4 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              32\nTests               225\nPassing Tests       225\nAsserts            9826\nTime              38.199s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-006",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-006 1/3 레시피 데이터 — 통과 (시도 1)",
+  "commit": "13c4fc9"
  }
 ]
