@@ -165,6 +165,12 @@ msgstr "작업대"
 msgid "ITEM_WHEAT_SEED"
 msgstr "밀 씨앗"
 
+msgid "ITEM_WHEAT"
+msgstr "밀"
+
+msgid "ITEM_BREAD"
+msgstr "빵"
+
 msgid "ITEM_IRON_INGOT"
 msgstr "철 주괴"
 

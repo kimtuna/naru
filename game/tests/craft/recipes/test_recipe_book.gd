@@ -71,7 +71,8 @@ func test_recipe_entries_are_well_formed() -> void:
 
 
 func test_raw_materials_come_from_harvesting() -> void:
-	var drops := HarvestConfig.DROPS.values()
+	# 채취(자원) 또는 밭 수확(작물)으로 얻는다 (G-008: 작물이 버프 음식 재료).
+	var drops := HarvestConfig.DROPS.values() + [FarmConfig.load_default().crop_id]
 	assert_gt(book.raw.size(), 0)
 	for id in book.raw:
 		assert_has(drops, id, "raw %s cannot be harvested" % id)
