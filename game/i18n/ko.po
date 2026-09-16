@@ -8,3 +8,21 @@ msgstr ""
 
 msgid "MAIN_TITLE"
 msgstr "나루"
+
+msgid "MENU_START"
+msgstr "시작"
+
+msgid "MENU_SETTINGS"
+msgstr "설정"
+
+msgid "MENU_QUIT"
+msgstr "종료"
+
+msgid "MENU_BACK"
+msgstr "뒤로"
+
+msgid "SETTINGS_TITLE"
+msgstr "설정"
+
+msgid "CHARACTER_SELECT_TITLE"
+msgstr "캐릭터 선택"

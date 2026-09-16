@@ -8,3 +8,21 @@ msgstr ""
 
 msgid "MAIN_TITLE"
 msgstr "Naru"
+
+msgid "MENU_START"
+msgstr "Start"
+
+msgid "MENU_SETTINGS"
+msgstr "Settings"
+
+msgid "MENU_QUIT"
+msgstr "Quit"
+
+msgid "MENU_BACK"
+msgstr "Back"
+
+msgid "SETTINGS_TITLE"
+msgstr "Settings"
+
+msgid "CHARACTER_SELECT_TITLE"
+msgstr "Character Select"
