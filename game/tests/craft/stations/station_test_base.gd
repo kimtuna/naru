@@ -1,5 +1,5 @@
 extends "res://tests/life/harvest/harvest_test_base.gd"
-## G-006 제작대 테스트가 함께 쓰는 준비 — 게임에 들어가 제작대를 들고 좌클릭한다.
+## G-006 제작대 테스트가 함께 쓰는 준비 — 게임에 들어가 제작대를 들고 우클릭한다 (G-011 2단계부터 설치 · 열기는 우클릭).
 ## 파일 이름이 test_ 로 시작하지 않아 혼자서는 돌지 않는다.
 
 const WORKBENCH := "workbench"
@@ -14,14 +14,24 @@ func _held(game: GameScene) -> Variant:
 	return game.player().held_item()
 
 
-## 실제 좌클릭 입력으로 이 칸을 한 번 누르고 뗀다.
-func _click_cell(game: GameScene, cell: Vector2i) -> void:
+## 실제 우클릭 입력으로 이 칸을 한 번 누르고 뗀다.
+func _right_click_cell(game: GameScene, cell: Vector2i) -> void:
 	var screen_mid := get_viewport().get_visible_rect().size / 2.0
 	Pointer.simulate(game.island_view().cell_center(cell))
-	_click(true, screen_mid)
+	_right_click(true, screen_mid)
 	await wait_physics_frames(2)
-	_click(false, screen_mid)
+	_right_click(false, screen_mid)
 	await wait_physics_frames(1)
+
+
+func _right_click(pressed: bool, at: Vector2) -> void:
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_RIGHT
+	ev.pressed = pressed
+	ev.position = at
+	ev.global_position = at
+	Input.parse_input_event(ev)
+	Input.flush_buffered_events()
 
 
 func _press_action(action: StringName) -> void:
@@ -39,6 +49,6 @@ func _place_next_to_spawn(game: GameScene) -> Vector2i:
 	_stand(game, here)
 	_hold(game, _bench())
 	var cell := here + Vector2i.RIGHT
-	await _click_cell(game, cell)
+	await _right_click_cell(game, cell)
 	assert_not_null(game.stations().station_at(cell), "setup: workbench was not placed")
 	return cell

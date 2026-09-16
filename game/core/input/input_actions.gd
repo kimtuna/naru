@@ -7,8 +7,10 @@ const MOVE_UP := &"move_up"
 const MOVE_DOWN := &"move_down"
 const MOVE_LEFT := &"move_left"
 const MOVE_RIGHT := &"move_right"
-## 좌클릭 — 도구 사용 · 상호작용 · 열기를 하나로.
+## 좌클릭 — 평타 (무엇을 들든 휘두른다).
 const USE := &"use"
+## 우클릭 — 상호작용 (제작대 열기 · 설치 · 든 아이템의 동작).
+const INTERACT := &"interact"
 ## 가방 화면 열기 · 닫기 — 키는 spec 미정, 임시로 Tab.
 const INVENTORY := &"inventory"
 const HOTBAR_PREFIX := "hotbar_"
@@ -36,7 +38,7 @@ static func hotbar_slot_pressed(event: InputEvent) -> int:
 
 ## 게임이 쓰는 액션 이름 전부.
 static func all() -> Array[StringName]:
-	var names: Array[StringName] = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, USE, INVENTORY]
+	var names: Array[StringName] = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, USE, INTERACT, INVENTORY]
 	for slot in range(1, HOTBAR_ACTION_COUNT + 1):
 		names.append(hotbar_action(slot))
 	return names

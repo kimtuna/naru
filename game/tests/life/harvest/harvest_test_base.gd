@@ -35,6 +35,7 @@ func after_each() -> void:
 		_gut_layer.visible = true
 		_gut_layer = null
 	Input.action_release(InputActions.USE)
+	Input.action_release(InputActions.INTERACT)
 	Pointer.clear_simulation()
 	Screens.simulate = false
 	Session.store = SaveStore.new()
@@ -68,6 +69,10 @@ func world_seed() -> int:
 
 func _cfg() -> HarvestConfig:
 	return HarvestConfig.load_default()
+
+
+func _swing_cfg() -> SwingConfig:
+	return SwingConfig.load_default()
 
 
 ## 스폰 둘레에서 이 자원이 있는 칸과, 그 옆의 빈 칸(설 자리)을 찾는다. skip 에 든 칸은 건너뛴다.

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SwingConfig" format=3]
+
+[ext_resource type="Script" path="res://player/swing/swing_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+swing_interval = 0.35
+reach_tiles = 2.0
+arc_degrees = 120.0
+show_time = 0.15

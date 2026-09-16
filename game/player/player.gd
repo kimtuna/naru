@@ -45,5 +45,14 @@ func held_item() -> Variant:
 	return hotbar.held_item()
 
 
+## 휘두른 표시 (바라보는 방향 앞) — Swinger 가 켜고 끈다.
+func show_swing(on: bool) -> void:
+	%Swing.visible = on
+
+
+func is_swing_shown() -> bool:
+	return %Swing.visible
+
+
 func camera() -> Camera2D:
 	return %Camera

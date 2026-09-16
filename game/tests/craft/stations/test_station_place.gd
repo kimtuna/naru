@@ -1,8 +1,9 @@
 extends "res://tests/craft/stations/station_test_base.gd"
-## G-006 2단계 — 핫바에서 제작대를 들고 빈 칸에 좌클릭하면 설치된다. 막힌 칸에는 안 된다.
+## G-006 2단계 · G-011 2단계 — 핫바에서 제작대를 들고 빈 칸에 우클릭하면 설치된다. 막힌 칸에는 안 된다.
+## 좌클릭 설치는 없다 — 좌클릭은 들고 있어도 휘두른다.
 
 
-func test_left_click_with_workbench_places_on_empty_cell() -> void:
+func test_right_click_with_workbench_places_on_empty_cell() -> void:
 	_hide_gut_layer()
 	var game := _enter()
 	var here := game.island.spawn()
@@ -12,11 +13,12 @@ func test_left_click_with_workbench_places_on_empty_cell() -> void:
 	assert_null(game.stations().station_at(cell))
 	var screen_mid := get_viewport().get_visible_rect().size / 2.0
 	Pointer.simulate(game.island_view().cell_center(cell))
-	_click(true, screen_mid)
+	_right_click(true, screen_mid)
 	await wait_physics_frames(1)
-	# 버튼을 쥔 채로 본다 — 떼고 나면 is_holding() 은 늘 false 다.
-	assert_false(game.harvester().is_holding(), "placing is not a tool swing")
-	_click(false, screen_mid)
+	# 버튼을 쥔 채로 본다 — 우클릭 설치는 휘두르기가 아니다.
+	assert_false(game.swinger().is_holding(), "placing is not a tool swing")
+	assert_eq(game.swinger().swing_count, 0)
+	_right_click(false, screen_mid)
 	await wait_physics_frames(1)
 	var station := game.stations().station_at(cell)
 	assert_not_null(station, "click with a workbench in hand must place it on the empty cell")
@@ -28,6 +30,28 @@ func test_left_click_with_workbench_places_on_empty_cell() -> void:
 		assert_true(station.get_child(0) is CollisionShape2D)
 	assert_eq(_held(game), _bench(1), "placing uses one workbench from the held slot")
 	assert_true(game.regrowth().structures.has(cell), "resources must not regrow around the station")
+	await _leave_physics_frame()
+
+
+func test_left_click_with_workbench_swings_and_does_not_place() -> void:
+	# 바뀐 규칙 (G-011): 예전에는 좌클릭으로 설치했다. 이제 좌클릭은 제작대를 들고 있어도 휘두른다.
+	_hide_gut_layer()
+	var game := _enter()
+	var here := game.island.spawn()
+	_stand(game, here)
+	_hold(game, _bench(2))
+	var cell := here + Vector2i.RIGHT
+	var screen_mid := get_viewport().get_visible_rect().size / 2.0
+	Pointer.simulate(game.island_view().cell_center(cell))
+	_click(true, screen_mid)
+	await wait_physics_frames(1)
+	assert_true(game.swinger().is_holding(), "left click with a workbench is a swing")
+	assert_gt(game.swinger().swing_count, 0, "it swings")
+	_click(false, screen_mid)
+	await wait_physics_frames(1)
+	assert_null(game.stations().station_at(cell), "left click does not place")
+	assert_eq(game.stations().all().size(), 0)
+	assert_eq(_held(game), _bench(2), "nothing is used")
 	await _leave_physics_frame()
 
 
@@ -46,7 +70,7 @@ func test_not_placed_on_resource_cell() -> void:
 	var found := _find(game, Deposit.TREE)
 	_stand(game, found[1])
 	_hold(game, _bench())
-	await _click_cell(game, found[0])
+	await _right_click_cell(game, found[0])
 	assert_null(game.stations().station_at(found[0]), "a tree cell is blocked")
 	assert_eq(_held(game), _bench(1), "nothing is used on a blocked cell")
 	assert_eq(game.island.deposit_at(found[0]), Deposit.TREE)
@@ -59,7 +83,7 @@ func test_not_placed_on_own_cell() -> void:
 	var here := game.island.spawn()
 	_stand(game, here)
 	_hold(game, _bench())
-	await _click_cell(game, here)
+	await _right_click_cell(game, here)
 	assert_null(game.stations().station_at(here), "the cell the body stands on is blocked")
 	assert_eq(_held(game), _bench(1))
 	await _leave_physics_frame()
@@ -71,7 +95,7 @@ func test_not_placed_on_existing_station() -> void:
 	var cell := await _place_next_to_spawn(game)
 	var first := game.stations().station_at(cell)
 	_hold(game, _bench())
-	# 실제 클릭은 여는 것이 먼저라 (test_station_open) 놓기만 따로 부른다.
+	# 실제 우클릭은 여는 것이 먼저라 (test_station_open) 놓기만 따로 부른다.
 	assert_false(game.stations().try_place(cell), "an occupied cell is blocked")
 	assert_eq(game.stations().all().size(), 1)
 	assert_same(game.stations().station_at(cell), first)
@@ -87,7 +111,7 @@ func test_not_placed_out_of_reach_or_off_island() -> void:
 	_hold(game, _bench())
 	var far := here + Vector2i(3, 0)
 	assert_eq(game.island.deposit_at(far), Deposit.NONE, "setup: spawn clearing is empty")
-	await _click_cell(game, far)
+	await _right_click_cell(game, far)
 	assert_null(game.stations().station_at(far), "a cell out of reach is not used")
 	assert_eq(_held(game), _bench(1))
 	# 섬 가장자리에서 섬 밖 칸.
@@ -103,10 +127,10 @@ func test_other_items_are_not_placed() -> void:
 	var here := game.island.spawn()
 	_stand(game, here)
 	_hold(game, AXE)
-	await _click_cell(game, here + Vector2i.RIGHT)
+	await _right_click_cell(game, here + Vector2i.RIGHT)
 	assert_eq(game.stations().all().size(), 0, "an axe is not a station")
 	_hold(game, {"id": "wood", "count": 5})
-	await _click_cell(game, here + Vector2i.RIGHT)
+	await _right_click_cell(game, here + Vector2i.RIGHT)
 	assert_eq(game.stations().all().size(), 0, "raw material is not a station")
 	assert_eq(_held(game), {"id": "wood", "count": 5})
 	await _leave_physics_frame()
@@ -119,7 +143,7 @@ func test_not_placed_while_bag_is_open() -> void:
 	_stand(game, here)
 	_hold(game, _bench())
 	game.inventory_view().set_open(true)
-	await _click_cell(game, here + Vector2i.RIGHT)
+	await _right_click_cell(game, here + Vector2i.RIGHT)
 	assert_eq(game.stations().all().size(), 0, "clicks do nothing while the bag is open")
 	assert_eq(_held(game), _bench(1))
 	await _leave_physics_frame()

@@ -24,11 +24,15 @@ func _ready() -> void:
 		island.time = world.world_time
 		island_view().setup(island)
 		harvester().setup(player(), island_view(), drops())
+		swinger().setup(player(), island_view().tile_px())
+		swinger().add_source(harvester().targets_near)
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
 		stations().setup(player(), island_view(), regrowth(), crafting_view(), RecipeBook.load_default())
 		stations().load_list(world.stations)
+		interactor().setup(player(), island_view())
+		stations().register(interactor())
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
@@ -42,8 +46,8 @@ func _ready() -> void:
 	%Hotbar.bind(player().hotbar)
 	inventory_view().bind(player().hotbar.inventory)
 	crafting_view().bind(player().hotbar.inventory)
-	harvester().blocked = ui_blocks_click
-	stations().blocked = ui_blocks_click
+	swinger().blocked = ui_blocks_click
+	interactor().blocked = ui_blocks_click
 	load_usec = Time.get_ticks_usec() - started
 
 
@@ -65,6 +69,16 @@ func island_view() -> IslandView:
 
 func harvester() -> Harvester:
 	return %Harvester
+
+
+## 좌클릭 평타 — 무엇을 들었든 바라보는 방향으로 휘두른다.
+func swinger() -> Swinger:
+	return %Swinger
+
+
+## 우클릭 상호작용 — 겨눈 오브젝트가 먼저, 없으면 손에 든 아이템의 동작.
+func interactor() -> Interactor:
+	return %Interactor
 
 
 func regrowth() -> Regrowth:
@@ -106,7 +120,7 @@ func inventory_view() -> InventoryView:
 	return %Inventory
 
 
-## 설치한 제작대들 — 좌클릭으로 놓고 연다.
+## 설치한 제작대들 — 우클릭으로 놓고 연다.
 func stations() -> Stations:
 	return %Stations
 
@@ -115,7 +129,7 @@ func crafting_view() -> CraftingView:
 	return %Crafting
 
 
-## 가방이나 제작 화면이 열려 있으면 좌클릭은 휘두르거나 놓지 않는다.
+## 가방이나 제작 화면이 열려 있으면 좌클릭은 휘두르지 않고 우클릭은 열거나 놓지 않는다.
 func ui_blocks_click() -> bool:
 	return inventory_view().is_open() or crafting_view().is_open()
 

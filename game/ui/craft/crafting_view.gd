@@ -3,7 +3,7 @@ extends PanelContainer
 ## 제작 화면 — 연 제작대에서 만드는 레시피 목록 (spec/05_craft/crafting-stations.md).
 ## 레시피 버튼을 누르면 제작을 시작하고, 진행 · 출력 버퍼를 보여 주고, 수령 버튼으로 버퍼를 가방에 옮긴다. 그림은 임시다.
 ## Esc(menu_exit) · 가방 키로 닫는다 — 열려 있는 동안 그 키는 게임을 나가거나 가방을 열지 않는다.
-## 버튼 밖 좌클릭은 가로채지 않는다 — 열려 있는 동안 막는 것은 Harvester · Stations 가 is_open() 을 보고 한다.
+## 버튼 밖 클릭은 가로채지 않는다 — 열려 있는 동안 막는 것은 Swinger · Interactor 가 is_open() 을 보고 한다.
 ## 버튼은 키보드 포커스를 잡지 않는다 (게임 키를 빼앗지 않게).
 
 signal toggled(open: bool)

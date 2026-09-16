@@ -1,5 +1,5 @@
 extends GutTest
-## G-003 1단계 — 이동 · 좌클릭 · 핫바 선택이 InputMap 액션이고, 코드는 키 코드가 아니라 액션 이름을 쓴다.
+## G-003 1단계 · G-011 2단계 — 이동 · 좌클릭 · 우클릭 · 핫바 선택이 InputMap 액션이고, 코드는 키 코드가 아니라 액션 이름을 쓴다.
 
 ## 게임 코드에서 키 · 버튼을 직접 읽는 흔적.
 const RAW_INPUT := "KEY_[A-Z0-9_]+|MOUSE_BUTTON_[A-Z_]+|keycode|is_key_pressed|is_mouse_button_pressed|InputEventKey|InputEventMouseButton"
@@ -46,6 +46,33 @@ func test_left_click_bound_to_use() -> void:
 	right.button_index = MOUSE_BUTTON_RIGHT
 	right.pressed = true
 	assert_false(_events_match(InputActions.USE, right), "right click must not be use")
+
+
+func test_right_click_bound_to_interact() -> void:
+	var right := InputEventMouseButton.new()
+	right.button_index = MOUSE_BUTTON_RIGHT
+	right.pressed = true
+	assert_true(InputMap.has_action(InputActions.INTERACT), "interact is an InputMap action")
+	assert_true(_events_match(InputActions.INTERACT, right), "right click is interact")
+	var left := InputEventMouseButton.new()
+	left.button_index = MOUSE_BUTTON_LEFT
+	left.pressed = true
+	assert_false(_events_match(InputActions.INTERACT, left), "left click must not be interact")
+
+
+func test_simulated_right_click_reaches_interact_action() -> void:
+	var right := InputEventMouseButton.new()
+	right.button_index = MOUSE_BUTTON_RIGHT
+	right.pressed = true
+	Input.parse_input_event(right)
+	Input.flush_buffered_events()
+	assert_true(Input.is_action_pressed(InputActions.INTERACT))
+	assert_false(Input.is_action_pressed(InputActions.USE))
+	var release := right.duplicate() as InputEventMouseButton
+	release.pressed = false
+	Input.parse_input_event(release)
+	Input.flush_buffered_events()
+	assert_false(Input.is_action_pressed(InputActions.INTERACT))
 
 
 func test_number_key_n_selects_hotbar_slot_n() -> void:
