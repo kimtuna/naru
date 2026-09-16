@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 00:53:20 KST",
- "updated_epoch": 1789574000,
+ "updated": "2026-09-17 00:55:19 KST",
+ "updated_epoch": 1789574119,
  "progress": {
   "groups_total": 14,
-  "groups_done": 7,
+  "groups_done": 8,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 25
+  "steps_done": 26
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-011",
- "group_title": "좌클릭 평타 · 우클릭 상호작용",
- "step": "2",
- "step_total": "2",
- "step_title": "우클릭 상호작용",
+ "group": "G-012",
+ "group_title": "ESC 설정 창",
+ "step": "1",
+ "step_total": "1",
+ "step_title": "ESC 설정 창",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 00:53:20"
+ "phase": "구현",
+ "phase_since": "2026-09-17 00:55:19"
 }
