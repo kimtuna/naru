@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 22:04:48 KST",
- "updated_epoch": 1789563888,
+ "updated": "2026-09-16 22:06:13 KST",
+ "updated_epoch": 1789563973,
  "progress": {
   "groups_total": 9,
   "groups_done": 1,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 6
+  "steps_done": 7
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-002",
  "group_title": "메인 화면 · 캐릭터 · 월드",
- "step": "4",
+ "step": "5",
  "step_total": "5",
- "step_title": "캐릭터 생성 · 커스터마이징 (칸만)",
+ "step_title": "월드 선택 · 생성 → 게임 들어가기",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 22:04:48"
+ "phase": "구현",
+ "phase_since": "2026-09-16 22:06:13"
 }

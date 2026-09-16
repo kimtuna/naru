@@ -431,5 +431,80 @@
   "attempt": "1",
   "title": "G-002 3/5 캐릭터 선택 — 슬롯 3개 — 통과 (시도 1)",
   "commit": "41022cd"
+ },
+ {
+  "time": "2026-09-16 22:06:13 KST",
+  "epoch": 1789563973,
+  "report": {
+   "status": "done",
+   "summary": "G-002.4 캐릭터 생성 · 커스터마이징 — 이름 · 외형 4항목(데이터 파일) · 미리보기 · 만들기/취소",
+   "problem": "빈 칸을 고르면 가는 캐릭터 생성 화면이 제목만 있는 자리였다. 이름 입력, 외형 항목(몸 · 머리 모양 · 머리 색 · 옷)을 이전/다음으로 고르기, 미리보기, 저장/취소를 만들어야 했다. 항목과 선택지는 코드 수정 없이 데이터 파일만 고쳐서 바꿀 수 있어야 했다. 처음 테스트를 돌렸을 때 GDScript 타입 추론 오류(Control 로 받은 화면의 메서드 결과에 :=)로 새 테스트 파일이 로드되지 않았고, 타입을 적어서 고쳤다.",
+   "feedback_applied": "",
+   "approach": "game/ui/menu/appearance.json 한 파일에 항목과 선택지를 정의했다(id · 번역 키 label · 미리보기 color). AppearanceCatalog(appearance_catalog.gd)가 이 파일을 읽고, 화면(character_create.gd)은 항목마다 [이름 · 이전 · 현재 값 · 다음] 줄과 미리보기 ColorRect 를 실행할 때 만든다. 이전/다음은 끝에서 처음으로 돌아간다. 만들기를 누르면 앞뒤 공백을 지운 이름이 비었을 때 오류 글자를 띄우고 저장하지 않는다. 이름이 있으면 Session.character_slot(캐릭터 선택에서 고른 칸)에 {항목 id: 선택지 id} 외형과 빈 인벤토리로 저장하고 캐릭터 선택으로 돌아간다. 취소는 저장 없이 돌아간다. 새 글자는 전부 번역 키로 넣고 ko/en 에 추가했다. 테스트 11개가 모든 기준을 검사한다. 특히 기본 json 을 복사해 항목(hat) · 선택지(hair_pink)를 더한 임시 파일을 AppearanceCatalog.path 로 가리키면, 코드를 고치지 않아도 화면에 줄 · 미리보기 · 저장 값이 생기는지 확인한다.",
+   "why": "데이터 형식으로 .tres Resource 대신 JSON 을 골랐다. 사람이 텍스트 편집기로 바로 고칠 수 있고, 테스트에서 임시 파일로 쓰기도 쉽다. Godot 4 에는 JSON 로더가 있어서 내보내기에도 포함된다. 나중에 형식을 바꾸더라도 AppearanceCatalog 한 곳만 고치면 된다. 미리보기는 디자인이 사람 몫이라 항목마다 색 네모 하나로 두었고, color 가 없는 선택지는 순서로 색을 만들어서 미리보기가 계속 바뀌게 했다. 선택지 라벨도 번역 키라서 기존 '모든 화면 글자가 번역 키' 테스트를 그대로 통과한다. 만들기가 끝나면 월드 선택이 아니라 캐릭터 선택으로 돌아가는데, 수용 기준이 '선택 화면의 그 칸에 나타난다'이기 때문이다. 고른 칸이 없거나 그새 찬 칸이면 덮어쓰지 않고 첫 빈 칸에 넣고, 빈 칸이 없으면 오류를 띄운다. 이름 길이 제한은 spec 에 없어서 이번에는 넣지 않았다.",
+   "files": [
+    "game/ui/menu/appearance.json",
+    "game/ui/menu/appearance_catalog.gd",
+    "game/ui/menu/appearance_catalog.gd.uid",
+    "game/ui/menu/character_create.gd",
+    "game/ui/menu/character_create.gd.uid",
+    "game/ui/menu/character_create.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/ui/menu/test_character_create.gd",
+    "game/tests/ui/menu/test_character_create.gd.uid"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "이름 입력칸과 외형 항목 여러 개(몸 · 머리 모양 · 머리 색 · 옷)가 있고, 항목마다 이전/다음으로 선택지를 바꾼다",
+     "ok": true,
+     "evidence": "character_create.tscn %NameEdit(LineEdit), character_create.gd _build_part 가 항목마다 Label/Prev/Value/Next 줄을 만든다. test_name_field_and_required_parts_with_prev_next · test_prev_next_cycle_options 통과(끝에서 돌기, 다른 항목 불변까지 검사). 헤드리스 실제 씬 전환 탐침에서도 body Next → APPEARANCE_BODY_2 확인"
+    },
+    {
+     "criterion": "항목과 선택지는 데이터 파일 하나에 정의된다. 그 파일에 항목이나 선택지를 추가하면 코드 수정 없이 화면에 나타난다 (테스트로 확인)",
+     "ok": true,
+     "evidence": "game/ui/menu/appearance.json 하나, AppearanceCatalog 가 읽음. test_screen_parts_match_data_file(화면 줄 순서 = 파일 id 순서), test_added_part_in_data_file_appears_on_screen(hat 항목 추가 → 줄 · 라벨 · 미리보기 색 · 저장 값), test_added_option_in_data_file_appears_on_screen(hair_pink 추가 → 선택 · 색) 통과. 기본 파일 복사본을 고쳐 쓰므로 진짜 데이터 경로를 검사한다"
+    },
+    {
+     "criterion": "미리보기 칸이 고른 선택지에 따라 바뀐다",
+     "ok": true,
+     "evidence": "%Preview 아래 항목별 ColorRect, _refresh 에서 선택지 color 로 갱신. test_preview_follows_choice 가 모든 항목에서 Next 후 색이 options[1].color 이고 이전과 다름을 확인. 탐침: body_2 → #c68642"
+    },
+    {
+     "criterion": "만들기 → 저장되고 캐릭터 선택 화면의 그 칸에 나타난다. 빈 이름은 거부된다. 취소 → 저장하지 않고 돌아간다",
+     "ok": true,
+     "evidence": "test_create_saves_to_chosen_slot_and_shows_in_select(슬롯 1에 저장, 슬롯 0 비어 있음, 공백 trim, 선택 화면 slot_button(1).text == 이름), test_empty_name_is_rejected(\"\" · 공백만 → 오류 표시, 저장 없음, 화면 전환 없음), test_cancel_returns_without_saving(캐릭터 폴더조차 안 생김) 통과. 실제 change_scene 탐침: 선택 화면 슬롯 2 → 생성 → 빈 이름 거부 → 만들기 → 선택 화면 slot 2 텍스트 'Probe', 슬롯 0 에서 취소 → 저장 없음"
+    },
+    {
+     "criterion": "새 캐릭터의 인벤토리는 비어 있다 (빈손 시작)",
+     "ok": true,
+     "evidence": "test_new_character_inventory_is_empty · test_create_saves... 에서 저장된 inventory == []. 탐침에서도 inv=[]"
+    }
+   ],
+   "issues": [
+    "(경미) 고른 칸이 이미 찼거나 칸 없이 들어오면 첫 빈 칸에 조용히 저장한다 — '그 칸' 기준과 다른 경로이고, 이 분기와 %SlotsFull 오류 표시는 테스트가 없다",
+    "(경미) 데이터 파일이 깨지면 항목 0개인 화면이 뜨고 만들기를 누르면 외형 {} 로 저장된다 — push_error 만 남는다",
+    "(경미) 라벨 폭 120 이 character_create.gd _build_part 두 곳과 tscn 에 흩어져 있다 (배치 값이라 사람이 바꿀 몫이지만 한 상수로 모으면 좋다)",
+    "(참고) appearance.json 을 FileAccess 로 읽는다 — 내보내기 필터에 *.json 이 빠지지 않는지 나중에 내보내기 단계에서 확인"
+   ],
+   "good": [
+    "데이터 추가 테스트가 기본 json 을 복사해 고친 임시 파일을 쓰므로 실제 로딩 경로를 검사한다",
+    "선택지 라벨까지 번역 키라서 기존 '모든 화면 글자 번역' 테스트를 그대로 통과한다 (ko/en 모두 추가)",
+    "기존 테스트 삭제 · 완화 없음. 파일 모두 300줄 이하 (최대 228줄)",
+    "report 내용이 실제 diff 와 일치한다"
+   ],
+   "feedback": ""
+  },
+  "test": "d1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/test_example.gd\n* test_arithmetic\n* test_array_contains\n2/2 passed.\n\n\nres://tests/core/test_i18n.gd\n* test_translation_files_exist_and_are_registered\n* test_locales_share_the_same_keys\n* test_main_scene_title_changes_with_locale\n3/3 passed.\n\n\nres://tests/core/test_project_setup.gd\n* test_spec_folders_exist\n* test_main_scene_is_set_and_loads\n* test_headless_quit_exits_clean\n* test_gitignore_excludes_godot_cache\n4/4 passed.\n\n\nres://tests/core/test_runner.gd\n* test_all_passing_exits_zero\n* test_one_failing_exits_nonzero\n* test_failing_in_subfolder_exits_nonzero\n* test_script_error_exits_nonzero\n* test_no_tests_exits_nonzero\n5/5 passed.\n\n\nres://tests/settings/save/test_save_store.gd\n* test_character_roundtrip_keeps_values\n* test_character_inventory_survives_roundtrip\n* test_world_roundtrip_keeps_values\n* test_character_and_world_are_stored_separately\n* test_character_slots_are_three\n* test_fourth_character_is_rejected\n* test_freed_slot_can_be_reused\n* test_delete_character\n* test_delete_world\n* test_default_location_is_under_user\n* test_tests_do_not_touch_user_saves\n* test_bad_world_id_is_rejected\n12/12 passed.\n\n\nres://tests/ui/menu/test_character_create.gd\n* test_name_field_and_required_parts_with_prev_next\n* test_prev_next_cycle_options\n* test_screen_parts_match_data_file\n* test_added_part_in_data_file_appears_on_screen\n* test_added_option_in_data_file_appears_on_screen\n* test_preview_follows_choice\n* test_create_saves_to_chosen_slot_and_shows_in_select\n* test_empty_name_is_rejected\n* test_cancel_returns_without_saving\n* test_new_character_inventory_is_empty\n* test_labels_translate_in_each_language\n11/11 passed.\n\n\nres://tests/ui/menu/test_character_select.gd\n* test_three_slots\n* test_filled_slot_shows_name_empty_slot_shows_new\n* test_slot_text_in_each_language\n* test_empty_slot_goes_to_character_create\n* test_filled_slot_goes_to_world_select_with_character\n* test_delete_button_only_on_filled_slots\n* test_delete_asks_first_and_cancel_keeps_character\n* test_confirmed_delete_empties_slot\n* test_back_goes_to_main_menu\n9/9 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_project_main_scene_is_main_menu\n* test_main_menu_has_start_settings_quit_in_order\n* test_start_goes_to_character_select\n* test_settings_goes_to_settings\n* test_settings_back_goes_to_main_menu\n* test_quit_requests_quit\n* test_target_screens_load\n* test_real_flow_in_separate_process\n* test_all_screen_text_is_translated_in_ko_and_en\n* test_buttons_render_in_each_language\n10/10 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               8\nTests                56\nPassing Tests        56\nAsserts             442\nTime              11.055s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-002",
+  "step": "4",
+  "attempt": "1",
+  "title": "G-002 4/5 캐릭터 생성 · 커스터마이징 (칸만) — 통과 (시도 1)",
+  "commit": "c15733f"
  }
 ]
