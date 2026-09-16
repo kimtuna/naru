@@ -1,6 +1,6 @@
 class_name GameScene
 extends Node2D
-## 게임 씬 — 섬과 플레이어 캐릭터 · 화면 아래 핫바 · 가방 화면 (나머지는 다음 묶음들이 채운다).
+## 게임 씬 — 섬과 플레이어 캐릭터 · 제작대 · 화면 아래 핫바 · 가방 · 제작 화면 (나머지는 다음 묶음들이 채운다).
 ## Session 이 들고 온 캐릭터와 월드를 받아 두고, menu_exit 액션으로 둘을 저장한 뒤 메인 화면으로 나간다.
 
 const EXIT_ACTION := "menu_exit"
@@ -27,6 +27,8 @@ func _ready() -> void:
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
+		stations().setup(player(), island_view(), regrowth(), crafting_view(), RecipeBook.load_default())
+		stations().load_list(world.stations)
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
@@ -39,7 +41,8 @@ func _ready() -> void:
 		player().hotbar = Hotbar.new(character)
 	%Hotbar.bind(player().hotbar)
 	inventory_view().bind(player().hotbar.inventory)
-	harvester().blocked = inventory_view().is_open
+	harvester().blocked = ui_blocks_click
+	stations().blocked = ui_blocks_click
 	load_usec = Time.get_ticks_usec() - started
 
 
@@ -102,6 +105,20 @@ func inventory_view() -> InventoryView:
 	return %Inventory
 
 
+## 설치한 제작대들 — 좌클릭으로 놓고 연다.
+func stations() -> Stations:
+	return %Stations
+
+
+func crafting_view() -> CraftingView:
+	return %Crafting
+
+
+## 가방이나 제작 화면이 열려 있으면 좌클릭은 휘두르거나 놓지 않는다.
+func ui_blocks_click() -> bool:
+	return inventory_view().is_open() or crafting_view().is_open()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(EXIT_ACTION):
 		get_viewport().set_input_as_handled()
@@ -122,4 +139,5 @@ func store_world_state() -> void:
 		return
 	if island:
 		world.world_time = island.time
+	world.stations = stations().to_list()
 	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())

@@ -158,3 +158,18 @@ msgstr "Esc: 저장하고 메인 화면으로"
 
 msgid "INVENTORY_TITLE"
 msgstr "가방"
+
+msgid "STATION_WORKBENCH"
+msgstr "작업대"
+
+msgid "ITEM_IRON_INGOT"
+msgstr "철 주괴"
+
+msgid "ITEM_GUN"
+msgstr "총"
+
+msgid "ITEM_AMMO"
+msgstr "탄약"
+
+msgid "CRAFT_CLOSE_HINT"
+msgstr "Esc: 닫기"

@@ -14,6 +14,8 @@ var removed_at: Dictionary = {}
 var world_time := 0.0
 ## 바닥에 떨어진 아이템 — {"id", "count", "pos": Vector2 (월드 픽셀)}.
 var drops: Array = []
+## 설치한 제작대 — {"id": 제작 장소 id, "cell": Vector2i}.
+var stations: Array = []
 
 
 static func create(world_name: String, seed_value: int) -> WorldData:
@@ -33,6 +35,7 @@ func to_dict() -> Dictionary:
 		"removed_at": removed_at.duplicate(),
 		"time": world_time,
 		"drops": drops.duplicate(true),
+		"stations": stations.duplicate(true),
 	}
 
 
@@ -58,4 +61,9 @@ static func from_dict(d: Dictionary) -> WorldData:
 		for drop in drops:
 			if drop is Dictionary and drop.get("id") is String and drop.get("pos") is Vector2:
 				w.drops.append(drop.duplicate(true))
+	var stations = d.get("stations", [])
+	if stations is Array:
+		for s in stations:
+			if s is Dictionary and s.get("id") is String and s.get("cell") is Vector2i:
+				w.stations.append(s.duplicate(true))
 	return w
