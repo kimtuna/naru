@@ -27,6 +27,11 @@ func _ready() -> void:
 		harvester().setup(player(), island_view(), drops())
 		swinger().setup(player(), island_view().tile_px())
 		swinger().add_source(harvester().targets_near)
+		melee().setup(mobs())
+		swinger().add_source(melee().targets_near)
+		gunner().setup(player(), mobs(), projectiles())
+		mob_spawner().setup(mobs(), mob_targets)
+		swinger().alternate = gunner().try_fire
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
@@ -41,10 +46,14 @@ func _ready() -> void:
 		farm().register(interactor())
 		eater().setup(player())
 		eater().register(interactor())
+		death_chests().setup(player(), island_view(), death_chest_view(), death_penalty_on)
+		death_chests().register(interactor())
+		death_chests().load_list(world.death_chests)
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
-		player().global_position = island_view().cell_center(island.spawn())
+		player().spawn_point = island_view().cell_center(island.spawn())
+		player().global_position = player().spawn_point
 		island_view().update_around(player().global_position)
 	lighting().setup(clock())
 	%CharacterName.text = character_name()
@@ -59,6 +68,8 @@ func _ready() -> void:
 	player().blocked = game_menu().is_open
 	inventory_view().blocked = game_menu().is_open
 	game_menu().set_host(Session.is_host)
+	if world:
+		game_menu().bind_world_settings(world.settings)
 	game_menu().main_menu_requested.connect(exit_to_menu)
 	game_menu().quit_requested.connect(exit_game)
 	load_usec = Time.get_ticks_usec() - started
@@ -70,6 +81,11 @@ func character_name() -> String:
 
 func world_name() -> String:
 	return world.name if world else ""
+
+
+## 지금 데스 페널티가 켜져 있나 — 월드 설정을 그때그때 읽어 바뀐 값이 바로 적용된다.
+func death_penalty_on() -> bool:
+	return world.settings.death_penalty if world else WorldSettings.DEFAULT_DEATH_PENALTY
 
 
 func player() -> Player:
@@ -87,6 +103,16 @@ func harvester() -> Harvester:
 ## 좌클릭 평타 — 무엇을 들었든 바라보는 방향으로 휘두른다.
 func swinger() -> Swinger:
 	return %Swinger
+
+
+## 근접 공격 — 평타에 맞은 몹에 손에 든 것의 공격 수치만큼 피해를 준다.
+func melee() -> Melee:
+	return %Melee
+
+
+## 총 — 총을 들고 좌클릭하면 휘두르지 않고 마우스 방향으로 쏜다. 탄약을 쓴다.
+func gunner() -> Gunner:
+	return %Gunner
 
 
 ## 우클릭 상호작용 — 겨눈 오브젝트가 먼저, 없으면 손에 든 아이템의 동작.
@@ -122,6 +148,26 @@ func picker() -> Picker:
 	return %Picker
 
 
+## 몹들의 부모.
+func mobs() -> Node2D:
+	return %Mobs
+
+
+## 몹 부르기 — 코드에서 자리와 마릿수를 정해 몹을 만든다.
+func mob_spawner() -> MobSpawner:
+	return %MobSpawner
+
+
+## 몹이 노릴 수 있는 대상 — 지금은 이 캐릭터 하나.
+func mob_targets() -> Array:
+	return [player()]
+
+
+## 날아가는 투사체들의 부모.
+func projectiles() -> Node2D:
+	return %Projectiles
+
+
 ## 바닥에 떨어진 아이템들의 부모.
 func drops() -> Node2D:
 	return %Drops
@@ -133,6 +179,15 @@ func dropped_items() -> Array[DroppedItem]:
 		if child is DroppedItem and not child.is_queued_for_deletion():
 			out.append(child)
 	return out
+
+
+## 데스 상자들 — 페널티가 켜진 월드에서 죽은 자리에 떨어진다.
+func death_chests() -> DeathChests:
+	return %DeathChests
+
+
+func death_chest_view() -> DeathChestView:
+	return %DeathChest
 
 
 func hotbar_view() -> HotbarView:
@@ -159,7 +214,8 @@ func game_menu() -> GameMenu:
 
 ## 가방 · 제작 화면 · 설정 창이 열려 있으면 좌클릭은 휘두르지 않고 우클릭은 열거나 놓지 않는다.
 func ui_blocks_click() -> bool:
-	return inventory_view().is_open() or crafting_view().is_open() or game_menu().is_open()
+	return inventory_view().is_open() or crafting_view().is_open() or death_chest_view().is_open() \
+		or game_menu().is_open()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -168,12 +224,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		on_escape()
 
 
-## Esc — 설정 창이 열려 있으면 그 창에서 뒤로, 아니면 열린 창(제작 → 가방)을 하나 닫고, 열린 창이 없으면 설정 창을 연다.
+## Esc — 설정 창이 열려 있으면 그 창에서 뒤로, 아니면 열린 창(제작 → 데스 상자 → 가방)을 하나 닫고, 열린 창이 없으면 설정 창을 연다.
 func on_escape() -> void:
 	if game_menu().is_open():
 		game_menu().back()
 	elif crafting_view().is_open():
 		crafting_view().close()
+	elif death_chest_view().is_open():
+		death_chest_view().close()
 	elif inventory_view().is_open():
 		inventory_view().set_open(false)
 	else:
@@ -207,4 +265,5 @@ func store_world_state() -> void:
 	world.stations = stations().to_list()
 	world.tilled = farm().to_list()
 	world.crops = farm().crops_to_list()
+	world.death_chests = death_chests().to_list()
 	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())

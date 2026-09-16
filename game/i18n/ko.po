@@ -215,3 +215,15 @@ msgstr "게임 종료"
 
 msgid "WORLD_SETTINGS_TITLE"
 msgstr "월드 설정"
+
+msgid "WORLD_SETTINGS_DEATH_PENALTY"
+msgstr "데스 페널티"
+
+msgid "DEATH_CHEST_TITLE"
+msgstr "데스 상자"
+
+msgid "DEATH_CHEST_TIME"
+msgstr "사라지기까지 %d:%02d"
+
+msgid "DEATH_CHEST_TAKE_ALL"
+msgstr "모두 꺼내기"

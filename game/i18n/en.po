@@ -215,3 +215,15 @@ msgstr "Quit game"
 
 msgid "WORLD_SETTINGS_TITLE"
 msgstr "World settings"
+
+msgid "WORLD_SETTINGS_DEATH_PENALTY"
+msgstr "Death penalty"
+
+msgid "DEATH_CHEST_TITLE"
+msgstr "Death chest"
+
+msgid "DEATH_CHEST_TIME"
+msgstr "Vanishes in %d:%02d"
+
+msgid "DEATH_CHEST_TAKE_ALL"
+msgstr "Take all"
