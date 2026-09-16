@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 22:09:32 KST",
- "updated_epoch": 1789564172,
+ "updated": "2026-09-16 22:11:14 KST",
+ "updated_epoch": 1789564274,
  "progress": {
   "groups_total": 9,
-  "groups_done": 1,
+  "groups_done": 2,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 7
+  "steps_done": 8
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-002",
- "group_title": "메인 화면 · 캐릭터 · 월드",
- "step": "5",
- "step_total": "5",
- "step_title": "월드 선택 · 생성 → 게임 들어가기",
+ "group": "G-003",
+ "group_title": "조작",
+ "step": "1",
+ "step_total": "4",
+ "step_title": "입력 액션과 Pointer",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 22:09:32"
+ "phase": "구현",
+ "phase_since": "2026-09-16 22:11:14"
 }
