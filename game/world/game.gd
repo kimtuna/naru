@@ -1,6 +1,6 @@
 class_name GameScene
 extends Node2D
-## 게임 씬 — 섬과 플레이어 캐릭터 · 화면 아래 핫바 (나머지는 다음 묶음들이 채운다).
+## 게임 씬 — 섬과 플레이어 캐릭터 · 화면 아래 핫바 · 가방 화면 (나머지는 다음 묶음들이 채운다).
 ## Session 이 들고 온 캐릭터와 월드를 받아 두고, menu_exit 액션으로 둘을 저장한 뒤 메인 화면으로 나간다.
 
 const EXIT_ACTION := "menu_exit"
@@ -23,6 +23,7 @@ func _ready() -> void:
 		island = IslandMap.new(IslandGenerator.new(world.world_seed), true, world.removed_cells)
 		island_view().setup(island)
 		harvester().setup(player(), island_view(), drops())
+		picker().setup(player(), drops(), island_view().tile_px())
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
@@ -33,6 +34,8 @@ func _ready() -> void:
 	if character:
 		player().hotbar = Hotbar.new(character)
 	%Hotbar.bind(player().hotbar)
+	inventory_view().bind(player().hotbar.inventory)
+	harvester().blocked = inventory_view().is_open
 	load_usec = Time.get_ticks_usec() - started
 
 
@@ -56,6 +59,10 @@ func harvester() -> Harvester:
 	return %Harvester
 
 
+func picker() -> Picker:
+	return %Picker
+
+
 ## 바닥에 떨어진 아이템들의 부모.
 func drops() -> Node2D:
 	return %Drops
@@ -71,6 +78,10 @@ func dropped_items() -> Array[DroppedItem]:
 
 func hotbar_view() -> HotbarView:
 	return %Hotbar
+
+
+func inventory_view() -> InventoryView:
+	return %Inventory
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -155,3 +155,6 @@ msgstr "World"
 
 msgid "GAME_EXIT_HINT"
 msgstr "Esc: save and return to main menu"
+
+msgid "INVENTORY_TITLE"
+msgstr "Bag"

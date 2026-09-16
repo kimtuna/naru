@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" path="res://ui/hud/hotbar_view.tscn" id="3"]
 [ext_resource type="Script" path="res://world/island/island_view.gd" id="4"]
 [ext_resource type="Script" path="res://life/harvest/harvester.gd" id="5"]
+[ext_resource type="Script" path="res://player/pickup/picker.gd" id="6"]
+[ext_resource type="PackedScene" path="res://ui/hud/inventory_view.tscn" id="7"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
@@ -19,6 +21,10 @@ unique_name_in_owner = true
 [node name="Harvester" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("5")
+
+[node name="Picker" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6")
 
 [node name="Player" parent="." instance=ExtResource("2")]
 unique_name_in_owner = true
@@ -57,4 +63,7 @@ offset_top = 110.0
 text = "GAME_EXIT_HINT"
 
 [node name="Hotbar" parent="Hud" instance=ExtResource("3")]
+unique_name_in_owner = true
+
+[node name="Inventory" parent="Hud" instance=ExtResource("7")]
 unique_name_in_owner = true

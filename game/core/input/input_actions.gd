@@ -9,6 +9,8 @@ const MOVE_LEFT := &"move_left"
 const MOVE_RIGHT := &"move_right"
 ## 좌클릭 — 도구 사용 · 상호작용 · 열기를 하나로.
 const USE := &"use"
+## 가방 화면 열기 · 닫기 — 키는 spec 미정, 임시로 Tab.
+const INVENTORY := &"inventory"
 const HOTBAR_PREFIX := "hotbar_"
 ## 숫자키 1~9, 0 을 hotbar_1 ~ hotbar_10 에 묶었다. 핫바 칸 수는 미정 — 핫바가 이 안에서 쓴다.
 const HOTBAR_ACTION_COUNT := 10
@@ -34,7 +36,7 @@ static func hotbar_slot_pressed(event: InputEvent) -> int:
 
 ## 게임이 쓰는 액션 이름 전부.
 static func all() -> Array[StringName]:
-	var names: Array[StringName] = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, USE]
+	var names: Array[StringName] = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT, USE, INVENTORY]
 	for slot in range(1, HOTBAR_ACTION_COUNT + 1):
 		names.append(hotbar_action(slot))
 	return names

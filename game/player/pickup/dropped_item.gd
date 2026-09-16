@@ -1,6 +1,6 @@
 class_name DroppedItem
 extends Node2D
-## 바닥에 떨어진 아이템 하나 (spec/02_player/pickup.md). 줍기는 다음 단계가 붙인다.
+## 바닥에 떨어진 아이템 하나 (spec/02_player/pickup.md). 줍기는 Picker 가 한다.
 
 ## 임시 색 — 아트는 사람이 나중에 넣는다.
 const COLORS := {
@@ -27,6 +27,12 @@ func item_id() -> String:
 
 func count() -> int:
 	return int(item.get("count", 0))
+
+
+## 개수를 바꾼다 — 가방에 일부만 들어가면 남은 몫이 바닥에 남는다.
+func set_count(value: int) -> void:
+	item["count"] = value
+	queue_redraw()
 
 
 ## 월드 저장에 넣는 값.

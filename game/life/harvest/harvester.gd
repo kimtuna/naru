@@ -3,6 +3,7 @@ extends Node
 ## 좌클릭 채취 — 겨눈 칸(Pointer)과 손에 든 것(핫바)이 동작을 정한다.
 ## 맞는 조합이고 손이 닿으면 휘두를 때마다 힘을 쌓고, 다 쌓이면 칸을 비우고 아이템을 바닥에 떨어뜨린다.
 ## 좌클릭을 쥐고 있으면 swing_interval 마다 이어서 휘두른다. 겨눈 칸이 바뀌면 쌓인 힘은 사라진다.
+## blocked 가 참인 동안(가방이 열려 있는 동안)은 휘두르지 않는다. 쥔 채로 풀리면 이어서 휘두른다.
 
 signal harvested(cell: Vector2i, deposit: IslandConfig.Deposit, drop: DroppedItem)
 
@@ -15,6 +16,8 @@ var player: Player
 var view: IslandView
 ## 떨어진 아이템을 넣을 노드.
 var drops: Node2D
+## 참을 돌려주면 좌클릭으로 휘두르지 않는다. 비워 두면 막지 않는다.
+var blocked := Callable()
 var _holding := false
 var _cooldown := 0.0
 var _target := NO_CELL
@@ -51,10 +54,14 @@ func _physics_process(delta: float) -> void:
 	_cooldown = maxf(_cooldown - delta, 0.0)
 	if not Input.is_action_pressed(InputActions.USE):
 		_holding = false
-	if not _holding or _cooldown > 0.0 or player == null or map() == null:
+	if not _holding or _cooldown > 0.0 or player == null or map() == null or is_blocked():
 		return
 	if swing(aimed_cell()):
 		_cooldown = config.swing_interval
+
+
+func is_blocked() -> bool:
+	return blocked.is_valid() and blocked.call()
 
 
 ## 커서가 가리키는 칸.
