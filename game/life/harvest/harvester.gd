@@ -44,6 +44,11 @@ func progress_at(cell: Vector2i) -> int:
 	return _progress if cell == _target else 0
 
 
+## 좌클릭을 받아 쥐고 있는 중인가 (다른 동작이 입력을 먹었으면 false).
+func is_holding() -> bool:
+	return _holding
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(InputActions.USE):
 		_holding = true
