@@ -35,10 +35,23 @@ var land_cells := 0
 var elevated_cells := 0
 var _kind := PackedByteArray()
 var _height := PackedByteArray()
+## 절벽 칸 — 절벽 블록 안에서 8방향 이웃에 더 낮은 칸이 있는 칸 (높이 경계의 높은 쪽).
+func cliff_at(x: int, y: int) -> bool:
+	if x < 0 or y < 0 or x >= config.size or y >= config.size or _cliff[(y / block) * blocks + x / block] == 0:
+		return false
+	var h := height_at(x, y)
+	for d in NEIGHBORS_8:
+		if height_at(x + d.x, y + d.y) < h:
+			return true
+	return false
+
+
 ## 보장 봉우리 한가운데 칸 — Terrain → Vector2i.
 var _peaks := {}
 ## 블록마다 무엇으로 정해졌나 — 섬 모양 · 솟음 · 숲 후보에서 뺄 곳.
 var _forced := PackedByteArray()
+## 블록마다 절벽이면 1 (IslandCliffs).
+var _cliff := PackedByteArray()
 
 const FORCE_NONE := 0
 const FORCE_FLAT := 1  # 스폰 둘레 — 풀밭
@@ -61,6 +74,8 @@ func _init(seed_value: int, cfg: IslandConfig) -> void:
 	_raise()
 	_grow_forest()
 	_measure_heights()
+	var spawn := config.spawn() / block
+	_cliff = IslandCliffs.new(world_seed, config, blocks, _kind, _height, spawn.y * blocks + spawn.x).cliff
 
 
 func terrain_at(x: int, y: int) -> Terrain:
@@ -254,37 +269,13 @@ func _grow_forest() -> void:
 			_kind[cells[k]] = Terrain.FOREST
 
 
-## 높이 — 솟은 블록에서 솟지 않은 블록까지의 거리(8방향 걸음)를 max_height 에서 자른다.
-## 이웃 블록끼리 거리는 1 넘게 다르지 않으니 이웃 칸 높이 차는 1 이하다.
+## 높이 — 이웃 블록끼리 1 넘게 다르지 않으니 이웃 칸 높이 차는 1 이하다.
 func _measure_heights() -> void:
-	var top := maxi(config.max_height, 1)
-	var frontier := PackedInt32Array()
+	var raised := PackedByteArray()
+	raised.resize(blocks * blocks)
 	elevated_cells = 0
 	for i in blocks * blocks:
-		if not IslandConfig.is_elevated(_kind[i]):
-			continue
-		elevated_cells += block * block
-		for d in NEIGHBORS_8:
-			var nx: int = i % blocks + d.x
-			var ny: int = i / blocks + d.y
-			var inside := nx >= 0 and ny >= 0 and nx < blocks and ny < blocks
-			if not inside or not IslandConfig.is_elevated(_kind[ny * blocks + nx]):
-				_height[i] = 1
-				frontier.append(i)
-				break
-	for level in range(2, top + 1):
-		var next := PackedInt32Array()
-		for i in frontier:
-			for d in NEIGHBORS_8:
-				var nx: int = i % blocks + d.x
-				var ny: int = i / blocks + d.y
-				if nx < 0 or ny < 0 or nx >= blocks or ny >= blocks:
-					continue
-				var j := ny * blocks + nx
-				if _height[j] == 0 and IslandConfig.is_elevated(_kind[j]):
-					_height[j] = level
-					next.append(j)
-		frontier = next
-	for i in blocks * blocks:
-		if _height[i] == 0 and IslandConfig.is_elevated(_kind[i]):
-			_height[i] = top
+		if IslandConfig.is_elevated(_kind[i]):
+			raised[i] = 1
+			elevated_cells += block * block
+	_height = IslandField.rise(blocks, raised, maxi(config.max_height, 1))

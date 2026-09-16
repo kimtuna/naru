@@ -14,6 +14,9 @@ const TERRAIN_COLORS := {
 	IslandConfig.Terrain.SEA: Color(0.16, 0.34, 0.6),
 }
 const HEIGHT_LIGHTEN := 0.06
+## 절벽 칸 — 바닥 색 위에 어두운 테두리 (임시).
+const CLIFF_COLOR := Color(0.12, 0.1, 0.1)
+const CLIFF_EDGE_PX := 3.0
 const DEPOSIT_COLORS := {
 	IslandConfig.Deposit.TREE: Color(0.1, 0.35, 0.12),
 	IslandConfig.Deposit.STONE: Color(0.55, 0.55, 0.58),
@@ -89,6 +92,9 @@ func _draw() -> void:
 			var cell := Vector2i(x, y)
 			var at := Vector2(cell - _rect.position) * float(tile_px)
 			draw_rect(Rect2(at, t), color_at(cell))
+			if map.is_cliff(cell):
+				draw_rect(Rect2(at + Vector2.ONE * CLIFF_EDGE_PX / 2.0, t - Vector2.ONE * CLIFF_EDGE_PX), CLIFF_COLOR,
+					false, CLIFF_EDGE_PX)
 			var deposit := map.deposit_at(cell)
 			if deposit != IslandConfig.Deposit.NONE:
 				draw_rect(Rect2(at + Vector2.ONE, t - Vector2.ONE * 2.0), DEPOSIT_COLORS[deposit])

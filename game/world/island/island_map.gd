@@ -15,6 +15,7 @@ var generator: IslandGenerator
 var _terrain := PackedByteArray()
 var _deposit := PackedByteArray()
 var _height := PackedByteArray()
+var _cliff := PackedByteArray()
 var _chunk_count := 0
 var _built := PackedByteArray()
 var _built_total := 0
@@ -39,6 +40,7 @@ func _init(gen: IslandGenerator, lazy := false, removed_cells: Variant = null,
 	_terrain.resize(size * size)
 	_deposit.resize(size * size)
 	_height.resize(size * size)
+	_cliff.resize(size * size)
 	_chunk_count = ceili(float(size) / chunk_size)
 	_built.resize(_chunk_count * _chunk_count)
 	if not lazy:
@@ -90,6 +92,7 @@ func ensure_chunk(chunk: Vector2i) -> void:
 			var t := generator.terrain_at(x, y)
 			_terrain[y * size + x] = t
 			_height[y * size + x] = generator.height_at(x, y)
+			_cliff[y * size + x] = 1 if generator.cliff_at(x, y) else 0
 			var d := generator.deposit_on(x, y, t)
 			if removed.has(Vector2i(x, y)):
 				d = IslandConfig.Deposit.NONE
@@ -113,6 +116,12 @@ func terrain_at(cell: Vector2i) -> IslandConfig.Terrain:
 func height_at(cell: Vector2i) -> int:
 	ensure_chunk(chunk_of(cell))
 	return _height[cell.y * size + cell.x]
+
+
+## 절벽 칸 — 등반 장비 없이는 못 들어간다.
+func is_cliff(cell: Vector2i) -> bool:
+	ensure_chunk(chunk_of(cell))
+	return _cliff[cell.y * size + cell.x] == 1
 
 
 func deposit_at(cell: Vector2i) -> IslandConfig.Deposit:
@@ -157,9 +166,10 @@ func regrow(cell: Vector2i) -> bool:
 	return true
 
 
-## 장애물(자원)이 있나. 섬 밖도 막힌 것으로 본다.
+## 걸어서 못 들어가나 — 섬 밖 · 바다 · 절벽 · 자원(장애물). 등반 장비는 아직 없다 (04_life/climbing.md).
 func is_blocked(cell: Vector2i) -> bool:
-	return not has_cell(cell) or deposit_at(cell) != IslandConfig.Deposit.NONE
+	return not has_cell(cell) or terrain_at(cell) == IslandConfig.Terrain.SEA or is_cliff(cell) \
+		or deposit_at(cell) != IslandConfig.Deposit.NONE
 
 
 ## 칸 값을 통째로 — 두 섬이 같은지 비교할 때. 아직 안 만든 곳까지 만든다.
@@ -171,6 +181,11 @@ func terrain_bytes() -> PackedByteArray:
 func height_bytes() -> PackedByteArray:
 	build_all()
 	return _height
+
+
+func cliff_bytes() -> PackedByteArray:
+	build_all()
+	return _cliff
 
 
 func deposit_bytes() -> PackedByteArray:

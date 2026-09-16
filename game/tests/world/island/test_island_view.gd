@@ -170,13 +170,20 @@ func test_free_ground_is_walkable() -> void:
 func test_island_edge_blocks() -> void:
 	var game := _enter()
 	var map := game.island
+	# 섬 가장자리는 바다라 원래 막힌다 — 바다를 빼면 벽만 남는지 본다. 바다가 막는 건 test_island_cliffs_game.gd.
 	var row := -1
 	for y in range(map.size):
-		if not map.is_blocked(Vector2i(0, y)) and not map.is_blocked(Vector2i(1, y)):
+		if map.deposit_at(Vector2i(0, y)) == IslandConfig.Deposit.NONE \
+				and map.deposit_at(Vector2i(1, y)) == IslandConfig.Deposit.NONE:
 			row = y
 			break
 	assert_gt(row, -1)
+	# 가장자리 덩어리의 바다 충돌을 걷어 내고, 섬 밖 벽만으로 막히는지.
 	await _teleport(game, Vector2i(1, row))
+	var edge := game.island_view().chunk_node(map.chunk_of(Vector2i(0, row)))
+	for col in edge.body().get_children():
+		col.disabled = true
+	await wait_physics_frames(2)
 	var moved := await _walk(game, InputActions.MOVE_LEFT, 40)
 	assert_gt(moved, 8.0)
 	assert_gte(game.player().global_position.x - _half_body(game.player()).x, -0.5, "walked off the island")

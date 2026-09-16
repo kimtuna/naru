@@ -69,3 +69,37 @@ static func flood(width: int, starts, mask: PackedByteArray, want: int) -> Packe
 				seen[j] = 1
 				stack.append(j)
 	return seen
+
+
+## 솟은 칸(raised == 1)마다 솟지 않은 칸 · 격자 밖까지의 8방향 걸음 수를 top 에서 자른 값. 나머지는 0.
+static func rise(width: int, raised: PackedByteArray, top: int) -> PackedByteArray:
+	var height := PackedByteArray()
+	height.resize(width * width)
+	var frontier := PackedInt32Array()
+	for i in width * width:
+		if raised[i] == 0:
+			continue
+		for d in NEIGHBORS_8:
+			var nx: int = i % width + d.x
+			var ny: int = i / width + d.y
+			if nx < 0 or ny < 0 or nx >= width or ny >= width or raised[ny * width + nx] == 0:
+				height[i] = 1
+				frontier.append(i)
+				break
+	for level in range(2, top + 1):
+		var next := PackedInt32Array()
+		for i in frontier:
+			for d in NEIGHBORS_8:
+				var nx: int = i % width + d.x
+				var ny: int = i / width + d.y
+				if nx < 0 or ny < 0 or nx >= width or ny >= width:
+					continue
+				var j := ny * width + nx
+				if height[j] == 0 and raised[j] == 1:
+					height[j] = level
+					next.append(j)
+		frontier = next
+	for i in width * width:
+		if height[i] == 0 and raised[i] == 1:
+			height[i] = top
+	return height

@@ -60,6 +60,10 @@ func height_at(x: int, y: int) -> int:
 	return terrain.height_at(x, y)
 
 
+func cliff_at(x: int, y: int) -> bool:
+	return terrain.cliff_at(x, y)
+
+
 func deposit_at(x: int, y: int) -> Deposit:
 	return deposit_on(x, y, terrain_at(x, y))
 

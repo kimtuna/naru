@@ -59,6 +59,9 @@ enum Deposit { NONE, TREE, STONE, ORE }
 @export_range(0.0, 100.0) var forest_percent := 25.0
 ## 높이 단 수 — 솟은 지형 가장자리가 1, 안으로 한 블록마다 1씩, 이 값까지. 개인 섬 산은 낮다.
 @export_range(1, 16) var max_height := 3
+## 높이 경계 블록 가운데 절벽인 % — 나머지는 걸어 오르는 경사. 절벽 얼룩 한 변 (칸).
+@export_range(0.0, 100.0) var cliff_percent := 50.0
+@export var cliff_noise_cell := 12
 ## 스폰 둘레 이 칸 수 안은 평지(풀밭).
 @export var spawn_flat_radius := 8
 ## 반드시 있는 산 · 화산 · 설산 — 스폰에서 이만큼 떨어진 곳에 이 반지름(칸)의 원 하나씩.
