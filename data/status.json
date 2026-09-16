@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 23:48:36 KST",
- "updated_epoch": 1789570116,
+ "updated": "2026-09-16 23:50:49 KST",
+ "updated_epoch": 1789570249,
  "progress": {
   "groups_total": 9,
-  "groups_done": 4,
+  "groups_done": 5,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 18
+  "steps_done": 19
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-005",
- "group_title": "시간",
- "step": "2",
- "step_total": "2",
- "step_title": "밤과 반경 조명",
+ "group": "G-006",
+ "group_title": "제작",
+ "step": "1",
+ "step_total": "3",
+ "step_title": "레시피 데이터",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 23:48:36"
+ "phase": "구현",
+ "phase_since": "2026-09-16 23:50:49"
 }
