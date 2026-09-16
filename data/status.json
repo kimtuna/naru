@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 04:19:03 KST",
- "updated_epoch": 1789586343,
+ "updated": "2026-09-17 04:20:51 KST",
+ "updated_epoch": 1789586451,
  "progress": {
   "groups_total": 14,
-  "groups_done": 11,
+  "groups_done": 12,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 35
+  "steps_done": 36
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-009",
- "group_title": "전투",
- "step": "6",
- "step_total": "6",
- "step_title": "몹 기본 AI",
+ "group": "G-013",
+ "group_title": "지형 확장 — 산 · 화산 · 설산 · 절벽",
+ "step": "1",
+ "step_total": "4",
+ "step_title": "높이와 지형 종류",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 04:19:03"
+ "phase": "구현",
+ "phase_since": "2026-09-17 04:20:51"
 }
