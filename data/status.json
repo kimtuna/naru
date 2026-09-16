@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 23:43:49 KST",
- "updated_epoch": 1789569829,
+ "updated": "2026-09-16 23:48:36 KST",
+ "updated_epoch": 1789570116,
  "progress": {
   "groups_total": 9,
   "groups_done": 4,
@@ -20,6 +20,6 @@
  "step_total": "2",
  "step_title": "밤과 반경 조명",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 23:43:49"
+ "phase": "QA",
+ "phase_since": "2026-09-16 23:48:36"
 }
