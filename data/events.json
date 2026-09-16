@@ -3452,5 +3452,70 @@
   "attempt": "1",
   "title": "G-014 2/4 절벽 이동과 기력 — 통과 (시도 1)",
   "commit": "48e14ed"
+ },
+ {
+  "time": "2026-09-17 06:02:45 KST",
+  "epoch": 1789592565,
+  "report": {
+   "status": "done",
+   "summary": "앵커 — 레시피 · 절벽 칸에 우클릭으로 달기(1개 소모) · 달린 칸에서 기력 회복 · 월드 저장",
+   "problem": "소모성 앵커를 만들어야 했다: 레시피가 있고, 들고 절벽 칸에 우클릭하면 그 칸에 달리며 1개가 줄고, 달린 칸에 있으면 기력이 차오르고, 달린 앵커가 월드 저장에 남아야 한다. 지금까지 기력은 '절벽이면 움직일 때 줄고, 절벽 밖이면 찬다'만 알았다.",
+   "feedback_applied": "",
+   "approach": "life/climbing/anchors.gd(Anchors, Node2D)를 새로 만들었다. 밭(Farm)과 같은 구조로, 달린 칸을 사전으로 들고 Interactor.set_item_action('anchor')로 우클릭을 받는다. 조건은 앵커를 들었는지, 평타 거리 안인지, 절벽 칸인지, 아직 안 달린 칸인지이고, 달면 핫바에서 1개를 줄인다(마지막 1개면 칸이 빈다). to_list/load_list로 WorldData.anchors(Vector2i 목록)에 저장하고, from_dict는 잘못된 값과 옛 저장을 걸러낸다. 표시는 칸 가운데 임시 색 네모다. Stamina.tick에 anchored 인자를 더했다. 달린 칸이면 절벽이든 움직이든 ClimbingConfig.anchor_regen_per_second(임시 30)로 차오르고 빨강 여유(overdraw)도 비운다. Climber는 Anchors.has_anchor_at(플레이어 위치)로 이 값을 넘긴다. 게임 씬에 Anchors 노드를 넣고 setup/register/load_list/store_world_state에 연결했다. 레시피는 작업대에서 철 주괴 1 + 나무 1 → 앵커 2(임시)이고, 번역 키 ITEM_ANCHOR(한/영)를 넣었다. 테스트 test_anchors.gd 8개: 레시피, 실제 우클릭 입력으로 달기와 소모, 이미 달린 칸, 마지막 1개, 절벽이 아닌 칸 거부, 다른 아이템과 거리 밖 거부, 게임 안에서 맨 절벽은 회복 없음 → 앵커를 달면 회복, Stamina 단위(움직여도 회복 · 여유 초기화 · 최대치 · 앵커 없으면 소모), 저장 후 다시 들어가도 남음. tools/test.sh 479개 통과, guard 통과.",
+   "why": "밭과 제작대가 이미 '우클릭 아이템 동작 + 칸 사전 + to_list/load_list' 방식이라 똑같이 따랐다. 새 규칙이 없어 읽기 쉽고 저장 형식도 맞는다. 앵커를 IslandMap이나 지형에 섞는 방안은 버렸다. 지형은 시드로 다시 만들고 바뀐 것만 저장하는 구조라 따로 두는 편이 깔끔하다. 회복은 Stamina.tick 안에서 앵커 판정을 절벽 판정보다 먼저 한다. spec이 '그 칸에 있으면 회복'이라 움직이는지와 상관없게 했고, 앵커 칸에서 떨어지지 않도록 overdraw도 비웠다. 회복 속도는 절벽 밖(40)과 따로 둔 임시 값(30)이다. 사람이 플레이해 보고 한 곳(climbing_config.tres)에서 바꾸면 된다. 앵커를 떼거나 되돌려 받는 기능은 spec에 없어 만들지 않았다. 달린 칸에는 절벽 판정만 하고 자원이 있는 절벽 칸도 허용했다(절벽 약초 옆에 매달리는 게 목적과 맞다).",
+   "files": [
+    "game/life/climbing/anchors.gd",
+    "game/life/climbing/climber.gd",
+    "game/life/climbing/stamina.gd",
+    "game/life/climbing/climbing_config.gd",
+    "game/life/climbing/climbing_config.tres",
+    "game/settings/save/world_data.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/craft/recipes/recipes.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/life/climbing/test_anchors.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "앵커 레시피가 있고, 앵커를 들고 절벽 칸에 우클릭하면 달리며 앵커 1개가 줄어든다",
+     "ok": true,
+     "evidence": "recipes.json 에 anchor 레시피(workbench, 철 주괴 1 + 나무 1 → 2)와 ITEM_ANCHOR 한/영 번역 추가. anchors.gd place()/register() 가 Interactor.set_item_action('anchor') 로 우클릭을 받아 절벽 · 거리 · 중복을 확인하고 핫바에서 1개를 줄인다. test_anchor_has_a_recipe_made_from_raw_materials, test_right_click_on_cliff_attaches_and_uses_one(실제 우클릭 입력, 3→2, 같은 칸 재시도 시 소모 없음), test_last_anchor_empties_the_slot, test_only_cliff_cells_take_an_anchor, test_only_the_anchor_attaches_and_reach_is_needed 통과. 임시로 '마지막 1개 처리'를 망가뜨리자 테스트가 실패하는 것을 확인했다(확인 뒤 되돌림)."
+    },
+    {
+     "criterion": "앵커가 달린 칸에 있으면 기력이 회복된다",
+     "ok": true,
+     "evidence": "Stamina.tick(delta, on_cliff, moving, anchored) 에서 anchored 면 anchor_regen_per_second 로 회복하고 overdraw 도 0 으로 되돌린다. Climber._physics_process 가 anchors.has_anchor_at(player.global_position) 값을 넘긴다. test_stamina_recovers_on_an_anchored_cell(게임 안: 앵커 없는 절벽에서는 10 그대로 → 앵커를 달면 기대값만큼 오름), test_anchor_recovery_beats_drain_and_clears_overdraw 통과. 임시로 Climber 에서 anchored 를 false 로 고정하자 테스트가 실패하는 것을 확인했다(확인 뒤 되돌림)."
+    },
+    {
+     "criterion": "달린 앵커는 월드 저장에 남는다",
+     "ok": true,
+     "evidence": "WorldData.anchors 가 to_dict/from_dict 에 들어갔고(Vector2i 가 아닌 값은 버림, 옛 저장은 빈 목록), game.gd 의 store_world_state 에 world.anchors = anchors().to_list(), _ready 에 load_list 가 연결됐다. 저장은 store_var 라 Vector2i 가 그대로 남는다. test_anchors_are_saved_with_the_world 가 저장한 뒤 다시 들어가도 앵커가 남는지 확인한다. 임시로 store_world_state 의 해당 줄을 지우자 테스트가 실패하는 것을 확인했다(확인 뒤 되돌림)."
+    }
+   ],
+   "issues": [
+    "(가벼움) 달린 앵커를 떼거나 되돌려 받는 방법이 없다. spec 에 없어 이번 단계 기준 밖이며 anchors.gd 머리 주석에 적혀 있다",
+    "(가벼움) 앵커 회복 속도(30)와 레시피 수량(2)은 임시 값이다. climbing_config.tres 와 recipes.json(time_temp) 한 곳에 모여 있어 규칙 위반은 아니다"
+   ],
+   "good": [
+    "Farm 과 같은 구조(set_item_action + 칸 사전 + to_list/load_list)를 따라 새로 만든 규칙이 없고 읽기 쉽다",
+    "Stamina 의 회복 코드를 _regen 으로 묶어 절벽 밖 회복과 앵커 회복이 같은 경로를 쓴다. 기존 tick 호출(인자 3개)은 기본값 덕분에 그대로 동작한다",
+    "테스트가 실제 우클릭 입력과 게임 씬을 쓰고, 세 기준 모두 코드를 일부러 망가뜨리면 테스트가 실패한다. 기존 테스트의 삭제 · 완화는 없다",
+    "tools/test.sh 479/479 통과(test.log), 등반 테스트 21/21을 다시 돌려 통과, guard 통과. 새 파일은 모두 300줄 이하이고 report 내용이 실제 diff 와 맞는다"
+   ],
+   "feedback": ""
+  },
+  "test": "physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 128.0 ms (game _ready 107.7 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              68\nTests               479\nPassing Tests       479\nAsserts           30122\nTime              177.04s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-014",
+  "step": "3",
+  "attempt": "1",
+  "title": "G-014 3/4 앵커 — 통과 (시도 1)",
+  "commit": "77c41a6"
  }
 ]
