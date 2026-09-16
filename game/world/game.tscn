@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://expedition/supply/eater.gd" id="17"]
 [ext_resource type="Script" path="res://combat/damage_death/death_chests.gd" id="18"]
 [ext_resource type="PackedScene" path="res://ui/combat/death_chest_view.tscn" id="19"]
+[ext_resource type="Script" path="res://combat/tools_as_weapons/melee.gd" id="20"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
@@ -44,6 +45,10 @@ unique_name_in_owner = true
 [node name="Harvester" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("5")
+
+[node name="Melee" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("20")
 
 [node name="Swinger" type="Node" parent="."]
 unique_name_in_owner = true

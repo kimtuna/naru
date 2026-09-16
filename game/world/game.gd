@@ -27,6 +27,8 @@ func _ready() -> void:
 		harvester().setup(player(), island_view(), drops())
 		swinger().setup(player(), island_view().tile_px())
 		swinger().add_source(harvester().targets_near)
+		melee().setup(mobs())
+		swinger().add_source(melee().targets_near)
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
@@ -98,6 +100,11 @@ func harvester() -> Harvester:
 ## 좌클릭 평타 — 무엇을 들었든 바라보는 방향으로 휘두른다.
 func swinger() -> Swinger:
 	return %Swinger
+
+
+## 근접 공격 — 평타에 맞은 몹에 손에 든 것의 공격 수치만큼 피해를 준다.
+func melee() -> Melee:
+	return %Melee
 
 
 ## 우클릭 상호작용 — 겨눈 오브젝트가 먼저, 없으면 손에 든 아이템의 동작.
