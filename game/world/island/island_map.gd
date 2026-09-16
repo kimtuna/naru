@@ -21,7 +21,7 @@ var _built_total := 0
 var removed: Dictionary
 ## 없앤 시각 — Vector2i → 월드 시간(초). WorldData.removed_at 과 나눠 쓴다. 없으면 0 에 없앤 것으로 본다.
 var removed_at: Dictionary
-## 월드 시간 (게임 초) — 재생(Regrowth)이 흘린다. 저장은 WorldData.world_time.
+## 월드 시간 (게임 초) — 시계(WorldClock)가 흘린다. 저장은 WorldData.world_time.
 var time := 0.0
 
 

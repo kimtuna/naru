@@ -25,6 +25,7 @@ func _ready() -> void:
 		island_view().setup(island)
 		harvester().setup(player(), island_view(), drops())
 		regrowth().setup(island, island_view(), player())
+		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
@@ -63,6 +64,11 @@ func harvester() -> Harvester:
 
 func regrowth() -> Regrowth:
 	return %Regrowth
+
+
+## 날짜 · 낮밤 시계. 시간은 섬(island.time)에 있다.
+func clock() -> WorldClock:
+	return %Clock
 
 
 func picker() -> Picker:

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="DayNightConfig" format=3]
+
+[ext_resource type="Script" path="res://world/day_night/day_night_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+day_seconds = 1200.0
+daytime_seconds = 600.0
