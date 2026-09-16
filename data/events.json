@@ -2659,5 +2659,91 @@
   "attempt": "1",
   "title": "G-009 2/6 월드 설정 — 서버장만 — 통과 (시도 1)",
   "commit": "9fd785b"
+ },
+ {
+  "time": "2026-09-17 03:14:57 KST",
+  "epoch": 1789582497,
+  "report": {
+   "status": "done",
+   "summary": "G-009.3 데스 상자 — 페널티 켬이면 죽은 자리에 가방 전부를 담은 상자, 30분 뒤 소멸 · 창이 열린 동안 멈춤 · 본인만 열기 · 월드 저장",
+   "problem": "죽음에 데스 상자를 붙여야 했다. 필요한 것: 죽은 자리에 상자를 만들고 아이템을 옮기기, 30분 타이머(창이 열린 동안 멈춤), 죽은 본인만 열기, 페널티 끔이면 아무 일 없음, 월드 저장, 테스트에서 시간을 빠르게 돌리기. 그런데 캐릭터에 '누구인가'를 가릴 id 가 없었다. 첫 테스트 실행에서는 상자를 다 비워 사라진 뒤에도 창이 한 프레임 열려 있었다. 창이 노드가 트리에서 빠질 때(queue_free 뒤)에야 닫혔기 때문이다.",
+   "feedback_applied": "",
+   "approach": "1) CharacterData 에 id(무작위 16진수)를 넣었다. 만들 때 정하고 저장에 남긴다. id 가 없는 옛 저장은 불러올 때 새 id 를 받고, 다음 저장에 남는다. 2) DeathChest(Node2D): 주인 id · 아이템 · 남은 초 · 보고 있는 창 수를 가진다. 창이 하나라도 열려 있으면 tick 이 시간을 줄이지 않는다. 0 이 되면 아이템을 비우고 expired 신호를 보낸 뒤 사라진다. take/take_all 은 주인이 아니면 0 을 돌려주고, 다 꺼내면 emptied 신호를 보내고 사라진다. 3) DeathChests(관리자): Player.died 를 듣는다. 죽는 순간 월드 설정을 읽고, 켜져 있으면 가방 전부(핫바 포함)를 비워 죽은 자리에 상자를 만든다. 우클릭 오브젝트로 Interactor 에 붙였고, 닿는 거리 안의 내 상자를 먼저 연다. 남의 상자면 refused 신호를 보내고 거부한다. 시간은 _process 의 delta × time_scale 로 흐르고, 테스트용으로 advance(초)도 있다. 멀어지면 창을 닫는다. to_list/load_list 로 저장한다. 4) DeathChestView(ui/combat): 칸 목록 · 남은 시간 · 모두 꺼내기 버튼이 있다. 열 때 set_viewing(true), 닫을 때 false 를 부른다. 상자의 emptied/expired 신호를 받으면 바로 닫는다(위 문제의 해결). Esc 와 가방 키로 닫고, 열려 있으면 클릭을 막는다(ui_blocks_click). 5) WorldData.death_chests 에 주인 · 위치 · 아이템 · 남은 초를 저장하고, 틀린 항목은 버린다. 6) 타이머 1800초는 DamageConfig.death_chest_seconds 한 곳에 두었다. 7) 번역 키 DEATH_CHEST_TITLE/TIME/TAKE_ALL 을 한국어 · 영어로 넣었다. 8) 테스트 16개를 더했다: 상자 생성과 아이템 이동, 두 번 죽으면 상자 둘, 페널티 끔, 게임 중 페널티 전환, 30분 뒤 소멸, 프레임 흐름과 배속, 열린 동안 멈춤과 닫으면 재개, 우클릭으로 열고 모두 꺼내기, 다른 캐릭터 id 로 열기 · 꺼내기 거부, 거리 밖, 나갔다 들어와도 상자 · 남은 시간 · 주인 유지, 저장 파일 왕복과 깨진 값. 전체 393개 테스트와 guard.sh 가 통과한다.",
+   "why": "주인 판별에는 캐릭터 이름 대신 id 를 골랐다. 이름은 겹칠 수 있고, 나중에 리슨 서버에서 손님을 가릴 때도 같은 값을 쓸 수 있다. '다른 플레이어'는 아직 접속 경로가 없다. 그래서 open/take 가 여는 사람의 id 를 인자로 받게 해, 다른 CharacterData 의 id 로 거부를 흉내 냈다. 타이머는 current.md 의 임시 결정대로 월드가 돌아가는 동안의 실제 시간(프레임 delta)이고, 게임 시계(island.time)와는 묶지 않았다. 불러올 때 남은 시간은 설정값을 넘지 않게 자른다. 창이 열린 동안의 멈춤은 '보고 있는 창 수'로 셌다. bool 대신 수를 센 이유는, 나중에 여러 사람이 볼 때도 한 명이 닫았다고 시간이 다시 흐르지 않게 하기 위해서다. 가방이 비어 있으면 상자를 만들지 않았다. 잃을 것이 없는 빈 상자는 바닥만 어지럽히고, 나중에 바꾸기도 싸다. 다 꺼낸 상자도 바로 없앤다. 버린 대안: 상자를 CraftStation 처럼 칸을 막는 StaticBody 로 만드는 것 — 죽은 자리가 칸 경계일 수 있어 몸이 끼일 위험이 있고, spec 에 막는다는 말도 없다. 담기는 범위(인벤토리 전부, 핫바 포함)는 사람 확인 전 임시이고, drop_for 한 곳만 고치면 바뀐다.",
+   "files": [
+    "game/settings/save/character_data.gd",
+    "game/settings/save/world_data.gd",
+    "game/combat/damage_death/damage_config.gd",
+    "game/combat/damage_death/damage_config.tres",
+    "game/combat/damage_death/death_chest.gd",
+    "game/combat/damage_death/death_chests.gd",
+    "game/ui/combat/death_chest_view.gd",
+    "game/ui/combat/death_chest_view.tscn",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/combat/damage_death/death_chest_test_base.gd",
+    "game/tests/combat/damage_death/test_death_chest.gd",
+    "game/tests/combat/damage_death/test_death_chest_save.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "페널티 켬 — 죽으면 죽은 자리에 상자가 생기고 가진 아이템이 상자로 옮겨진다. 여러 번 죽으면 상자도 여러 개다",
+     "ok": true,
+     "evidence": "DeathChests.drop_for (death_chests.gd) 가 Player.died(at) 에서 가방 전부(핫바 포함)를 비워 그 위치에 DeathChest 를 만든다. test_penalty_on_drops_chest_with_whole_bag_at_death_spot (위치 · 주인 id · 핫바 도끼 · 가방 뒤 칸 돌 · 나무 · 가방 비움 · 손 비움), test_dying_twice_leaves_two_chests (상자 2개, 아이템 중복 없음). 직접 돌린 임시 테스트에서 창을 연 채 다시 죽어도 상자가 2개가 되고, 창이 닫히며 타이머가 다시 흐르는 것을 확인했다"
+    },
+    {
+     "criterion": "30분이 지나면 상자와 아이템이 사라진다. 상자 창이 열려 있는 동안은 시간이 줄지 않고, 닫으면 다시 준다",
+     "ok": true,
+     "evidence": "DamageConfig.death_chest_seconds=1800 (한 곳). test_chest_and_items_vanish_after_thirty_minutes (1초 전에는 남아 있고 1800초에 expired · 아이템 비움 · 노드 제거), test_open_window_pauses_timer_and_closing_resumes (advance 와 프레임 모두 열린 동안 멈춤, Esc 로 닫으면 10초 줄어듦), test_out_of_reach...(멀어지면 창이 닫히고 타이머 재개)"
+    },
+    {
+     "criterion": "죽은 본인만 상자를 열고 꺼낼 수 있다 (다른 플레이어는 거부 — 테스트로 흉내)",
+     "ok": true,
+     "evidence": "DeathChest.can_open(who_id) 로 open/take/take_all 모두 막는다. test_other_player_is_refused (다른 CharacterData id 로 열기 · take · take_all 이 거부되고 refused 신호가 나며, 타이머도 멈추지 않는다. 빈 id 도 거부), test_right_click_on_someone_elses_chest_is_refused, test_owner_opens_and_takes_everything (우클릭 → 모두 꺼내기 → 빈 상자 사라짐 · 창 닫힘)"
+    },
+    {
+     "criterion": "페널티 끔 — 죽어도 인벤토리가 그대로이고 상자가 생기지 않는다",
+     "ok": true,
+     "evidence": "drop_for 가 is_penalty_on() 이 거짓이면 null 을 돌려준다. test_penalty_off_keeps_bag_and_drops_nothing (가방 · 든 도끼 그대로, 상자 0), test_switching_penalty_mid_game_applies_to_next_death"
+    },
+    {
+     "criterion": "상자와 남은 시간이 월드 저장에 남는다",
+     "ok": true,
+     "evidence": "WorldData.death_chests 와 GameScene.store_world_state/load_list. test_chests_and_time_left_survive_leaving_and_reentering (나갔다 들어와도 상자 2개 · 위치 · 주인 · 남은 시간 1200초 · 아이템이 남고, 다시 열어 꺼낼 수 있다), test_expired_chest_is_gone_after_reload, test_world_data_round_trip_and_broken_entries, test_old_character_save_without_id_gets_one_that_sticks. 임시 테스트로 창을 연 채 저장해도, 다시 들어오면 타이머가 흐르는 것을 확인했다"
+    },
+    {
+     "criterion": "테스트는 시간을 빠르게 돌릴 수 있다",
+     "ok": true,
+     "evidence": "DeathChests.time_scale 과 advance(seconds). test_time_runs_by_frames_and_can_be_sped_up 에서 프레임으로 시간이 흐르고, 배속을 주면 사라진다"
+    }
+   ],
+   "issues": [
+    "가방이 비어 있으면 페널티가 켜져 있어도 상자를 만들지 않는다. 기준('가진 아이템이 옮겨진다')과 어긋나지 않고 report 에도 적혀 있지만, 이 동작을 확인하는 테스트는 없다",
+    "DeathChests.open(null, id) 는 refused 신호를 chest=null 로 보낸다. 받는 쪽이 null 을 가정하지 않으면 문제가 될 수 있다 (사소)",
+    "상자 창에는 '모두 꺼내기'만 있고, 칸을 하나씩 꺼내는 입력은 없다 (DeathChest.take(i) 는 있다). 기준은 충족한다",
+    "add_chest 의 이름 'DeathChest_%d' % get_child_count() 는 queue_free 대기 중인 노드와 겹칠 수 있다. Godot 이 자동으로 이름을 바꾸므로 기능 문제는 아니다"
+   ],
+   "good": [
+    "주인을 이름이 아닌 CharacterData.id 로 가렸다. id 가 없는 옛 저장은 새 id 를 받고, 다음 저장에 남는다",
+    "보고 있는 창 수(_viewers)로 멈춤을 세어, 나중에 여러 사람이 볼 때도 확장할 수 있다. 같은 상자를 다시 열어도 두 번 세지 않는다",
+    "빈 상자나 소멸한 상자의 신호를 받으면 창이 바로 닫힌다. 멀어져도 닫힌다. 창이 열려 있으면 클릭을 막고 Esc 순서에도 들어 있다",
+    "화면 글자는 모두 번역 키(ko/en)다. 수치는 DamageConfig 한 곳에 있고, 테스트가 1800 하드코딩을 검사한다. 모든 파일이 300줄 이하다",
+    "기존 테스트는 삭제 · 완화되지 않았다. 전체 393개 통과, guard.sh 통과. report 내용이 실제 diff 와 맞는다"
+   ],
+   "feedback": ""
+  },
+  "test": "40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 56.2 ms (game _ready 37.0 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              52\nTests               393\nPassing Tests       393\nAsserts           14185\nTime              54.11s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-009",
+  "step": "3",
+  "attempt": "1",
+  "title": "G-009 3/6 데스 상자 — 통과 (시도 1)",
+  "commit": "533bbad"
  }
 ]

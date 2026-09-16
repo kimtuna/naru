@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 03:12:21 KST",
- "updated_epoch": 1789582341,
+ "updated": "2026-09-17 03:14:57 KST",
+ "updated_epoch": 1789582497,
  "progress": {
   "groups_total": 14,
   "groups_done": 11,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 32
+  "steps_done": 33
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-009",
  "group_title": "전투",
- "step": "3",
+ "step": "4",
  "step_total": "6",
- "step_title": "데스 상자",
+ "step_title": "도구 근접 공격",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 03:12:21"
+ "phase": "구현",
+ "phase_since": "2026-09-17 03:14:57"
 }
