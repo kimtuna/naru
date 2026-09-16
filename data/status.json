@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 22:29:14 KST",
- "updated_epoch": 1789565354,
+ "updated": "2026-09-16 22:30:40 KST",
+ "updated_epoch": 1789565440,
  "progress": {
   "groups_total": 9,
-  "groups_done": 2,
+  "groups_done": 3,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 11
+  "steps_done": 12
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-003",
- "group_title": "조작",
- "step": "4",
- "step_total": "4",
- "step_title": "핫바",
+ "group": "G-004",
+ "group_title": "섬 · 자원",
+ "step": "1",
+ "step_total": "5",
+ "step_title": "시드로 섬 만들기",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 22:29:14"
+ "phase": "구현",
+ "phase_since": "2026-09-16 22:30:40"
 }
