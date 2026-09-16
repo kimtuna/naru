@@ -17,6 +17,7 @@ var facing := Vector2.RIGHT
 func _ready() -> void:
 	if tuning == null:
 		tuning = MovementTuning.load_default()
+	DisplayConfig.lock_camera(%Camera)
 
 
 func _physics_process(_delta: float) -> void:

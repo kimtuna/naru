@@ -33,4 +33,3 @@ color = Color(1, 1, 1, 1)
 
 [node name="Camera" type="Camera2D" parent="."]
 unique_name_in_owner = true
-zoom = Vector2(3, 3)
