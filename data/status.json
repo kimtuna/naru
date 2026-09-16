@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 21:31:21 KST",
- "updated_epoch": 1789561881,
+ "updated": "2026-09-16 21:32:27 KST",
+ "updated_epoch": 1789561947,
  "progress": {
   "groups_total": 1,
   "groups_done": 0,
@@ -20,6 +20,6 @@
  "step_total": "3",
  "step_title": "Godot 프로젝트 만들기",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 21:31:21"
+ "phase": "QA",
+ "phase_since": "2026-09-16 21:32:27"
 }
