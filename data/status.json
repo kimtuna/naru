@@ -1,11 +1,11 @@
 {
- "updated": "2026-09-17 00:02:03 KST",
- "updated_epoch": 1789570923,
+ "updated": "2026-09-17 00:04:23 KST",
+ "updated_epoch": 1789571063,
  "progress": {
-  "groups_total": 9,
+  "groups_total": 11,
   "groups_done": 5,
   "groups_waiting": 0,
-  "steps_total": 31,
+  "steps_total": 35,
   "steps_done": 20
  },
  "state": "running",
@@ -19,7 +19,7 @@
  "step": "2",
  "step_total": "3",
  "step_title": "제작대 설치와 열기",
- "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 00:02:03"
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-17 00:04:23"
 }
