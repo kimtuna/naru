@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 05:50:01 KST",
- "updated_epoch": 1789591801,
+ "updated": "2026-09-17 05:52:17 KST",
+ "updated_epoch": 1789591937,
  "progress": {
   "groups_total": 14,
   "groups_done": 13,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 41
+  "steps_done": 42
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-014",
  "group_title": "등반 — 스파이크 · 기력 · 앵커 · 갈고리총",
- "step": "2",
+ "step": "3",
  "step_total": "4",
- "step_title": "절벽 이동과 기력",
+ "step_title": "앵커",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 05:50:01"
+ "phase": "구현",
+ "phase_since": "2026-09-17 05:52:17"
 }

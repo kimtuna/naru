@@ -3368,5 +3368,89 @@
   "attempt": "1",
   "title": "G-014 1/4 신발 칸과 스파이크 — 통과 (시도 1)",
   "commit": "b58277b"
+ },
+ {
+  "time": "2026-09-17 05:52:17 KST",
+  "epoch": 1789591937,
+  "report": {
+   "status": "done",
+   "summary": "절벽 이동과 기력 — 스파이크로 절벽 통과 · 기력 막대(초록/주황/빨강) · 0 뒤 여유 · 아래로 낙하와 낙하 피해",
+   "problem": "절벽 칸은 자원·바다와 같은 충돌 몸체에 들어 있어 누구도 지나갈 수 없었다. 스파이크를 낀 캐릭터만 절벽을 지나가게 하고, 절벽에서 움직일 때만 기력을 쓰고, 기력이 0 이 된 뒤 여유를 넘기면 아래쪽 걸을 수 있는 칸까지 떨어뜨려 피해를 줘야 했다. 구현하다 두 가지에 부딪혔다: (1) CharacterBody2D.get_position_delta() 는 호출 시점에 계산돼 순간이동도 '움직임'으로 셌다 (2) 기존 테스트 두 개가 chunk.body() 하나에 절벽 충돌까지 있다고 가정했다.",
+   "feedback_applied": "",
+   "approach": "① 충돌 분리: IslandMap.is_solid(바다·섬 밖·자원) 추가, is_blocked = is_solid 또는 절벽 (설치·밭 판정은 그대로). IslandChunk 가 Body(레이어 1)와 CliffBody(레이어 ClimbingConfig.CLIFF_LAYER=2) 두 몸체를 만든다. 플레이어·몹 collision_mask=3, 플레이어는 매 물리 걸음 스파이크를 끼었으면 절벽 레이어를 마스크에서 뺀다. ② life/climbing/: ClimbingConfig(.tres) 에 기력 최대 100 · 절벽에서 움직일 때 초당 20 감소 · 절벽 밖 초당 40 회복 · 주황 60% 미만 · 빨강 30% 미만 · 여유 20(기력 단위, 약 1초 이동) · 절벽 이동 속력 40px/s · 낙하 속력 240px/s · 낙하 피해 20 을 모았다. Stamina 는 tick(delta, on_cliff, moving) 으로 줄고/차고, 0 이 된 뒤 쓴 양(overdraw)이 grace 를 넘으면 떨어지라고 알린다. Climber 노드는 캐릭터 칸이 절벽인지 보고 기력을 흘리고, 떨어질 때 같은 열에서 아래(+y)로 처음 나오는 is_blocked 가 아닌 칸을 찾아 입력을 막고(Player.falling) 그 칸까지 내려보낸 뒤 fall_damage 를 준다. 아래에 칸이 없으면 스폰 지점에 떨어진다. 절벽 위에서 스파이크를 빼도 떨어진다. 죽어서 다시 시작하면 기력이 가득 찬다. ③ Player: 절벽 칸에서는 climb_speed(×버프), 움직임은 move_and_slide 직후 기록한 last_motion 으로 판단(순간이동은 안 셈). ④ HUD StaminaView: 캐릭터 바로 아래 막대, 절벽에 있거나 덜 찼을 때만 보이고 색은 zone 에 따라 바뀐다. 글자는 없다. ⑤ 테스트: test_stamina.gd(감소/정지/회복, 색 경계, 초록→주황→빨강 순서, 빨강만으로는 안 떨어짐, 여유, 수치가 한 곳의 설정에서 옴), test_climbing_game.gd(스파이크 없을 때 4방향 막힘/있을 때 진입, 절벽 속력, 막대 표시·감소·정지 유지·회복·숨김, 막대 색 3단계, 0 이 된 순간엔 안 떨어지고 여유를 넘긴 그 걸음에 떨어짐, 낙하 중 옆 입력 무시, 아래 첫 걸을 수 있는 칸에 착지, 착지 때만 피해, 절벽에서 스파이크 빼면 낙하).",
+   "why": "절벽을 물리 레이어로 뗀 이유: 캐릭터마다 스파이크 유무가 다르므로(멀티) 지형 충돌을 다시 만들지 않고 캐릭터의 마스크만 바꾸는 게 싸고 정확하다. 몹은 마스크 3 이라 절벽을 못 지난다. 버린 대안: 스파이크를 끼면 청크 몸체를 통째로 예외 처리(자원 충돌까지 사라짐), 청크를 다시 만들기(캐릭터마다 다를 수 없음). 여유를 '기력 단위'로 둔 이유: 움직일 때만 쓰므로 '멈추면 안 떨어진다'가 자연스럽게 지켜지고, 감소 속도를 바꿔도 여유가 움직인 거리 기준으로 유지된다. '아래쪽'은 화면 아래(+y) 로 정했다 — 탑다운이라 시점을 안 바꾸는 spec 과 맞고, 줄 끊기도 같은 규칙('아래로 밟을 수 있는 칸')이라 재사용한다. 착지 칸은 is_blocked 기준이라 자원·바다·절벽 칸에는 내리지 않는다. 낙하 피해는 높이와 상관없이 고정 20 (임시, 나중에 바꾸기 쌈). 모든 수치는 spec 에서 미정이라 임시 값이다 — 특히 '멈춰 있으면 줄지 않고, 절벽을 벗어나면 차오른다'는 수용 기준이 임시라 명시한 규칙이다(사람 확인 필요). 기존 테스트 두 곳(test_island_view.gd, test_island_cliffs.gd)은 충돌이 두 몸체로 나뉘어 chunk.body() 대신 chunk.collision_shapes()(두 몸체 합)를 보게 바꿨다 — '충돌이 막힌 칸을 정확히 덮는다'는 검사 강도는 그대로다. 절벽 막대 색은 디자인이라 StaminaView 상수에 두고, 색 경계 값은 설정에 뒀다.",
+   "files": [
+    "game/life/climbing/climbing_config.gd",
+    "game/life/climbing/climbing_config.tres",
+    "game/life/climbing/stamina.gd",
+    "game/life/climbing/climber.gd",
+    "game/ui/hud/stamina_view.gd",
+    "game/ui/hud/stamina_view.tscn",
+    "game/player/player.gd",
+    "game/player/player.tscn",
+    "game/combat/mob_ai/mob.tscn",
+    "game/world/island/island_map.gd",
+    "game/world/island/island_chunk.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/life/climbing/test_stamina.gd",
+    "game/tests/life/climbing/test_climbing_game.gd",
+    "game/tests/world/island/test_island_view.gd",
+    "game/tests/world/island/test_island_cliffs.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "스파이크가 없으면 절벽 칸에 들어갈 수 없고, 있으면 들어가 움직일 수 있다",
+     "ok": true,
+     "evidence": "island_chunk.gd 가 절벽 칸을 CliffBody(레이어 ClimbingConfig.CLIFF_LAYER=2)로 분리하고, player.gd:56 이 스파이크를 끼면 마스크에서 그 레이어를 뺀다. player/mob .tscn 은 collision_mask=3. test_without_spikes_cliff_blocks_and_with_spikes_it_is_entered(4방향, 스파이크 있음·없음)와 test_moves_on_cliff_at_climb_speed 가 통과한다. 검증용으로 마스크 토글을 항상 true 로 바꿔 보니 5개 테스트가 실패했다(되돌려 놓음)."
+    },
+    {
+     "criterion": "절벽에서 움직이는 동안 기력이 화면에 나타나고 줄어든다. 멈춰 있으면 줄지 않고, 절벽을 벗어나면 차오른다 (임시 — report 에 적는다)",
+     "ok": true,
+     "evidence": "Stamina.tick(delta, on_cliff, moving) 이 이 규칙을 따른다. StaminaView 는 절벽에 있거나 기력이 덜 찼을 때 보인다. test_drains_only_while_moving_on_cliff, test_stamina_shows_drains_holds_and_refills(표시 → 감소 → 막대 비율 일치 → 멈추면 그대로 → 절벽 밖에서 회복 → 가득 차면 숨김)가 통과한다. report 의 why 에 임시 규칙이라고 적혀 있다. '멈춰 있어도 준다'로 바꿔 보니 3개 테스트가 실패했다."
+    },
+    {
+     "criterion": "기력 표시가 남은 양에 따라 초록 → 주황 → 빨강으로 바뀐다 (사람 결정)",
+     "ok": true,
+     "evidence": "Stamina.zone() 은 orange_below=0.6 · red_below=0.3 을 기준으로 나누고, StaminaView.ZONE_COLORS 가 색을 칠한다. test_zone_follows_thresholds(경계값 포함), test_zone_changes_in_order_while_climbing(순서가 정확히 G→O→R), test_bar_color_green_orange_red(실제 게임 막대 색) 가 통과한다."
+    },
+    {
+     "criterion": "빨강 구간에서 바로 떨어지지 않는다. 기력이 다 떨어진 뒤에도 조금 여유가 있고, 그 여유를 넘겨 더 움직이면 아래쪽으로 걸을 수 있는 칸이 나올 때까지 떨어지며 낙하 피해를 받는다 (사람 결정)",
+     "ok": true,
+     "evidence": "Stamina.overdraw 가 grace 를 넘으면 떨어지고, Climber.landing_cell 은 +y 쪽에서 처음 나오는 !is_blocked 칸을 찾는다. _land 에서 fall_damage 를 준다. test_red_zone_alone_never_falls, test_grace_after_empty_before_fall, test_falls_only_after_grace_then_lands_below_with_damage(0 이 된 순간에는 안 떨어짐, 여유를 넘긴 걸음에 떨어짐, 낙하 중에는 옆 입력을 무시, 첫 걸을 수 있는 칸에 착지, 착지할 때만 피해) 가 통과한다. 여유를 없애는 버그를 넣어 보니 3개 테스트가 실패했다."
+    },
+    {
+     "criterion": "기력 · 색 경계 · 여유량 · 절벽 이동 속력 · 낙하 피해 값은 한 곳에 있다",
+     "ok": true,
+     "evidence": "life/climbing/climbing_config.gd/.tres 에 max_stamina · drain · regen · orange_below · red_below · grace · climb_speed · fall_speed · fall_damage 가 모여 있다. Climber · Stamina · Player 는 이 설정 값을 읽어서 쓴다. test_values_live_in_one_config 가 통과한다. 코드에 따로 박힌 수치는 없다(MOVE_EPS 는 판정용 엡실론이다)."
+    }
+   ],
+   "issues": [
+    "플레이어가 절벽 칸에 몸 일부만 걸친 채(중심은 절벽 밖) 스파이크를 빼면, Climber 는 중심 칸만 보므로 떨어뜨리지 않는다. 그런데 절벽 충돌 마스크는 다시 켜져서 몸이 충돌 안에 겹칠 수 있다. 지금 기준 밖이지만, 3단계(앵커)에서 절벽 가장자리 동작을 만질 때 확인해야 한다",
+    "착지할 칸이 아래에 없으면 스폰 지점으로 순간이동한 뒤 피해를 받는다. spec 에 없는 임시 처리인데 report 의 approach 에만 적혀 있고 why 에는 이유가 없다",
+    "report 에 적힌 '죽어서 다시 시작하면 기력이 가득 찬다'(Climber._on_respawned)를 검사하는 테스트가 없다",
+    "test_taking_off_spikes_on_cliff_drops 의 assert 가 'is_falling() or 절벽이 아님' 이라 느슨하다. 낙하 피해나 착지 칸은 확인하지 않는다",
+    "Climber 는 플레이어를 하나만 다룬다. 멀티플레이 단계에서 캐릭터마다 하나씩 두도록 나눠야 한다 (지금 단계 밖)"
+   ],
+   "good": [
+    "충돌을 물리 레이어로 나눠 캐릭터 마스크만 바꾸는 설계라, 지형을 다시 만들지 않고 캐릭터마다 다르게 처리할 수 있다. 몹은 그대로 절벽을 못 지나간다",
+    "여유를 '기력 단위의 overdraw'로 둬서 '멈추면 안 떨어진다'가 자연스럽게 지켜진다",
+    "기존 테스트 수정(chunk.body() → chunk.collision_shapes())은 충돌이 두 몸체로 나뉜 데 맞춘 것일 뿐이고, 검사 강도는 그대로다",
+    "일부러 넣은 버그 세 가지(스파이크 무시 · 여유 없음 · 멈춰도 감소)를 테스트가 모두 잡았다",
+    "전체 테스트 471/471 통과, 파일은 모두 300줄 이하, 화면에 박힌 글자 없음"
+   ],
+   "feedback": ""
+  },
+  "test": "hysics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 124.2 ms (game _ready 106.0 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              67\nTests               471\nPassing Tests       471\nAsserts           30037\nTime              175.598s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-014",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-014 2/4 절벽 이동과 기력 — 통과 (시도 1)",
+  "commit": "48e14ed"
  }
 ]
