@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 00:44:49 KST",
- "updated_epoch": 1789573489,
+ "updated": "2026-09-17 00:47:12 KST",
+ "updated_epoch": 1789573632,
  "progress": {
   "groups_total": 14,
   "groups_done": 7,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 24
+  "steps_done": 25
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-011",
  "group_title": "좌클릭 평타 · 우클릭 상호작용",
- "step": "1",
+ "step": "2",
  "step_total": "2",
- "step_title": "좌클릭 평타",
+ "step_title": "우클릭 상호작용",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 00:44:49"
+ "phase": "구현",
+ "phase_since": "2026-09-17 00:47:12"
 }

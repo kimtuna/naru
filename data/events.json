@@ -1990,5 +1990,109 @@
   "type": "group_done",
   "group": "G-010",
   "title": "G-010 화면 배율 — 보이는 범위 고정 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-17 00:47:12 KST",
+  "epoch": 1789573632,
+  "report": {
+   "status": "done",
+   "summary": "G-011.1 좌클릭 평타 — 무엇을 들든 바라보는 방향 앞을 휘두르고, 맞지 않는 도구·맨손은 느리게 캔다",
+   "problem": "좌클릭 채취(Harvester)가 커서가 가리키는 칸 하나만 쳤고, 맞지 않는 조합(도끼→돌, 곡괭이→나무, 나무 들고 치기)은 아무 일도 안 했다. 휘두르는 간격·도달 거리가 채취 설정에 묶여 있었고, 몹이 맞을 경로가 없었다. 기존 테스트 일부(test_mismatched_combinations_do_nothing, 커서 칸 기준 클릭 테스트)는 바뀐 사람 결정(2026-09-17)과 정면으로 어긋났다.",
+   "feedback_applied": "",
+   "approach": "1) player/swing/ 을 새로 만들었다: SwingConfig(.tres — swing_interval · reach_tiles · arc_degrees 120 · show_time, 평타 수치는 여기 한 곳), SwingTarget(위치 · 반지름 · on_hit(item) · what), SwingAim(대상 고르기 — 앞 부채꼴 + 도달 거리 안에서 ① 바라보는 선이 지나는 대상 중 가장 가까운 것, 앞의 것이 뒤를 가림 ② 없으면 각이 가장 작은 것), Swinger(좌클릭 쥐기 · 간격 · blocked · 휘두른 표시. add_source(Callable) 로 등록된 출처에서 후보를 모아 SwingAim 으로 고르고 손에 든 것으로 on_hit). 2) Harvester 는 입력 처리를 버리고 targets_near(origin, reach) 로 손 둘레 자원 칸을 SwingTarget 으로 내놓는 출처가 됐다. hit(cell, item): 맞는 도구는 tool_power, 그 밖(맞지 않는 도구 · 맨손 · 아무 아이템)은 slow_power. 3) HarvestConfig: RIGHT_TOOLS(도끼→나무, 곡괭이→돌·광물), REQUIRED_TOOLS(광물→곡괭이만, 임시), hand_power→slow_power. 도달 거리 · 간격은 SwingConfig 로 옮겼다. 4) Player 에 휘두른 표시(%Swing, 조준 방향으로 돈다). 게임 씬에 Swinger 노드를 Stations 보다 앞에 두어 제작대 클릭이 먼저 먹는 순서를 지켰다. 가방 · 제작 화면이 열리면 blocked. Stations 도달 거리도 SwingConfig 를 쓴다. 5) 테스트: test_swing_aim(앞/뒤/옆/거리/가림/순서 무관/수치 한 곳), test_swinger(무엇을 들든 실제 클릭마다 바라보는 방향으로 휘두름, 표시가 켜졌다 꺼짐, 쥐면 간격대로, 커서가 대상 위에 없어도 맞음, 앞이라도 거리 밖은 안 맞음, 도끼 · 맨손으로 돌은 곡괭이보다 느림, 맨손 · 도끼로 광물은 맞아도 진행 없음, 가짜 몹 출처가 같은 경로로 맞고 뒤의 나무를 가림, 가방 · 제작 화면이 열린 동안 휘두르지 않음). tools/test.sh 288/288 통과, harness/guard.sh 통과.",
+   "why": "몹(G-009)이 같은 판정을 쓰려면 '무엇이 맞나'가 자원 코드 밖에 있어야 해서 대상을 Callable 출처로 받는 구조로 했다 — 몹 목록은 add_source 한 줄로 붙는다. 버린 대안: 물리 쿼리(Area2D)로 맞히기 — 자원 칸은 덩어리별 충돌이라 칸 단위 대상을 되찾기 번거롭고 테스트가 물리 프레임에 묶인다. 커서 칸을 먼저 치는 방식도 버렸다 — 수용 기준이 '커서와 상관없이 바라보는 방향 앞'이고, 바라보는 방향이 이미 커서 쪽이라 커서 위 대상은 선 위 규칙으로 자연히 맞는다. 광물은 곡괭이가 있어야 캐진다(임시): 수용 기준대로 했다. spec 에 '곡괭이 등급별 채굴 가능 대상 미정'이라 REQUIRED_TOOLS 한 곳에 두어 나중에 바꾸기 쉽다. 부채꼴 120° · 표시 0.15초도 임시 값(SwingConfig)이다. 기존 테스트 변경: '맞지 않는 조합은 아무 일도 없다'는 사람 결정(2026-09-17)으로 뒤집혀 '맞지 않는 도구는 느리지만 캔다' + '광물은 곡괭이만'으로 바꿨다(검사 강도는 유지하고 넓혔다). 커서 칸 기준 클릭 테스트는 '등 뒤를 보고 치면 안 맞고 앞을 보면 맞는다'로 바꿨다. is_holding 검사는 Swinger 로 옮겼고, 레시피 테스트의 TARGETS[HAND] 는 harvestable_by(HAND) 로 바꿨다(맨손으로 얻는 재료 = 나무 · 돌, 뜻은 같다). 남은 것: 제작대 열기 · 설치는 아직 좌클릭이 먼저 먹는다 — 2단계(우클릭 상호작용)에서 옮긴다. 총 · 갈고리총 '쏜다'는 그런 아이템이 아직 없어 이번 범위 밖이다.",
+   "files": [
+    "game/player/swing/swing_config.gd",
+    "game/player/swing/swing_config.tres",
+    "game/player/swing/swing_target.gd",
+    "game/player/swing/swing_aim.gd",
+    "game/player/swing/swinger.gd",
+    "game/life/harvest/harvester.gd",
+    "game/life/harvest/harvest_config.gd",
+    "game/life/harvest/harvest_config.tres",
+    "game/player/player.gd",
+    "game/player/player.tscn",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/craft/stations/stations.gd",
+    "game/core/input/input_actions.gd",
+    "game/tests/player/swing/test_swing_aim.gd",
+    "game/tests/player/swing/test_swinger.gd",
+    "game/tests/life/harvest/harvest_test_base.gd",
+    "game/tests/life/harvest/test_harvester.gd",
+    "game/tests/life/harvest/test_harvest_input.gd",
+    "game/tests/craft/stations/test_station_open.gd",
+    "game/tests/craft/stations/test_station_place.gd",
+    "game/tests/craft/recipes/test_recipe_book.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "무엇을 들었든(맨손 포함) 좌클릭하면 바라보는 방향으로 휘두른다. 휘두르는 간격 값은 한 곳에 있다",
+     "ok": true,
+     "evidence": "game/player/swing/swinger.gd — _unhandled_input(USE)→_physics_process→swing(), 대상이 없어도 swing_count·swung 신호·표시. test_swinger.gd::test_click_swings_whatever_is_held(맨손·도끼·곡괭이·나무·돌, 방향 5개를 실제 클릭으로 확인, swung 의 facing 이 조준 방향과 같음), test_holding_click_swings_at_the_configured_interval. 간격은 SwingConfig.swing_interval(swing_config.tres) 한 곳 — HarvestConfig 에서 swing_interval·reach_tiles 가 지워졌고 test_swing_aim.gd::test_swing_values_live_in_one_config 가 중복 없음을 검사. 변이 검사: 이 기준과 관련된 코드를 임시로 바꾸면 테스트가 실패했다(아래 참고)"
+    },
+    {
+     "criterion": "휘두르면 바라보는 방향 앞, 손 닿는 범위 안의 대상이 맞는다 — 커서가 대상 위에 정확히 있지 않아도 된다",
+     "ok": true,
+     "evidence": "SwingAim.pick(부채꼴 120° + reach, 선 위 우선·가까운 것이 가림·그다음 각이 작은 것). test_swing_aim.gd 가 앞/뒤/옆/거리 밖/선에서 비낀 대상/가림/순서 무관을 검사. test_swinger.gd::test_cursor_need_not_be_on_the_target(커서가 나무 칸이 아니고 200px 밖 0.3rad 비낀 곳 → 나무가 베임), test_target_out_of_reach_in_front_is_not_hit, test_harvest_input.gd::test_left_click_harvests_what_is_in_front(등 뒤로 겨누면 휘두르지만 안 맞음)"
+    },
+    {
+     "criterion": "자원을 치면 채취가 진행된다. 맞는 도구(도끼 → 나무, 곡괭이 → 돌 · 광물)는 빠르고, 맞지 않는 도구 · 맨손은 느리다. 광물은 곡괭이가 있어야 캐진다 (임시 — report 에 적는다)",
+     "ok": true,
+     "evidence": "HarvestConfig.RIGHT_TOOLS / REQUIRED_TOOLS / power_of(tool, deposit)(tool_power 3 · slow_power 1). test_harvester.gd::test_mismatched_tool_is_slower_than_the_right_tool(돌: 도끼·제작대·나무 < 곡괭이, 나무: 곡괭이·나무·맨손 < 도끼, 느려도 결국 캐고 드롭), test_ore_needs_a_pickaxe_and_empty_cells_do_nothing, test_swinger.gd::test_mismatched_tool_is_slow_and_ore_needs_pickaxe_through_swings(Swinger 경로). report.why 에 '광물은 곡괭이가 있어야 캐진다(임시)'가 적혀 있다. 변이 검사: slow_power=3 으로 바꾸면 실패"
+    },
+    {
+     "criterion": "맞는 대상을 고르는 코드는 몹도 같은 경로로 받을 수 있게 되어 있다 (G-009 가 쓴다)",
+     "ok": true,
+     "evidence": "Swinger.add_source(Callable(origin, reach) -> Array[SwingTarget]) + SwingTarget.on_hit(item). game.gd 에서 harvester().targets_near 를 같은 방식으로 등록. test_swinger.gd::test_mobs_are_hit_through_the_same_path — 가짜 몹 출처가 add_source 한 줄로 붙고, 앞의 몹이 뒤의 나무를 가리며 든 아이템(AXE)을 받고, 등 뒤 몹은 안 맞음"
+    },
+    {
+     "criterion": "가방 · 제작 화면이 열려 있는 동안은 휘두르지 않는다",
+     "ok": true,
+     "evidence": "game.gd: swinger().blocked = ui_blocks_click, Swinger._physics_process 가 is_blocked() 면 휘두르지 않음. test_swinger.gd::test_no_swing_while_bag_or_crafting_is_open(두 화면 각각 실제 클릭 → swing_count 그대로·나무 그대로·표시 꺼짐, 닫으면 베임). 변이 검사: is_blocked() 검사를 빼면 실패"
+    },
+    {
+     "criterion": "기계 테스트 · 가드",
+     "ok": true,
+     "evidence": "직접 실행: tools/test.sh 288/288 통과(exit 0), harness/guard.sh 통과. 변이 검사: Swinger 의 blocked 검사 제거 + slow_power=3 으로 바꾸면 tests/player/swing 에서 2개 실패 → 되돌렸고 cmp 로 원본과 같음을 확인, git status 는 처음과 같다"
+    },
+    {
+     "criterion": "기존 테스트 약화 여부",
+     "ok": true,
+     "evidence": "git diff: test_mismatched_combinations_do_nothing 는 사람 결정(2026-09-17, spec/04_life/logging.md·mining.md '다른 것으로 치면 느리다')과 맞게 '느리지만 캔다'로 바뀌고, 캘 수 없는 조합(광물·빈 칸)은 계속 '아무 일도 없다'로 검사. 커서 칸 클릭 테스트는 '등 뒤는 안 맞고 앞은 맞는다'로 바뀌며 assert 가 늘었다. 삭제·skip·기대값 낮춤 없음. is_holding 검사는 harvester()→swinger() 로 옮겨졌을 뿐 같은 뜻이다"
+    },
+    {
+     "criterion": "규칙 위반(화면 글자 하드코딩 · 흩어진 수치 · 300줄 · 단계 밖 기능)",
+     "ok": true,
+     "evidence": "새 파일 최대 246줄(test_swinger.gd), swinger.gd 100줄, harvester.gd 107줄. 화면 글자 추가 없음. 평타 수치는 swing_config.tres, 채취 수치는 harvest_config.tres. 우클릭·총은 손대지 않았다(2단계·범위 밖이라고 report 에 적혀 있음)"
+    }
+   ],
+   "issues": [
+    "제작대 열기 · 설치가 아직 좌클릭이다(Stations 가 Swinger 보다 먼저 입력을 먹음). spec 의 '좌클릭으로는 열리지 않는다'와 어긋나지만, report 에 적힌 대로 2단계(우클릭 상호작용)에서 옮길 일이다 — 2단계에서 꼭 옮기고, test_station_open.gd·test_station_place.gd 도 우클릭 기준으로 바꿔야 한다",
+    "Harvester.swing(cell) 은 이제 게임 코드에서 부르지 않고 테스트(harvest_test_base·test_harvester·test_harvest_save)만 쓴다 — 죽은 코드에 가깝다. 남겨도 되지만 '테스트용 헬퍼'라고 주석을 달거나 테스트가 hit(cell, player.held_item()) 을 쓰게 하는 편이 낫다 (판정에는 반영 안 함)",
+    "캘 수 없는 광물(맨손·도끼)도 맞는 대상이 되어 뒤의 자원을 가린다 — 의도라고 주석에 적혀 있고 임시 규칙이라 문제는 아니다. 사람이 플레이해 보고 판단할 부분",
+    "SwingTarget 반지름(tile/2)과 SwingAim 의 각도 여유값(0.0001)은 코드 안에 있다 — 튜닝 값이 아니라 규칙이라 괜찮지만, 몹 반지름이 생기면 SwingTarget.create 에 넘기는 값의 출처를 설정 파일로 모을 것",
+    "test_swinger.gd 의 var _used · before_each 가 파일 중간에 있다 — 읽기 불편하다(취향)"
+   ],
+   "good": [
+    "대상 고르기(SwingAim)·대상 출처(add_source Callable)·대상 처리(SwingTarget.on_hit)가 나뉘어 몹(G-009)이 한 줄로 붙는다 — 가짜 몹 출처로 실제 검증까지 했다",
+    "SwingAim 이 정적·순수 함수라 물리 프레임 없이 단위 테스트가 된다. 앞/뒤/옆/거리/가림/순서 무관을 다 다룬다",
+    "도달 거리·간격을 SwingConfig 한 곳으로 옮기고, HarvestConfig 에 중복이 없다는 것과 Stations 도 같은 설정을 쓴다는 것까지 테스트로 묶었다",
+    "기존 테스트를 바꿀 때 사람 결정을 근거로 들고 검사를 넓혔다(느려도 결국 캐고 드롭한다까지 확인)",
+    "실제 입력(클릭)으로 검사하는 테스트와 swing() 직접 호출 테스트가 섞여 있어 입력 경로와 규칙 둘 다 확인된다"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 47.6 ms (game _ready 39.2 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              40\nTests               288\nPassing Tests       288\nAsserts           13136\nTime              44.302s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-011",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-011 1/2 좌클릭 평타 — 통과 (시도 1)",
+  "commit": "99c44d9"
  }
 ]
