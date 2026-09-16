@@ -1655,5 +1655,87 @@
   "attempt": "2",
   "title": "G-006 2/3 제작대 설치와 열기 — 통과 (시도 2)",
   "commit": "f7c2ac2"
+ },
+ {
+  "time": "2026-09-17 00:15:26 KST",
+  "epoch": 1789571726,
+  "report": {
+   "status": "done",
+   "summary": "G-006.3 제작 타이머와 출력 버퍼 — 제작대마다 타이머 · 버퍼 · 수령, 월드 저장, 레시피별 임시 5초 표시",
+   "problem": "제작대를 열어 목록만 보던 상태에서, 제작을 시작하면 재료를 쓰고 타이머가 돈 뒤에야 결과물이 출력 버퍼에 생기고, 수령해야 가방으로 가며(가방이 차면 남는 몫은 버퍼에 남음), 진행 중인 제작과 버퍼가 월드 저장에 남아야 했다. 가방에는 아이템을 빼는 기능이 없었고, 기존 저장 테스트는 제작대 저장 값을 {id, cell} 로 딱 맞춰 비교하고 있었다.",
+   "feedback_applied": "",
+   "approach": "CraftStation 에 job({recipe, left, output})과 buffer([{id,count}])를 두고 start(재료 확인 후 가방에서 소비) · tick(_process 에서 delta 만큼, 0 이 되면 버퍼에 넣음) · collect(Inventory.add 가 못 넣은 몫은 버퍼에 남김)를 만들었다. Inventory.remove 를 추가했다(뒤 칸부터 빼 핫바를 덜 건드림, 모자라면 하나도 안 뺌). 저장은 CraftStation.to_dict 에 job/buffer 를 있을 때만 넣고 Stations.load_list 가 load_state 로 되살린다. recipes.json 의 각 레시피에 time 5.0 과 time_temp: true 를 두고 RecipeBook 이 time_temp 를 읽는다. 제작 화면은 레시피 줄을 버튼으로 바꾸고(재료 없음 · 제작 중이면 비활성), 진행 상태 · 버퍼 목록 · 수령 버튼을 더했다. 새 글자는 ko/en 번역 키로 넣었다. 테스트 8개(test_craft_timer.gd)가 각 수용 기준과 화면 버튼 흐름을 검사한다.",
+   "why": "타이머를 세계 시계가 아니라 제작대 자신의 _process 에 둔 것은, 버퍼를 나중에 드론 · 주민이 그대로 꺼내 가는 구조(spec)에 맞게 제작대 하나가 스스로 완결되게 하려는 것이다. job 에 output 을 함께 저장해 불러올 때 레시피 책이 없어도 끝낼 수 있게 했다. job/buffer 를 비어 있을 때 저장하지 않은 것은 저장을 작게 하고 G-006.2 의 저장 테스트를 바꾸지 않기 위해서다. 한 번에 한 제작만(대기열 없음)으로 한 것은 spec 에 대기열이 없고 나중에 넣기 싸기 때문이다. 버퍼 최대 칸 수는 spec 미정이라 제한하지 않았다. 버리지 않고 보류한 것: 같은 방 상자 재료 사용(방 판정이 아직 없어 이번 단계 기준 밖), 맨손(hand) 레시피 제작 화면(이번 기준 밖). 창을 닫아 둔 동안(월드 밖) 시간은 흐르지 않는다 — 남은 초를 그대로 저장한다. 버튼은 focus_mode 없음으로 두어 게임 키를 빼앗지 않게 했다.",
+   "files": [
+    "game/craft/recipes/recipes.json",
+    "game/craft/recipes/recipe_book.gd",
+    "game/craft/stations/craft_station.gd",
+    "game/craft/stations/stations.gd",
+    "game/player/inventory/inventory.gd",
+    "game/settings/save/world_data.gd",
+    "game/ui/craft/crafting_view.gd",
+    "game/ui/craft/crafting_view.tscn",
+    "game/world/game.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/craft/stations/test_craft_timer.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "제작을 시작한 직후 결과물은 버퍼에 없고, 타이머가 끝나야 버퍼에 생긴다",
+     "ok": true,
+     "evidence": "CraftStation.start 는 job 만 만들고, tick 에서 left<=0 이 될 때 add_to_buffer 한다 (game/craft/stations/craft_station.gd). test_result_appears_in_buffer_only_after_timer 가 시작 직후 buffered==0, time-0.1 에서도 0, 끝난 뒤 output.count 인지 검사한다. test_timer_runs_with_game_time 이 _process 로 실제 프레임마다 줄어드는지 본다. tools/test.sh (TEST_DIR=res://tests/craft) 직접 실행 37/37 통과"
+    },
+    {
+     "criterion": "수령하면 인벤토리로 간다. 수령하기 전에는 버퍼에 남는다. 인벤토리가 가득 차면 남는 몫은 버퍼에 그대로 있다",
+     "ok": true,
+     "evidence": "CraftStation.collect 가 Inventory.add 의 남은 개수를 버퍼에 남긴다. test_buffer_stays_until_collected_then_goes_to_bag (tick 100초 + 프레임 뒤에도 버퍼에 남음, 수령 후 가방으로), test_full_bag_leaves_the_rest_in_buffer (가방 꽉 참: 탄약 4개만 옮기고 6개 · 주괴 2개 남음, 칸 비운 뒤 탄약 6개 수령, 주괴는 계속 남음). 화면 수령 버튼은 test_crafting_screen_starts_and_collects"
+    },
+    {
+     "criterion": "제작 진행과 버퍼 내용이 월드 저장에 남는다",
+     "ok": true,
+     "evidence": "CraftStation.to_dict 가 job/buffer 를 넣고 Stations.load_list 가 load_state 로 되살린다. test_progress_and_buffer_survive_saving 이 실제 exit_to_menu → Session.store.load_world 로 저장 값을 확인하고, 다시 들어가 is_busy · 남은 시간(±0.1) · 버퍼 · 불러온 job 이 끝나 버퍼에 쌓이는지까지 검사한다"
+    },
+    {
+     "criterion": "제작 시간은 레시피 데이터에 레시피마다 있다. 지금은 전부 임시 5초이고, 임시 값이라고 데이터에 적혀 있다",
+     "ok": true,
+     "evidence": "game/craft/recipes/recipes.json 의 6개 레시피 모두 \"time\": 5.0, \"time_temp\": true, _note 에도 임시라고 적힘. recipe_book.gd 주석에 임시 5초 명시(spec 의 '코드에 적는다' 충족). test_craft_time_comes_from_each_recipe 가 JSON 원본에서 time==5.0 · time_temp==true 를 검사하고, time 1.5 로 바꾼 레시피가 1.5초에 끝나는지로 스테이션이 레시피 값을 쓰는지 확인"
+    }
+   ],
+   "issues": [
+    "craft_station.gd: 새 signal 선언이 클래스 설명 주석 사이에 끼어, '## 그림은 임시 색 네모다' 줄이 signal 뒤에 떨어져 있다 (정리 필요, 기능 무관)",
+    "craft_started · crafted · buffer_changed 시그널은 지금 어디서도 연결되지 않는다 — 드론/주민용 훅으로 보이나 현재는 쓰이지 않는 코드",
+    "Inventory.remove 에 직접 단위 테스트가 없다 (뒤 칸부터 빼기 · 모자라면 안 빼기) — 제작 시작 테스트로 간접 검증만 됨",
+    "월드 밖(저장된 상태)에서는 타이머가 흐르지 않는다 — report 에 명시된 선택이고 spec 에 규칙이 없어 불합격 사유는 아님. 나중에 사람 결정이 필요할 수 있음",
+    "spec 수용 기준 '같은 방 ID 의 상자 재료 사용' 은 방 판정이 아직 없어 미구현 — 이번 단계 수용 기준 밖이며 report 에 보류로 적혀 있음"
+   ],
+   "good": [
+    "기존 테스트의 삭제 · 완화 · skip 없음 (git diff 에 tests/ 변경 없음, 새 파일만 추가). 전체 250/250 통과",
+    "저장 테스트가 메모리 값이 아니라 실제 저장소를 거쳐 다시 들어오는 흐름을 검사한다",
+    "가방이 찬 경우를 같은 아이템 일부 수용 · 다른 아이템 전혀 수용 못함 두 갈래로 모두 검사했다",
+    "job 에 output 을 함께 저장해 레시피 책 없이도 불러온 제작을 끝낼 수 있다. load_state 가 모양이 틀린 값을 버린다",
+    "새 화면 글자는 모두 ko/en 번역 키 (CRAFT_IDLE · CRAFT_PROGRESS · CRAFT_BUFFER · CRAFT_BUFFER_ITEM · CRAFT_COLLECT). 파일은 모두 300줄 이하",
+    "report 의 설명(파일 목록 · 접근 · 보류 항목)이 실제 diff 와 일치한다"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 29.0 ms (game _ready 20.5 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              35\nTests               250\nPassing Tests       250\nAsserts           10013\nTime              40.435s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-006",
+  "step": "3",
+  "attempt": "1",
+  "title": "G-006 3/3 제작 타이머와 출력 버퍼 — 통과 (시도 1)",
+  "commit": "fca8d60"
+ },
+ {
+  "time": "2026-09-17 00:15:30 KST",
+  "epoch": 1789571730,
+  "type": "group_done",
+  "group": "G-006",
+  "title": "G-006 제작 — 묶음 완료, main 에 합침"
  }
 ]
