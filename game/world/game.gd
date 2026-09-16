@@ -29,6 +29,8 @@ func _ready() -> void:
 		swinger().add_source(harvester().targets_near)
 		melee().setup(mobs())
 		swinger().add_source(melee().targets_near)
+		gunner().setup(player(), mobs(), projectiles())
+		swinger().alternate = gunner().try_fire
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
@@ -107,6 +109,11 @@ func melee() -> Melee:
 	return %Melee
 
 
+## 총 — 총을 들고 좌클릭하면 휘두르지 않고 마우스 방향으로 쏜다. 탄약을 쓴다.
+func gunner() -> Gunner:
+	return %Gunner
+
+
 ## 우클릭 상호작용 — 겨눈 오브젝트가 먼저, 없으면 손에 든 아이템의 동작.
 func interactor() -> Interactor:
 	return %Interactor
@@ -143,6 +150,11 @@ func picker() -> Picker:
 ## 몹들의 부모.
 func mobs() -> Node2D:
 	return %Mobs
+
+
+## 날아가는 투사체들의 부모.
+func projectiles() -> Node2D:
+	return %Projectiles
 
 
 ## 바닥에 떨어진 아이템들의 부모.

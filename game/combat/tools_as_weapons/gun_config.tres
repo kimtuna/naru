@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="GunConfig" format=3]
+
+[ext_resource type="Script" path="res://combat/tools_as_weapons/gun_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+guns = {
+"gun": {
+"damage": 5.0,
+"interval": 0.4,
+"range": 160.0,
+"speed": 240.0
+}
+}
+ammo_id = "ammo"
+ammo_per_shot = 1
+hit_radius = 7.0
+muzzle_offset = 6.0
