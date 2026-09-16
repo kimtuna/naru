@@ -1737,5 +1737,70 @@
   "type": "group_done",
   "group": "G-006",
   "title": "G-006 제작 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-17 00:21:33 KST",
+  "epoch": 1789572093,
+  "report": {
+   "status": "done",
+   "summary": "G-010.1 기준 화면 640×360 · 정수 배율 · 검은 띠 · 카메라 확대 고정",
+   "problem": "기준 화면 설정이 없었다. 프로젝트는 Godot 기본값(1152×648, 늘리기 없음)이었고, 플레이어 카메라는 확대 3배였다. 그래서 창이 커지면 월드가 더 넓게 보이고 글자는 상대적으로 작아졌다. 보이는 범위도 24×13.5칸으로, spec 의 40×22.5칸과 달랐다. 창 크기별 동작을 창 없이(headless) 확인할 방법도 찾아야 했다.",
+   "feedback_applied": "",
+   "approach": "1) project.godot [display] 설정: 기준 화면 640×360, 처음 창 1280×720, stretch mode=viewport · aspect=keep · scale_mode=integer. 2) 수치를 game/settings/display/display_config.gd(DisplayConfig) 한 곳에 모았다. 테스트가 project.godot 값과 같은지 본다. 3) player.tscn 의 zoom=3 을 지웠다. Player._ready 에서 DisplayConfig.lock_camera 로 확대를 1 로 고정한다(640×360 = 16px 타일 40×22.5칸). 4) 테스트 tests/settings/display/test_display_scale.gd(8개): 실험해 보니 headless 에서도 root.size 를 바꾸면 엔진이 늘리기 변환(get_final_transform)을 계산한다. 이를 이용해 수용 기준의 창 5종마다 다음을 확인한다. 보이는 월드 사각형이 40×22.5칸인지. 16:9 창은 2·3·4배로 빈틈 없이 차는지. 2560×1080 은 3배에 좌우 320px 띠, 1280×800 은 2배에 위아래 40px 띠인지. 메인 메뉴 글자 · 버튼이 기준 화면 안에서는 제자리이고 창에서는 같은 비율로 커지는지(1280→2560 이면 정확히 2배). 입력 설정 · 휠 · +/- 키 · 설정 화면 · 번역 파일에 보이는 범위를 바꾸는 것이 없는지. 전체 258개 테스트 통과, guard 통과.",
+   "why": "stretch mode 는 viewport 를 골랐다. 기준 화면 크기로 그린 뒤 통째로 늘리므로 도트가 깨끗하고(spec: 정수 배율 우선) 글자 · UI 도 반드시 같은 비율로 커진다. canvas_items 는 글자가 더 선명하지만 스프라이트가 픽셀 사이에 걸려 떨릴 수 있다. 나중에 설정 한 줄로 바꿀 수 있어 사람에게 묻지 않았다. scale_mode 는 integer 로 했다. 1366×768 같은 창은 2배에 사방 띠가 생기지만, spec 이 정수 배율을 먼저 쓰라고 한다. 보이는 범위는 어느 배율에서도 같다. 창이 640×360 보다 작을 때만 엔진이 소수 배율로 줄인다. 띠 색은 viewport 모드에서 엔진이 검게 비워 두는 영역이라 따로 칠하지 않았다. shot.sh 는 게임 화면 텍스처(640×360)만 찍고 띠는 찍지 않는다. 그래서 띠 확인은 창 좌표 변환 검사로 했다. 기존 UI 가 640×360 안에 다 들어가는지는 다음 단계(2단계) 일이라 손대지 않았다. 지금 테스트는 모두 통과한다.",
+   "files": [
+    "game/project.godot",
+    "game/settings/display/display_config.gd",
+    "game/player/player.gd",
+    "game/player/player.tscn",
+    "game/tests/settings/display/test_display_scale.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "창 크기가 1280×720 · 1920×1080 · 2560×1440 · 2560×1080 · 1280×800 어느 것이든 보이는 월드 범위(칸 수)가 같다",
+     "ok": true,
+     "evidence": "project.godot [display] viewport 640×360 · stretch mode=viewport · aspect=keep · scale_mode=integer. player.tscn 의 zoom=3 제거, Player._ready 에서 DisplayConfig.lock_camera. test_visible_world_range_is_same_for_every_window_size 가 게임 씬에서 root.size 를 창 5종으로 바꿔 canvas_transform 역변환으로 보이는 월드가 40×22.5칸인지 확인. 직접 실행해 8/8 통과. QA 임시 테스트로 이 측정이 진짜로 민감한지 확인함: stretch 를 끄면 월드가 1280×720 → 2560×1080 으로 달라짐 (지운 뒤 git status 확인)"
+    },
+    {
+     "criterion": "16:9 가 아닌 창에서는 남는 곳이 검은 띠이고, 옆이나 위아래가 더 보이지 않는다",
+     "ok": true,
+     "evidence": "test_non_16_9_windows_get_black_bars_not_more_view: 2560×1080 → Rect2(320,0,1920,1080), 1280×800 → Rect2(0,40,1280,720), 게임 화면은 640×360 그대로. QA 임시 테스트에서 aspect=expand 로 바꾸면 2560×1080 이 853×360 을 보게 되어 이 테스트가 잡아냄을 확인. 띠 색은 엔진 viewport 모드 기본(검정)에 기댐 — Godot 문서의 keep 동작과 맞음"
+    },
+    {
+     "criterion": "글자와 UI 가 기준 화면 기준으로 배치되어 창이 커지면 같은 비율로 커진다 — 창을 키워도 글자만 작아 보이지 않는다",
+     "ok": true,
+     "evidence": "test_text_and_ui_scale_with_window: 메인 메뉴 Title · Start 가 창 5종에서 기준 화면 안 위치가 같고, 창에서의 크기 · 위치 · 글꼴 픽셀이 콘텐츠 영역 대비 같은 비율, 1280×720→2560×1440 이면 정확히 2배. stretch mode=viewport 라 모든 UI 가 한 번에 늘어남"
+    },
+    {
+     "criterion": "보이는 범위를 바꾸는 플레이어 설정(카메라 줌 등)이 없다",
+     "ok": true,
+     "evidence": "grep: 게임 코드에 zoom 을 쓰는 곳은 DisplayConfig.lock_camera 와 island_view.visible_half_extent(읽기만) 뿐. test_no_input_action_changes_view_range(InputMap), test_wheel_and_zoom_keys_do_not_change_camera(휠 · Ctrl+휠 · +/- · PgUp/PgDn), test_settings_screen_has_no_view_range_option(설정 화면 노드 · ko/en.po) 통과"
+    }
+   ],
+   "issues": [
+    "띠가 '검은색'인지는 픽셀로 확인하지 않고 content_scale_mode 가 viewport 인지만 본다 (test_display_scale.gd:132). shot.sh 가 띠를 찍지 못해 생긴 한계 — 엔진 기본 동작이라 불합격 사유로 보지 않음",
+    "player.tscn 에서 zoom 을 지웠으므로 Player._ready 의 DisplayConfig.lock_camera 는 사실상 중복 방어다. 해롭지 않음",
+    "test_text_and_ui_scale_with_window 의 글꼴 비율 검사는 균일 배율이면 늘 참이 되는 편이라, 실질적인 검사는 위치 · 크기 비교가 맡는다",
+    "기존 화면(메인 메뉴 · HUD · 설정 등)이 640×360 안에 다 들어가는지는 아직 확인 안 됨 — 2단계 몫"
+   ],
+   "good": [
+    "수치를 DisplayConfig 한 곳에 모으고 project.godot 값과 같은지 테스트로 묶었다",
+    "창 없이 root.size 를 바꿔 늘리기 변환을 검사하는 방법을 찾았고, 그 측정이 설정 변화에 실제로 반응함을 QA 가 확인했다",
+    "기존 테스트 삭제 · 완화 없음, 전체 258개 통과, guard 통과, 파일 모두 300줄 이하",
+    "report 의 내용이 실제 diff 와 일치한다"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 48.5 ms (game _ready 40.7 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              36\nTests               258\nPassing Tests       258\nAsserts           10277\nTime              40.599s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-010",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-010 1/2 기준 화면과 배율 — 통과 (시도 1)",
+  "commit": "0031008"
  }
 ]

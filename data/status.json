@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 00:20:16 KST",
- "updated_epoch": 1789572016,
+ "updated": "2026-09-17 00:21:33 KST",
+ "updated_epoch": 1789572093,
  "progress": {
-  "groups_total": 12,
+  "groups_total": 14,
   "groups_done": 6,
   "groups_waiting": 0,
-  "steps_total": 36,
-  "steps_done": 22
+  "steps_total": 44,
+  "steps_done": 23
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-010",
  "group_title": "화면 배율 — 보이는 범위 고정",
- "step": "1",
+ "step": "2",
  "step_total": "2",
- "step_title": "기준 화면과 배율",
+ "step_title": "모든 화면이 기준 화면 안에 들어간다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 00:20:16"
+ "phase": "구현",
+ "phase_since": "2026-09-17 00:21:33"
 }
