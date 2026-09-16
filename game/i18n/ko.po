@@ -8,3 +8,150 @@ msgstr ""
 
 msgid "MAIN_TITLE"
 msgstr "나루"
+
+msgid "MENU_START"
+msgstr "시작"
+
+msgid "MENU_SETTINGS"
+msgstr "설정"
+
+msgid "MENU_QUIT"
+msgstr "종료"
+
+msgid "MENU_BACK"
+msgstr "뒤로"
+
+msgid "SETTINGS_TITLE"
+msgstr "설정"
+
+msgid "CHARACTER_SELECT_TITLE"
+msgstr "캐릭터 선택"
+
+msgid "CHARACTER_NEW"
+msgstr "새 캐릭터"
+
+msgid "CHARACTER_DELETE"
+msgstr "삭제"
+
+msgid "CHARACTER_DELETE_CONFIRM"
+msgstr "이 캐릭터를 삭제할까요? 되돌릴 수 없습니다."
+
+msgid "MENU_CANCEL"
+msgstr "취소"
+
+msgid "CHARACTER_CREATE_TITLE"
+msgstr "캐릭터 만들기"
+
+msgid "WORLD_SELECT_TITLE"
+msgstr "월드 선택"
+
+msgid "CHARACTER_NAME"
+msgstr "이름"
+
+msgid "CHARACTER_NAME_EMPTY"
+msgstr "이름을 입력하세요."
+
+msgid "CHARACTER_SLOTS_FULL"
+msgstr "빈 캐릭터 칸이 없습니다."
+
+msgid "CHARACTER_CREATE"
+msgstr "만들기"
+
+msgid "CHARACTER_PREVIEW"
+msgstr "미리보기"
+
+msgid "APPEARANCE_PREV"
+msgstr "이전"
+
+msgid "APPEARANCE_NEXT"
+msgstr "다음"
+
+msgid "APPEARANCE_BODY"
+msgstr "몸"
+
+msgid "APPEARANCE_BODY_1"
+msgstr "몸 1"
+
+msgid "APPEARANCE_BODY_2"
+msgstr "몸 2"
+
+msgid "APPEARANCE_BODY_3"
+msgstr "몸 3"
+
+msgid "APPEARANCE_HAIR_STYLE"
+msgstr "머리 모양"
+
+msgid "APPEARANCE_HAIR_SHORT"
+msgstr "짧은 머리"
+
+msgid "APPEARANCE_HAIR_LONG"
+msgstr "긴 머리"
+
+msgid "APPEARANCE_HAIR_NONE"
+msgstr "민머리"
+
+msgid "APPEARANCE_HAIR_COLOR"
+msgstr "머리 색"
+
+msgid "APPEARANCE_HAIR_BLACK"
+msgstr "검정"
+
+msgid "APPEARANCE_HAIR_BROWN"
+msgstr "갈색"
+
+msgid "APPEARANCE_HAIR_BLOND"
+msgstr "금색"
+
+msgid "APPEARANCE_OUTFIT"
+msgstr "옷"
+
+msgid "APPEARANCE_OUTFIT_1"
+msgstr "옷 1"
+
+msgid "APPEARANCE_OUTFIT_2"
+msgstr "옷 2"
+
+msgid "APPEARANCE_OUTFIT_3"
+msgstr "옷 3"
+
+msgid "WORLD_EMPTY"
+msgstr "저장된 월드가 없습니다."
+
+msgid "WORLD_NEW"
+msgstr "새 월드"
+
+msgid "WORLD_NAME"
+msgstr "이름"
+
+msgid "WORLD_NAME_PLACEHOLDER"
+msgstr "월드 이름"
+
+msgid "WORLD_SEED"
+msgstr "시드"
+
+msgid "WORLD_SEED_PLACEHOLDER"
+msgstr "비우면 무작위"
+
+msgid "WORLD_NAME_REQUIRED"
+msgstr "이름을 입력하세요."
+
+msgid "WORLD_CREATE_FAILED"
+msgstr "월드를 만들지 못했습니다."
+
+msgid "WORLD_CREATE"
+msgstr "만들기"
+
+msgid "WORLD_DELETE"
+msgstr "삭제"
+
+msgid "WORLD_DELETE_CONFIRM"
+msgstr "이 월드를 삭제할까요? 되돌릴 수 없습니다."
+
+msgid "GAME_CHARACTER"
+msgstr "캐릭터"
+
+msgid "GAME_WORLD"
+msgstr "월드"
+
+msgid "GAME_EXIT_HINT"
+msgstr "Esc: 저장하고 메인 화면으로"

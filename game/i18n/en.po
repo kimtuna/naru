@@ -8,3 +8,150 @@ msgstr ""
 
 msgid "MAIN_TITLE"
 msgstr "Naru"
+
+msgid "MENU_START"
+msgstr "Start"
+
+msgid "MENU_SETTINGS"
+msgstr "Settings"
+
+msgid "MENU_QUIT"
+msgstr "Quit"
+
+msgid "MENU_BACK"
+msgstr "Back"
+
+msgid "SETTINGS_TITLE"
+msgstr "Settings"
+
+msgid "CHARACTER_SELECT_TITLE"
+msgstr "Character Select"
+
+msgid "CHARACTER_NEW"
+msgstr "New Character"
+
+msgid "CHARACTER_DELETE"
+msgstr "Delete"
+
+msgid "CHARACTER_DELETE_CONFIRM"
+msgstr "Delete this character? This cannot be undone."
+
+msgid "MENU_CANCEL"
+msgstr "Cancel"
+
+msgid "CHARACTER_CREATE_TITLE"
+msgstr "Create Character"
+
+msgid "WORLD_SELECT_TITLE"
+msgstr "Select World"
+
+msgid "CHARACTER_NAME"
+msgstr "Name"
+
+msgid "CHARACTER_NAME_EMPTY"
+msgstr "Please enter a name."
+
+msgid "CHARACTER_SLOTS_FULL"
+msgstr "No empty character slot."
+
+msgid "CHARACTER_CREATE"
+msgstr "Create"
+
+msgid "CHARACTER_PREVIEW"
+msgstr "Preview"
+
+msgid "APPEARANCE_PREV"
+msgstr "Prev"
+
+msgid "APPEARANCE_NEXT"
+msgstr "Next"
+
+msgid "APPEARANCE_BODY"
+msgstr "Body"
+
+msgid "APPEARANCE_BODY_1"
+msgstr "Body 1"
+
+msgid "APPEARANCE_BODY_2"
+msgstr "Body 2"
+
+msgid "APPEARANCE_BODY_3"
+msgstr "Body 3"
+
+msgid "APPEARANCE_HAIR_STYLE"
+msgstr "Hair Style"
+
+msgid "APPEARANCE_HAIR_SHORT"
+msgstr "Short"
+
+msgid "APPEARANCE_HAIR_LONG"
+msgstr "Long"
+
+msgid "APPEARANCE_HAIR_NONE"
+msgstr "Bald"
+
+msgid "APPEARANCE_HAIR_COLOR"
+msgstr "Hair Color"
+
+msgid "APPEARANCE_HAIR_BLACK"
+msgstr "Black"
+
+msgid "APPEARANCE_HAIR_BROWN"
+msgstr "Brown"
+
+msgid "APPEARANCE_HAIR_BLOND"
+msgstr "Blond"
+
+msgid "APPEARANCE_OUTFIT"
+msgstr "Outfit"
+
+msgid "APPEARANCE_OUTFIT_1"
+msgstr "Outfit 1"
+
+msgid "APPEARANCE_OUTFIT_2"
+msgstr "Outfit 2"
+
+msgid "APPEARANCE_OUTFIT_3"
+msgstr "Outfit 3"
+
+msgid "WORLD_EMPTY"
+msgstr "No saved worlds."
+
+msgid "WORLD_NEW"
+msgstr "New World"
+
+msgid "WORLD_NAME"
+msgstr "Name"
+
+msgid "WORLD_NAME_PLACEHOLDER"
+msgstr "World name"
+
+msgid "WORLD_SEED"
+msgstr "Seed"
+
+msgid "WORLD_SEED_PLACEHOLDER"
+msgstr "Leave empty for random"
+
+msgid "WORLD_NAME_REQUIRED"
+msgstr "Enter a name."
+
+msgid "WORLD_CREATE_FAILED"
+msgstr "Could not create the world."
+
+msgid "WORLD_CREATE"
+msgstr "Create"
+
+msgid "WORLD_DELETE"
+msgstr "Delete"
+
+msgid "WORLD_DELETE_CONFIRM"
+msgstr "Delete this world? This cannot be undone."
+
+msgid "GAME_CHARACTER"
+msgstr "Character"
+
+msgid "GAME_WORLD"
+msgstr "World"
+
+msgid "GAME_EXIT_HINT"
+msgstr "Esc: save and return to main menu"
