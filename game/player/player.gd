@@ -29,6 +29,14 @@ var health := Health.new(DamageConfig.load_default().player_max_health)
 var spawn_point := Vector2.ZERO
 ## (위치, 이동 방향) → 경사 (+1 오르막 · 0 평지 · -1 내리막). 게임 씬이 섬으로 채운다. 비어 있으면 평지.
 var slope := Callable()
+## 위치 → 절벽 칸인가. 게임 씬(Climber)이 채운다. 비어 있으면 절벽이 없다.
+var on_cliff := Callable()
+## 절벽 칸에서의 이동 속력 — 경사 배율 대신 쓴다. Climber 가 ClimbingConfig 로 채운다.
+var climb_speed := ClimbingConfig.load_default().climb_speed
+## 절벽에서 떨어지는 중 — 입력을 받지 않고 Climber 가 옮긴다.
+var falling := false
+## 지난 물리 걸음에서 스스로 걸어 움직인 거리 (순간이동 · 낙하는 셈하지 않는다).
+var last_motion := Vector2.ZERO
 
 
 func _init() -> void:
@@ -44,15 +52,33 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	buffs.tick(delta)
 	update_facing()
+	# 스파이크를 끼면 절벽 충돌을 지나간다 (spec/04_life/climbing.md).
+	set_collision_mask_value(ClimbingConfig.CLIFF_LAYER, not can_climb())
+	last_motion = Vector2.ZERO
+	if falling:
+		velocity = Vector2.ZERO
+		return
 	var dir := InputActions.move_vector()
 	velocity = Vector2.ZERO if is_blocked() else dir * move_speed(dir)
 	move_and_slide()
+	last_motion = get_position_delta()
 
 
-## 지금 이동 속력 — 기본 속력에 버프 배수와 dir 쪽 경사 배율을 곱한다.
+## 지금 이동 속력 — 기본 속력에 버프 배수와 dir 쪽 경사 배율을 곱한다. 절벽 칸에서는 기본 속력 · 경사 대신 등반 속력.
 ## dir 은 방향만 본다 — 대각선도 속력은 같다 (정규화는 InputActions.move_vector 가 한다).
 func move_speed(dir := Vector2.ZERO) -> float:
+	if is_on_cliff():
+		return climb_speed * buffs.move_speed_multiplier()
 	return tuning.move_speed * buffs.move_speed_multiplier() * tuning.slope_multiplier(slope_along(dir))
+
+
+func is_on_cliff() -> bool:
+	return on_cliff.is_valid() and on_cliff.call(global_position)
+
+
+## 절벽을 탈 수 있나 — 신발에 스파이크를 꼈다.
+func can_climb() -> bool:
+	return equipment.is_wearing(EquipmentConfig.SPIKES)
 
 
 ## 지금 자리에서 dir 쪽 경사. 방향이 없거나 경사를 모르면 0.

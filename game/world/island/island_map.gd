@@ -167,9 +167,14 @@ func regrow(cell: Vector2i) -> bool:
 	return true
 
 
-## 걸어서 못 들어가나 — 섬 밖 · 바다 · 절벽 · 자원(장애물). 등반 장비는 아직 없다 (04_life/climbing.md).
+## 걸어서 못 들어가나 — 섬 밖 · 바다 · 절벽 · 자원(장애물). 절벽은 스파이크가 있으면 탄다 (04_life/climbing.md).
 func is_blocked(cell: Vector2i) -> bool:
-	return not has_cell(cell) or terrain_at(cell) == IslandConfig.Terrain.SEA or is_cliff(cell) \
+	return is_solid(cell) or is_cliff(cell)
+
+
+## 등반 장비가 있어도 못 들어가나 — 섬 밖 · 바다 · 자원(장애물).
+func is_solid(cell: Vector2i) -> bool:
+	return not has_cell(cell) or terrain_at(cell) == IslandConfig.Terrain.SEA \
 		or deposit_at(cell) != IslandConfig.Deposit.NONE
 
 

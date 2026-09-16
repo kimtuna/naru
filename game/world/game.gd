@@ -53,6 +53,7 @@ func _ready() -> void:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
 		player().slope = island_view().slope_along
+		climber().setup(player(), island_view())
 		player().spawn_point = island_view().cell_center(island.spawn())
 		player().global_position = player().spawn_point
 		island_view().update_around(player().global_position)
@@ -63,6 +64,7 @@ func _ready() -> void:
 		player().hotbar = Hotbar.new(character)
 		player().equipment = Equipment.new(player().hotbar.inventory)
 	%Hotbar.bind(player().hotbar)
+	stamina_view().bind(climber())
 	inventory_view().bind(player().hotbar.inventory)
 	inventory_view().bind_equipment(player().equipment, player().hotbar)
 	crafting_view().bind(player().hotbar.inventory)
@@ -145,6 +147,15 @@ func clock() -> WorldClock:
 ## 밤의 어둠과 광원(램프 자리).
 func lighting() -> Lighting:
 	return %Lighting
+
+
+## 절벽 등반 — 기력과 낙하.
+func climber() -> Climber:
+	return %Climber
+
+
+func stamina_view() -> StaminaView:
+	return %Stamina
 
 
 func picker() -> Picker:

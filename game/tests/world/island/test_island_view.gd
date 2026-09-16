@@ -125,7 +125,7 @@ func test_chunk_collision_matches_obstacles() -> void:
 		for x in range(rect.position.x, rect.end.x):
 			if game.island.is_blocked(Vector2i(x, y)):
 				expected += 1
-	for col in chunk.body().get_children():
+	for col in chunk.collision_shapes():
 		var size: Vector2 = col.shape.size
 		blocked_area += size.x * size.y
 	var t := float(game.island_view().tile_px())
@@ -181,7 +181,7 @@ func test_island_edge_blocks() -> void:
 	# 가장자리 덩어리의 바다 충돌을 걷어 내고, 섬 밖 벽만으로 막히는지.
 	await _teleport(game, Vector2i(1, row))
 	var edge := game.island_view().chunk_node(map.chunk_of(Vector2i(0, row)))
-	for col in edge.body().get_children():
+	for col in edge.collision_shapes():
 		col.disabled = true
 	await wait_physics_frames(2)
 	var moved := await _walk(game, InputActions.MOVE_LEFT, 40)
