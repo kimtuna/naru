@@ -34,8 +34,9 @@ func _ready() -> void:
 		stations().load_list(world.stations)
 		interactor().setup(player(), island_view())
 		stations().register(interactor())
-		farm().setup(player(), island_view(), regrowth(), stations())
+		farm().setup(player(), island_view(), regrowth(), stations(), clock(), drops())
 		farm().load_list(world.tilled)
+		farm().load_crops(world.crops)
 		stations().farm = farm()
 		farm().register(interactor())
 		for d in world.drops:
@@ -91,7 +92,7 @@ func interactor() -> Interactor:
 	return %Interactor
 
 
-## 삽으로 간 밭.
+## 밭과 작물 — 개간 · 심기 · 물 · 수확.
 func farm() -> Farm:
 	return %Farm
 
@@ -198,4 +199,5 @@ func store_world_state() -> void:
 		world.world_time = island.time
 	world.stations = stations().to_list()
 	world.tilled = farm().to_list()
+	world.crops = farm().crops_to_list()
 	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())

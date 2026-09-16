@@ -162,6 +162,9 @@ msgstr "Bag"
 msgid "STATION_WORKBENCH"
 msgstr "Workbench"
 
+msgid "ITEM_WHEAT_SEED"
+msgstr "Wheat Seeds"
+
 msgid "ITEM_IRON_INGOT"
 msgstr "Iron Ingot"
 

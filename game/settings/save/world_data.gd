@@ -18,6 +18,8 @@ var drops: Array = []
 var stations: Array = []
 ## 삽으로 간 밭 — Vector2i 목록.
 var tilled: Array = []
+## 밭에 심은 작물 — {"cell": Vector2i, "id", "days", "watered"} (Crop.to_dict).
+var crops: Array = []
 
 
 static func create(world_name: String, seed_value: int) -> WorldData:
@@ -39,6 +41,7 @@ func to_dict() -> Dictionary:
 		"drops": drops.duplicate(true),
 		"stations": stations.duplicate(true),
 		"tilled": tilled.duplicate(),
+		"crops": crops.duplicate(true),
 	}
 
 
@@ -74,4 +77,9 @@ static func from_dict(d: Dictionary) -> WorldData:
 		for cell in fields:
 			if cell is Vector2i:
 				w.tilled.append(cell)
+	var crops = d.get("crops", [])
+	if crops is Array:
+		for c in crops:
+			if Crop.is_valid_dict(c):
+				w.crops.append(c.duplicate(true))
 	return w
