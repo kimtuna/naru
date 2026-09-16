@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 03:53:03 KST",
- "updated_epoch": 1789584783,
+ "updated": "2026-09-17 04:00:35 KST",
+ "updated_epoch": 1789585235,
  "progress": {
   "groups_total": 14,
   "groups_done": 11,
@@ -19,7 +19,7 @@
  "step": "4",
  "step_total": "6",
  "step_title": "도구 근접 공격",
- "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 03:53:03"
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-17 04:00:35"
 }
