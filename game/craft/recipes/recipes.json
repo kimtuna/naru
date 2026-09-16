@@ -1,6 +1,6 @@
 {
 	"_note": "레시피 데이터 (spec/05_craft/recipes.md). 수량 · 시간은 전부 임시 값 — 아이템 목록이 정해지면 사람이 바꾼다. time 은 제작 시간(초), time_temp 가 true 면 임시 값이다 (crafting-stations.md: 지금은 전부 임시 5초).",
-	"raw": ["wood", "stone", "ore", "wheat"],
+	"raw": ["wood", "stone", "iron_ore", "sulfur", "herb", "wheat"],
 	"stations": ["hand", "workbench"],
 	"recipes": [
 		{"id": "axe", "station": "hand", "time": 5.0, "time_temp": true,
@@ -22,7 +22,7 @@
 			"inputs": [{"id": "wood", "count": 1}],
 			"output": {"id": "wheat_seed", "count": 3}},
 		{"id": "iron_ingot", "station": "workbench", "time": 5.0, "time_temp": true,
-			"inputs": [{"id": "ore", "count": 2}, {"id": "wood", "count": 1}],
+			"inputs": [{"id": "iron_ore", "count": 2}, {"id": "wood", "count": 1}],
 			"output": {"id": "iron_ingot", "count": 1}},
 		{"id": "gun", "station": "workbench", "time": 5.0, "time_temp": true,
 			"inputs": [{"id": "iron_ingot", "count": 5}, {"id": "wood", "count": 3}],

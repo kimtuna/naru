@@ -92,8 +92,9 @@ func ensure_chunk(chunk: Vector2i) -> void:
 			var t := generator.terrain_at(x, y)
 			_terrain[y * size + x] = t
 			_height[y * size + x] = generator.height_at(x, y)
-			_cliff[y * size + x] = 1 if generator.cliff_at(x, y) else 0
-			var d := generator.deposit_on(x, y, t)
+			var cliff := generator.cliff_at(x, y)
+			_cliff[y * size + x] = 1 if cliff else 0
+			var d := generator.deposit_on(x, y, t, cliff)
 			if removed.has(Vector2i(x, y)):
 				d = IslandConfig.Deposit.NONE
 			_deposit[y * size + x] = d

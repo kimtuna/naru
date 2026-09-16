@@ -32,7 +32,7 @@ func _harvest(game: GameScene, deposit: Deposit, tool: Dictionary) -> Vector2i:
 func test_harvested_cells_stay_empty_after_reentering() -> void:
 	var game := _enter()
 	var tree := _harvest(game, Deposit.TREE, AXE)
-	var ore := _harvest(game, Deposit.ORE, PICKAXE)
+	var ore := _harvest(game, Deposit.IRON, PICKAXE)
 	await _leave(game)
 
 	var again := _enter()

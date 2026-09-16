@@ -12,7 +12,7 @@ func test_matching_tool_clears_cell_and_drops_item() -> void:
 	var cases := [
 		[AXE, Deposit.TREE, "wood"],
 		[PICKAXE, Deposit.STONE, "stone"],
-		[PICKAXE, Deposit.ORE, "ore"],
+		[PICKAXE, Deposit.IRON, "iron_ore"],
 		[null, Deposit.TREE, "wood"],
 		[null, Deposit.STONE, "stone"],
 	]
@@ -96,7 +96,7 @@ func test_mismatched_tool_is_slower_than_the_right_tool() -> void:
 func test_ore_needs_a_pickaxe_and_empty_cells_do_nothing() -> void:
 	var game := _enter()
 	var cases := [
-		[AXE, Deposit.ORE], [null, Deposit.ORE], [{"id": "wood", "count": 5}, Deposit.ORE],
+		[AXE, Deposit.IRON], [null, Deposit.IRON], [{"id": "wood", "count": 5}, Deposit.IRON],
 		[AXE, Deposit.NONE], [PICKAXE, Deposit.NONE], [null, Deposit.NONE],
 	]
 	for c in cases:

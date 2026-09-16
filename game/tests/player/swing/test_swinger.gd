@@ -128,7 +128,7 @@ func test_mismatched_tool_is_slow_and_ore_needs_pickaxe_through_swings() -> void
 	assert_gt(counts[PICKAXE], 0)
 	assert_gt(counts[AXE], counts[PICKAXE], "axe on stone is slower than a pickaxe")
 	assert_gt(counts[null], counts[PICKAXE], "bare hand on stone is slower than a pickaxe")
-	var ore := _find(game, Deposit.ORE)
+	var ore := _find(game, Deposit.IRON)
 	for item in [null, AXE]:
 		_stand(game, ore[1])
 		_hold(game, item)
@@ -138,9 +138,9 @@ func test_mismatched_tool_is_slow_and_ore_needs_pickaxe_through_swings() -> void
 			assert_not_null(hit, "the ore is hit")
 			if hit:
 				assert_eq(hit.what, ore[0])
-		assert_eq(game.island.deposit_at(ore[0]), Deposit.ORE, "%s cannot mine ore" % [item])
+		assert_eq(game.island.deposit_at(ore[0]), Deposit.IRON, "%s cannot mine ore" % [item])
 		assert_eq(game.harvester().progress_at(ore[0]), 0)
-	assert_gt(await _swings_in_front(game, PICKAXE, Deposit.ORE), 0, "a pickaxe mines ore")
+	assert_gt(await _swings_in_front(game, PICKAXE, Deposit.IRON), 0, "a pickaxe mines ore")
 
 
 var _used: Array = []

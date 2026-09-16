@@ -1,6 +1,49 @@
-[gd_resource type="Resource" script_class="IslandConfig" format=3]
+[gd_resource type="Resource" script_class="IslandConfig" load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://world/island/island_config.gd" id="1"]
+[ext_resource type="Script" path="res://world/island/deposit_rule.gd" id="2"]
+
+[sub_resource type="Resource" id="grass"]
+script = ExtResource("2")
+fill_percent = 20.0
+tree_weight = 1.0
+stone_weight = 1.0
+
+[sub_resource type="Resource" id="forest"]
+script = ExtResource("2")
+fill_percent = 45.0
+tree_weight = 8.0
+stone_weight = 1.0
+
+[sub_resource type="Resource" id="mountain"]
+script = ExtResource("2")
+fill_percent = 40.0
+tree_weight = 1.0
+stone_weight = 6.0
+
+[sub_resource type="Resource" id="volcano"]
+script = ExtResource("2")
+fill_percent = 35.0
+stone_weight = 3.0
+sulfur_weight = 2.0
+
+[sub_resource type="Resource" id="snow"]
+script = ExtResource("2")
+fill_percent = 35.0
+tree_weight = 1.0
+stone_weight = 2.0
+iron_weight = 3.0
+
+[sub_resource type="Resource" id="beach"]
+script = ExtResource("2")
+fill_percent = 10.0
+tree_weight = 1.0
+stone_weight = 1.0
+
+[sub_resource type="Resource" id="cliff"]
+script = ExtResource("2")
+fill_percent = 25.0
+herb_weight = 1.0
 
 [resource]
 script = ExtResource("1")
@@ -9,10 +52,14 @@ spawn_clear = 7
 chunk_size = 16
 tile_px = 16
 view_margin_px = 160.0
-fill_percent = 30.0
-tree_weight = 3.0
-stone_weight = 2.0
-ore_weight = 1.0
+grass_deposits = SubResource("grass")
+forest_deposits = SubResource("forest")
+mountain_deposits = SubResource("mountain")
+volcano_deposits = SubResource("volcano")
+snow_deposits = SubResource("snow")
+beach_deposits = SubResource("beach")
+cliff_deposits = SubResource("cliff")
+starter_patch = Vector2i(3, 5)
 terrain_block = 2
 land_percent = 55.0
 sea_margin = 12

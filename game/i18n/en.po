@@ -180,6 +180,15 @@ msgstr "Gun"
 msgid "ITEM_AMMO"
 msgstr "Ammo"
 
+msgid "ITEM_IRON_ORE"
+msgstr "Iron Ore"
+
+msgid "ITEM_SULFUR"
+msgstr "Sulfur"
+
+msgid "ITEM_HERB"
+msgstr "Herb"
+
 msgid "CRAFT_CLOSE_HINT"
 msgstr "Esc: Close"
 

@@ -19,7 +19,7 @@ const DIRS_12 := [
 	Vector2i(-500, 866), Vector2i(-866, 500), Vector2i(-1000, 0), Vector2i(-866, -500),
 	Vector2i(-500, -866), Vector2i(0, -1000), Vector2i(500, -866), Vector2i(866, -500),
 ]
-## 보장 봉우리를 놓는 차례 — 겹치면 뒤가 이긴다. 산이 마지막이라 광물 보장 칸(ore_anchor)은 늘 산이다.
+## 보장 봉우리를 놓는 차례 — 겹치면 뒤가 이긴다. 광물 보장 칸(IslandGenerator.mineral_anchor)은 화산 · 설산 봉우리 한가운데다.
 const PEAK_KINDS := [Terrain.VOLCANO, Terrain.SNOW, Terrain.MOUNTAIN]
 const ELEVATED_KINDS := [Terrain.MOUNTAIN, Terrain.VOLCANO, Terrain.SNOW]
 const NEIGHBORS_4 := IslandField.NEIGHBORS_4

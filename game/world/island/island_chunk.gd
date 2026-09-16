@@ -20,7 +20,9 @@ const CLIFF_EDGE_PX := 3.0
 const DEPOSIT_COLORS := {
 	IslandConfig.Deposit.TREE: Color(0.1, 0.35, 0.12),
 	IslandConfig.Deposit.STONE: Color(0.55, 0.55, 0.58),
-	IslandConfig.Deposit.ORE: Color(0.75, 0.55, 0.15),
+	IslandConfig.Deposit.IRON: Color(0.62, 0.45, 0.38),
+	IslandConfig.Deposit.SULFUR: Color(0.9, 0.85, 0.2),
+	IslandConfig.Deposit.HERB: Color(0.45, 0.8, 0.45),
 }
 
 var map: IslandMap

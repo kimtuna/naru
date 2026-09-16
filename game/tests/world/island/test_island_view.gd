@@ -139,7 +139,7 @@ func test_blocked_by_tree_stone_ore_in_every_direction() -> void:
 	var game := _enter()
 	var view := game.island_view()
 	var half := _half_body(game.player())
-	var names := {IslandConfig.Deposit.TREE: "tree", IslandConfig.Deposit.STONE: "stone", IslandConfig.Deposit.ORE: "ore"}
+	var names := {IslandConfig.Deposit.TREE: "tree", IslandConfig.Deposit.STONE: "stone", IslandConfig.Deposit.IRON: "iron"}
 	for deposit in names:
 		for action in DIRS:
 			var d: Vector2i = DIRS[action]

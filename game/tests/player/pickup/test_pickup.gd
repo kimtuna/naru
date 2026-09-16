@@ -84,7 +84,7 @@ func test_harvested_drop_is_picked_by_stepping_on_its_cell() -> void:
 
 func test_full_bag_leaves_the_drop_on_the_ground() -> void:
 	var game := _enter()
-	_fill_bag(game, "ore")
+	_fill_bag(game, "iron_ore")
 	var s := _setup_drop(game, {"id": "wood", "count": 4})
 	await _walk_over(game, s[1], s[0])
 	var drops := _drops_at(game, s[0])
@@ -92,13 +92,13 @@ func test_full_bag_leaves_the_drop_on_the_ground() -> void:
 	if drops.size() == 1:
 		assert_eq(drops[0].count(), 4)
 	assert_eq(game.player().hotbar.inventory.count_of("wood"), 0)
-	assert_eq(game.player().hotbar.inventory.count_of("ore"), MAX * InventoryConfig.BAG_SIZE)
+	assert_eq(game.player().hotbar.inventory.count_of("iron_ore"), MAX * InventoryConfig.BAG_SIZE)
 	await _leave_physics_frame()
 
 
 func test_partly_full_bag_leaves_the_rest_and_saves_it() -> void:
 	var game := _enter()
-	_fill_bag(game, "ore")
+	_fill_bag(game, "iron_ore")
 	game.player().hotbar.inventory.set_slot(InventoryConfig.BAG_SIZE - 1, {"id": "wood", "count": MAX - 2})
 	var s := _setup_drop(game, {"id": "wood", "count": 5})
 	await _walk_over(game, s[1], s[0])
@@ -121,7 +121,7 @@ func test_partly_full_bag_leaves_the_rest_and_saves_it() -> void:
 
 func test_room_in_bag_later_picks_up_the_rest() -> void:
 	var game := _enter()
-	_fill_bag(game, "ore")
+	_fill_bag(game, "iron_ore")
 	var s := _setup_drop(game, {"id": "wood", "count": 4})
 	await _walk_over(game, s[1], s[0])
 	assert_eq(_drops_at(game, s[0]).size(), 1)

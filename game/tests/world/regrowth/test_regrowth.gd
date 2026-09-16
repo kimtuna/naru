@@ -74,11 +74,16 @@ func test_regrown_cells_match_the_seed_original() -> void:
 	var cells: Array[Vector2i] = []
 	cells.append_array(_cells(Deposit.TREE, 5))
 	cells.append_array(_cells(Deposit.STONE, 5))
-	cells.append_array(_cells(Deposit.ORE, 5))
+	cells.append_array(_cells(Deposit.IRON, 5))
+	cells.append_array(_cells(Deposit.SULFUR, 5))
+	cells.append_array(_cells(Deposit.HERB, 5))
 	for c in cells:
 		assert_true(map.remove_deposit(c))
 		assert_eq(map.deposit_at(c), Deposit.NONE)
-	_elapse(cfg.period_of(Deposit.ORE) + 1.0)
+	var longest := 0.0
+	for kind in [Deposit.TREE, Deposit.STONE, Deposit.IRON, Deposit.SULFUR, Deposit.HERB]:
+		longest = maxf(longest, cfg.period_of(kind))
+	_elapse(longest + 1.0)
 	for c in cells:
 		assert_false(map.is_removed(c), "mark cleared at %s" % [c])
 		assert_ne(fresh.deposit_at(c), Deposit.NONE)
@@ -127,7 +132,7 @@ func test_originally_empty_cells_never_grow() -> void:
 	var harvested := _cells(Deposit.TREE, 10)
 	for c in harvested:
 		map.remove_deposit(c)
-	_elapse(cfg.period_of(Deposit.ORE) * 3.0)
+	_elapse(cfg.period_of(Deposit.IRON) * 3.0)
 	var count := 0
 	var fresh_count := 0
 	for y in range(s.y - 30, s.y + 31):
@@ -228,7 +233,7 @@ func test_player_straddling_cells_blocks_all_of_them() -> void:
 	assert_true(a in regrowth.player_cells())
 	assert_true(b in regrowth.player_cells())
 	assert_false(a + Vector2i.LEFT in regrowth.player_cells())
-	_elapse(cfg.period_of(Deposit.ORE) * 2.0)
+	_elapse(cfg.period_of(Deposit.IRON) * 2.0)
 	assert_eq(map.deposit_at(a), Deposit.NONE)
 	assert_true(map.is_removed(a))
 	assert_true(map.is_removed(b))
@@ -238,7 +243,9 @@ func test_player_straddling_cells_blocks_all_of_them() -> void:
 
 func test_periods_order_tree_stone_ore() -> void:
 	assert_lt(cfg.period_of(Deposit.TREE), cfg.period_of(Deposit.STONE))
-	assert_lt(cfg.period_of(Deposit.STONE), cfg.period_of(Deposit.ORE))
+	assert_lt(cfg.period_of(Deposit.STONE), cfg.period_of(Deposit.IRON))
+	assert_eq(cfg.period_of(Deposit.SULFUR), cfg.period_of(Deposit.IRON), "both minerals regrow slowest")
+	assert_gt(cfg.period_of(Deposit.HERB), 0.0, "herbs regrow too")
 	assert_gt(cfg.period_of(Deposit.TREE), 0.0)
 	assert_eq(cfg.period_of(Deposit.NONE), 0.0, "stray marks on empty ground just clear")
 
@@ -246,12 +253,12 @@ func test_periods_order_tree_stone_ore() -> void:
 func test_regrowth_happens_in_order_tree_then_stone_then_ore() -> void:
 	var tree := _one(Deposit.TREE)
 	var stone := _one(Deposit.STONE)
-	var ore := _one(Deposit.ORE)
+	var ore := _one(Deposit.IRON)
 	for c in [tree, stone, ore]:
 		map.remove_deposit(c)
 	var t := cfg.period_of(Deposit.TREE)
 	var s := cfg.period_of(Deposit.STONE)
-	var o := cfg.period_of(Deposit.ORE)
+	var o := cfg.period_of(Deposit.IRON)
 	_elapse((t + s) / 2.0)
 	assert_eq(map.deposit_at(tree), Deposit.TREE)
 	assert_eq(map.deposit_at(stone), Deposit.NONE)
@@ -260,7 +267,7 @@ func test_regrowth_happens_in_order_tree_then_stone_then_ore() -> void:
 	assert_eq(map.deposit_at(stone), Deposit.STONE)
 	assert_eq(map.deposit_at(ore), Deposit.NONE)
 	_elapse(o - (s + o) / 2.0 + 1.0)
-	assert_eq(map.deposit_at(ore), Deposit.ORE)
+	assert_eq(map.deposit_at(ore), Deposit.IRON)
 
 
 func test_periods_come_from_the_config() -> void:
