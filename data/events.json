@@ -2861,5 +2861,77 @@
   "attempt": "2",
   "title": "G-009 4/6 도구 근접 공격 — 통과 (시도 2)",
   "commit": "24f1d5e"
+ },
+ {
+  "time": "2026-09-17 04:11:57 KST",
+  "epoch": 1789585917,
+  "report": {
+   "status": "done",
+   "summary": "G-009.5 총과 투사체 — 총을 들고 좌클릭하면 마우스 방향으로 탄약을 써서 쏘고, 투사체는 처음 닿는 몹에 피해를 주고 사라진다",
+   "problem": "좌클릭은 지금까지 무엇을 들든 휘두르기(Swinger)만 했다. spec(movement-controls)은 '총은 쏜다'고 하므로 총을 들었을 때만 휘두르기 대신 쏘기로 바꿔야 했고, 탄약 소모 · 탄약 없음 처리 · 날아가서 몹에 맞는 투사체가 필요했다. 총(gun)과 탄약(ammo) 아이템은 제작 레시피에 이미 있었다.",
+   "feedback_applied": "",
+   "approach": "① combat/tools_as_weapons/gun_config.gd(.tres): 총 id별 피해 · 탄속 · 사거리 · 연사 간격, 탄약 id(ammo) · 한 발당 개수, 맞는 거리 — 수치를 한 곳에 모음(임시 값). ② Swinger 에 alternate 훅을 추가: 좌클릭 때 손에 든 것을 먼저 넘겨 맡는 동작이 있으면(다음까지 기다릴 초를 돌려주면) 휘두르지 않는다. 쥐고 있기 · 창이 열리면 막기 처리는 그대로 재사용. ③ Gunner 노드: 총이면 가방에서 탄약을 빼고(모자라면 dry_fired 만 내고 안 쏨), Pointer 방향(player.update_facing → facing)으로 Projectile 을 Projectiles 노드 아래 만든다. ④ Projectile: 매 물리 프레임 지나간 선분과 몹 한가운데 거리를 재어 가장 앞의 살아 있는 몹에 피해를 주고 queue_free, 사거리를 다 가도 사라진다. ⑤ game.tscn 에 Projectiles · Gunner 노드, game.gd 에 연결. ⑥ tests/combat/tools_as_weapons/test_gun.gd 10개: 여러 방향으로 Pointer 쪽 발사, 탄약 1개 소모, 실제 좌클릭이면 쏘고 휘두르지 않음, 쥐고 있으면 탄약 2발만 나가고 빈 방아쇠, 탄약 없으면 투사체 · 휘두르기 · 인벤토리 변화 없음, 창 열림 중 안 쏨, 한 줄의 두 몹 중 앞 몹만 피해 · 투사체 사라짐, 빗나감 · 사거리 밖 몹 무사 · 사거리에서 소멸, 긴 한 걸음에도 몹을 건너뛰지 않음, 죽은 몹 안 맞음. 전체 409개 통과, guard 통과.",
+   "why": "총 발사를 Swinger 안에 두는 대신 alternate 훅으로 빼서, 좌클릭 입력 · 연사 · UI 막힘 경로를 하나로 유지하면서 나중에 갈고리총 · 작살총도 같은 훅에 붙일 수 있게 했다(별도 입력 노드를 두면 휘두르기와 쏘기가 같은 클릭에 둘 다 일어나는 문제가 생김). 투사체 충돌은 Area2D/물리 레이어 대신 선분-거리 판정으로 했다 — 몹은 아직 충돌 레이어 설계가 없고, 빠른 탄이 한 프레임에 몹을 건너뛰지 않으며, 테스트가 결정적이다. 탄약이 없을 때 휘두르기로 넘어가지 않게 한 것은 총을 든 좌클릭이 '쏘기'라는 spec 에 맞추기 위함(맨손 휘두르기로 바뀌면 실수가 된다). 투사체가 나무 · 바위에 막히는지, 탄약 종류 · 총 종류는 spec 미정이라 이번 단계에서 만들지 않았다 — 수치는 gun_config.tres 한 곳에서 바꾸면 된다.",
+   "files": [
+    "game/combat/tools_as_weapons/gun_config.gd",
+    "game/combat/tools_as_weapons/gun_config.tres",
+    "game/combat/tools_as_weapons/gunner.gd",
+    "game/combat/tools_as_weapons/projectile.gd",
+    "game/player/swing/swinger.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/combat/tools_as_weapons/test_gun.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "총은 Pointer 방향으로 투사체를 쏘고, 탄약을 쓴다. 탄약이 없으면 쏘지 않는다",
+     "ok": true,
+     "evidence": "gunner.gd:41-53 fire(): inventory.remove(ammo_id, ammo_per_shot) 가 실패하면 dry_fired 만 내고 null. Inventory.remove(inventory.gd:64-79)는 개수가 모자라면 아무것도 빼지 않는다. 그다음 player.update_facing()(Pointer 기준) → facing 방향으로 Projectile 을 만든다. game.gd 에서 swinger.alternate = gunner.try_fire 로 연결했다. 총을 들고 좌클릭하면 쏘고 휘두르지 않는다. 테스트는 test_gun.gd 의 test_fire_goes_toward_pointer_and_uses_ammo(5방향), test_left_click_with_gun_shoots_instead_of_swinging(실제 클릭), test_holding_click_fires_until_ammo_runs_out(탄 2발 → 발사 2번, 그다음 빈 방아쇠), test_no_ammo_no_shot(투사체 · 휘두르기 · 인벤토리 변화 없음), test_no_shot_while_a_window_is_open. 직접 돌린 TEST_DIR=res://tests/combat 결과 42/42 통과, guard 통과. 변이 검사(/tmp 복사본): 탄약 차감 제거 → 실패, 방향을 RIGHT 로 고정 → 실패, 빈 총이 휘두르기로 넘어감 → 실패."
+    },
+    {
+     "criterion": "투사체가 몹에 맞으면 피해가 들어가고 사라진다",
+     "ok": true,
+     "evidence": "projectile.gd:43-59 advance(): 이번 걸음의 선분 위에서 가장 앞에 있는 살아 있는 몹(_first_mob)에 take_damage 를 주고 queue_free 한다. 테스트는 test_projectile_hits_mob_deals_damage_and_disappears(실제 물리 프레임, 앞 몹만 gun damage 만큼 깎이고 투사체 무효), test_fast_projectile_does_not_skip_a_mob, test_dead_mob_is_not_hit_and_shots_can_kill, test_projectile_that_misses_leaves_mob_alone_and_expires_at_range. 변이 검사: take_damage 제거 → 실패, 맞은 뒤 queue_free 제거 → 실패(line 245 와 195)."
+    },
+    {
+     "criterion": "기존 테스트를 약하게 만들지 않았다",
+     "ok": true,
+     "evidence": "git diff HEAD 에서 바뀐 테스트 파일이 없다(새 test_gun.gd 만 있음). 전체 409/409 통과(.loop/out/test.log)."
+    },
+    {
+     "criterion": "규칙: 수치 한 곳 · 300줄 이하 · 화면 글자 하드코딩 없음 · 단계 밖 기능 없음",
+     "ok": true,
+     "evidence": "수치는 gun_config.tres 한 곳에 있다. 제일 긴 파일은 game.gd 258줄. 화면에 나오는 글자는 없다. 탄약 종류 · 총 종류 · 지형 충돌은 만들지 않았다(spec 미정)."
+    },
+    {
+     "criterion": "report 가 사실과 맞다",
+     "ok": true,
+     "evidence": "report 의 files 목록 · 설명(alternate 훅, 선분-거리 판정, 테스트 10개)이 실제 diff 와 새 파일과 같다."
+    }
+   ],
+   "issues": [
+    "(참고) 투사체가 나무 · 바위 · 구조물을 뚫고 지나간다. spec 에 정해진 것이 없어 이번 기준 밖이다. 나중에 막을지 정해야 한다",
+    "(참고) 탄약이 없어도 try_fire 가 연사 간격(interval)을 돌려주므로, 쥐고 있으면 interval 마다 dry_fired 가 난다. 소리나 표시를 붙일 때 이 점을 알고 써야 한다",
+    "(참고) Projectile.create 에 몸통 색(Color(1.0, 0.9, 0.3))과 SIZE 가 코드에 박혀 있다. 디자인 영역이라 판정에는 넣지 않았다"
+   ],
+   "good": [
+    "Swinger.alternate 훅 덕분에 좌클릭 · 쥐고 있기 · 창 열림 막기 경로를 새로 만들지 않고 그대로 썼다. 갈고리총 · 작살총도 같은 자리에 붙일 수 있다",
+    "선분-거리 판정이라 빠른 탄이 몹을 건너뛰지 않고, 결과가 늘 같다. 앞 몹만 맞는 것까지 테스트했다",
+    "변이 5종을 모두 테스트가 잡았다. 테스트가 기준을 실제로 검사한다",
+    "탄약 차감이 한 번에 되거나 아예 안 된다(Inventory.remove). 모자랄 때 일부만 빠지지 않는다"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 51.5 ms (game _ready 35.5 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              54\nTests               409\nPassing Tests       409\nAsserts           14368\nTime              58.185s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-009",
+  "step": "5",
+  "attempt": "1",
+  "title": "G-009 5/6 총과 투사체 — 통과 (시도 1)",
+  "commit": "3c0a1b0"
  }
 ]
