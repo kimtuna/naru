@@ -1,11 +1,17 @@
 {
- "updated": "2026-09-16 21:27:46 KST",
- "updated_epoch": 1789561666,
+ "updated": "2026-09-16 21:31:19 KST",
+ "updated_epoch": 1789561879,
  "progress": {
   "groups_total": 1,
   "groups_done": 0,
   "groups_waiting": 0,
   "steps_total": 3,
   "steps_done": 0
- }
+ },
+ "state": "running",
+ "reason": "",
+ "started": "2026-09-16 21:31:19",
+ "ended": "",
+ "resume_at": "",
+ "pid": "93658"
 }
