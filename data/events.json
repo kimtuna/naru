@@ -1802,5 +1802,69 @@
   "attempt": "1",
   "title": "G-010 1/2 기준 화면과 배율 — 통과 (시도 1)",
   "commit": "0031008"
+ },
+ {
+  "time": "2026-09-17 00:30:06 KST",
+  "epoch": 1789572606,
+  "report": {
+   "status": "done",
+   "summary": "G-010.2 모든 화면을 640×360 에 맞춤 · 글자 크기를 테마 한 곳으로",
+   "problem": "메뉴 · HUD 배치가 1280×720 기준 좌표로 짜여 있어 기준 화면 640×360 에서 월드 선택(새 월드 · 삭제 확인 · 목록), 캐릭터 선택 확인 창, 캐릭터 생성 폼(높이 360), 가방(40px 칸 10줄 = 436px 폭, 나가기 안내와 겹침)이 화면 밖으로 나가거나 겹쳤다. 글자 크기는 엔진 기본 16 에 기대고 있어 정해 둔 곳이 없었다. 월드 목록은 개수 제한이 없어 많아지면 반드시 넘친다.",
+   "feedback_applied": "",
+   "approach": "1) ui/theme/theme.tres 를 만들어 project.godot gui/theme/custom 으로 걸고, 기본 글자 12px · 작은 글자 타입 변형 SmallLabel 10px 을 여기에만 둔다. UiTheme(ui/theme/ui_theme.gd) 에 테마 경로 · 읽을 수 있는 하한 10 · 상한 16 을 둔다. 2) 모든 메뉴 씬 좌표를 640×360 기준으로 다시 잡았다(여백 20 · 제목 16 · 본문 44). 월드 목록은 ScrollContainer 로 감싸 개수와 상관없이 목록 칸 안에서 스크롤. 확인 창 문구는 자동 줄바꿈. 캐릭터 · 월드 이름 버튼과 HUD 이름 칸은 고정 너비 + 말줄임. 3) 아이템 칸 40→24px, 핫바 아래 여백 · 간격 축소, 칸 숫자는 SmallLabel. 4) tests/settings/display/test_screen_fit.gd — 메인 · 설정 · 캐릭터 선택(꽉 참 + 확인 창 / 빔) · 캐릭터 생성(오류 줄 표시) · 월드 선택(월드 12개 + 오류 + 확인 창 / 빔) · 게임 HUD(가득 찬 핫바) · 가방(열림) · 제작(레시피 전부 · 진행 중 · 버퍼 가득)을 한국어 · 영어 둘 다에서, 보이는 모든 Control 이 640×360 안에 있고 최소 크기보다 눌리지 않았으며 나란한 덩어리끼리 겹치지 않는지 검사. 가장 긴 이름(24자 W)을 넣고, 스크롤로 마지막 월드까지 닿는지도 본다. 글자 크기는 테마 값이 하한~상한 안인지, 화면의 모든 Label · Button · LineEdit 크기가 테마에서 온 값인지, 소스에 font_size 오버라이드가 없는지 검사. 수정 전에는 이 테스트가 실제로 위 넘침들을 잡았고, 지금 tools/test.sh 270개 전부 통과. shot.sh 로 캐릭터 생성 · 월드 선택을 찍어 눈으로도 확인했다.",
+   "why": "글자 크기를 한 곳에 두는 방법으로 Godot 테마가 엔진 기본 경로라 모든 Control 이 자동으로 따른다 — 코드 상수 + 노드마다 오버라이드는 빠뜨리기 쉬워 버렸다. 12px 은 viewport 늘림 모드에서 640×360 으로 래스터화될 때 한글 획이 읽히는 최소 수준(한글 픽셀 폰트도 11~12px)이고 1280×720 에서 24px 로 보인다. 칸 안 숫자만 10px. 값은 임시라 폰트가 정해지면 테마 파일만 고치면 된다. 월드 목록은 개수 상한이 spec 에 없어 상한을 새로 만들기보다 스크롤을 택했다(되돌리기 싸다). 이름 말줄임은 캐릭터 이름 길이 제한이 spec 에 없어서 배치를 지키는 가장 싼 방법. 칸 24px 은 가방 10열이 276px 로 화면 가운데에 들어가고 16px 타일의 1.5배라 아이콘이 보인다.",
+   "files": [
+    "game/project.godot",
+    "game/ui/theme/theme.tres",
+    "game/ui/theme/ui_theme.gd",
+    "game/ui/menu/main_menu.tscn",
+    "game/ui/menu/settings.tscn",
+    "game/ui/menu/character_select.tscn",
+    "game/ui/menu/character_select.gd",
+    "game/ui/menu/character_create.tscn",
+    "game/ui/menu/character_create.gd",
+    "game/ui/menu/world_select.tscn",
+    "game/ui/menu/world_select.gd",
+    "game/ui/hud/item_slot.gd",
+    "game/ui/hud/hotbar_view.tscn",
+    "game/world/game.tscn",
+    "game/tests/settings/display/test_screen_fit.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "criterion": "메인 화면 · 캐릭터 선택 · 캐릭터 생성 · 월드 선택 · 게임 HUD · 인벤토리 · 제작 화면이 640×360 안에 잘리지 않고 들어간다 (노드 크기 · 위치 검사)",
+     "ok": true,
+     "evidence": "tests/settings/display/test_screen_fit.gd 의 test_main_menu_and_settings_fit · test_character_select_* · test_character_create_fits_with_errors_shown · test_world_select_* · test_game_hud_fits_with_full_hotbar · test_inventory_fits_when_open · test_crafting_fits_with_all_recipes_progress_and_full_buffer 가 ko/en 모두에서 보이는 모든 Control 의 global rect 가 640×360 안인지, 최소 크기보다 눌리지 않았는지, 직계 덩어리끼리 겹치지 않는지 검사한다. 직접 실행 12/12 통과(전체 test.log 270/270). 임시 변형으로 테스트가 진짜인지 확인: HUD ExitHint offset_left 620 → 3개 실패, 월드 목록 offset_bottom 420 → 2개 실패, 테마 글자 16 → 5개 실패. 변형은 모두 원복(cmp 로 확인)."
+    },
+    {
+     "criterion": "글자 크기가 640×360 에서 읽을 수 있는 크기로 정해져 있고, 값은 한 곳(테마)에 있다",
+     "ok": true,
+     "evidence": "game/ui/theme/theme.tres (default_font_size 12, SmallLabel 10), project.godot gui/theme/custom 연결. test_font_sizes_are_readable_and_live_in_the_theme (10~16 범위), test_every_shown_text_uses_a_theme_font_size, test_no_font_size_overrides_in_sources. item_slot.gd 에 add_theme_font_size_override 를 임시로 넣자 2개 실패. grep 으로 테스트 · 애드온 밖에 font_size 설정 없음 확인."
+    }
+   ],
+   "issues": [
+    "규칙 위반(prompt.md 4절 '파일 하나가 300줄을 넘으면 나눈다'): game/tests/settings/display/test_screen_fit.gd 가 318줄이다. 다른 테스트 파일은 모두 300줄 이하다.",
+    "(참고 · pass 무관) 배치가 글자 12px 에 딱 맞춰져 있어 테마 default_font_size 를 허용 범위 안의 16 으로만 올려도 화면 맞춤 테스트 5개가 깨진다. report 의 '폰트가 정해지면 테마 파일만 고치면 된다'는 글자 크기를 올리는 경우엔 사실이 아니다 — 폰트를 정할 때 배치도 같이 봐야 한다는 점을 알아 둘 것. 테스트가 이를 잡아 주므로 지금 고칠 것은 아니다.",
+    "(참고 · pass 무관) 확인 창 PanelContainer 의 offset_bottom(60 · 220)과 버튼 offset_bottom 은 최소 크기보다 작은 값이라 실제 크기는 엔진이 키워서 정한다. 동작은 맞지만 씬 값만 보면 크기를 오해하기 쉽다."
+   ],
+   "good": [
+    "화면 맞춤 테스트가 꽉 찬 상태(긴 이름 24자 W, 월드 12개, 오류 줄, 확인 창, 가득 찬 가방, 제작 진행 중 + 버퍼 가득)와 두 언어를 모두 보아 실제로 넘침을 잡는다 — 변형 검사에서 확인.",
+    "글자 크기를 테마 한 곳에 두고, 화면의 실제 글자 크기 · 소스 오버라이드 두 방향으로 검사한다.",
+    "월드 목록을 ScrollContainer 로 감싸고 마지막 항목까지 스크롤로 닿는지 검사한다.",
+    "새 수치(SLOT_WIDTH, ROW_WIDTH, PART_COLUMN_WIDTH, ICON_MARGIN, FRAME_WIDTH)를 이름 붙인 상수로 뒀고 화면 글자 하드코딩이 없다. 기존 테스트 삭제 · 완화 없음(git diff 에 tests 변경 없음)."
+   ],
+   "feedback": "기능과 수용 기준은 충족했다. 불합격 사유는 하나뿐이다: game/tests/settings/display/test_screen_fit.gd 가 318줄로 300줄 규칙을 넘는다. 고칠 것: 파일 끝의 글자 크기 테스트 세 개(test_font_sizes_are_readable_and_live_in_the_theme, test_every_shown_text_uses_a_theme_font_size, test_no_font_size_overrides_in_sources)와 도우미 _files · _theme, 상수 SOURCE_DIRS 를 새 파일 game/tests/settings/display/test_font_size.gd (extends GutTest) 로 옮겨 두 파일 모두 300줄 이하로 만든다. test_every_shown_text_uses_a_theme_font_size 는 _character · _open · _enter · _fill_bag 과 before_each/after_each(Session.store 임시 폴더, Screens.simulate, root.size, 로케일 원복)가 필요하니 새 파일에도 같이 두거나, 공통 도우미를 tests/settings/display/ 아래 작은 헬퍼 스크립트(예: fit_helpers.gd)로 빼서 두 파일이 같이 쓰게 한다. 테스트 내용 · 기대값은 바꾸지 말고 옮기기만 한다. 옮긴 뒤 tools/test.sh 가 전부 통과하고 테스트 개수가 그대로 270 인지 확인한다. 코드 · 씬은 건드리지 않는다."
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 47.4 ms (game _ready 40.6 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              37\nTests               270\nPassing Tests       270\nAsserts           13003\nTime              41.078s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_fail",
+  "group": "G-010",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-010 2/2 모든 화면이 기준 화면 안에 들어간다 — 재시도 (시도 1)",
+  "detail": "- QA 피드백:\n기능과 수용 기준은 충족했다. 불합격 사유는 하나뿐이다: game/tests/settings/display/test_screen_fit.gd 가 318줄로 300줄 규칙을 넘는다. 고칠 것: 파일 끝의 글자 크기 테스트 세 개(test_font_sizes_are_readable_and_live_in_the_theme, test_every_shown_text_uses_a_theme_font_size, test_no_font_size_overrides_in_sources)와 도우미 _files · _theme, 상수 SOURCE_DIRS 를 새 파일 game/tests/settings/display/test_font_size.gd (extends GutTest) 로 옮겨 두 파일 모두 300줄 이하로 만든다. test_every_shown_text_uses_a_theme_font_size 는 _character · _open · _enter · _fill_bag 과 before_each/after_each(Session.store 임시 폴더, Screens.simulate, root.size, 로케일 원복)가 필요하니 새 파일에도 같이 두거나, 공통 도우미를 tests/settings/display/ 아래 작은 헬퍼 스크립트(예: fit_helpers.gd)로 빼서 두 파일이 같이 쓰게 한다. 테스트 내용 · 기대값은 바꾸지 말고 옮기기만 한다. 옮긴 뒤 tools/test.sh 가 전부 통과하고 테스트 개수가 그대로 270 인지 확인한다. 코드 · 씬은 건드리지 않는다."
  }
 ]
