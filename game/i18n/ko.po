@@ -186,6 +186,12 @@ msgstr "철광석"
 msgid "ITEM_SULFUR"
 msgstr "유황"
 
+msgid "EQUIP_FEET"
+msgstr "신발"
+
+msgid "ITEM_SPIKES"
+msgstr "스파이크"
+
 msgid "ITEM_HERB"
 msgstr "약초"
 

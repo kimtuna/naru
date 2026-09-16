@@ -61,8 +61,10 @@ func _ready() -> void:
 	%WorldName.text = world_name()
 	if character:
 		player().hotbar = Hotbar.new(character)
+		player().equipment = Equipment.new(player().hotbar.inventory)
 	%Hotbar.bind(player().hotbar)
 	inventory_view().bind(player().hotbar.inventory)
+	inventory_view().bind_equipment(player().equipment, player().hotbar)
 	crafting_view().bind(player().hotbar.inventory)
 	swinger().blocked = ui_blocks_click
 	interactor().blocked = ui_blocks_click

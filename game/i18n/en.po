@@ -186,6 +186,12 @@ msgstr "Iron Ore"
 msgid "ITEM_SULFUR"
 msgstr "Sulfur"
 
+msgid "EQUIP_FEET"
+msgstr "Feet"
+
+msgid "ITEM_SPIKES"
+msgstr "Spikes"
+
 msgid "ITEM_HERB"
 msgstr "Herb"
 
