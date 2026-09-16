@@ -3517,5 +3517,113 @@
   "attempt": "1",
   "title": "G-014 3/4 앵커 — 통과 (시도 1)",
   "commit": "77c41a6"
+ },
+ {
+  "time": "2026-09-17 06:21:30 KST",
+  "epoch": 1789593690,
+  "report": {
+   "status": "done",
+   "summary": "갈고리총 — 등급 둘(최대 거리 · 탄창 데이터) · 레시피 · 좌클릭으로 Pointer 쪽 발사와 비행 · 탄창 · 절벽 매달림(기력 감소) · 줄 끊기(Space 임시) 낙하 · 드는 동안 채취 안 함",
+   "problem": "좌클릭 한 번이 휘두르기 대신 '쏘고 날아가기'가 되어야 했고, 스파이크 없이 절벽 칸에 닿으면 지금의 Climber 는 바로 떨어뜨린다 — 매달린 상태를 따로 두어야 했다. 좌클릭 대체 동작 자리(Swinger.alternate)는 총이 이미 쓰고 있어 하나만 걸 수 있었다. 탄창은 spec 에 '있다'만 있고 채우는 방법이 없었다. game.gd 가 292줄이라 300줄 한도에 걸릴 뻔했다.",
+   "feedback_applied": "",
+   "approach": "① GrappleConfig(life/climbing/grapple_config.tres): 아이템 id(=등급) → 최대 거리(칸) · 탄창 · 발사 간격, 비행 속력. grapple_gun 4칸/2발, grapple_gun_2 8칸/4발 (임시). hook_point 가 최대 거리로 자른다. ② Grappler 노드: IDLE/FLYING/HANGING. 쏘면 탄창 1 감소(핫바 칸 아이템에 loaded 키로 저장 — 캐릭터 저장에 그대로 남음), 걸린 곳으로 fly_speed 로 날아간다. 가는 길에 막힌 칸(바다 · 자원 · 섬 밖)이 있으면 그 앞에서 멈춘다. 절벽에 닿으면 HANGING — player.hanging 이 켜져 걷지 않고, Climber 는 스파이크가 없어도 떨어뜨리지 않으며 Stamina 가 멈춰 있어도 hang_drain_per_second 로 줄인다(0+여유를 넘기면 기존 낙하). 매달린 채로 다시 쏠 수 있다. ③ 줄 끊기: InputActions.CUT_ROPE(project.godot 에 Space 임시) → 절벽이면 Climber.start_fall 로 아래쪽 걸을 수 있는 칸까지 떨어진다. ④ Swinger.alternate 를 add_alternate 목록으로 바꿔 총 · 갈고리총을 함께 건다. 갈고리총은 탄이 없어도 좌클릭을 맡으므로 드는 동안 휘두르지도 채취하지도 않는다. ⑤ 레시피 두 개(갈고리총: 철괴+나무, II: 갈고리총+철괴 — 깊이 3), 번역 키 ko/en. ⑥ 테스트: test_grapple_config.gd(등급 데이터 · 레시피 · 최대 거리 자르기), test_grappler.gd(실제 좌클릭으로 최대 거리/짧은 조준 도착 · 막힌 칸 앞 멈춤 · 탄창 비면 안 쏨 · 절벽 매달림과 기력 감소 · 기력 소진 낙하 · Space 줄 끊기 후 아래 걸을 수 있는 칸 도착 · 들고 있으면 채취 안 됨, 맨손 대조). tools/test.sh 490개 통과, guard 통과.",
+   "why": "탄창 재장전은 spec 에 없어 '걸을 수 있는 땅에 서 있으면 들고 있는 갈고리총이 다시 찬다'로 임시 결정했다 — 탄창의 뜻이 '한 번 오를 때 몇 번 쏠 수 있나'가 되어 초반 짧은 갈고리총 → 후반 갈고리총만으로 이동이라는 진행과 맞고, 따로 탄약 아이템 · 재장전 키를 만들지 않아 나중에 바꾸기 싸다(Grappler._reload_on_ground 한 곳). 탄약 아이템을 소모하는 총 방식은 새 아이템과 레시피가 늘고 spec 이 '탄창'이라고 해서 버렸다. 탄 수를 아이템 dict 에 둔 것은 저장 · 되살리기가 공짜라서다(노드에 두면 저장 후 다시 들어가면 가득 차는 구멍). 매달림은 spec 미정 항목(옆으로 가나 · 기력 더 빨리 주나)이라 가장 단순하게 '걷지 않음 · 멈춰도 초당 10 감소 · 앵커 칸이면 회복'으로 두었고 값은 ClimbingConfig 한 곳에 있다. 줄 끊기 키는 spec 미정이라 비어 있던 Space 를 임시로 묶었다. 등급은 아이템 id 로 표현했다 — 장비 등급 체계(equipment.md)가 아직 미정이라 데이터 키만 바꾸면 된다. 날아가는 길이 막히면 그 앞에서 멈추게 한 것은 바다 · 바위 속에 서는 것을 막기 위한 최소 규칙이다.",
+   "files": [
+    "game/life/climbing/grapple_config.gd",
+    "game/life/climbing/grapple_config.tres",
+    "game/life/climbing/grappler.gd",
+    "game/life/climbing/climber.gd",
+    "game/life/climbing/stamina.gd",
+    "game/life/climbing/climbing_config.gd",
+    "game/life/climbing/climbing_config.tres",
+    "game/player/player.gd",
+    "game/player/swing/swinger.gd",
+    "game/combat/tools_as_weapons/gunner.gd",
+    "game/core/input/input_actions.gd",
+    "game/project.godot",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/craft/recipes/recipes.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/life/climbing/test_grappler.gd",
+    "game/tests/life/climbing/test_grapple_config.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "갈고리총 레시피가 있고, 등급마다 최대 거리가 데이터에 있다 (지금은 등급 둘 이상)",
+     "ok": true,
+     "evidence": "game/life/climbing/grapple_config.tres 에 grapple_gun(4칸 · 2발) · grapple_gun_2(8칸 · 4발). recipes.json 에 두 레시피가 있다. test_grapple_config.gd 의 test_grades_have_max_range_and_magazine_in_data(등급 2개 이상 · 등급마다 다른 거리 · II 가 더 멂)와 test_every_grade_has_a_recipe_from_raw_materials(모든 등급에 레시피 · 원재료부터 깊이 3 이하 · ko/en 번역 키)가 통과한다"
+    },
+    {
+     "criterion": "좌클릭하면 Pointer 쪽으로 쏘고 걸린 곳으로 이동한다. 최대 거리보다 멀리 겨누면 최대 거리 지점에, 짧게 겨누면 그 지점에 걸린다",
+     "ok": true,
+     "evidence": "grappler.gd:76 에서 Pointer.global_position 과 GrappleConfig.hook_point 로 최대 거리까지 자르고, _physics_process 에서 fly_speed 로 날아간다. test_aiming_beyond_max_range_lands_at_max_range(두 등급 모두 실제 좌클릭 → hook 과 도착 위치가 최대 거리 지점), test_aiming_short_lands_where_aimed_and_uses_one_shot(겨눈 점에 걸리고, 순간이동이 아니라 날아가서 도착), test_hook_point_is_clamped_to_max_range(대각선 포함)가 통과한다. guard.sh 도 통과한다"
+    },
+    {
+     "criterion": "탄창이 있고, 비면 쏘지 않는다",
+     "ok": true,
+     "evidence": "탄 수는 핫바 아이템의 loaded 키에 있다(grappler.gd:69-73). test_empty_magazine_does_not_fire: 절벽에 매달린 채 탄을 다 쓴 뒤 좌클릭하면 fired 가 늘지 않고, dry_fired 가 1번 나고, 위치도 그대로이며, 휘두르지도 않는다. 한 발에 하나씩 주는 것은 test_aiming_short 가 확인한다"
+    },
+    {
+     "criterion": "절벽에 도착하면 매달린 상태가 되고 기력이 준다. 줄을 끊으면(InputMap 액션 — 키는 임시) 아래쪽으로 걸을 수 있는 칸까지 떨어진다",
+     "ok": true,
+     "evidence": "_arrive 가 절벽이면 HANGING · player.hanging 을 켠다. stamina.tick 에서 hanging 이면 hang_drain_per_second(ClimbingConfig) 만큼 준다. project.godot 에 cut_rope(Space, 임시)가 있고 InputActions.CUT_ROPE 로 등록돼 있다. test_arriving_on_a_cliff_hangs_and_drains_stamina(스파이크 없이도 떨어지지 않음 · 걷지 않음 · 기력이 기대값 ±1 로 줆), test_hanging_until_stamina_runs_out_falls, test_cutting_the_rope_falls_to_a_walkable_cell_below(InputEventAction 으로 줄을 끊으면 landing_cell 로 떨어지고, 그 칸이 아래쪽이며 걸을 수 있음. 땅에서는 끊을 줄이 없음)가 통과한다"
+    },
+    {
+     "criterion": "들고 있는 동안은 채취하지 않는다 (손이 갈고리총을 쥐고 있다)",
+     "ok": true,
+     "evidence": "Swinger.add_alternate 로 grappler.try_fire 가 좌클릭을 맡고, 갈고리총이면 탄이 없어도 음수가 아닌 값을 돌려준다(휘두르지 않음). test_holding_the_grapple_gun_does_not_harvest: 갈고리총을 들고 나무를 겨누면 progress 0 · swing 0이고, 같은 나무를 맨손으로 치면 휘둘러서 progress 가 올라간다(대조군)"
+    },
+    {
+     "criterion": "테스트가 진짜인가 · 기존 테스트를 약하게 만들었나",
+     "ok": true,
+     "evidence": "git diff HEAD 에서 기존 테스트 파일은 바뀌지 않았다(삭제 · 완화 · skip 없음). 새 테스트는 실제 좌클릭 · InputMap 액션으로 확인하고, 기대값을 config 에서 계산한다. 맨손 대조군도 있다. tools/test.sh 로 climbing · player · combat 폴더(154개)를 직접 돌려 모두 통과했다. test.log 에서는 전체 490개가 통과했다"
+    },
+    {
+     "criterion": "규칙 위반 (하드코딩 글자 · 흩어진 수치 · 300줄 · 단계 밖 기능)",
+     "ok": true,
+     "evidence": "수치는 grapple_config.tres · climbing_config.tres 에 모여 있다. 화면 글자는 ITEM_GRAPPLE_GUN(_2) 번역 키(ko/en)만 새로 생겼다. 가장 긴 파일은 game.gd 299줄 · test_grappler.gd 264줄로 300줄 아래다. 단계 밖 기능은 없다"
+    },
+    {
+     "criterion": "report 가 사실과 맞나",
+     "ok": true,
+     "evidence": "report 의 files 목록 · approach(IDLE/FLYING/HANGING, loaded 키, add_alternate, Space 임시, 땅에서 재장전, 막힌 칸 앞에서 멈춤)가 실제 diff 와 맞다"
+    }
+   ],
+   "issues": [
+    "game.gd 가 299줄로 300줄 한도에 붙어 있다. 다음에 한 줄이라도 더하면 나눠야 한다 — 다음 단계는 먼저 게임 씬 연결(setup 묶음)을 나눌 자리를 생각할 것",
+    "스파이크를 신은 채 갈고리총으로 절벽에 매달리면 player.hanging 때문에 걷지 못한다. 임시 검사에서 can_climb=true 인데 30프레임 동안 이동 거리가 0이었다. 벗어나려면 줄을 끊어 떨어지거나(낙하 피해) 다시 쏴야 한다. spec 미정 항목('매달린 채 옆으로 가나')이라 불합격 사유는 아니지만, '스파이크+갈고리총' 진행에서 걸림돌이 된다. 사람 결정이 필요하다",
+    "모든 아이템이 STACK_MAX(99)까지 겹치므로(기존 규칙), 갈고리총 여러 개가 한 칸에 겹치면 loaded 값 하나를 나눠 쓴다. 또 loaded 키가 붙은 칸과 새로 만든 갈고리총은 id 가 같아 add 때 한 칸에 합쳐진다. 도구 겹치기 규칙이 정해질 때 함께 봐야 한다",
+    "땅(절벽 아닌 칸)에 서 있으면 매 물리 프레임에 탄창이 바로 가득 찬다. 그래서 탄창은 절벽 위에서만 의미가 있다. spec 에 재장전 규칙이 없어 임시 결정으로 report.why 에 적혀 있다 — 사람 확인 대상",
+    "날아가는 길은 캐릭터 중심점만 막힌 칸인지 검사한다(reachable). 그래서 몸 충돌 크기만큼 자원 칸 가장자리에 겹친 채 멈출 수 있다. 지금은 테스트상 문제가 없다",
+    "좌클릭을 누르고 있으면 interval(0.3초)마다 계속 쏴서 매달린 채로 탄창이 금방 빈다. 손맛 문제라 사람이 플레이해 보고 판단할 것"
+   ],
+   "good": [
+    "수용 기준마다 실제 입력(좌클릭 · InputMap 액션)으로 게임 씬에서 확인하는 테스트가 있고, 맨손 대조군까지 있어 '채취 안 함'이 진짜로 검증된다",
+    "Swinger.alternate 를 add_alternate 목록으로 바꿔 총과 갈고리총이 좌클릭을 함께 쓴다. 기존 Gunner 테스트도 그대로 통과한다",
+    "탄 수를 아이템 dict 에 둬서 저장 · 되살리기 구멍이 없다. 수치는 모두 config 한 곳에 있다",
+    "매달림 · 날기 상태를 Player 플래그로 드러내 Climber · Stamina 와 겹치지 않게 연결했다(날아가는 동안 기력 멈춤, 기력 소진 시 기존 낙하 경로 재사용)"
+   ],
+   "feedback": ""
+  },
+  "test": "hysics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 127.4 ms (game _ready 107.9 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              70\nTests               490\nPassing Tests       490\nAsserts           30279\nTime              192.076s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-014",
+  "step": "4",
+  "attempt": "1",
+  "title": "G-014 4/4 갈고리총 — 통과 (시도 1)",
+  "commit": "6165924"
+ },
+ {
+  "time": "2026-09-17 06:21:34 KST",
+  "epoch": 1789593694,
+  "type": "group_done",
+  "group": "G-014",
+  "title": "G-014 등반 — 스파이크 · 기력 · 앵커 · 갈고리총 — 묶음 완료, main 에 합침"
  }
 ]
