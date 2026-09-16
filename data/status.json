@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 02:22:15 KST",
- "updated_epoch": 1789579335,
+ "updated": "2026-09-17 02:26:58 KST",
+ "updated_epoch": 1789579618,
  "progress": {
   "groups_total": 14,
   "groups_done": 8,
@@ -20,6 +20,6 @@
  "step_total": "1",
  "step_title": "ESC 설정 창",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 00:55:19"
+ "phase": "QA",
+ "phase_since": "2026-09-17 02:26:58"
 }
