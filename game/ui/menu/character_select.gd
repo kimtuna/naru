@@ -3,6 +3,8 @@ extends Control
 ## 빈 칸 → 캐릭터 생성, 찬 칸 → 그 캐릭터를 들고 월드 선택. 삭제는 확인을 한 번 거친다.
 
 const EMPTY_TEXT := "CHARACTER_NEW"
+## 슬롯 버튼 너비 (기준 화면 640×360 픽셀) — 긴 이름은 말줄임으로 자른다.
+const SLOT_WIDTH := 180
 
 ## 삭제 확인 중인 슬롯. 없으면 -1.
 var _pending_delete := -1
@@ -43,7 +45,9 @@ func _build_slot(slot: int) -> void:
 	row.name = "Slot%d" % slot
 	var select := Button.new()
 	select.name = "Select"
-	select.custom_minimum_size.x = 200
+	select.custom_minimum_size.x = SLOT_WIDTH
+	select.clip_text = true
+	select.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	select.pressed.connect(_on_slot_pressed.bind(slot))
 	var delete := Button.new()
 	delete.name = "Delete"

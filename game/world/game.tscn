@@ -53,10 +53,10 @@ unique_name_in_owner = true
 [node name="Hud" type="CanvasLayer" parent="."]
 
 [node name="Info" type="GridContainer" parent="Hud"]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 320.0
-offset_bottom = 100.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 208.0
+offset_bottom = 46.0
 mouse_filter = 2
 columns = 2
 
@@ -66,8 +66,11 @@ text = "GAME_CHARACTER"
 
 [node name="CharacterName" type="Label" parent="Hud/Info"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 auto_translate_mode = 2
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="WorldLabel" type="Label" parent="Hud/Info"]
 layout_mode = 2
@@ -75,12 +78,15 @@ text = "GAME_WORLD"
 
 [node name="WorldName" type="Label" parent="Hud/Info"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 auto_translate_mode = 2
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="ExitHint" type="Label" parent="Hud"]
-offset_left = 20.0
-offset_top = 110.0
+offset_left = 8.0
+offset_top = 50.0
 text = "GAME_EXIT_HINT"
 
 [node name="Hotbar" parent="Hud" instance=ExtResource("3")]

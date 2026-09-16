@@ -2,6 +2,9 @@ extends Control
 ## 월드 선택 · 생성 — 저장된 월드 목록, 새 월드(이름 · 시드), 삭제(확인 한 번), 뒤로 → 캐릭터 선택.
 ## 월드를 고르면 Session 의 캐릭터와 그 월드를 들고 게임 씬으로 간다.
 
+## 월드 버튼 너비 (기준 화면 640×360 픽셀) — 긴 이름은 말줄임으로 자른다.
+const ROW_WIDTH := 180
+
 ## 삭제 확인 중인 월드 id. 없으면 "".
 var _pending_delete := ""
 
@@ -97,7 +100,9 @@ func _build_row(id: String, data: WorldData) -> void:
 	# 월드 이름은 사용자가 쓴 글자라 번역하지 않는다.
 	select.text = data.name
 	select.auto_translate_mode = AUTO_TRANSLATE_MODE_DISABLED
-	select.custom_minimum_size.x = 200
+	select.custom_minimum_size.x = ROW_WIDTH
+	select.clip_text = true
+	select.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	select.pressed.connect(_on_world_pressed.bind(id))
 	var delete := Button.new()
 	delete.name = "Delete"

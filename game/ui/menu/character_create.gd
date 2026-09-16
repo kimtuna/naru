@@ -4,6 +4,8 @@ extends Control
 ## 모양 · 배치는 자리만 — 디자인은 사람이 나중에 넣는다.
 
 const PREVIEW_SIZE := Vector2(80, 20)
+## 외형 줄의 항목 이름 · 선택지 칸 너비 (기준 화면 640×360 픽셀).
+const PART_COLUMN_WIDTH := 80
 
 var catalog: AppearanceCatalog
 ## 항목 index → 고른 선택지 index.
@@ -80,14 +82,14 @@ func _build_part(i: int) -> void:
 	var label := Label.new()
 	label.name = "Label"
 	label.text = part.label
-	label.custom_minimum_size.x = 120
+	label.custom_minimum_size.x = PART_COLUMN_WIDTH
 	var prev := Button.new()
 	prev.name = "Prev"
 	prev.text = "APPEARANCE_PREV"
 	prev.pressed.connect(step.bind(i, -1))
 	var value := Label.new()
 	value.name = "Value"
-	value.custom_minimum_size.x = 120
+	value.custom_minimum_size.x = PART_COLUMN_WIDTH
 	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var next := Button.new()
 	next.name = "Next"

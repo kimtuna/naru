@@ -2,7 +2,10 @@ class_name ItemSlot
 ## 아이템 칸 네모 하나 — 핫바와 가방 화면이 같이 쓴다. 그림은 임시 색 네모다. 아트는 사람이 나중에 넣는다.
 ## 노드: Background · Icon(아이템이 있을 때만 보임) · Frame(고른 칸 테두리) · Key(숫자키) · Count(2개 이상일 때 개수).
 
-const SIZE := Vector2(40, 40)
+## 기준 화면 640×360 픽셀.
+const SIZE := Vector2(24, 24)
+const ICON_MARGIN := 5
+const FRAME_WIDTH := 2.0
 const FRAME_COLOR := Color(1, 1, 1, 1)
 const EMPTY_COLOR := Color(0, 0, 0, 0.5)
 
@@ -23,14 +26,14 @@ static func make(node_name: String, key_text := "") -> Control:
 	var icon := ColorRect.new()
 	icon.name = "Icon"
 	icon.visible = false
-	_fill(icon, 8)
+	_fill(icon, ICON_MARGIN)
 	box.add_child(icon)
 
 	var frame := ReferenceRect.new()
 	frame.name = "Frame"
 	frame.editor_only = false
 	frame.border_color = FRAME_COLOR
-	frame.border_width = 3.0
+	frame.border_width = FRAME_WIDTH
 	frame.visible = false
 	_fill(frame, 0)
 	box.add_child(frame)
@@ -40,7 +43,8 @@ static func make(node_name: String, key_text := "") -> Control:
 		key.name = "Key"
 		key.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		key.text = key_text
-		key.position = Vector2(3, 0)
+		key.theme_type_variation = UiTheme.SMALL_LABEL
+		key.position = Vector2(2, -2)
 		key.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		box.add_child(key)
 
@@ -49,7 +53,8 @@ static func make(node_name: String, key_text := "") -> Control:
 	count.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	count.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	_fill(count, 2)
+	count.theme_type_variation = UiTheme.SMALL_LABEL
+	_fill(count, 0)
 	box.add_child(count)
 	return box
 
