@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 21:31:19 KST",
- "updated_epoch": 1789561879,
+ "updated": "2026-09-16 21:31:21 KST",
+ "updated_epoch": 1789561881,
  "progress": {
   "groups_total": 1,
   "groups_done": 0,
@@ -13,5 +13,13 @@
  "started": "2026-09-16 21:31:19",
  "ended": "",
  "resume_at": "",
- "pid": "93658"
+ "pid": "93658",
+ "group": "G-001",
+ "group_title": "프로젝트 기반",
+ "step": "1",
+ "step_total": "3",
+ "step_title": "Godot 프로젝트 만들기",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-16 21:31:21"
 }
