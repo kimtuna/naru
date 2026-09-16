@@ -974,5 +974,79 @@
   "attempt": "2",
   "title": "G-004 1/5 시드로 섬 만들기 — 통과 (시도 2)",
   "commit": "e53120f"
+ },
+ {
+  "time": "2026-09-16 22:53:42 KST",
+  "epoch": 1789566822,
+  "report": {
+   "status": "done",
+   "summary": "게임 씬에 섬을 덩어리 단위로 그리고 나무·돌·광물·섬 가장자리에서 막히게 함 (256×256 들어가기 약 22ms)",
+   "problem": "1단계는 섬 데이터만 만들었고 게임 씬에는 풀밭 네모 하나뿐이었다. 섬을 화면에 그리고 자원 칸에서 캐릭터가 막혀야 했다. 섬 전체(65,536칸)를 한 번에 만드는 데만 약 155ms 가 걸렸고, 그 위에 칸마다 그림과 충돌(자원 약 2만 개)까지 만들면 들어가는 시간이 길어진다.",
+   "feedback_applied": "",
+   "approach": "1) IslandMap 을 16×16 덩어리 단위로 처음 읽을 때 만들게 바꿨다(lazy). terrain_bytes/deposit_bytes 는 전체를 만든 뒤 돌려주어 기존 테스트와 API 가 그대로다. IslandGenerator.generate() 는 계속 섬 전체를 바로 만든다. 2) IslandView(게임 씬의 Island 노드)는 매 물리 프레임마다 카메라에 보이는 범위(줌 반영)에 여유 160px 를 더한 영역의 덩어리만 IslandChunk 로 만들고, 한 덩어리 넘게 벗어난 덩어리는 치운다. 3) IslandChunk 는 지형과 자원을 색 네모로 그리고, 자원 칸에 StaticBody2D 충돌을 둔다. 한 줄에서 이어진 자원 칸은 네모 하나로 합쳐 충돌 모양 수를 줄였다. 4) 섬 네 변 바깥에 벽을 두었다. 5) 플레이어는 스폰 칸 한가운데에서 시작한다. 타일 크기(16px)·덩어리 크기·여유 거리는 IslandConfig(.tres)에 모았다. 잰 시간: 256×256 섬 게임 씬 instantiate+add_child 22.4ms(그중 GameScene._ready 18.5ms). 섬 전체를 만드는 경우는 데이터만으로 약 155ms 다. 들어갈 때 만드는 덩어리는 전체 256개의 1/4 미만이다(테스트로 확인). 테스트(test_island_view.gd, 9개)는 다음을 확인한다. 섬이 보이고 화면 네 귀퉁이까지 덩어리가 덮는다. 카메라가 따라간다. 덩어리의 충돌 넓이가 막힌 칸 수와 정확히 같다. 나무·돌·광물 × 네 방향 모두 걸어가다 막히고 칸에 들어가지 못한다. 빈터에서는 설정 속력대로 걷는다. 섬 가장자리에서 막힌다. 들어가기 500ms 미만이고 만드는 덩어리는 일부뿐이다. 멀리 가면 새 덩어리가 생기고 옛 덩어리는 치워진다. lazy 섬과 전체 섬이 아무 순서로 읽어도 같다. 충돌 생성을 끄면 막힘 테스트 13개가 실패하는 것도 확인했다. tools/test.sh 는 140개 모두 통과했다.",
+   "why": "TileMapLayer 도 생각했지만 TileSet·아틀라스 텍스처가 필요하다. 또 set_cell 을 65,536번 부르는 비용이 그대로 남아 결국 덩어리 단위로 나눠야 한다. 그래서 덩어리 노드를 직접 두었다. 이 방식은 노드·상태로 검사하기 쉽고, 다음 단계(채취로 칸 비우기, 재생)에서 덩어리 하나만 다시 만들면 된다. 섬 전체를 백그라운드 스레드로 만드는 방법은 칸 값이 좌표 해시라서 필요가 없어 버렸다. 보이는 곳부터 순서 없이 만들어도 값이 같기 때문이다. 충돌은 칸 전체 크기로 했다. 그래야 그림과 막히는 곳이 일치하고, 12px 캐릭터가 16px 칸 사이 틈으로 빠지지 않는다. 색·타일 크기는 임시 값이고 한 곳에 모았다(나중에 바꾸기 싸다).",
+   "files": [
+    "game/world/island/island_map.gd",
+    "game/world/island/island_view.gd",
+    "game/world/island/island_chunk.gd",
+    "game/world/island/island_config.gd",
+    "game/world/island/island_config.tres",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/world/island/test_island_view.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "게임 씬에 섬이 보이고 나무 · 돌 · 광물에 막힌다",
+     "ok": true,
+     "evidence": "tools/test.sh 를 직접 돌림: 140/140 통과. test_island_view.gd 9개 중 test_island_is_shown_around_player_at_spawn(스폰 칸의 덩어리 노드가 있고 보이며, 화면 네 귀퉁이까지 덮음), test_chunk_collision_matches_obstacles(충돌 넓이 = 막힌 칸 수), test_blocked_by_tree_stone_ore_in_every_direction(나무·돌·광물 × 네 방향, 실제 입력으로 걸음), test_island_edge_blocks 확인. QA 임시 검사: 덩어리 충돌 레이어를 0 으로 끄면 캐릭터가 나무 칸(186,133)을 지나 (187,133)까지 가고, 켜면 (185,133)에서 멈춤 → 테스트가 실제 충돌을 검사함. 오른쪽+아래 대각선으로 600프레임 걷는 동안 막힌 칸 안에 들어간 프레임 0. harness/shot.sh 로 1152×648 화면을 찍어 봄: 지형(광물 지형)과 나무·돌·광물 네모가 화면 전체에 그려지고 HUD·핫바가 위에 보임. 코드: game/world/island/island_view.gd, island_chunk.gd, game/world/game.tscn 의 Island 노드(Player 앞에 있어 아래에 그려짐)"
+    },
+    {
+     "criterion": "256×256 섬에서도 들어가는 시간이 길지 않다 (보이는 곳 위주로 만든다 — 잰 시간을 report 에 적는다)",
+     "ok": true,
+     "evidence": "report 에 22.4ms(_ready 18.5ms)를 적었고, QA 재실행 결과는 23.7ms(_ready 19.4ms). test_entering_256_island_is_quick_and_builds_only_near_view 는 500ms 미만과 만든 덩어리 < 전체의 1/4 을 확인함. 다만 headless 뷰포트는 64×64 이다. 그래서 QA가 뷰포트를 키워 다시 잼: 1152×648 은 _ready 30ms · 두 프레임 뒤 39ms · 덩어리 16/256개, 3840×2160 은 _ready 39ms · 52ms · 40/256개. 두 크기 모두 화면 귀퉁이까지 덮음. IslandMap 은 덩어리를 처음 읽을 때 만들고(ensure_chunk), test_lazy_map_equals_full_map_in_any_order 로 전체 생성과 값이 같음을 확인함"
+    },
+    {
+     "criterion": "테스트를 약하게 만들지 않았나",
+     "ok": true,
+     "evidence": "git diff HEAD 에서 기존 테스트 파일은 바뀌지 않음(새 파일 test_island_view.gd 만 추가). IslandGenerator.generate() 는 계속 섬 전체를 만들고, terrain_bytes/deposit_bytes 는 build_all() 뒤에 돌려줘 1단계 테스트의 의미가 그대로임"
+    },
+    {
+     "criterion": "spec · 코드 규칙",
+     "ok": true,
+     "evidence": "칸 값은 좌표 해시라서 만드는 순서와 상관없음(island-generation.md 규칙 유지). 타일 크기·덩어리 크기·여유 거리는 IslandConfig(.tres)에 모음. 새로 나온 화면 글자 없음. 가장 긴 파일은 test_island_view.gd 224줄로 300줄 이하. 단계 밖 기능(채취·줍기) 없음"
+    },
+    {
+     "criterion": "report 가 사실과 맞나",
+     "ok": true,
+     "evidence": "files 목록이 git status 와 일치함. 적힌 설계(lazy 덩어리, 줄 단위로 합친 충돌, 네 변 벽, 스폰 칸 한가운데에서 시작)가 코드와 일치함"
+    }
+   ],
+   "issues": [
+    "(경미) report 와 테스트의 들어가기 시간은 headless 기본 뷰포트(64×64, 줌 3이면 약 21px 화면)에서 잰 값이라, 실제로 보이는 곳을 만드는 비용이 거의 빠져 있다. QA가 잰 실제 크기는 1152×648 에서 약 39ms, 4K 에서 약 52ms 로 여전히 짧다. 다음에 시간을 잴 때는 get_tree().root.size 를 실제 창 크기로 맞추고 재는 것이 정확하다",
+    "(경미) test_blocked_by_tree_stone_ore_in_every_direction 은 '8px 넘게 걸었다'와 '면을 넘지 않았다'만 본다. 장애물 면에 실제로 닿았는지(lead 가 face 에 거의 같음)는 보지 않는다. QA 확인으로 충돌을 끄면 실패하므로 지금은 충분하다",
+    "(경미) IslandMap.terrain_at/deposit_at 에 섬 밖 좌표를 넣으면 배열 범위 오류가 난다(1단계와 같음). is_blocked 는 has_cell 로 먼저 막는다. 3단계에서 마우스 조준 칸이 섬 밖일 수 있으니 부르는 쪽에서 has_cell 로 거를 것",
+    "(참고) test_island_generator.gd 에서 '광물 지형이 좁다' 경고가 수백 줄 나온다(1단계 테스트가 일부러 만드는 경고). 로그가 읽기 어렵지만 이번 단계의 문제는 아니다"
+   ],
+   "good": [
+    "보이는 곳 둘레만 덩어리로 만들고 한 덩어리 넘게 멀어지면 치운다. 4K 화면에서도 256개 중 40개만 만든다",
+    "충돌을 칸 크기로 맞추고 한 줄에서 이어진 칸을 합쳐, 그림과 막히는 곳이 같고 모양 수도 적다",
+    "막힘 테스트가 순간이동이 아니라 실제 입력으로 걸어서 확인하고, 세 자원 × 네 방향을 모두 다룬다",
+    "lazy 섬과 전체 섬이 아무 순서로 읽어도 같은지 검사해 spec 의 '해시' 규칙을 지킨다",
+    "다음 단계(채취로 칸 비우기, 재생)는 덩어리 하나만 다시 만들면 되는 구조다"
+   ],
+   "feedback": ""
+  },
+  "test": "e_ground_with_ore (res://tests/world/island/test_island_generator.gd:189)\n         [2] _run_test (res://addons/gut/gut.gd:622)\n         [3] _test_the_scripts (res://addons/gut/gut.gd:835)\nWARNING: IslandGenerator: 광물 지형(0.003)이 채울 % × 광물 몫(0.050)보다 좁아 비율을 맞출 수 없다\n     at: push_warning (core/variant/variant_utility.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] test_every_island_has_ore_ground_with_ore (res://tests/world/island/test_island_generator.gd:189)\n         [2] _run_test (res://addons/gut/gut.gd:622)\n         [3] _test_the_scripts (res://addons/gut/gut.gd:835)\n* test_ore_ground_exists_on_full_map_without_noise\nWARNING: IslandGenerator: 광물 지형(0.003)이 채울 % × 광물 몫(0.050)보다 좁아 비율을 맞출 수 없다\n     at: push_warning (core/variant/variant_utility.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] generate (res://world/island/island_generator.gd:48)\n         [2] test_ore_ground_exists_on_full_map_without_noise (res://tests/world/island/test_island_generator.gd:204)\n         [3] _run_test (res://addons/gut/gut.gd:622)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:835)\n14/14 passed.\n\n\nres://tests/world/island/test_island_view.gd\n* test_island_is_shown_around_player_at_spawn\n* test_camera_follows_player_over_island\n* test_chunk_collision_matches_obstacles\n* test_blocked_by_tree_stone_ore_in_every_direction\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 22.6 ms (game _ready 18.7 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              19\nTests               140\nPassing Tests       140\nAsserts            3136\nTime              30.895s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-004",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-004 2/5 섬을 그리고 걸어 다니기 — 통과 (시도 1)",
+  "commit": "fbee30a"
  }
 ]
