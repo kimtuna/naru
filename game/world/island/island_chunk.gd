@@ -37,6 +37,15 @@ func body() -> StaticBody2D:
 	return _body
 
 
+## 칸이 바뀌면 충돌과 그림을 다시 만든다.
+func refresh() -> void:
+	if _body:
+		remove_child(_body)
+		_body.free()
+	_build_body()
+	queue_redraw()
+
+
 func _build_body() -> void:
 	_body = StaticBody2D.new()
 	_body.name = "Body"

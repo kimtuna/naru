@@ -13,6 +13,7 @@ var _chunks := {}
 func setup(island: IslandMap) -> void:
 	map = island
 	config = island.generator.config
+	map.cell_changed.connect(_on_cell_changed)
 	_build_border()
 
 
@@ -75,6 +76,12 @@ func update_around(center: Vector2) -> void:
 				node.setup(map, key, tile_px())
 				add_child(node)
 				_chunks[key] = node
+
+
+func _on_cell_changed(cell: Vector2i) -> void:
+	var node := chunk_node(map.chunk_of(cell))
+	if node:
+		node.refresh()
 
 
 ## 섬 밖으로 못 나가게 네 변에 벽.

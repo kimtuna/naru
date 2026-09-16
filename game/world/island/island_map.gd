@@ -3,6 +3,10 @@ extends RefCounted
 ## 섬 — 칸마다 지형과 자원. 값은 IslandGenerator 의 해시에서 온다.
 ## 덩어리(chunk_size × chunk_size) 단위로 처음 읽을 때 만든다 — 게임은 보이는 곳만 만들어 빨리 들어간다.
 ## 어느 순서로 만들어도 값이 같다 (칸 값이 좌표의 해시라서).
+## 채취로 없앤 칸은 표시(removed)로 남긴다 — 저장은 이 표시만 한다. 재생은 표시를 지우는 것이다.
+
+## 칸의 자원이 바뀌었다 (그리기 · 충돌을 다시 만들 때).
+signal cell_changed(cell: Vector2i)
 
 var world_seed: int
 var size: int
@@ -13,11 +17,14 @@ var _deposit := PackedByteArray()
 var _chunk_count := 0
 var _built := PackedByteArray()
 var _built_total := 0
+## 없앤 칸 표시 — Vector2i → true. WorldData.removed_cells 와 같은 사전을 나눠 쓴다.
+var removed: Dictionary
 
 
-## lazy 가 아니면 섬 전체를 바로 만든다.
-func _init(gen: IslandGenerator, lazy := false) -> void:
+## lazy 가 아니면 섬 전체를 바로 만든다. removed_cells 는 저장에서 온 없앤 칸 표시 (그대로 나눠 쓴다).
+func _init(gen: IslandGenerator, lazy := false, removed_cells: Variant = null) -> void:
 	generator = gen
+	removed = removed_cells if removed_cells is Dictionary else {}
 	world_seed = gen.world_seed
 	size = gen.config.size
 	chunk_size = maxi(gen.config.chunk_size, 1)
@@ -73,7 +80,10 @@ func ensure_chunk(chunk: Vector2i) -> void:
 		for x in range(rect.position.x, rect.end.x):
 			var t := generator.terrain_at(x, y)
 			_terrain[y * size + x] = t
-			_deposit[y * size + x] = generator.deposit_on(x, y, t)
+			var d := generator.deposit_on(x, y, t)
+			if removed.has(Vector2i(x, y)):
+				d = IslandConfig.Deposit.NONE
+			_deposit[y * size + x] = d
 	_built[chunk.y * _chunk_count + chunk.x] = 1
 	_built_total += 1
 
@@ -92,6 +102,20 @@ func terrain_at(cell: Vector2i) -> IslandConfig.Terrain:
 func deposit_at(cell: Vector2i) -> IslandConfig.Deposit:
 	ensure_chunk(chunk_of(cell))
 	return _deposit[cell.y * size + cell.x] as IslandConfig.Deposit
+
+
+## 칸의 자원을 없애고 표시를 남긴다. 없앨 자원이 없으면 false.
+func remove_deposit(cell: Vector2i) -> bool:
+	if not has_cell(cell) or deposit_at(cell) == IslandConfig.Deposit.NONE:
+		return false
+	_deposit[cell.y * size + cell.x] = IslandConfig.Deposit.NONE
+	removed[cell] = true
+	cell_changed.emit(cell)
+	return true
+
+
+func is_removed(cell: Vector2i) -> bool:
+	return removed.has(cell)
 
 
 ## 장애물(자원)이 있나. 섬 밖도 막힌 것으로 본다.

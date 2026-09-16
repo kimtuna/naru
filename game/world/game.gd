@@ -19,8 +19,12 @@ func _ready() -> void:
 	character = Session.character
 	world = Session.world
 	if world:
-		island = IslandMap.new(IslandGenerator.new(world.world_seed), true)
+		# 지형은 시드로 다시 만들고, 저장된 「없앤 칸」만 얹는다.
+		island = IslandMap.new(IslandGenerator.new(world.world_seed), true, world.removed_cells)
 		island_view().setup(island)
+		harvester().setup(player(), island_view(), drops())
+		for d in world.drops:
+			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
 		player().global_position = island_view().cell_center(island.spawn())
 		island_view().update_around(player().global_position)
@@ -48,6 +52,23 @@ func island_view() -> IslandView:
 	return %Island
 
 
+func harvester() -> Harvester:
+	return %Harvester
+
+
+## 바닥에 떨어진 아이템들의 부모.
+func drops() -> Node2D:
+	return %Drops
+
+
+func dropped_items() -> Array[DroppedItem]:
+	var out: Array[DroppedItem] = []
+	for child in drops().get_children():
+		if child is DroppedItem and not child.is_queued_for_deletion():
+			out.append(child)
+	return out
+
+
 func hotbar_view() -> HotbarView:
 	return %Hotbar
 
@@ -60,6 +81,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## 캐릭터와 월드를 저장하고 메인 화면으로 나간다.
 func exit_to_menu() -> void:
+	store_world_state()
 	Session.save_all()
 	Session.clear()
 	Screens.go(self, Screens.MAIN_MENU)
+
+
+## 저장할 월드 상태를 WorldData 에 옮긴다. 없앤 칸은 섬과 같은 사전이라 이미 들어 있다.
+func store_world_state() -> void:
+	if world == null:
+		return
+	world.drops = dropped_items().map(func(d: DroppedItem) -> Dictionary: return d.to_dict())
