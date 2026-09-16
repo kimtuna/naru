@@ -2528,5 +2528,73 @@
   "type": "group_done",
   "group": "G-008",
   "title": "G-008 보급 — 묶음 완료, main 에 합침"
+ },
+ {
+  "time": "2026-09-17 03:00:21 KST",
+  "epoch": 1789581621,
+  "report": {
+   "status": "done",
+   "summary": "G-009.1 체력 · 피해 · 죽음 — 캐릭터 · 몹 체력, 0 이면 죽음, 캐릭터는 스폰 지점에서 다시 시작",
+   "problem": "캐릭터와 몹 둘 다 체력이 없었고 몹 자체도 없었다. 체력이 0 이 되면 죽고, 캐릭터는 스폰 지점에서 다시 시작해야 한다. 다음 단계(데스 상자)가 죽은 자리를 알아야 하므로 죽는 순간을 밖에서 받을 수 있어야 한다.",
+   "feedback_applied": "",
+   "approach": "공용 Health(RefCounted: 최대 · 현재 · damage · heal · reset · died 신호, 0 에서 한 번만 죽고 죽은 뒤엔 피해 · 회복 무시)를 combat/damage_death/ 에 두고, 수치는 DamageConfig(damage_config.tres: 캐릭터 100 · 몹 30, 임시 값) 한 곳에 모았다. Player 에 health · spawn_point · take_damage 를 붙여, 죽으면 died(죽은 자리) 신호를 먼저 내고 respawn() 으로 spawn_point 에 옮겨 체력을 가득 채운 뒤 respawned 를 낸다. 게임 씬은 섬 스폰 칸 중심을 spawn_point 로 넣는다. 몹은 체력만 가진 최소 Mob(combat/mob_ai/mob.tscn, 색 네모)이고 0 이 되면 died 신호 뒤 사라진다. 게임 씬에 몹들의 부모 Mobs 노드를 추가했다. 테스트 10개(수치 위치, Health 경계값, 캐릭터 생존 · 사망 · 재시작 · 물리 프레임 후 위치 · 재사망, 몹 사망 · 제거)를 추가했고 tools/test.sh 370개 전부 통과, guard 통과.",
+   "why": "캐릭터와 몹이 같은 규칙(0 이면 죽음)을 쓰므로 Health 하나를 공유해 규칙이 갈라지지 않게 했다. Node 컴포넌트 대신 RefCounted 로 한 것은 기존 Buffs 와 같은 방식이고 씬 없이도 테스트하기 쉬워서다. died 신호를 스폰 이동보다 먼저 내는 것은 3단계 데스 상자가 죽은 자리를 그대로 받게 하려는 것이다. 체력 수치 · 부활 무적 시간은 spec 미정이라 임시 값 · 무적 없음(즉시 부활)으로 두었다 — 나중에 바꾸기 싸다. 체력 저장, 체력 HUD, 몹 움직임 · 스폰, 데스 페널티는 이번 단계 밖이라 만들지 않았다 (들어갈 때마다 체력 가득).",
+   "files": [
+    "game/combat/damage_death/health.gd",
+    "game/combat/damage_death/damage_config.gd",
+    "game/combat/damage_death/damage_config.tres",
+    "game/combat/mob_ai/mob.gd",
+    "game/combat/mob_ai/mob.tscn",
+    "game/player/player.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/combat/damage_death/test_health_death.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "캐릭터와 몹에 체력이 있고, 0 이 되면 죽는다",
+     "ok": true,
+     "evidence": "game/combat/damage_death/health.gd (0 에서 died 한 번, 죽은 뒤 피해·회복 무시, 음수 피해 무시). Player.health (player.gd:25), Mob.health (combat/mob_ai/mob.gd:10) 둘 다 DamageConfig 값으로 가득 찬 채 시작. 테스트 test_health_drops_and_dies_once_at_zero · test_character_has_full_health_on_enter · test_mob_has_health_and_dies_at_zero (max-1 에선 살아 있고 1 더 받으면 died 1회 · 씬에서 제거) — TEST_DIR=res://tests/combat tools/test.sh 로 직접 실행해 10/10 통과"
+    },
+    {
+     "criterion": "죽으면 스폰 지점에서 다시 시작한다",
+     "ok": true,
+     "evidence": "player.gd _on_died → died(죽은 자리) 후 respawn(): spawn_point 로 이동 · velocity 0 · 체력 reset. game.gd:47 에서 spawn_point = island.spawn() 칸 중심. 테스트 test_character_dies_at_zero_and_respawns_at_spawn (스폰에서 떨어진 자리에서 죽음 → died 인자=죽은 자리, 위치=섬 스폰 칸 중심, 체력 가득), test_respawned_character_stays_at_spawn_after_physics (물리 2프레임 뒤에도 스폰), test_character_can_die_again_after_respawn. island_view.follow 가 매 프레임 update_around 하므로 순간이동 뒤 지도도 갱신됨"
+    },
+    {
+     "criterion": "기존 테스트 삭제 · 완화 없음 / 기계 테스트 · guard",
+     "ok": true,
+     "evidence": "git diff HEAD 에 tests 변경 없음(새 파일만). .loop/out/test.log 370/370 통과, ERROR 없음(WARNING 은 기존 IslandGenerator 것). harness/guard.sh 통과"
+    },
+    {
+     "criterion": "코드 규칙 (수치 한 곳 · 화면 글자 · 300줄 · 단계 밖 기능)",
+     "ok": true,
+     "evidence": "체력 수치는 damage_config.tres 한 곳. 새 화면 글자 없음. 최대 파일 game.gd 216줄. 몹은 체력만 있는 최소 노드, 데스 상자 · 월드 설정 · 공격 · AI 없음"
+    }
+   ],
+   "issues": [
+    "test_health_values_live_in_config 의 하드코딩 검사는 player_max_health 문자열(\"100.0\")만 찾는다 — 몹 체력(\"30.0\")이 mob.gd 에 박혀도 못 잡는다. 약한 검사지만 실제 코드는 config 를 쓰므로 불합격 사유는 아님",
+    "테스트가 res://tests/life/harvest/harvest_test_base.gd 를 상속한다 — 전투 테스트가 채취 폴더의 준비 코드에 기대는 결합. 공용 게임 진입 준비를 tests 공용 위치로 옮기는 편이 낫다 (취향)",
+    "Mob.config 멤버는 health 초기화에만 쓰인다. 이후 단계에서 쓸 거면 괜찮음"
+   ],
+   "good": [
+    "캐릭터 · 몹이 같은 Health 를 공유해 '0 이면 죽음' 규칙이 한 곳에 있다",
+    "died(죽은 자리)를 스폰 이동보다 먼저 내 3단계 데스 상자가 바로 얹힐 수 있다",
+    "경계값(정확히 0, 초과 피해, 죽은 뒤 피해 · 회복, 재사망)과 물리 프레임 후 위치까지 검사하는 실질적인 테스트",
+    "spec 미정(체력 수치 · 부활 무적)을 임시 값으로 두고 report 에 명시했다. report 내용이 실제 diff 와 일치"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 52.0 ms (game _ready 38.4 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              49\nTests               370\nPassing Tests       370\nAsserts           13855\nTime              53.242s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-009",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-009 1/6 체력 · 피해 · 죽음 — 통과 (시도 1)",
+  "commit": "5a887d8"
  }
 ]

@@ -195,7 +195,7 @@ Claude 루프 세션은 이 파일을 읽지 않는다 — `loop.sh` 가 지금 
 ## [ ] G-009 전투
 - spec: spec/08_combat/tools-as-weapons.md, spec/08_combat/mob-ai.md, spec/08_combat/damage-death.md, spec/01_settings/world-settings.md
 - 결정: 데스 페널티는 월드 설정, 기본 켬, 서버장만 게임 중에도 바꾼다. 켜져 있으면 죽은 자리에 상자 · 30분 뒤 소멸 · 여는 동안 타이머 멈춤 · 본인만 연다 (2026-09-16)
-- [ ] 1. 체력 · 피해 · 죽음
+- [x] 1. 체력 · 피해 · 죽음
   - 기준: 캐릭터와 몹에 체력이 있고, 0 이 되면 죽는다
   - 기준: 죽으면 스폰 지점에서 다시 시작한다
 - [ ] 2. 월드 설정 — 서버장만
