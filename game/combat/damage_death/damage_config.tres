@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="DamageConfig" format=3]
+
+[ext_resource type="Script" path="res://combat/damage_death/damage_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+player_max_health = 100.0
+mob_max_health = 30.0

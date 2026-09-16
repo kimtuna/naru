@@ -44,7 +44,8 @@ func _ready() -> void:
 		for d in world.drops:
 			drops().add_child(DroppedItem.create({"id": d["id"], "count": d.get("count", 1)}, d["pos"]))
 		island_view().follow = player()
-		player().global_position = island_view().cell_center(island.spawn())
+		player().spawn_point = island_view().cell_center(island.spawn())
+		player().global_position = player().spawn_point
 		island_view().update_around(player().global_position)
 	lighting().setup(clock())
 	%CharacterName.text = character_name()
@@ -120,6 +121,11 @@ func lighting() -> Lighting:
 
 func picker() -> Picker:
 	return %Picker
+
+
+## 몹들의 부모.
+func mobs() -> Node2D:
+	return %Mobs
 
 
 ## 바닥에 떨어진 아이템들의 부모.

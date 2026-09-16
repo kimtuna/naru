@@ -4,6 +4,11 @@ extends CharacterBody2D
 ## 대각선은 정규화해 어느 방향이든 속력이 같다 (spec/02_player/movement-controls.md).
 ## 바라보는 방향은 Pointer(마우스) 쪽이고 이동 방향과 상관없다 — 뒷걸음질 · 게걸음이 된다.
 
+## 체력이 0 이 되어 죽었다 — 죽은 자리(at)에서. 이 신호 뒤에 바로 스폰 지점에서 다시 시작한다.
+signal died(at: Vector2)
+## 스폰 지점에서 다시 시작했다.
+signal respawned
+
 ## 비워 두면 movement_tuning.tres 를 쓴다.
 @export var tuning: MovementTuning
 
@@ -16,6 +21,14 @@ var facing := Vector2.RIGHT
 var blocked := Callable()
 ## 걸린 버프 — 버프 음식을 먹으면 걸리고 시간이 지나면 풀린다. 이동 속력에 곱해진다.
 var buffs := Buffs.new()
+## 체력 — 0 이 되면 죽고 spawn_point 에서 가득 찬 채로 다시 시작한다 (spec/08_combat/damage-death.md).
+var health := Health.new(DamageConfig.load_default().player_max_health)
+## 죽은 뒤 다시 시작하는 자리. 게임 씬이 섬의 스폰 칸으로 채운다.
+var spawn_point := Vector2.ZERO
+
+
+func _init() -> void:
+	health.died.connect(_on_died)
 
 
 func _ready() -> void:
@@ -66,6 +79,24 @@ func show_swing(on: bool) -> void:
 
 func is_swing_shown() -> bool:
 	return %Swing.visible
+
+
+## 피해를 받는다. 이번 피해로 죽었으면 true (그때는 이미 스폰 지점에 다시 서 있다).
+func take_damage(amount: float) -> bool:
+	return health.damage(amount)
+
+
+func _on_died() -> void:
+	died.emit(global_position)
+	respawn()
+
+
+## 스폰 지점에서 체력을 가득 채워 다시 시작한다.
+func respawn() -> void:
+	global_position = spawn_point
+	velocity = Vector2.ZERO
+	health.reset()
+	respawned.emit()
 
 
 func camera() -> Camera2D:

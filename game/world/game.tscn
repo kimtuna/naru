@@ -32,6 +32,9 @@ script = ExtResource("16")
 [node name="Drops" type="Node2D" parent="."]
 unique_name_in_owner = true
 
+[node name="Mobs" type="Node2D" parent="."]
+unique_name_in_owner = true
+
 [node name="Harvester" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("5")
