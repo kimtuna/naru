@@ -20,6 +20,8 @@ var regrowth: Regrowth
 ## 제작 화면. 비워 두면 열지 않는다.
 var craft_view: CraftingView
 var book: RecipeBook
+## 밭 위에는 놓지 않는다. 비워 두면 따지지 않는다.
+var farm: Farm
 ## Vector2i → CraftStation
 var _by_cell := {}
 
@@ -62,10 +64,10 @@ func can_reach(cell: Vector2i) -> bool:
 		and player.global_position.distance_to(view.cell_center(cell)) <= config.reach_px(view.tile_px())
 
 
-## 이 칸에 제작대를 놓을 수 있나 — 섬 안 · 자원 없음 · 설치물 없음 · 몸이 걸치지 않음.
+## 이 칸에 제작대를 놓을 수 있나 — 섬 안 · 자원 없음 · 설치물 · 밭 없음 · 몸이 걸치지 않음.
 func is_free(cell: Vector2i) -> bool:
 	return map() != null and not map().is_blocked(cell) and not _by_cell.has(cell) \
-		and not _overlaps_player(cell)
+		and not (farm and farm.is_tilled(cell)) and not _overlaps_player(cell)
 
 
 ## 열어 둔 제작대에서 손이 닿지 않게 멀어지면 제작 화면을 닫는다.
