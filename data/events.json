@@ -1351,5 +1351,63 @@
   "attempt": "1",
   "title": "G-005 1/2 하루 20분 시계 — 재시도 (시도 1)",
   "detail": "- QA 피드백:\n구현은 수용 기준을 모두 채운다. 고칠 것은 테스트 하나다. game/tests/world/day_night/test_world_clock_game.gd 의 test_clock_ticks_in_game_without_regrowth_doubling_it 는 시간이 두 번 흐르는 것을 잡지 못한다. QA 가 game/world/regrowth/regrowth.gd 의 _process 를 `advance(delta)` 로 되돌려 봤는데도 이 테스트가 통과했다. 재생이 더하는 양은 배속이 안 걸린 delta(0.3초쯤)뿐인데, 허용 오차 `+ 5.0` 이 이를 덮는다. 고치는 법: 결정적인 검사로 바꿔라. 예를 들어 게임에 들어간 뒤 `game.clock().speed = 0.0` 으로 두고 `await wait_process_frames(5)` 한 다음 `assert_eq(game.island.time, before, \"only the clock moves time\")` 를 확인한다. 시계를 멈췄으니 재생이 시간을 더하면 바로 실패한다. 배속으로 시간이 흐르는지 보려면 같은 테스트나 따로 떼어 낸 테스트에서 speed 를 올리고 `assert_gt(passed, 0.0)` 를 확인하면 된다. 고친 뒤에는 regrowth.gd 의 _process 를 잠시 `advance(delta)` 로 바꿔 이 테스트가 실제로 실패하는지 확인하고, 되돌려 놓아라. 다른 코드는 바꿀 필요가 없다."
+ },
+ {
+  "time": "2026-09-16 23:43:49 KST",
+  "epoch": 1789569829,
+  "report": {
+   "status": "done",
+   "summary": "G-005.1 하루 20분 시계 — 시간이 두 번 흐르는지 결정적으로 검사하도록 테스트 수정",
+   "problem": "QA 지적: test_clock_ticks_in_game_without_regrowth_doubling_it 가 허용 오차(+5.0) 때문에 재생(Regrowth)이 월드 시간을 한 번 더 더해도 통과했다. 재생이 더하는 양은 배속 없는 delta(0.3초쯤)라 오차 안에 묻혔다.",
+   "feedback_applied": "시간 기반 비교를 버리고 결정적인 검사로 바꿨다. 게임에 들어간 뒤 clock().speed = 0.0 으로 두고 5프레임 흘린 뒤 island.time 이 그대로인지 assert_eq 로 본다. 배속으로 시간이 흐르는지는 test_clock_ticks_in_game_with_speed 로 떼어 speed=100 에서 assert_gt(passed, 0) 로 본다. 검증: regrowth.gd 의 _process 를 잠시 advance(delta) 로 바꾸자 새 테스트가 '[0.0476] expected to equal [0.0]: only the clock moves time' 로 실패했고, 되돌린 뒤 전체 199개 테스트가 통과했다.",
+   "approach": "테스트 파일 하나만 고쳤다. 구현 코드(regrowth.gd 등)는 QA 말대로 바꾸지 않았다 — mutation 확인 후 원래 tick(delta) 로 되돌렸다.",
+   "why": "시계를 멈추면 시간을 움직일 수 있는 건 다른 곳뿐이라 어떤 작은 이중 증가도 0 과의 정확 비교로 잡힌다. 실시간 측정 + 허용 오차 방식은 프레임 시간에 흔들리고 작은 중복을 덮으므로 버렸다.",
+   "files": [
+    "game/tests/world/day_night/test_world_clock_game.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "게임 시간 20분이 지나면 날짜가 넘어가고, 10분 경계에서 낮/밤이 바뀐다",
+     "ok": true,
+     "evidence": "game/world/day_night/world_clock.gd day()/is_night()/advance() — 값은 day_night_config.tres(1200/600). tests/world/day_night/test_world_clock.gd 의 test_day_turns_after_twenty_minutes · test_night_starts_at_ten_minutes_and_ends_at_twenty · test_big_jump_reports_every_boundary 가 경계 직전(-0.1)과 경계에서 상태와 신호를 확인한다. 전체 199/199 통과를 직접 돌려 확인"
+    },
+    {
+     "criterion": "시각과 날짜가 월드 저장에 남는다",
+     "ok": true,
+     "evidence": "시간은 island.time 하나에 있고 game.gd:118 에서 world.world_time 으로 저장된다. game.gd:24 에서 불러온 뒤 :28 clock().setup 으로 맞춘다. test_world_clock_game.gd 의 test_time_and_day_survive_saving 이 저장 값, 다시 들어간 뒤의 날짜 · 시각 · 밤 상태를 확인한다"
+    },
+    {
+     "criterion": "테스트는 시간을 빠르게 돌릴 수 있다",
+     "ok": true,
+     "evidence": "WorldClock.speed 와 advance(seconds) — test_speed_runs_time_fast_in_process(몇 프레임 안에 하루가 넘어감, speed 0 이면 멈춤), test_clock_ticks_in_game_with_speed"
+    },
+    {
+     "criterion": "이전 피드백: 시간이 두 번 흐르는 것을 결정적으로 잡는다",
+     "ok": true,
+     "evidence": "QA 가 regrowth.gd:42 _process 를 advance(delta) 로 바꿔 보니 test_clock_ticks_in_game_without_regrowth_doubling_it 만 '[0.0467] expected to equal [0.0]' 로 실패했다. 되돌린 뒤 전체 통과, git status 는 시작 때와 같다"
+    }
+   ],
+   "issues": [
+    "(취향) RegrowthConfig.load_default 가 load() 로 캐시된 공유 리소스의 day_seconds 를 덮어쓴다. 지금은 값이 같아 해가 없지만, 나중에 하루 길이를 바꿀 때는 regrowth_config.gd 의 기본값(1200)과 DayNightConfig 가 따로 논다는 점을 기억해야 한다"
+   ],
+   "good": [
+    "피드백대로 허용 오차를 쓰던 검사를 speed=0 과 정확히 같은지 보는 검사로 바꿨고, 배속 검사는 따로 떼어 냈다",
+    "report 의 설명(바꾼 파일 하나, 코드를 바꿔 실패하는지 확인한 뒤 되돌림)이 실제 diff 와 맞다",
+    "시간을 island.time 한 곳에만 두고 날짜 · 낮밤은 거기서 계산한다 — 저장한 값끼리 어긋날 일이 없다",
+    "advance 로 한 번에 크게 넘겨도 경계마다 신호를 빠뜨리지 않는다"
+   ],
+   "feedback": ""
+  },
+  "test": "ity.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] generate (res://world/island/island_generator.gd:48)\n         [2] test_ore_ground_exists_on_full_map_without_noise (res://tests/world/island/test_island_generator.gd:204)\n         [3] _run_test (res://addons/gut/gut.gd:622)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:835)\n14/14 passed.\n\n\nres://tests/world/island/test_island_view.gd\n* test_island_is_shown_around_player_at_spawn\n* test_camera_follows_player_over_island\n* test_chunk_collision_matches_obstacles\n* test_blocked_by_tree_stone_ore_in_every_direction\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 22.5 ms (game _ready 17.9 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              29\nTests               199\nPassing Tests       199\nAsserts            9638\nTime              39.19s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-005",
+  "step": "1",
+  "attempt": "2",
+  "title": "G-005 1/2 하루 20분 시계 — 통과 (시도 2)",
+  "commit": "5540c8d"
  }
 ]

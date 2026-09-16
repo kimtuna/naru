@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 23:42:09 KST",
- "updated_epoch": 1789569729,
+ "updated": "2026-09-16 23:43:49 KST",
+ "updated_epoch": 1789569829,
  "progress": {
   "groups_total": 9,
   "groups_done": 4,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 17
+  "steps_done": 18
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-005",
  "group_title": "시간",
- "step": "1",
+ "step": "2",
  "step_total": "2",
- "step_title": "하루 20분 시계",
- "attempt": "2",
- "phase": "QA",
- "phase_since": "2026-09-16 23:42:09"
+ "step_title": "밤과 반경 조명",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-16 23:43:49"
 }
