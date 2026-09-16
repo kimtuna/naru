@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 04:20:51 KST",
- "updated_epoch": 1789586451,
+ "updated": "2026-09-17 04:40:22 KST",
+ "updated_epoch": 1789587622,
  "progress": {
   "groups_total": 14,
   "groups_done": 12,
@@ -20,6 +20,6 @@
  "step_total": "4",
  "step_title": "높이와 지형 종류",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 04:20:51"
+ "phase": "QA",
+ "phase_since": "2026-09-17 04:40:22"
 }
