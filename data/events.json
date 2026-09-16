@@ -752,5 +752,77 @@
   "attempt": "1",
   "title": "G-003 3/4 마우스 조준 — 통과 (시도 1)",
   "commit": "3310389"
+ },
+ {
+  "time": "2026-09-16 22:30:33 KST",
+  "epoch": 1789565433,
+  "report": {
+   "status": "done",
+   "summary": "G-003.4 핫바 — 화면 아래 항상 보이는 10칸 핫바 · 숫자키로 칸 선택 · 고른 칸 = 손에 든 것 · 내용과 고른 칸은 캐릭터 저장에 들어간다",
+   "problem": "핫바를 화면 아래에 항상 보이게 하고, 숫자키 N 으로 N번 칸을 골라 그 칸의 아이템을 「손에 든 것」으로 만들고, 핫바 내용을 캐릭터 인벤토리에 넣어 저장·불러오기 뒤에도 남게 해야 했다. 기존 테스트는 CharacterData.inventory 를 「아이템 목록(Array)」으로 쓰고 있다(append_array · [] 비교). 핫바 칸 수는 spec 에서 미정. headless 창 크기가 64x64 라, 「화면 아래 · 화면 안」 검사가 실제 창 크기와 달라 처음에 실패했다.",
+   "feedback_applied": "",
+   "approach": "① InventoryConfig.HOTBAR_SIZE = 10 (임시 값, 숫자키 1~9·0 과 1:1) 한 곳에 둠. ② Hotbar(RefCounted, game/player/inventory/) — CharacterData 를 감싸서 inventory 목록의 번호 = 칸 번호로 보고, 앞 10칸을 핫바로 쓴다. 빈칸은 null 또는 목록 밖. select(n) · item(n) · set_item(n, 아이템) · held_item() 과 changed 신호를 둔다. 고른 칸은 CharacterData.hotbar_selected 에 두어 캐릭터와 함께 저장한다(옛 저장 파일에 없거나 이상한 값이면 1). ③ Player 가 hotbar 를 들고 _unhandled_input 에서 InputActions.hotbar_slot_pressed 로 칸을 고르며, held_item() 은 고른 칸의 아이템을 돌려준다. ④ HotbarView(game/ui/hud/, HBoxContainer) — 화면 아래 가운데에 고정하고, 게임 씬의 Hud CanvasLayer 에 넣어 카메라와 상관없이 늘 보인다. 칸마다 임시 색 네모 · 개수 · 키 숫자를 그리고, 고른 칸에는 테두리를 켠다. changed 신호로 다시 그린다. ⑤ GameScene 이 Session 의 캐릭터로 Hotbar 를 만들어 플레이어와 HUD 에 연결한다. 테스트: 모델 7개(범위 · 빈손 · 인벤토리 공유 · 저장 왕복 · 옛 저장) + 게임 씬 6개(실제 창 기본 크기에서 화면 안 · 아래 · 가운데인지, 플레이어가 움직여도 그대로인지, 숫자키 1~0 이 모두 제 칸을 고르는지, 손에 든 것 · 테두리가 바뀌는지, ESC 로 나갔다 다시 들어와도 내용과 고른 칸이 그대로인지). tools/test.sh 115/115 통과, guard 통과.",
+   "why": "inventory 를 「칸 번호 = 목록 번호」인 Array 로 둔 것은 기존 저장 형식과 기존 테스트(빈 목록 = 빈손, 아이템을 append 하면 앞 칸부터 참)를 그대로 살리기 위해서다. 별도 Inventory 클래스로 바꾸면 기존 테스트의 기대값을 고쳐야 해서 버렸다. 가방 칸은 이번 단계 밖이라 만들지 않았고, 나중에 목록 뒤쪽을 가방으로 쓰면 된다. 고른 칸까지 저장한 것은 싸고, 다시 들어왔을 때 손에 든 것이 바뀌지 않게 하려는 것이다. 칸 수 10 은 숫자키 수에 맞춘 임시 값이고 InventoryConfig 한 곳만 바꾸면 된다(키보다 많아지지 않게 테스트로 막았다). 화면 검사는 headless 64x64 대신 project 기본 창 크기로 root 를 잠깐 바꿔서 한다. 창 크기 설정 자체를 바꾸는 방법은 이번 단계 밖이라 버렸다. 아이템 그림 · 이름 표시는 아이템 구조가 없고 디자인은 사람 몫이라, id 별 임시 색만 쓴다.",
+   "files": [
+    "game/player/inventory/inventory_config.gd",
+    "game/player/inventory/hotbar.gd",
+    "game/player/player.gd",
+    "game/settings/save/character_data.gd",
+    "game/ui/hud/hotbar_view.gd",
+    "game/ui/hud/hotbar_view.tscn",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/tests/player/inventory/test_hotbar.gd",
+    "game/tests/ui/hud/test_hotbar_view.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "화면 아래에 핫바가 항상 보인다",
+     "ok": true,
+     "evidence": "game/world/game.tscn: Hotbar(hotbar_view.tscn) 가 CanvasLayer 'Hud' 아래에 있어 카메라와 무관. hotbar_view.tscn 앵커 bottom-center(anchor_top/bottom=1, offset -52~-12). test_hotbar_view.gd::test_hotbar_is_visible_at_bottom_of_screen — 창 기본 크기로 root 를 맞춘 뒤(적용 여부도 assert) 핫바·10칸 모두 화면 안, y > 화면 75%, 가운데 정렬, 고른 칸 1개만 테두리. test_hotbar_stays_when_player_moves_away — 플레이어를 옮겨도 rect 동일. 직접 tools/test.sh 실행해 통과 확인."
+    },
+    {
+     "criterion": "숫자키 N → N번 슬롯이 선택되고, 선택한 슬롯의 아이템이 「손에 든 것」이 된다",
+     "ok": true,
+     "evidence": "player.gd::_unhandled_input 이 InputActions.hotbar_slot_pressed(액션 이름 기반, 키코드 아님)로 Hotbar.select 호출, Player.held_item() = hotbar.held_item(). test_every_number_key_selects_its_slot — 실제 키 이벤트(KEY_1~KEY_0)로 1~10칸 모두 선택·테두리 확인. test_number_key_selects_slot_and_changes_held_item — 키 3/2/5/0 에 따라 held_item 이 axe→stone→pickaxe→null(빈칸=빈손), 0 은 10번 칸. test_hotbar.gd 의 범위 밖 무시 · 빈 캐릭터 빈손 테스트도 있음."
+    },
+    {
+     "criterion": "핫바 내용은 캐릭터 인벤토리에 속하고, 저장했다 불러와도 유지된다",
+     "ok": true,
+     "evidence": "Hotbar 는 CharacterData.inventory(앞 10칸)와 hotbar_selected 를 직접 읽고 씀 — 별도 상태 없음. character_data.gd to_dict/from_dict 에 hotbar_selected 추가(SaveStore 는 store_var 라 int 유지). test_hotbar_contents_live_in_character_inventory · test_view_updates_when_item_is_put_in_hotbar(game.character.inventory[0] 확인) · test_hotbar_survives_save_and_load(SaveStore 왕복) · test_hotbar_survives_exit_and_reenter(ESC 저장 → 게임 씬 재진입 후 내용·고른 칸·뷰 표시 유지) · test_old_save_without_selection_loads."
+    }
+   ],
+   "issues": [
+    "(취향 · 판정 무관) Hotbar.set_item 은 같은 값을 다시 넣어도 changed 를 보낸다 — 지금은 무해하지만 줍기 단계에서 잦은 호출이 생기면 불필요한 refresh 가 늘 수 있다.",
+    "(취향 · 판정 무관) CharacterData.from_dict 는 hotbar_selected 의 범위를 검사하지 않고 Hotbar.selected() 의 clamp 에 맡긴다. 저장값 15 면 화면은 10번이지만 데이터는 15로 남는다(다음 select 때 고쳐짐). 동작상 문제는 없다.",
+    "(참고) HotbarView 의 SLOT_SIZE · 색 · 테두리 두께는 뷰 파일 상수 — 디자인 값이라 사람이 나중에 바꿀 자리로 적절하다."
+   ],
+   "good": [
+    "기존 테스트를 하나도 건드리지 않고 inventory 를 「칸 번호 = 목록 번호」 Array 로 확장해 기존 저장 형식·빈손 규칙을 그대로 살렸다.",
+    "핫바 칸 수를 InventoryConfig 한 곳에 두고, 숫자키 액션 수를 넘지 않게 테스트로 묶었다.",
+    "headless 64x64 창 문제를 테스트 안에서 기본 창 크기로 바꿔 풀고, 바뀌었는지까지 assert 해 가짜 통과를 막았다.",
+    "실제 키 이벤트 → InputMap → 선택 → 뷰 테두리까지 끝에서 끝으로 검사하고, ESC 저장 후 재진입까지 확인했다.",
+    "report 의 파일 목록·설명이 실제 diff 와 일치한다. 파일 모두 300줄 이하, 화면 글자는 숫자뿐(번역 끔 명시), guard 통과."
+   ],
+   "feedback": ""
+  },
+  "test": "\n* test_prev_next_cycle_options\n* test_screen_parts_match_data_file\n* test_added_part_in_data_file_appears_on_screen\n* test_added_option_in_data_file_appears_on_screen\n* test_preview_follows_choice\n* test_create_saves_to_chosen_slot_and_shows_in_select\n* test_empty_name_is_rejected\n* test_cancel_returns_without_saving\n* test_new_character_inventory_is_empty\n* test_labels_translate_in_each_language\n11/11 passed.\n\n\nres://tests/ui/menu/test_character_select.gd\n* test_three_slots\n* test_filled_slot_shows_name_empty_slot_shows_new\n* test_slot_text_in_each_language\n* test_empty_slot_goes_to_character_create\n* test_filled_slot_goes_to_world_select_with_character\n* test_delete_button_only_on_filled_slots\n* test_delete_asks_first_and_cancel_keeps_character\n* test_confirmed_delete_empties_slot\n* test_back_goes_to_main_menu\n9/9 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_project_main_scene_is_main_menu\n* test_main_menu_has_start_settings_quit_in_order\n* test_start_goes_to_character_select\n* test_settings_goes_to_settings\n* test_settings_back_goes_to_main_menu\n* test_quit_requests_quit\n* test_target_screens_load\n* test_real_flow_in_separate_process\n* test_all_screen_text_is_translated_in_ko_and_en\n* test_buttons_render_in_each_language\n10/10 passed.\n\n\nres://tests/ui/menu/test_world_select.gd\n* test_lists_saved_worlds\n* test_empty_list_says_so\n* test_create_with_name_and_seed\n* test_text_seed_is_stable\n* test_empty_seed_is_random\n    30 Orphans\n        * [World_0:<HBoxContainer#228807673474>] + 2\n        * [World_3:<HBoxContainer#230653167856>] + 2\n        * [World_1:<HBoxContainer#228992223525>] + 2\n        * [World_0:<HBoxContainer#228438575462>] + 2\n        * [World_1:<HBoxContainer#230284069269>] + 2\n        * [World_0:<HBoxContainer#230099519904>] + 2\n        * [World_2:<HBoxContainer#230468618680>] + 2\n        * [World_1:<HBoxContainer#229545871802>] + 2\n        * [World_0:<HBoxContainer#229361322434>] + 2\n        * [World_2:<HBoxContainer#229730421196>] + 2\n* test_create_needs_name\n* test_delete_asks_first_and_cancel_keeps_world\n* test_confirmed_delete_removes_world\n    6 Orphans\n        * [World_1:<HBoxContainer#236625856947>] + 2\n        * [World_0:<HBoxContainer#236441307572>] + 2\n* test_back_goes_to_character_select\n* test_pick_world_enters_game_with_character_and_world\n* test_pick_world_without_character_goes_back_to_select\n* test_game_scene_loads\n* test_world_screen_text_in_each_language\n36 orphans\n13/13 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              16\nTests               115\nPassing Tests       115\nAsserts             921\nTime              13.675s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-003",
+  "step": "4",
+  "attempt": "1",
+  "title": "G-003 4/4 핫바 — 통과 (시도 1)",
+  "commit": "feb265b"
+ },
+ {
+  "time": "2026-09-16 22:30:38 KST",
+  "epoch": 1789565438,
+  "type": "group_done",
+  "group": "G-003",
+  "title": "G-003 조작 — 묶음 완료, main 에 합침"
  }
 ]
