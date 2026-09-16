@@ -1,7 +1,32 @@
 #!/bin/bash
 # 루프 세션 안의 godot — 창을 띄우지 않는다. 사람이 이 맥을 같이 쓰기 때문이다.
 # 창이 필요하면 harness/shot.sh 를 쓴다 (포커스·마우스와 섞이지 않게 해 둠).
+# 무한 루프에 빠진 테스트가 루프 전체를 붙잡지 않게 NARU_GODOT_TIMEOUT 초(기본 600)가 지나면 끊는다.
+# (2026-09-17: 몹 공격 테스트가 무한 루프에 빠져 34분 동안 루프가 멈췄다. 평소 전체 테스트는 약 55초)
 real="${NARU_REAL_GODOT:?NARU_REAL_GODOT 없음}"
+limit="${NARU_GODOT_TIMEOUT:-600}"
 [ -n "${NARU_ALLOW_WINDOW:-}" ] && exec "$real" "$@"
-for a in "$@"; do [ "$a" = "--headless" ] && exec "$real" "$@"; done
-exec "$real" --headless "$@"
+
+args=("$@")
+headless=0
+for a in "$@"; do [ "$a" = "--headless" ] && headless=1; done
+[ "$headless" -eq 1 ] || args=(--headless "$@")
+
+"$real" "${args[@]}" &
+pid=$!
+trap 'kill "$pid" 2>/dev/null' TERM INT HUP
+(
+  t=0
+  while kill -0 "$pid" 2>/dev/null; do
+    if [ "$t" -ge "$limit" ]; then
+      echo "godot: ${limit}초 안에 끝나지 않아 끊었다 — 무한 루프나 끝나지 않는 대기를 의심하라. 멈춘 곳은 바로 위 출력의 마지막 테스트다" >&2
+      kill "$pid" 2>/dev/null; sleep 3; kill -9 "$pid" 2>/dev/null
+      exit 0
+    fi
+    sleep 2; t=$((t + 2))
+  done
+) &
+wd=$!
+wait "$pid"; rc=$?
+kill "$wd" 2>/dev/null; wait "$wd" 2>/dev/null
+exit "$rc"
