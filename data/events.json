@@ -1204,5 +1204,77 @@
   "attempt": "1",
   "title": "G-004 4/5 밟으면 줍기와 인벤토리 — 통과 (시도 1)",
   "commit": "2faba5e"
+ },
+ {
+  "time": "2026-09-16 23:32:58 KST",
+  "epoch": 1789569178,
+  "report": {
+   "status": "done",
+   "summary": "G-004.5 자원 재생 — 없앤 표시를 주기 뒤 지워 시드 원래 값으로 되돌림",
+   "problem": "채취로 비운 칸이 영영 비어 있었다. 재생은 spec 대로 「없앤 표시를 지우기」여야 하고(원래 빈 칸엔 안 생김), 설치물 둘레 · 플레이어가 선 칸은 막아야 하며, 주기는 나무 < 돌 < 광물이어야 했다. 기존 저장은 없앤 칸 목록만 있고 언제 없앴는지 · 월드 시간이 없어 주기를 잴 수 없었다. 설치물 기능은 아직 없다.",
+   "feedback_applied": "",
+   "approach": "① IslandMap 에 월드 시간 time · 없앤 시각 removed_at(저장과 나눠 쓰는 사전) · regrow(cell)(표시를 지우고 generator.deposit_at 원래 값으로 되돌림, 안 만든 덩어리는 표시만 지움) 추가. ② WorldData 에 removed_at · world_time 저장 (옛 저장은 시각 0 으로 봄). ③ world/regrowth/RegrowthConfig(.tres) 한 곳에 하루 1200초 · 나무 2일 · 돌 4일 · 광물 8일 · 설치물 반경 3칸 · 훑기 간격 1초 (임시 값). ④ Regrowth 노드가 시간을 흘리고 1초마다 없앤 칸을 훑어, 주기가 지났고 설치물 둘레(체비쇼프 반경)도 플레이어 충돌 모양이 걸친 칸도 아니면 재생. 막힌 칸은 비켜날 때까지 기다린다. add_structure/remove_structure 로 나중의 짓기 · 밭 · 길이 알린다. ⑤ game.tscn 에 Regrowth 연결, 나갈 때 월드 시간 저장. ⑥ 테스트 16개: 시드 값과 일치(안 만든 덩어리 포함), 빈 칸 · 밀도 불변, 주기 전 안 자람, 없앤 시각부터 잼, 설치물 반경 안/밖, 플레이어 칸 · 두 칸 걸침, 주기 순서(값과 실제 동작), 설정값을 따름, 게임 안 재생 · 저장/재진입 뒤 시간 이어짐.",
+   "why": "재생을 「표시 지우기」로만 하면 비율 · 해시가 저절로 지켜진다(spec 이 금지한 「부족분 채우기」를 피함). 칸마다 타이머 노드를 두는 대신 없앤 시각 + 월드 시간 하나로 재면 저장이 작고 재진입 뒤에도 이어진다. 매 프레임 훑지 않고 1초 간격으로 훑어 비용을 줄였다. 플레이어 칸은 중심 한 칸이 아니라 충돌 모양이 걸친 칸 전부로 봤다 — 경계에 서 있을 때 옆 칸에 나무가 자라 몸이 갇히는 것을 막으려고. 원래 빈 칸의 표시(조작된 저장 등)는 주기 0 으로 바로 지워 저장이 불어나지 않게 했다(아무것도 안 생김). 설치물 시스템은 아직 없어 칸 등록 API 만 두었다 — 짓기를 미리 만들지 않기 위해. 날 수 · 반경은 spec 미정이라 임시 값을 한 파일에 두고 사람이 플레이해 보고 바꾼다.",
+   "files": [
+    "game/world/island/island_map.gd",
+    "game/settings/save/world_data.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/world/regrowth/regrowth.gd",
+    "game/world/regrowth/regrowth_config.gd",
+    "game/world/regrowth/regrowth_config.tres",
+    "game/tests/world/regrowth/test_regrowth.gd",
+    "game/tests/world/regrowth/test_regrowth_game.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "재생된 칸은 같은 시드 · 좌표의 처음 값과 같고, 원래 비어 있던 칸에는 생기지 않는다",
+     "ok": true,
+     "evidence": "IslandMap.regrow (island_map.gd:139) 는 removed/removed_at 표시를 지우고, 만든 덩어리면 generator.deposit_at 로 되돌린다. deposit_at 은 ensure_chunk 가 쓰는 deposit_on(terrain_at) 과 같은 경로라 값이 같다. 안 만든 덩어리는 표시만 지우므로 나중에 ensure_chunk 가 시드 값으로 만든다. 테스트: test_regrown_cells_match_the_seed_original(나무 · 돌 · 광물 5개씩, 새로 만든 섬과 비교), test_regrow_restores_cells_in_chunks_not_built_yet, test_originally_empty_cells_never_grow(빈 칸 500개 이상에 가짜 표시를 넣어도 NONE 유지, 61×61 영역 자원 수가 시드와 같음). tools/test.sh 를 직접 돌려 188/188 통과를 확인했다."
+    },
+    {
+     "criterion": "설치물 둘레와 플레이어가 선 칸에는 재생되지 않는다",
+     "ok": true,
+     "evidence": "Regrowth.is_protected (regrowth.gd:69) = near_structure(체비쇼프 반경 structure_radius) 또는 player_cells(충돌 모양이 걸친 칸 전부). 막힌 칸은 표시가 남아 비켜난 뒤에 자란다. 테스트: test_no_regrowth_around_structures(반경 끝 대각선 (r,-r)은 막힘, r+1 은 자람), test_structure_on_the_cell_itself_blocks_regrowth, test_no_regrowth_where_the_player_stands, test_player_straddling_cells_blocks_all_of_them, 게임 안 test_game_regrows_felled_tree_after_player_walks_away(실제 Player 씬의 충돌 모양으로 확인). 설치물 시스템이 아직 없어 add_structure/remove_structure API 만 있다 — 단계 범위에 맞다."
+    },
+    {
+     "criterion": "재생 주기는 나무 < 돌 < 광물이고, 값은 한 곳에 있다 (지금은 임시 값)",
+     "ok": true,
+     "evidence": "game/world/regrowth/regrowth_config.tres (2일 · 4일 · 8일, 하루 1200초, 반경 3, 훑기 1초). 코드에 흩어진 수치는 없다(grep 으로 확인). 테스트: test_periods_order_tree_stone_ore(설정 값 비교), test_regrowth_happens_in_order_tree_then_stone_then_ore(실제 시간 흐름에서 순서대로 자람), test_periods_come_from_the_config(설정을 바꾸면 동작이 따라 바뀌고, 기본 설정 경로가 DEFAULT_PATH)."
+    }
+   ],
+   "issues": [
+    "RegrowthConfig.day_seconds(1200)는 게임 하루 길이다. 지금은 낮밤 시스템이 없어 한 곳뿐이지만, 낮밤 단계가 생기면 그쪽 설정과 두 곳이 된다 — 그때 하루 길이는 낮밤 설정 하나에서 읽도록 옮겨야 한다 (합격 판정에는 반영 안 함)",
+    "설치물 칸(Regrowth.structures)은 저장되지 않는다. 짓기 단계에서 설치물 자체의 저장에서 다시 등록하는 흐름이 필요하다 (지금 단계 범위 밖)",
+    "재생할 때 그 칸 위에 떨어진 아이템(drops)이 있는지는 보지 않는다 — 나무 속에 아이템이 묻힐 수 있다. 수용 기준 밖이라 기록만 한다",
+    "Regrowth.check 는 1초마다 removed 전체를 훑고, 칸마다 player_cells() 를 새로 계산한다. 지금 규모에서는 문제없지만, 없앤 칸이 많아지면 player_cells 를 check 에서 한 번만 계산하는 편이 낫다"
+   ],
+   "good": [
+    "재생을 spec 그대로 「없앤 표시 지우기」로만 구현해 「부족분 채우기」를 피했고, 섬이 시드보다 빽빽해지지 않음을 테스트로 확인했다",
+    "칸마다 타이머 대신 없앤 시각 + 월드 시간 하나로 재서 저장이 작고, 저장 · 재진입 뒤에도 남은 시간이 이어진다(test_time_and_removal_times_survive_saving). 옛 저장(removed_at · time 없음)도 받는다",
+    "플레이어 칸을 중심 한 칸이 아니라 몸이 걸친 칸 전부로 보고, 끝 모서리에 딱 닿은 칸은 뺀 처리까지 테스트했다",
+    "기존 테스트를 지우거나 약하게 만든 곳이 없다 (git diff 에 tests 변경 없음). 모든 파일 300줄 이하, 화면 글자 없음",
+    "report.json 의 내용(파일 목록 · 접근 · 테스트 16개)이 실제 diff 와 맞다"
+   ],
+   "feedback": ""
+  },
+  "test": "ty.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] generate (res://world/island/island_generator.gd:48)\n         [2] test_ore_ground_exists_on_full_map_without_noise (res://tests/world/island/test_island_generator.gd:204)\n         [3] _run_test (res://addons/gut/gut.gd:622)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:835)\n14/14 passed.\n\n\nres://tests/world/island/test_island_view.gd\n* test_island_is_shown_around_player_at_spawn\n* test_camera_follows_player_over_island\n* test_chunk_collision_matches_obstacles\n* test_blocked_by_tree_stone_ore_in_every_direction\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 20.1 ms (game _ready 16.2 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              27\nTests               188\nPassing Tests       188\nAsserts            9592\nTime              38.452s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-004",
+  "step": "5",
+  "attempt": "1",
+  "title": "G-004 5/5 자원 재생 — 통과 (시도 1)",
+  "commit": "9c3b833"
+ },
+ {
+  "time": "2026-09-16 23:33:03 KST",
+  "epoch": 1789569183,
+  "type": "group_done",
+  "group": "G-004",
+  "title": "G-004 섬 · 자원 — 묶음 완료, main 에 합침"
  }
 ]
