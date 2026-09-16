@@ -2094,5 +2094,93 @@
   "attempt": "1",
   "title": "G-011 1/2 좌클릭 평타 — 통과 (시도 1)",
   "commit": "99c44d9"
+ },
+ {
+  "time": "2026-09-17 00:55:14 KST",
+  "epoch": 1789574114,
+  "report": {
+   "status": "done",
+   "summary": "G-011.2 우클릭 상호작용 — 제작대 열기·설치를 우클릭(interact 액션)으로 옮기고, 든 아이템이 자기 우클릭 동작을 붙일 수 있는 Interactor 를 만들었다",
+   "problem": "1단계 뒤에도 Stations 가 좌클릭(use)을 먼저 받아 제작대를 열거나 설치하고 입력을 먹었다. 그래서 제작대 위에서 좌클릭하면 휘두르지 않았다. 우클릭 액션이 없었고, 삽·씨앗·음식 같은 아이템이 우클릭 동작을 붙일 자리도 없었다.",
+   "feedback_applied": "",
+   "approach": "① InputActions.INTERACT(&\"interact\")를 추가하고 project.godot 에서 우클릭(button_index 2)에 묶었다. ② game/player/interact/interactor.gd(Interactor)를 새로 만들었다. 우클릭을 받으면 겨눈 칸에 대해 먼저 상호작용 오브젝트(add_object)에 묻고, 아무 오브젝트도 반응하지 않으면 든 아이템의 동작을 부른다. 아이템 동작은 id 로 붙인 것(set_item_action)을 먼저 쓰고, 없으면 종류로 고르는 add_item_handler 에 차례로 묻는다. 가방·제작 화면이 열려 있으면 막는다(blocked). ③ Stations 에서 좌클릭 _unhandled_input·try_use·blocked·aimed_cell 을 지웠다. 대신 register(interactor) 로 try_open 을 오브젝트로, try_place 를 아이템 handler 로 붙인다. ④ game.tscn 에 Interactor 노드를 넣고 game.gd 에서 setup·register·blocked 를 연결했다. ⑤ 테스트: 좌클릭으로 열기·설치를 검사하던 것을 우클릭으로 바꾸고, 반대 방향 검사를 더했다. test_left_click_on_station_swings_instead_of_opening 은 도끼·맨손·제작대를 들고 제작대를 좌클릭하면 휘두르고 열리지 않는지 본다. test_left_click_with_workbench_swings_and_does_not_place 는 제작대를 들고 좌클릭하면 휘두르기만 하고 설치하지 않는지 본다. test_right_click_bound_to_interact 는 우클릭이 interact 에 묶였는지 본다. test_interactor.gd 7개는 든 아이템의 우클릭 동작이 불리는지, 다른 아이템·좌클릭으로는 안 불리는지, 겨눈 제작대가 먼저인지, 닿지 않는 제작대면 아이템 동작으로 넘어가는지, 가방이 열려 있으면 막히는지, handler 를 차례로 묻는지 본다. tools/test.sh 299/299 통과, guard 통과.",
+   "why": "우클릭 동작을 가진 주체는 둘로 나뉜다. 월드에 놓인 오브젝트(제작대·뒤의 상자)와 손에 든 아이템(삽·씨앗·음식·설치물)이다. Interactor 하나가 '오브젝트 먼저, 그다음 아이템' 순서를 쥐고 있으면 spec 의 우선순위 규칙이 한 곳에만 있게 된다. 버린 대안 A: 각 시스템이 우클릭을 따로 받고 트리 순서로 입력을 먹는 방식. 1단계 전 Stations 가 이렇게 했는데, 우선순위가 노드 순서에 숨어 있어 깨지기 쉽다. 버린 대안 B: 아이템 데이터(Resource)에 동작 스크립트를 넣는 방식. 아직 아이템 정의 Resource 가 없어 이번 단계 밖이다. id 로 붙이는 set_item_action 과 종류로 고르는 add_item_handler 를 둘 다 둔 이유는 이렇다. 설치물은 '제작 장소 id 전부'처럼 종류로 골라야 하고, 삽·씨앗은 id 하나에 동작 하나가 자연스럽다. 삽·씨앗·음식 동작 자체는 이번 단계 밖이라 만들지 않았다. 테스트에서는 가짜 id(test_seed)로 구조만 검사한다.",
+   "files": [
+    "game/core/input/input_actions.gd",
+    "game/project.godot",
+    "game/player/interact/interactor.gd",
+    "game/craft/stations/stations.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/ui/craft/crafting_view.gd",
+    "game/tests/player/interact/test_interactor.gd",
+    "game/tests/core/input/test_input_actions.gd",
+    "game/tests/craft/stations/station_test_base.gd",
+    "game/tests/craft/stations/test_station_open.gd",
+    "game/tests/craft/stations/test_station_place.gd",
+    "game/tests/craft/stations/test_craft_timer.gd",
+    "game/tests/life/harvest/harvest_test_base.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "우클릭이 InputMap 액션(상호작용)이다",
+     "ok": true,
+     "evidence": "game/project.godot 에 interact={button_index 2} 추가, InputActions.INTERACT(&\"interact\") 가 all() 에 들어감. test_input_actions.gd::test_right_click_bound_to_interact(우클릭은 interact, 좌클릭은 아님) · test_simulated_right_click_reaches_interact_action(실제 입력 이벤트로 INTERACT 눌림 · USE 안 눌림) 통과. 기존 RAW_INPUT 검사도 그대로 통과"
+    },
+    {
+     "criterion": "손이 닿는 거리의 제작대에 우클릭 → 제작 화면이 열린다. 좌클릭으로는 열리지 않고 휘두른다",
+     "ok": true,
+     "evidence": "Stations._unhandled_input(좌클릭) 삭제, Interactor._unhandled_input 이 INTERACT 만 받아 Stations.try_open 을 부름. test_station_open.gd::test_right_click_on_station_in_reach_opens_crafting(열림 · swing_count 0), ::test_left_click_on_station_swings_instead_of_opening(도끼 · 맨손 · 제작대를 들고 좌클릭 → is_holding true, swing_count 증가, 화면 안 열림, 설치 없음), ::test_station_out_of_reach_does_not_open 통과"
+    },
+    {
+     "criterion": "제작대 같은 설치물은 들고 빈 칸에 우클릭하면 설치된다 (좌클릭 설치는 없앤다)",
+     "ok": true,
+     "evidence": "Stations.register 가 try_place 를 Interactor.add_item_handler 로 붙임, 좌클릭 경로(try_use) 삭제 — grep 으로 try_use · stations().blocked 잔재 없음 확인. test_station_place.gd::test_right_click_with_workbench_places_on_empty_cell, ::test_left_click_with_workbench_swings_and_does_not_place(설치 0, 개수 그대로 2) 및 막힌 칸 · 자기 칸 · 닿지 않는 칸 · 가방 열림 테스트가 우클릭으로 통과"
+    },
+    {
+     "criterion": "손에 든 아이템이 자기 우클릭 동작을 가질 수 있는 구조다. 겨눈 곳에 상호작용 오브젝트가 있으면 그쪽이 먼저다",
+     "ok": true,
+     "evidence": "game/player/interact/interactor.gd: interact() = _try_objects(cell) or _try_item(cell); set_item_action(id) 이 add_item_handler 보다 먼저. test_interactor.gd 7개: 든 아이템 동작이 겨눈 칸으로 불림, 다른 아이템 · 맨손 · 좌클릭으로는 안 불림, 겨눈 제작대가 먼저(test_aimed_station_comes_before_item_action), 닿지 않는 제작대면 아이템 동작으로 넘어감, 가방 열림 시 막힘, handler 순서 · 첫 true 에서 멈춤 · id 동작 우선. test_right_click_with_workbench_in_hand_opens_existing_station 도 오브젝트 우선(설치 안 함)을 실제 입력으로 확인"
+    },
+    {
+     "criterion": "기존 테스트 중 「좌클릭으로 연다 · 설치한다」를 검사하던 것은 새 규칙에 맞게 바뀌었다 — 지운 것이 아니라 바꾼 것이다",
+     "ok": true,
+     "evidence": "git diff: 삭제된 테스트 함수 없음. test_click_on_station_in_reach_opens_crafting_instead_of_swinging → test_right_click_on_station_in_reach_opens_crafting, test_left_click_with_workbench_places_on_empty_cell → test_right_click_with_workbench_places_on_empty_cell, test_click_that_opens_station_never_reaches_the_tool → test_right_click_..., test_tool_still_swings_when_click_is_not_on_station → 좌클릭 휘두름 + 우클릭 무동작까지 검사. _click_cell → _right_click_cell. 반대 방향(좌클릭은 열지 · 놓지 않는다) 테스트가 새로 붙어 오히려 강해짐. skip · assert 완화 없음"
+    }
+   ],
+   "issues": [
+    "Interactor._try_item: set_item_action 으로 붙인 동작이 false 를 돌려주면 add_item_handler 로 넘어가지 않는다. 지금은 문제없지만, 뒤에 설치물 id 에 개별 동작을 붙이면 설치 handler 가 가려진다 — 의도라면 주석으로 밝혀 두면 좋다",
+    "Interactor.interact() 를 player 없이 직접 부르면 _try_item 에서 player.held_item() 으로 터진다 (_unhandled_input 경로는 막혀 있어 실사용에선 안 난다)",
+    "signal interacted 는 아직 아무도 듣지 않는다 (작은 죽은 코드)",
+    "test_right_click_that_opens_station_never_reaches_the_tool 은 규칙이 바뀌며 거의 자명한 검사(우클릭 누름은 휘두르지 않는다)가 됐다. 반대 방향 검사가 따로 있어 기준에는 영향 없음",
+    "test_interactor.gd 의 test_item_handlers_are_asked_in_order_and_id_action_wins 에서 Pointer.simulate(Vector2.ZERO) 는 쓰이지 않는다"
+   ],
+   "good": [
+    "우선순위(오브젝트 → id 동작 → 종류 handler)가 Interactor 한 곳에 모여, 예전처럼 노드 순서에 숨지 않는다",
+    "좌클릭 · 우클릭을 서로 다른 액션으로 갈라 Swinger 와 Interactor 가 입력을 먹는 순서에 기대지 않는다",
+    "바뀐 테스트마다 반대 방향(좌클릭은 열지 · 놓지 않고 휘두른다) 검사를 더해 규칙 변경을 양쪽에서 못박았다",
+    "after_each 에서 INTERACT 도 풀어 테스트 간 누수를 막았다",
+    "직접 실행: tools/test.sh 299/299 통과, harness/guard.sh 통과. 파일 모두 300줄 이하, 화면 글자 추가 없음, report 내용이 diff 와 일치"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 49.5 ms (game _ready 40.6 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              41\nTests               299\nPassing Tests       299\nAsserts           13205\nTime              46.088s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-011",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-011 2/2 우클릭 상호작용 — 통과 (시도 1)",
+  "commit": "0de282d"
+ },
+ {
+  "time": "2026-09-17 00:55:17 KST",
+  "epoch": 1789574117,
+  "type": "group_done",
+  "group": "G-011",
+  "title": "G-011 좌클릭 평타 · 우클릭 상호작용 — 묶음 완료, main 에 합침"
  }
 ]
