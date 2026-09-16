@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 02:46:59 KST",
- "updated_epoch": 1789580819,
+ "updated": "2026-09-17 02:52:34 KST",
+ "updated_epoch": 1789581154,
  "progress": {
   "groups_total": 14,
   "groups_done": 10,
@@ -20,6 +20,6 @@
  "step_total": "1",
  "step_title": "버프 음식 1종",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 02:46:59"
+ "phase": "QA",
+ "phase_since": "2026-09-17 02:52:34"
 }
