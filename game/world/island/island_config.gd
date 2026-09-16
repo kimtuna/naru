@@ -13,6 +13,15 @@ enum Deposit { NONE, TREE, STONE, ORE }
 @export var size := 256
 ## 스폰 둘레 빈터의 한 변 (홀수). 스폰은 섬 한가운데.
 @export var spawn_clear := 7
+## 섬을 만들고 그리는 덩어리 한 변의 타일 수 — 게임은 보이는 덩어리만 만든다.
+@export var chunk_size := 16
+
+@export_group("View")
+## 타일 한 칸의 픽셀.
+@export var tile_px := 16
+## 화면 가장자리 밖으로 미리 만들어 둘 여유 (픽셀). 이보다 한 덩어리 더 멀어지면 치운다.
+@export var view_margin_px := 160.0
+@export_group("")
 
 ## 땅의 몇 %를 자원으로 채우나 (0 ~ 100).
 @export_range(0.0, 100.0) var fill_percent := 30.0

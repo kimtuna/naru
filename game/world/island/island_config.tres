@@ -6,6 +6,9 @@
 script = ExtResource("1")
 size = 256
 spawn_clear = 7
+chunk_size = 16
+tile_px = 16
+view_margin_px = 160.0
 fill_percent = 30.0
 tree_weight = 3.0
 stone_weight = 2.0
