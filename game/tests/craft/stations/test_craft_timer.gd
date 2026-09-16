@@ -170,7 +170,7 @@ func test_crafting_screen_starts_and_collects() -> void:
 	_hide_gut_layer()
 	var game := _enter()
 	var station := _ready_bench(game)
-	await _click_cell(game, station.cell)
+	await _right_click_cell(game, station.cell)
 	var view := game.crafting_view()
 	assert_true(view.is_open(), "setup: the station is open")
 	var button := view.recipe_button(INGOT)

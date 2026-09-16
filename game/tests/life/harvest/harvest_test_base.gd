@@ -35,6 +35,7 @@ func after_each() -> void:
 		_gut_layer.visible = true
 		_gut_layer = null
 	Input.action_release(InputActions.USE)
+	Input.action_release(InputActions.INTERACT)
 	Pointer.clear_simulation()
 	Screens.simulate = false
 	Session.store = SaveStore.new()
