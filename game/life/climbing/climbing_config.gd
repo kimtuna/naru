@@ -11,6 +11,8 @@ const CLIFF_LAYER := 2
 @export var max_stamina := 100.0
 ## 절벽에서 움직이는 동안 초당 주는 기력. 멈춰 있으면 줄지 않는다 (임시).
 @export var drain_per_second := 20.0
+## 갈고리총에 매달린 동안 초당 주는 기력 — 움직이지 않아도 준다 (임시).
+@export var hang_drain_per_second := 10.0
 ## 절벽 밖에서 초당 차오르는 기력 (임시).
 @export var regen_per_second := 40.0
 ## 앵커가 달린 칸에서 초당 차오르는 기력 (임시).

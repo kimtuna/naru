@@ -245,3 +245,9 @@ msgstr "Vanishes in %d:%02d"
 
 msgid "DEATH_CHEST_TAKE_ALL"
 msgstr "Take all"
+
+msgid "ITEM_GRAPPLE_GUN"
+msgstr "Grappling Hook Gun"
+
+msgid "ITEM_GRAPPLE_GUN_2"
+msgstr "Grappling Hook Gun II"

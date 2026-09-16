@@ -31,7 +31,7 @@ func _ready() -> void:
 		swinger().add_source(melee().targets_near)
 		gunner().setup(player(), mobs(), projectiles())
 		mob_spawner().setup(mobs(), mob_targets)
-		swinger().alternate = gunner().try_fire
+		swinger().add_alternate(gunner().try_fire)
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
 		picker().setup(player(), drops(), island_view().tile_px())
@@ -57,6 +57,8 @@ func _ready() -> void:
 		anchors().register(interactor())
 		anchors().load_list(world.anchors)
 		climber().setup(player(), island_view(), anchors())
+		grappler().setup(player(), island_view(), climber())
+		swinger().add_alternate(grappler().try_fire)
 		player().spawn_point = island_view().cell_center(island.spawn())
 		player().global_position = player().spawn_point
 		island_view().update_around(player().global_position)
@@ -160,6 +162,11 @@ func climber() -> Climber:
 ## 절벽에 단 앵커 — 그 칸에서 기력이 차오른다.
 func anchors() -> Anchors:
 	return %Anchors
+
+
+## 갈고리총 — 들고 좌클릭하면 쏜 쪽으로 날아가 절벽에 매달린다.
+func grappler() -> Grappler:
+	return %Grappler
 
 
 func stamina_view() -> StaminaView:

@@ -36,6 +36,12 @@
 		{"id": "anchor", "station": "workbench", "time": 5.0, "time_temp": true,
 			"inputs": [{"id": "iron_ingot", "count": 1}, {"id": "wood", "count": 1}],
 			"output": {"id": "anchor", "count": 2}},
+		{"id": "grapple_gun", "station": "workbench", "time": 5.0, "time_temp": true,
+			"inputs": [{"id": "iron_ingot", "count": 3}, {"id": "wood", "count": 2}],
+			"output": {"id": "grapple_gun", "count": 1}},
+		{"id": "grapple_gun_2", "station": "workbench", "time": 5.0, "time_temp": true,
+			"inputs": [{"id": "grapple_gun", "count": 1}, {"id": "iron_ingot", "count": 4}],
+			"output": {"id": "grapple_gun_2", "count": 1}},
 		{"id": "bread", "station": "workbench", "time": 5.0, "time_temp": true,
 			"inputs": [{"id": "wheat", "count": 3}],
 			"output": {"id": "bread", "count": 1}}

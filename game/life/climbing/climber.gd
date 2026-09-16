@@ -3,7 +3,8 @@ extends Node
 ## 절벽 등반 — 캐릭터가 절벽 칸에 있는 동안 기력을 쓰고, 여유까지 다 쓰면 떨어뜨린다 (spec/04_life/climbing.md).
 ## 떨어지면 아래쪽(+y)으로 걸을 수 있는 칸이 나올 때까지 내려가고, 닿으면 낙하 피해를 받는다.
 ## 앵커가 달린 칸에 있으면 기력이 차오른다 (anchors).
-## 스파이크 없이 절벽 칸에 있게 되면(절벽에서 스파이크를 뺐을 때) 바로 떨어진다.
+## 스파이크 없이 절벽 칸에 있게 되면(절벽에서 스파이크를 뺐을 때) 바로 떨어진다. 갈고리총에 매달려 있으면 떨어지지 않는다.
+## 매달린 동안은 움직이지 않아도 기력이 준다. 날아가는 동안은 기력이 그대로다.
 
 ## 떨어지기 시작했다 (이 신호 동안 stamina.overdraw 는 아직 떨어진 순간의 값이다).
 signal fell
@@ -61,13 +62,15 @@ func _physics_process(delta: float) -> void:
 	if _falling:
 		_fall_step(delta)
 		return
+	if player.flying:
+		return
 	var on := is_cliff_at(player.global_position)
-	if on and not player.can_climb():
+	if on and not player.can_climb() and not player.hanging:
 		start_fall()
 		return
 	var moving := player.last_motion.length() > MOVE_EPS
 	var anchored := anchors != null and anchors.has_anchor_at(player.global_position)
-	if stamina.tick(delta, on, moving, anchored):
+	if stamina.tick(delta, on, moving, anchored, on and player.hanging):
 		start_fall()
 
 
@@ -76,6 +79,7 @@ func start_fall() -> void:
 	if player == null or _falling:
 		return
 	var land := landing_cell(view.world_to_cell(player.global_position))
+	player.hanging = false
 	fell.emit()
 	stamina.clear_overdraw()
 	if land == NO_CELL:

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="GrappleConfig" format=3]
+
+[ext_resource type="Script" path="res://life/climbing/grapple_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+guns = {
+"grapple_gun": {
+"interval": 0.3,
+"magazine": 2,
+"range_tiles": 4.0
+},
+"grapple_gun_2": {
+"interval": 0.3,
+"magazine": 4,
+"range_tiles": 8.0
+}
+}
+fly_speed = 320.0
+path_step_px = 2.0

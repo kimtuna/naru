@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://world/game.gd" id="1"]
+[ext_resource type="Script" path="res://life/climbing/grappler.gd" id="26"]
 [ext_resource type="PackedScene" path="res://player/player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://ui/hud/hotbar_view.tscn" id="3"]
 [ext_resource type="Script" path="res://world/island/island_view.gd" id="4"]
@@ -85,6 +86,10 @@ script = ExtResource("17")
 [node name="Climber" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("23")
+
+[node name="Grappler" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("26")
 
 [node name="Picker" type="Node" parent="."]
 unique_name_in_owner = true

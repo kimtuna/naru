@@ -35,6 +35,10 @@ var on_cliff := Callable()
 var climb_speed := ClimbingConfig.load_default().climb_speed
 ## 절벽에서 떨어지는 중 — 입력을 받지 않고 Climber 가 옮긴다.
 var falling := false
+## 갈고리총으로 날아가는 중 — 입력을 받지 않고 Grappler 가 옮긴다.
+var flying := false
+## 갈고리총 줄에 매달려 있다 — 걷지 않는다. 스파이크가 없어도 절벽에서 떨어지지 않는다 (Climber).
+var hanging := false
 ## 지난 물리 걸음에서 스스로 걸어 움직인 거리 (순간이동 · 낙하는 셈하지 않는다).
 var last_motion := Vector2.ZERO
 
@@ -55,7 +59,7 @@ func _physics_process(delta: float) -> void:
 	# 스파이크를 끼면 절벽 충돌을 지나간다 (spec/04_life/climbing.md).
 	set_collision_mask_value(ClimbingConfig.CLIFF_LAYER, not can_climb())
 	last_motion = Vector2.ZERO
-	if falling:
+	if falling or flying or hanging:
 		velocity = Vector2.ZERO
 		return
 	var dir := InputActions.move_vector()

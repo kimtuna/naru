@@ -245,3 +245,9 @@ msgstr "사라지기까지 %d:%02d"
 
 msgid "DEATH_CHEST_TAKE_ALL"
 msgstr "모두 꺼내기"
+
+msgid "ITEM_GRAPPLE_GUN"
+msgstr "갈고리총"
+
+msgid "ITEM_GRAPPLE_GUN_2"
+msgstr "갈고리총 II"
