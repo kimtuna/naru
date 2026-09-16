@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-17 05:28:26 KST",
- "updated_epoch": 1789590506,
+ "updated": "2026-09-17 05:36:26 KST",
+ "updated_epoch": 1789590986,
  "progress": {
   "groups_total": 14,
   "groups_done": 13,
@@ -20,6 +20,6 @@
  "step_total": "4",
  "step_title": "신발 칸과 스파이크",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-17 05:28:25"
+ "phase": "QA",
+ "phase_since": "2026-09-17 05:36:26"
 }
