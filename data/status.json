@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 04:03:17 KST",
- "updated_epoch": 1789585397,
+ "updated": "2026-09-17 04:05:03 KST",
+ "updated_epoch": 1789585503,
  "progress": {
   "groups_total": 14,
   "groups_done": 11,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 33
+  "steps_done": 34
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-009",
  "group_title": "전투",
- "step": "4",
+ "step": "5",
  "step_total": "6",
- "step_title": "도구 근접 공격",
- "attempt": "2",
- "phase": "QA",
- "phase_since": "2026-09-17 04:03:17"
+ "step_title": "총과 투사체",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-17 04:05:03"
 }
