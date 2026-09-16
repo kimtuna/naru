@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 02:52:34 KST",
- "updated_epoch": 1789581154,
+ "updated": "2026-09-17 02:54:56 KST",
+ "updated_epoch": 1789581296,
  "progress": {
   "groups_total": 14,
-  "groups_done": 10,
+  "groups_done": 11,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 29
+  "steps_done": 30
  },
  "state": "running",
  "reason": "",
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "99697",
- "group": "G-008",
- "group_title": "보급",
+ "group": "G-009",
+ "group_title": "전투",
  "step": "1",
- "step_total": "1",
- "step_title": "버프 음식 1종",
+ "step_total": "6",
+ "step_title": "체력 · 피해 · 죽음",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 02:52:34"
+ "phase": "구현",
+ "phase_since": "2026-09-17 02:54:56"
 }
