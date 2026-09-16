@@ -5,7 +5,7 @@
 - roadmap.md — 로드맵 · 프로토타입 범위(넣는 것/빼는 것)  ·  tech.md — 엔진 · 2D · 시드 생성 · 번역 키 원칙
 - art-sound.md — 아트·사운드 (보류)
 ## 01_settings
-- display.md — 해상도 · 창 모드 (대부분 미정)  ·  input.md — 키 배치 · InputMap
+- display.md — 해상도 · 창 모드 (대부분 미정)  ·  world-settings.md — 월드 설정 (서버장만 · 데스 페널티)  ·  input.md — 키 배치 · InputMap
 - save.md — 캐릭터/월드 분리 저장  ·  language.md — 한국어·영어, 문자열 하드코딩 금지
 - audio.md — 음량 (미정)
 ## 02_player
