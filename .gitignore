@@ -1,0 +1,11 @@
+# 루프 상태 · 대시보드 워크트리
+.loop/
+# 사람과 루프가 같이 쓰는 파일 — 브랜치를 오가도 흔들리지 않게 git 밖에 둔다.
+# 기록은 대시보드(gh-pages 브랜치)의 data/ 에 남는다.
+list.md
+decisions.md
+current.md
+# Godot
+game/.godot/
+*.import.tmp
+.DS_Store
