@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-16 21:47:32 KST",
- "updated_epoch": 1789562852,
+ "updated": "2026-09-16 21:49:51 KST",
+ "updated_epoch": 1789562991,
  "progress": {
   "groups_total": 9,
   "groups_done": 1,
@@ -20,6 +20,6 @@
  "step_total": "5",
  "step_title": "저장 뼈대 — 캐릭터와 월드를 따로",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-16 21:47:32"
+ "phase": "QA",
+ "phase_since": "2026-09-16 21:49:51"
 }
