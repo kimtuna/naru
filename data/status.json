@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-16 23:07:28 KST",
- "updated_epoch": 1789567648,
+ "updated": "2026-09-16 23:09:52 KST",
+ "updated_epoch": 1789567792,
  "progress": {
   "groups_total": 9,
   "groups_done": 3,
   "groups_waiting": 0,
   "steps_total": 31,
-  "steps_done": 14
+  "steps_done": 15
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-004",
  "group_title": "섬 · 자원",
- "step": "3",
+ "step": "4",
  "step_total": "5",
- "step_title": "좌클릭 채취 → 바닥에 떨어짐",
+ "step_title": "밟으면 줍기와 인벤토리",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-16 23:07:28"
+ "phase": "구현",
+ "phase_since": "2026-09-16 23:09:52"
 }

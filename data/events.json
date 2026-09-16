@@ -1048,5 +1048,83 @@
   "attempt": "1",
   "title": "G-004 2/5 섬을 그리고 걸어 다니기 — 통과 (시도 1)",
   "commit": "fbee30a"
+ },
+ {
+  "time": "2026-09-16 23:09:52 KST",
+  "epoch": 1789567792,
+  "report": {
+   "status": "done",
+   "summary": "G-004.3 좌클릭 채취 → 바닥에 떨어짐 (도구·대상 규칙, 도달 거리, 바뀐 칸만 월드 저장)",
+   "problem": "겨눈 칸과 손에 든 것으로 채취 동작을 정하고(도끼→나무, 곡괭이→돌·광물, 맨손→나무·돌 느리게, 나머지 조합은 무동작), 손이 닿는 거리 안에서만 동작하게 하며, 채취한 칸을 비우고 아이템을 바닥에 떨어뜨리고, 바뀐 칸을 월드 저장에 남겨야 했다(지형은 시드로 다시 만든다). 부딪힌 문제: (1) 헤드리스 창(64×64) 전체를 GUT 실행 화면이 덮어 테스트의 좌클릭이 _unhandled_input 까지 오지 않았다. (2) 물리 프레임을 기다리며 끝난 테스트 뒤에 다음 테스트 파일(test_player_aim)이 같은 물리 프레임 안에서 시작돼, 그 테스트의 플레이어가 흉내 커서를 넣기 전에 실제 커서 읽기를 한 번 불렀다(기존 테스트가 순서에 따라 실패). (3) 칸이 바뀔 때 충돌체를 queue_free 로 지워서 GUT 가 고아 노드로 보고했다.",
+   "feedback_applied": "",
+   "approach": "life/harvest/harvest_config.gd(.tres): 손에 든 것 → 칠 수 있는 자원 표(TARGETS), 자원 → 떨어지는 아이템 id(wood/stone/ore), 수치(도달 거리 2타일, 휘두르기 간격 0.35초, 자원 내구 3, 도구 힘 3, 맨손 힘 1, 드롭 1개)를 한 곳에 모았다. life/harvest/harvester.gd: 좌클릭을 _unhandled_input 으로 받기 시작하고 쥐고 있는 동안 간격마다 Pointer 로 겨눈 칸에 swing() 한다. 거리·조합이 안 맞으면 아무 일도 없고, 힘을 쌓아 내구에 닿으면 칸을 비우고 DroppedItem(player/pickup/dropped_item.gd)을 칸 한가운데에 떨어뜨린다. 겨눈 칸이 바뀌면 쌓인 힘은 사라진다. IslandMap 에 없앤 칸 표시(removed 사전)와 remove_deposit()/cell_changed 신호를 넣었다. 나중에 만드는 덩어리에도 표시를 적용하고, IslandView 는 신호를 받아 그 덩어리의 충돌·그림을 다시 만든다. WorldData 에 removed_cells(IslandMap 과 같은 사전을 나눠 씀)와 drops 를 넣어 저장하고, 옛 저장도 읽힌다. GameScene 은 시드 + 저장된 표시로 섬을 만들고, 저장된 드롭을 다시 놓고, 나갈 때 드롭을 WorldData 에 옮긴다. HUD 정보 상자는 클릭을 가로채지 않게 mouse_filter=IGNORE 로 바꿨다. 테스트 13개(test_harvester · test_harvest_input · test_harvest_save, 공용 준비는 harvest_test_base.gd): 맞는 조합 5가지의 칸 비움·드롭 id·위치, 맨손이 더 많이 휘둘러야 함, 맞지 않는 조합 8가지 무동작, 거리 밖(3방향) 무동작·안쪽 동작, 실제 좌클릭 입력과 쥐고 있기, 충돌 제거, 나갔다 들어와도(두 번) 빈 칸 유지, 나머지 칸은 시드 값 그대로, 저장에는 바뀐 칸만 있음, 드롭 유지, WorldData 왕복, 나중에 만드는 덩어리에 표시 적용. 부딪힌 문제는 클릭 테스트 동안만 GUT 층을 숨기고, 물리 프레임을 기다린 테스트는 일반 프레임으로 넘긴 뒤 끝내고, 게임 씬은 테스트 끝에 바로 free 하고, 충돌체는 바로 free 해서 풀었다. tools/test.sh 153개 통과(여러 번 돌려 확인), guard 통과.",
+   "why": "「맨손은 느리게」를 휘두르기 횟수(힘/내구)로 표현했다. 누르고 있는 시간(진행 막대)보다 테스트가 결정적이고, 나중에 도구 등급·내구도(spec 미정)를 같은 숫자에 얹기 쉽다. 수치는 모두 임시 값이고 .tres 한 곳에서 바꾼다. 저장은 spec(save.md, resources-regrowth.md)대로 「없앤 칸 표시」만 남겼다. 재생 단계는 표시를 지우고 시드 값으로 되돌리면 된다. 칸 바이트 전체를 저장하는 안은 spec 과 어긋나서 버렸다. 떨어진 아이템도 월드 상태라 함께 저장했다. 안 하면 나갔다 들어올 때 캔 자원이 사라진다. 줍기는 4단계 몫이라 넣지 않았다. 도달 거리 판정은 캐릭터 한가운데 → 칸 한가운데 거리로 했다(spec 미정, 싸게 바꿀 수 있음). 좌클릭 시작을 _unhandled_input 으로 받아 UI 위 클릭은 휘두르지 않게 했고, 이미 쥔 뒤에는 Input 상태로 이어 간다. 이렇게 하면 이후 「가방이 열려 있는 동안은 휘두르지 않음, 쥔 채 닫으면 계속」 규칙을 붙이기 쉽다. 아이템 id(axe/pickaxe/wood/stone/ore)는 화면 글자가 아닌 내부 키라 번역 파일에 넣지 않았다.",
+   "files": [
+    "game/life/harvest/harvest_config.gd",
+    "game/life/harvest/harvest_config.tres",
+    "game/life/harvest/harvester.gd",
+    "game/player/pickup/dropped_item.gd",
+    "game/world/island/island_map.gd",
+    "game/world/island/island_chunk.gd",
+    "game/world/island/island_view.gd",
+    "game/world/game.gd",
+    "game/world/game.tscn",
+    "game/settings/save/world_data.gd",
+    "game/tests/life/harvest/harvest_test_base.gd",
+    "game/tests/life/harvest/test_harvester.gd",
+    "game/tests/life/harvest/test_harvest_input.gd",
+    "game/tests/life/harvest/test_harvest_save.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "겨눈 칸과 손에 든 것이 동작을 정한다 — 도끼 → 나무, 곡괭이 → 돌 · 광물, 맨손 → 나무 · 돌을 느리게. 맞지 않는 조합은 아무 일도 없다",
+     "ok": true,
+     "evidence": "HarvestConfig.TARGETS(harvest_config.gd:15) + Harvester.can_swing_at/swing(harvester.gd:71-94). test_matching_tool_clears_cell_and_drops_item(맞는 조합 5개), test_bare_hand_is_slower_than_the_right_tool, test_hand_swing_keeps_cell_until_done, test_mismatched_combinations_do_nothing(8개 조합, 진행도·표시·드롭까지 확인), test_left_click_harvests_aimed_cell / test_holding_click_keeps_swinging_bare_hand(실제 좌클릭 입력으로 겨눈 칸이 동작을 정함). 코드를 일부러 망가뜨려 확인: 맨손에 ORE 허용 → mismatch 테스트 실패, hand_power=3 → 느림 테스트 실패."
+    },
+    {
+     "criterion": "손이 닿는 거리 밖에서는 동작하지 않는다",
+     "ok": true,
+     "evidence": "Harvester.can_reach(harvester.gd:63), 거리 값은 harvest_config.tres 의 reach_tiles. test_out_of_reach_does_nothing_and_in_reach_works(세 방향 reach+1px 무동작, reach-1px 동작). can_reach 를 항상 참으로 바꾸면 이 테스트가 실패하는 것을 확인."
+    },
+    {
+     "criterion": "채취한 칸은 비고 아이템이 바닥에 떨어진다",
+     "ok": true,
+     "evidence": "Harvester._harvest → IslandMap.remove_deposit + DroppedItem 을 %Drops 아래에 칸 한가운데 위치로 넣음. IslandView._on_cell_changed → IslandChunk.refresh 로 충돌을 다시 만듦. test_matching_tool_clears_cell_and_drops_item(칸 NONE, is_blocked false, 드롭 1개, id wood/stone/ore, 위치, 트리 안에 있음), test_harvested_cell_no_longer_collides(물리 질의). add_child 를 빼면 테스트 실패하는 것을 확인."
+    },
+    {
+     "criterion": "바뀐 칸은 월드 저장에 남는다. 다시 들어가도 비어 있다 (지형은 시드로 다시 만들고 바뀐 것만 저장)",
+     "ok": true,
+     "evidence": "WorldData.removed_cells(IslandMap.removed 와 같은 사전)·drops 를 to_dict/from_dict 로 저장(store_var 라 Vector2i/Vector2 가 그대로 남음). game.gd:23 에서 시드 + 표시로 섬을 만든다. test_harvested_cells_stay_empty_after_reentering(두 번 다시 들어가도 빈 칸, 둘레 41×41 칸은 시드 값과 같음), test_world_save_holds_only_the_changes(removed 는 [그 칸] 뿐, 지형 배열 없음), test_drops_stay_on_the_ground_after_reentering, test_world_data_round_trip_keeps_changes(옛 저장 호환), test_lazy_island_applies_removed_marks_to_chunks_built_later. to_dict 의 removed 를 [] 로 바꾸거나 store_world_state 를 끊으면 테스트 실패하는 것을 확인."
+    },
+    {
+     "criterion": "기계 테스트 · 규칙",
+     "ok": true,
+     "evidence": "tools/test.sh 직접 실행 153/153 통과(test.log 와 같음), harness/guard.sh 통과. git diff 에서 기존 테스트 삭제·완화·skip 없음(바뀐 테스트 파일 없음, 새 테스트만 추가). 300줄 넘는 파일 없음(최대 harvest_test_base.gd 138줄). 화면 글자 추가 없음. 수치는 harvest_config.tres 한 곳. 줍기(4단계)·재생(5단계)은 넣지 않음. report 의 파일 목록·테스트 수(13개)가 실제와 맞음."
+    }
+   ],
+   "issues": [
+    "떨어진 아이템(world.drops)은 exit_to_menu 의 store_world_state() 에서만 WorldData 에 옮겨진다. 없앤 칸(removed_cells)은 공유 사전이라 언제 저장해도 최신인데 drops 는 아니다 — 나중에 자동 저장이나 창 닫기 저장이 Session.save_all() 을 따로 부르면 칸은 비었는데 드롭은 옛 값으로 저장될 수 있다. 저장 경로가 늘어날 때 store_world_state 를 Session 저장 쪽에서 부르게 하는 편이 안전하다 (지금 단계 기준에는 영향 없음)",
+    "Harvester.harvested 신호와 IslandMap.is_removed 는 지금 테스트에서만 쓰인다 (다음 단계 줍기·재생에서 쓸 것으로 보여 문제 삼지 않음)",
+    "휘두르는 중에 손에 든 도구를 바꿔도 같은 칸이면 쌓인 힘이 유지된다 (맨손 2번 + 도끼 1번 등). 기준 밖이고 spec 미정"
+   ],
+   "good": [
+    "저장을 spec(save.md · resources-regrowth.md)대로 「없앤 칸 표시」만 남기고, 늦게 만드는 덩어리에도 표시를 적용해 재생 단계가 표시만 지우면 되게 했다",
+    "테스트가 실제 좌클릭 입력 경로(_unhandled_input → 쥐고 있기)까지 검사하고, 둘레 칸이 시드 값 그대로인지·저장에 전체 지형이 없는지까지 본다. 여섯 가지 고의 결함을 모두 잡아냈다",
+    "맨손 「느리게」를 휘두르기 횟수로 표현해 테스트가 결정적이고, 수치가 .tres 한 곳에 모였다",
+    "HUD 정보 상자가 클릭을 가로채던 문제를 mouse_filter=IGNORE 로 짚어 고쳤다"
+   ],
+   "feedback": ""
+  },
+  "test": "e_ground_with_ore (res://tests/world/island/test_island_generator.gd:189)\n         [2] _run_test (res://addons/gut/gut.gd:622)\n         [3] _test_the_scripts (res://addons/gut/gut.gd:835)\nWARNING: IslandGenerator: 광물 지형(0.003)이 채울 % × 광물 몫(0.050)보다 좁아 비율을 맞출 수 없다\n     at: push_warning (core/variant/variant_utility.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] test_every_island_has_ore_ground_with_ore (res://tests/world/island/test_island_generator.gd:189)\n         [2] _run_test (res://addons/gut/gut.gd:622)\n         [3] _test_the_scripts (res://addons/gut/gut.gd:835)\n* test_ore_ground_exists_on_full_map_without_noise\nWARNING: IslandGenerator: 광물 지형(0.003)이 채울 % × 광물 몫(0.050)보다 좁아 비율을 맞출 수 없다\n     at: push_warning (core/variant/variant_utility.cpp:1033)\n     GDScript backtrace (most recent call first):\n         [0] _init (res://world/island/island_generator.gd:42)\n         [1] generate (res://world/island/island_generator.gd:48)\n         [2] test_ore_ground_exists_on_full_map_without_noise (res://tests/world/island/test_island_generator.gd:204)\n         [3] _run_test (res://addons/gut/gut.gd:622)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:835)\n14/14 passed.\n\n\nres://tests/world/island/test_island_view.gd\n* test_island_is_shown_around_player_at_spawn\n* test_camera_follows_player_over_island\n* test_chunk_collision_matches_obstacles\n* test_blocked_by_tree_stone_ore_in_every_direction\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 24.3 ms (game _ready 19.6 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              22\nTests               153\nPassing Tests       153\nAsserts            6723\nTime              32.708s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-004",
+  "step": "3",
+  "attempt": "1",
+  "title": "G-004 3/5 좌클릭 채취 → 바닥에 떨어짐 — 통과 (시도 1)",
+  "commit": "f370c18"
  }
 ]
