@@ -291,5 +291,73 @@
   "attempt": "1",
   "title": "G-002 1/5 저장 뼈대 — 캐릭터와 월드를 따로 — 통과 (시도 1)",
   "commit": "db9bff5"
+ },
+ {
+  "time": "2026-09-16 21:56:52 KST",
+  "epoch": 1789563412,
+  "report": {
+   "status": "done",
+   "summary": "G-002.2 메인 화면 — 시작 · 설정 · 종료",
+   "problem": "게임을 켜면 메인 화면(시작 · 설정 · 종료)이 떠야 한다. 시작은 캐릭터 선택 화면으로, 설정은 빈 설정 화면으로 가고, 설정의 뒤로는 메인 화면으로 돌아오고, 종료는 게임을 끝내야 한다. 까다로운 점: GUT 안에서 실제로 씬을 바꾸거나 quit 하면 테스트 실행기까지 사라진다. 게다가 G-001 번역 테스트가 '메인 씬의 Title 라벨'을 보기 때문에, 그 테스트를 고치지 않고 통과시켜야 했다.",
+   "feedback_applied": "",
+   "approach": "1) game/core/screens.gd(Screens): 메뉴 화면 경로를 한 곳에 모으고, go(from, path) · quit(from)을 둔다. simulate=true면 실제 전환 · 종료 없이 last_request만 남긴다(Pointer.simulate와 같은 방식). 2) game/ui/menu/main_menu.tscn: Title(MAIN_TITLE) + Items(Start · Settings · Quit). 프로젝트 메인 씬으로 지정했다. 3) settings.tscn: 제목 + 뒤로 버튼만. 4) character_select.tscn: 3단계에서 채울 자리. 지금은 제목만 있다. 5) 번역 키 MENU_START/SETTINGS/QUIT/BACK, SETTINGS_TITLE, CHARACTER_SELECT_TITLE을 ko.po · en.po에 넣었다. 6) 테스트 두 겹: (가) GUT 안에서 버튼을 누른 뒤 전환 요청을 검사하고, 모든 Label/Button 글자가 번역 키인지, ko · en 번역이 모두 있는지 검사한다. (나) 별도 godot 프로세스(menu_flow_probe.gd)로 실제 메인 씬 → 시작 → 캐릭터 선택, 설정 → 뒤로 → 메인 흐름을 돌리고, 종료 버튼만으로 프로세스가 코드 0으로 끝나는지 확인한다. 종료 연결을 일부러 끊으면 두 테스트가 떨어지는 것도 확인했다.",
+   "why": "화면 전환은 change_scene_to_file(씬 통째 교체)로 했다. 루트 씬 하나가 화면을 갈아 끼우는 방식도 있었지만, 그러면 G-001 테스트가 보는 메인 씬 Title이 모든 화면에 남는다. 또 이 단계에서 이 방식이 더 단순하다. 오토로드 대신 static 클래스를 고른 이유: 상태가 simulate 하나뿐이고, 오토로드 등록 없이 GUT(-s)에서도 그대로 쓸 수 있어서다. 기존 core/main.tscn은 메인 메뉴로 대체되어 쓰이는 곳이 없으므로 지웠다. 설정 화면 항목은 spec에서 미정이라 넣지 않았다. 캐릭터 선택 화면도 이번 단계 밖이라 제목만 둔 자리다. 알림: core/main.tscn을 지울 때 실수로 `git rm --cached`를 함께 실행해 삭제가 인덱스에 올라가 있다. 작업 트리 삭제와 결과가 같아 커밋 내용은 달라지지 않는다. 앞으로 git 쓰기는 하지 않겠다.",
+   "files": [
+    "game/core/screens.gd",
+    "game/ui/menu/main_menu.tscn",
+    "game/ui/menu/main_menu.gd",
+    "game/ui/menu/settings.tscn",
+    "game/ui/menu/settings.gd",
+    "game/ui/menu/character_select.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/project.godot",
+    "game/core/main.tscn (삭제)",
+    "game/ui/.gitkeep (삭제)",
+    "game/tests/ui/menu/test_main_menu.gd",
+    "game/tests/ui/menu/menu_flow_probe.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "게임을 실행하면 메인 화면이 뜬다 (프로젝트 메인 씬)",
+     "ok": true,
+     "evidence": "game/project.godot run/main_scene=res://ui/menu/main_menu.tscn. test_project_main_scene_is_main_menu 통과. menu_flow_probe.gd 가 실제 main_scene 을 띄워 첫 STEP 이 main_menu.tscn 인지 확인한다. 직접 `godot --headless --path game --quit-after 30` 를 돌리니 exit 0, error/warning 출력 없음"
+    },
+    {
+     "criterion": "시작 → 캐릭터 선택 화면, 설정 → 설정 화면, 설정의 뒤로 → 메인 화면, 종료 → 게임 종료 요청",
+     "ok": true,
+     "evidence": "main_menu.gd:6-8, settings.gd:6 가 Screens.go/quit 를 부른다. GUT: test_start_goes_to_character_select · test_settings_goes_to_settings · test_settings_back_goes_to_main_menu · test_quit_requests_quit 통과. test_real_flow_in_separate_process 는 별도 프로세스에서 씬을 실제로 전환하고, 종료 버튼만으로 exit 0 이 되는지 본다. 뮤테이션 검사(/tmp 복사본에서 Quit 연결 제거, Start→SETTINGS 로 변경, Back 연결 제거): 세 경우 모두 단위 테스트와 실제 흐름 테스트가 함께 실패했다"
+    },
+    {
+     "criterion": "화면의 모든 글자가 번역 키이고, 한국어 · 영어 번역이 둘 다 있다",
+     "ok": true,
+     "evidence": "세 씬의 Label/Button text 는 MAIN_TITLE · MENU_START/SETTINGS/QUIT/BACK · SETTINGS_TITLE · CHARACTER_SELECT_TITLE 이고, ko.po · en.po 에 모두 번역이 있다. test_all_screen_text_is_translated_in_ko_and_en · test_buttons_render_in_each_language 통과. 뮤테이션 검사(버튼 글자 'Start' 하드코딩, en 의 MENU_BACK 삭제, ko 의 CHARACTER_SELECT_TITLE 비우기): 세 경우 모두 테스트가 실패했다"
+    }
+   ],
+   "issues": [
+    "game/core/main.tscn 삭제가 인덱스에 올라가 있다(`git rm --cached`). report 에 스스로 밝혔고, 커밋 결과는 같아서 불합격 사유는 아니다",
+    "번역 검사(test_all_screen_text_is_translated_in_ko_and_en)는 Label/Button 만 훑는다. 다음 단계에서 LineEdit placeholder, OptionButton 항목, tooltip 같은 글자가 생기면 _texts() 가 확인하는 노드 종류를 넓혀야 한다",
+    "menu_flow_probe.gd 는 캐릭터 선택 화면에 뒤로 버튼이 없어서 change_scene_to_file 로 메인으로 직접 돌아간다. 3단계에서 캐릭터 선택에 뒤로 버튼을 넣으면 probe 도 버튼으로 돌아가게 바꾸는 편이 좋다",
+    "기존 테스트 삭제 · 완화는 없다(git diff HEAD -- game/tests 에 변경 없음, 새 파일만 있음). tools/test.sh 를 직접 돌려 36/36 통과를 확인했다"
+   ],
+   "good": [
+    "Screens 에 화면 경로를 한 곳으로 모았고, simulate 플래그로 GUT 안에서 전환 · 종료를 안전하게 검사한다",
+    "단위 테스트 말고도 별도 프로세스로 실제 씬 전환과 종료 exit code 까지 검증한다. 뮤테이션 6개를 모두 잡아냈다",
+    "G-001 test_i18n 은 고치지 않았고, 메인 씬의 Title(MAIN_TITLE)을 유지해 그대로 통과시켰다",
+    "파일이 모두 짧고 단계 밖 기능이 없다. 설정 · 캐릭터 선택은 자리만 두었다"
+   ],
+   "feedback": ""
+  },
+  "test": "$ harness/guard.sh\nguard: 통과\nexit=0\n$ tools/test.sh\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/test_example.gd\n* test_arithmetic\n* test_array_contains\n2/2 passed.\n\n\nres://tests/core/test_i18n.gd\n* test_translation_files_exist_and_are_registered\n* test_locales_share_the_same_keys\n* test_main_scene_title_changes_with_locale\n3/3 passed.\n\n\nres://tests/core/test_project_setup.gd\n* test_spec_folders_exist\n* test_main_scene_is_set_and_loads\n* test_headless_quit_exits_clean\n* test_gitignore_excludes_godot_cache\n4/4 passed.\n\n\nres://tests/core/test_runner.gd\n* test_all_passing_exits_zero\n* test_one_failing_exits_nonzero\n* test_failing_in_subfolder_exits_nonzero\n* test_script_error_exits_nonzero\n* test_no_tests_exits_nonzero\n5/5 passed.\n\n\nres://tests/settings/save/test_save_store.gd\n* test_character_roundtrip_keeps_values\n* test_character_inventory_survives_roundtrip\n* test_world_roundtrip_keeps_values\n* test_character_and_world_are_stored_separately\n* test_character_slots_are_three\n* test_fourth_character_is_rejected\n* test_freed_slot_can_be_reused\n* test_delete_character\n* test_delete_world\n* test_default_location_is_under_user\n* test_tests_do_not_touch_user_saves\n* test_bad_world_id_is_rejected\n12/12 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_project_main_scene_is_main_menu\n* test_main_menu_has_start_settings_quit_in_order\n* test_start_goes_to_character_select\n* test_settings_goes_to_settings\n* test_settings_back_goes_to_main_menu\n* test_quit_requests_quit\n* test_target_screens_load\n* test_real_flow_in_separate_process\n* test_all_screen_text_is_translated_in_ko_and_en\n* test_buttons_render_in_each_language\n10/10 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               6\nTests                36\nPassing Tests        36\nAsserts             153\nTime              11.405s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-002",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-002 2/5 메인 화면 — 통과 (시도 1)",
+  "commit": "c14a894"
  }
 ]
