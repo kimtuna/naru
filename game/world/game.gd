@@ -30,6 +30,7 @@ func _ready() -> void:
 		melee().setup(mobs())
 		swinger().add_source(melee().targets_near)
 		gunner().setup(player(), mobs(), projectiles())
+		mob_spawner().setup(mobs(), mob_targets)
 		swinger().alternate = gunner().try_fire
 		regrowth().setup(island, island_view(), player())
 		clock().setup(island)
@@ -150,6 +151,16 @@ func picker() -> Picker:
 ## 몹들의 부모.
 func mobs() -> Node2D:
 	return %Mobs
+
+
+## 몹 부르기 — 코드에서 자리와 마릿수를 정해 몹을 만든다.
+func mob_spawner() -> MobSpawner:
+	return %MobSpawner
+
+
+## 몹이 노릴 수 있는 대상 — 지금은 이 캐릭터 하나.
+func mob_targets() -> Array:
+	return [player()]
 
 
 ## 날아가는 투사체들의 부모.
