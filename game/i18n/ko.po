@@ -26,3 +26,21 @@ msgstr "설정"
 
 msgid "CHARACTER_SELECT_TITLE"
 msgstr "캐릭터 선택"
+
+msgid "CHARACTER_NEW"
+msgstr "새 캐릭터"
+
+msgid "CHARACTER_DELETE"
+msgstr "삭제"
+
+msgid "CHARACTER_DELETE_CONFIRM"
+msgstr "이 캐릭터를 삭제할까요? 되돌릴 수 없습니다."
+
+msgid "MENU_CANCEL"
+msgstr "취소"
+
+msgid "CHARACTER_CREATE_TITLE"
+msgstr "캐릭터 만들기"
+
+msgid "WORLD_SELECT_TITLE"
+msgstr "월드 선택"

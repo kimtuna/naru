@@ -26,3 +26,21 @@ msgstr "Settings"
 
 msgid "CHARACTER_SELECT_TITLE"
 msgstr "Character Select"
+
+msgid "CHARACTER_NEW"
+msgstr "New Character"
+
+msgid "CHARACTER_DELETE"
+msgstr "Delete"
+
+msgid "CHARACTER_DELETE_CONFIRM"
+msgstr "Delete this character? This cannot be undone."
+
+msgid "MENU_CANCEL"
+msgstr "Cancel"
+
+msgid "CHARACTER_CREATE_TITLE"
+msgstr "Create Character"
+
+msgid "WORLD_SELECT_TITLE"
+msgstr "Select World"

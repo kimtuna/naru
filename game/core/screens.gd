@@ -6,6 +6,8 @@ extends RefCounted
 const MAIN_MENU := "res://ui/menu/main_menu.tscn"
 const CHARACTER_SELECT := "res://ui/menu/character_select.tscn"
 const SETTINGS := "res://ui/menu/settings.tscn"
+const CHARACTER_CREATE := "res://ui/menu/character_create.tscn"
+const WORLD_SELECT := "res://ui/menu/world_select.tscn"
 const QUIT := "quit"
 
 static var simulate := false

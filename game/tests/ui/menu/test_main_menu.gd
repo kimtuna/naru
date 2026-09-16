@@ -1,7 +1,8 @@
 extends GutTest
 ## G-002 2단계 — 메인 화면 수용 기준.
 
-const MENU_SCENES := [Screens.MAIN_MENU, Screens.SETTINGS, Screens.CHARACTER_SELECT]
+const MENU_SCENES := [Screens.MAIN_MENU, Screens.SETTINGS, Screens.CHARACTER_SELECT,
+	Screens.CHARACTER_CREATE, Screens.WORLD_SELECT]
 const LOCALES := ["ko", "en"]
 const PROBE := "res://tests/ui/menu/menu_flow_probe.gd"
 
@@ -9,10 +10,13 @@ const PROBE := "res://tests/ui/menu/menu_flow_probe.gd"
 func before_each() -> void:
 	Screens.simulate = true
 	Screens.last_request = ""
+	# 실제 사용자 저장을 읽지 않는다 — 없는 임시 폴더라 슬롯은 모두 빈 칸.
+	Session.store = SaveStore.new(OS.get_temp_dir().path_join("naru_menu_empty_%d" % Time.get_ticks_usec()))
 
 
 func after_each() -> void:
 	Screens.simulate = false
+	Session.store = SaveStore.new()
 
 
 func _open(path: String) -> Control:
