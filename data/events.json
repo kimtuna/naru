@@ -2353,5 +2353,95 @@
   "attempt": "1",
   "title": "G-007 1/2 삽 · 개간 · 되돌리기 — 통과 (시도 1)",
   "commit": "1aa3927"
+ },
+ {
+  "time": "2026-09-17 02:46:50 KST",
+  "epoch": 1789580810,
+  "report": {
+   "status": "done",
+   "summary": "G-007.2 심기 · 물 주기 · 성장 · 수확 — 밀 씨앗 · 물뿌리개 우클릭, 물 준 날만 자라 3일에 익고, 수확하면 밀이 떨어진다. 밭 · 작물 저장",
+   "problem": "개간만 있던 밭에 씨앗 → 물 → 성장 → 수확 순서를 붙여야 했다. 순서를 건너뛸 수 없어야 하고, 물을 안 주면 자라지 않아야 하며, 작물 상태가 월드 저장에 남아야 했다. 씨앗을 얻는 방법도 하나 필요했는데, 맨손(hand) 레시피는 아직 게임 안에서 만들 화면이 없다.",
+   "feedback_applied": "",
+   "approach": "Crop(RefCounted: id · days · watered)과 FarmConfig(.tres: 씨앗 id · 물뿌리개 id · 작물 id · grow_days=3 · harvest_count=1)를 새로 두고 Farm 에 작물을 붙였다. 우클릭은 기존 Interactor 경로를 그대로 쓴다: 씨앗을 들면 plant(빈 밭에만 · 하나 소모), 물뿌리개를 들면 water(심은 작물에만 · 하루 한 번 · 닳지 않음), 다 익은 작물은 상호작용 오브젝트로 등록해 무엇을 들었든 수확한다(밀이 칸 한가운데에 떨어지고 밭은 남는다). 성장은 WorldClock.day_changed 에 붙였다 — 날이 넘어갈 때 물 받은 작물만 하루 자라고 물은 마른다. 시간을 한 번에 며칠 넘겨도 물 한 번에 하루만 자란다. 삽으로 심은 밭을 되돌리면 씨앗이 바닥에 떨어진다. WorldData 에 crops 목록({cell, id, days, watered})을 더하고 불러올 때 잘못된 항목과 밭 없는 작물은 버린다. 씨앗은 작업대 레시피(나무 1 → 밀 씨앗 3), 물뿌리개는 삽처럼 맨손 레시피(나무 2 · 돌 2) — 둘 다 임시 수치. 테스트는 test_crops.gd(실제 우클릭 입력으로 한 바퀴 · 순서 건너뛰기 · 물 없이 안 자람 · 거리 · 되돌리기)와 test_crops_save.gd(저장 · 불러오기 · 레시피)로 나눴고, 전체 350개 통과, guard 통과.",
+   "why": "물 마름 규칙은 spec 미정이라 '하루치 물'로 정했다 — 물 주기를 인프라로 대량화한다는 spec 목적과 맞고(한 번 주고 끝나면 대량화할 일이 없다), 값·규칙이 FarmConfig/Crop 한 곳이라 바꾸기 싸다. 성장을 경과 초가 아니라 날짜 경계로 센 것은 '3일에 자란다'를 그대로 표현하고 WorldClock 이 여러 날을 넘겨도 날마다 신호를 내기 때문. 씨앗 얻는 법은 나무를 벨 때 확률 드롭 · 개간 시 드롭도 생각했지만, 확률은 테스트가 흔들리고 개간 드롭은 개간↔되돌리기 반복으로 무한히 나온다. 맨손 레시피는 아직 만들 화면이 없어 실제 게임에서 못 얻으므로 이미 열리는 작업대 레시피로 뒀다. 수확은 우클릭(상호작용)으로 했다 — spec 에서 좌클릭은 평타·채취, 우클릭은 상호작용이다. 되돌리기에서 작물을 그냥 없애지 않고 씨앗을 돌려주는 것은 '실수 클릭이 치명적이지 않게' 규칙을 따른 것. 수확해도 밭은 남긴다 — 다시 심을 때 개간을 반복하지 않게.",
+   "files": [
+    "game/life/farming/farm.gd",
+    "game/life/farming/crop.gd",
+    "game/life/farming/farm_config.gd",
+    "game/life/farming/farm_config.tres",
+    "game/settings/save/world_data.gd",
+    "game/world/game.gd",
+    "game/craft/recipes/recipes.json",
+    "game/player/pickup/dropped_item.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/life/farming/crop_test_base.gd",
+    "game/tests/life/farming/test_crops.gd",
+    "game/tests/life/farming/test_crops_save.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "맨땅 → 개간 → 씨앗(들고 우클릭) → 물 → 성장 → 수확 순서를 건너뛸 수 없다",
+     "ok": true,
+     "evidence": "test_crops.gd: test_full_cycle_with_right_clicks(실제 우클릭 입력으로 삽→씨앗→물뿌리개 3일→수확), test_seeds_need_a_field(맨땅·자원 칸에 못 심음, 씨앗 안 줄어듦), test_water_needs_a_planted_crop(맨땅·빈 밭에 물 안 됨, 심기 전 날·물은 안 셈), test_unripe_crop_cannot_be_harvested, test_only_seeds_plant_and_only_the_can_waters, test_cannot_plant_twice_on_one_field. 코드: farm.gd plant()는 _tilled 확인, water()는 작물 확인, harvest()는 is_ripe 확인. 임시 테스트로 마지막 씨앗을 쓰면 슬롯이 비는 것, 삽을 든 채 익은 작물을 우클릭하면 수확되고 밭이 남는 것도 확인함(확인 뒤 지움)"
+    },
+    {
+     "criterion": "물을 주지 않은 작물은 자라지 않는다",
+     "ok": true,
+     "evidence": "test_unwatered_crop_does_not_grow(10일 지나도 days 0), test_water_lasts_one_day(한 번에 5일 넘겨도 1일만 자라고 물이 마름), test_growth_waits_for_the_day_change. crop.gd pass_day()는 watered일 때만 days+1. 같은 날 두 번 줘도 하루만 자라는 것을 임시 테스트로 확인함"
+    },
+    {
+     "criterion": "다 자란 작물을 수확하면 작물이 바닥에 떨어진다",
+     "ok": true,
+     "evidence": "test_full_cycle_with_right_clicks: 수확 뒤 칸에 wheat DroppedItem 1개, 개수는 harvest_count, 밭은 남음. test_ripe_crop_is_saved: 불러온 뒤에도 수확하면 떨어짐. farm.gd harvest() → _drop()이 drops 노드에 DroppedItem을 넣음(game.gd setup에서 drops() 전달)"
+    },
+    {
+     "criterion": "밭 · 작물 상태가 월드 저장에 남는다",
+     "ok": true,
+     "evidence": "test_crops_save.gd: test_fields_and_crops_are_saved_with_the_world(save_world → 다시 _enter: 밭 2칸, 작물 id·days·watered 유지, 불러온 뒤에도 계속 자람), test_ripe_crop_is_saved, test_crop_save_entries_are_checked(잘못된 항목 버림, to_dict/from_dict 왕복), test_crop_without_a_field_is_not_loaded. world_data.gd에 crops 필드, game.gd store_world_state/_ready에 저장·불러오기 연결"
+    },
+    {
+     "criterion": "(단계 설명) 작물은 밀 1종, 3일에 자란다 · 씨앗을 얻는 방법도 하나 둔다",
+     "ok": true,
+     "evidence": "farm_config.tres crop_id=wheat, grow_days=3 (test_full_cycle에서 3으로 검사). recipes.json wheat_seed(작업대, 나무 1 → 3), test_seeds_and_watering_can_have_recipes. ITEM_WHEAT_SEED ko/en 번역 있음"
+    },
+    {
+     "criterion": "기존 테스트 약화 · 규칙 위반 · report 일치",
+     "ok": true,
+     "evidence": "git diff HEAD에 tests 변경 없음(새 파일만). tools/test.sh 직접 실행 350/350 통과, harness/guard.sh 통과. 가장 긴 파일 farm.gd 240줄. 수치는 FarmConfig(.tres)에 모음. 색 상수는 임시 그림용. report의 files · approach가 실제 diff와 맞음"
+    }
+   ],
+   "issues": [
+    "물뿌리개 레시피가 station 'hand'인데, 게임 안에는 아직 맨손 제작 화면이 없다(crafting_view는 제작대를 열 때만 뜬다). 그래서 실제 플레이로는 물뿌리개를 얻을 수 없다. 삽 · 작업대도 hand 레시피라 같은 문제가 이미 있었다. 이번 단계 탓은 아니지만, 한 바퀴를 실제 게임에서 돌리려면 맨손 제작 화면이 필요하다 — 목록에 올릴 것",
+    "ITEM_WHEAT · ITEM_WATERING_CAN 번역 키가 없다. 지금은 그 이름이 나오는 화면이 없어서 괜찮지만(맨손 아이템들도 키가 없는 기존 관례), 이름을 보여 주는 화면이 생기면 함께 넣어야 한다",
+    "'나무 1 → 밀 씨앗 3' 레시피와 '하루치 물' 규칙은 임시다(spec 미정) — 사람 결정이 필요하면 decisions에 올릴 것",
+    "untill()의 '익은 작물이면 수확물을 떨어뜨림' 분기는 우클릭으로는 닿지 않는다. 수확 오브젝트가 먼저 처리되기 때문이며, dig()를 직접 부를 때만 쓰인다. 해롭지 않다"
+   ],
+   "good": [
+    "실제 우클릭 입력으로 한 바퀴를 도는 테스트가 있고, 순서를 건너뛰는 경우마다 아이템 소모 · 부작용이 없는지까지 검사한다",
+    "성장을 WorldClock.day_changed에 붙이고, 여러 날을 한 번에 넘길 때 · 같은 날 안에서의 동작을 따로 검사했다",
+    "Crop / FarmConfig로 나눠 farm.gd가 300줄 안에 들고, 수치가 한 곳에 모여 있다",
+    "저장 항목을 검증하고, 밭 없는 작물은 버린다. 심은 밭을 되돌리면 씨앗을 돌려준다(실수 클릭 보호)"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 49.4 ms (game _ready 37.9 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              47\nTests               350\nPassing Tests       350\nAsserts           13709\nTime              51.708s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-007",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-007 2/2 심기 · 물 주기 · 성장 · 수확 — 통과 (시도 1)",
+  "commit": "8ddb4f2"
+ },
+ {
+  "time": "2026-09-17 02:46:57 KST",
+  "epoch": 1789580817,
+  "type": "group_done",
+  "group": "G-007",
+  "title": "G-007 농사 — 묶음 완료, main 에 합침"
  }
 ]
