@@ -2596,5 +2596,68 @@
   "attempt": "1",
   "title": "G-009 1/6 체력 · 피해 · 죽음 — 통과 (시도 1)",
   "commit": "5a887d8"
+ },
+ {
+  "time": "2026-09-17 03:06:22 KST",
+  "epoch": 1789581982,
+  "report": {
+   "status": "done",
+   "summary": "G-009.2 월드 설정 — 데스 페널티 항목(기본 켬 · 월드 저장), 게임 중 설정 창에서 서버장만 바꿈",
+   "problem": "월드 설정에 데스 페널티 항목이 없었다. G-012 의 ESC 설정 창에서 「월드 설정」 페이지는 뒤로 가기만 있는 빈 자리였고, 서버장이 아닌 사람의 변경을 막는 곳도 없었다. 멀티가 없어서 「누가 서버장인가」는 Session.is_host(혼자면 참)로만 알 수 있다. 중간에 상수 이름을 KEY_DEATH_PENALTY 로 지었다가, 키 입력을 직접 읽지 못하게 막는 검사(test_input_actions 의 KEY_ 패턴)에 걸려 DEATH_PENALTY 로 바꿨다.",
+   "feedback_applied": "",
+   "approach": "game/settings/world_settings/world_settings.gd 에 WorldSettings(death_penalty, 기본값 상수 DEFAULT_DEATH_PENALTY=true)를 만들었다. set_death_penalty(on, by_host) 는 서버장이 아니면 false 를 돌려주고 값을 그대로 두며, 바뀌면 changed 신호를 낸다. WorldData 에 settings 를 붙여 to_dict/from_dict 로 저장한다. 옛 저장이나 틀린 값은 기본값(켬)으로 읽는다. GameMenu 의 WorldSettingsPage 에 DeathPenalty CheckButton 을 넣고(번역 키 WORLD_SETTINGS_DEATH_PENALTY, ko/en), bind_world_settings 로 월드 설정을 붙였다. 체크를 바꾸면 is_host 와 함께 WorldSettings 에 요청하고, 거부되면 체크 표시를 실제 값으로 되돌린다. GameScene 은 들어올 때 world.settings 를 메뉴에 붙이고, death_penalty_on() 이 그때그때 월드 설정을 읽어 바뀐 값이 바로 적용된다(3단계 데스 상자가 이것을 쓴다). 테스트 7개(tests/settings/world_settings/test_world_settings.gd)가 다음을 검사한다: 기본값과 옛 저장 · 저장/불러오기 · 서버장 아님 거부(값과 신호) · 서버장이 아닌 사람이 메뉴 체크를 눌러도 되돌아감 · 게임 중 서버장이 바꾸면 바로 적용되고 나갈 때 저장됨 · 저장된 끔 값이 페이지에 보임 · 번역. tools/test.sh 는 377개 전부 통과했고 guard.sh 도 통과했다.",
+   "why": "「서버장이 아니면 거부」를 UI 에서 숨기는 것만으로 두지 않고 WorldSettings 한 곳에서 막았다. 나중에 리슨 서버에서 손님의 요청이 들어와도 같은 문을 지나게 하려는 것이다. 서버장 판정은 기존 Session.is_host 를 그대로 넘긴다. 월드에 host id 를 새로 저장하는 방법은 캐릭터 id 체계가 아직 없어서 버렸고, 멀티 단계에서 바꿔도 비용이 작다. 설정을 바꾸는 순간 월드 파일을 바로 쓰는 방법도 버렸다. 떨어진 아이템 같은 월드 값은 나갈 때 한꺼번에 맞춰 저장되므로, 중간에 일부만 저장하면 캔 칸과 떨어진 아이템이 서로 어긋날 수 있다. 그래서 값은 메모리의 월드에 바로 반영하고, 파일에는 기존 저장 경로(메인 화면으로 · 게임 종료)로 남긴다.",
+   "files": [
+    "game/settings/world_settings/world_settings.gd",
+    "game/settings/save/world_data.gd",
+    "game/ui/menu/game_menu.gd",
+    "game/ui/menu/game_menu.tscn",
+    "game/world/game.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/settings/world_settings/test_world_settings.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "월드 설정에 데스 페널티 항목이 있고 기본값은 켬이다. 월드 저장에 남는다",
+     "ok": true,
+     "evidence": "game/settings/world_settings/world_settings.gd: death_penalty 기본값 DEFAULT_DEATH_PENALTY=true. game/settings/save/world_data.gd: settings 가 to_dict 의 \"settings\" 키로 저장되고, from_dict 는 옛 저장이나 틀린 값이면 기본값(켬)으로 읽는다. test_death_penalty_defaults_on 은 새 월드 · 옛 저장 · 틀린 값을 검사한다. test_death_penalty_is_kept_in_world_save 는 Session.store 로 끔/켬을 저장했다 불러와 확인한다. 이 파일을 직접 돌려 7/7 통과를 확인했다."
+    },
+    {
+     "criterion": "게임 도중 ESC 설정 창의 「월드 설정」에서 바꿀 수 있고 바로 적용된다 (G-012 의 빈 자리를 채운다)",
+     "ok": true,
+     "evidence": "game_menu.tscn 의 WorldSettingsPage 에 DeathPenalty CheckButton(번역 키 WORLD_SETTINGS_DEATH_PENALTY, ko/en)이 있다. toggled 신호가 _on_death_penalty_toggled 를 거쳐 WorldSettings.set_death_penalty 를 부른다. game.gd 의 _ready 가 bind_world_settings(world.settings) 로 붙이고, death_penalty_on() 은 값을 그때그때 읽는다. test_host_changes_death_penalty_in_game_menu 는 실제 Esc 입력으로 창을 열고 「월드 설정」 페이지로 가서 토글한다. 그 뒤 world.settings 와 death_penalty_on() 에 바로 반영되는지, 메뉴가 열린 채인지, MainMenu 로 나간 뒤 저장 파일에 남는지 확인한다. test_world_settings_page_reflects_loaded_value 는 저장된 끔 값이 페이지에 보이는지 검사한다."
+    },
+    {
+     "criterion": "서버장이 아닌 플레이어의 변경은 거부된다 (테스트로 흉내)",
+     "ok": true,
+     "evidence": "WorldSettings.set_death_penalty(on, by_host) 는 by_host 가 거짓이면 false 를 돌려주고 값을 그대로 둔다. test_non_host_change_is_rejected 는 반환값, 값이 그대로인지, changed 신호가 나가지 않는지를 확인한다. 서버장이면 받아들이고 신호를 내는지도 본다. test_non_host_toggle_in_menu_is_rejected 는 Session.is_host=false 로 게임에 들어가 토글을 강제로 누른다. 그 뒤 월드 값이 그대로인지, 체크 표시가 실제 값으로 되돌아가는지 확인한다. after_each 가 Session.is_host=true 로 되돌리므로 다른 테스트로 새지 않는다."
+    }
+   ],
+   "issues": [
+    "(참고, 합격에는 영향 없음) spec 의 「월드를 만든 사람이 서버장」은 아직 월드 데이터에 남지 않는다. 서버장 판정은 Session.is_host 하나뿐이다. 멀티가 없는 단계라 받아들일 만하고, report 의 why 에도 적혀 있다. 멀티 단계에서 월드에 서버장 id 를 저장해야 한다",
+    "(참고) WorldSettings.changed 신호는 아직 듣는 곳이 없다. 게임은 death_penalty_on() 으로 값을 그때그때 읽는다. 3단계에서 둘 중 하나만 쓰도록 정리하면 좋다",
+    "(참고) 변이 검사(서버장 검사 제거 등)는 소스를 바꿔야 해서 권한이 거부돼 돌리지 못했다. 대신 테스트를 읽어 확인했다. 반환값 · 값 유지 · 기본값 · 저장 후 다시 읽기를 모두 직접 assert 하므로, 그런 변이가 생기면 테스트가 실패한다"
+   ],
+   "good": [
+    "거부를 UI 에서 숨기는 데 그치지 않고 WorldSettings 한 곳에서 막는다. 나중에 손님 요청도 같은 문을 지나게 된다",
+    "거부되면 체크 표시를 실제 값으로 되돌리고, 페이지를 열 때마다 값을 새로 읽는다",
+    "옛 저장과 틀린 값을 기본값으로 읽는 방어가 있고 테스트도 있다",
+    "기존 테스트는 삭제 · 완화하지 않았다(테스트 파일 diff 없음). 파일 길이는 모두 300줄 아래이고(game.gd 223줄), 화면 글자는 번역 키로 넣었다",
+    "report 의 파일 목록 · 설명이 실제 diff 와 맞는다. 전체 377개 통과(test.log)"
+   ],
+   "feedback": ""
+  },
+  "test": "0 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 51.0 ms (game _ready 37.8 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              50\nTests               377\nPassing Tests       377\nAsserts           13908\nTime              52.853s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-009",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-009 2/6 월드 설정 — 서버장만 — 통과 (시도 1)",
+  "commit": "9fd785b"
  }
 ]

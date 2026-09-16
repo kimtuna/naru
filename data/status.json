@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-17 03:05:20 KST",
- "updated_epoch": 1789581920,
+ "updated": "2026-09-17 03:06:22 KST",
+ "updated_epoch": 1789581982,
  "progress": {
   "groups_total": 14,
   "groups_done": 11,
   "groups_waiting": 0,
   "steps_total": 44,
-  "steps_done": 31
+  "steps_done": 32
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "99697",
  "group": "G-009",
  "group_title": "전투",
- "step": "2",
+ "step": "3",
  "step_total": "6",
- "step_title": "월드 설정 — 서버장만",
+ "step_title": "데스 상자",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-17 03:05:20"
+ "phase": "구현",
+ "phase_since": "2026-09-17 03:06:22"
 }
