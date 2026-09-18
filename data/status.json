@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-18 19:57:56 KST",
- "updated_epoch": 1789729076,
+ "updated": "2026-09-18 20:08:49 KST",
+ "updated_epoch": 1789729729,
  "progress": {
   "groups_total": 15,
   "groups_done": 14,
@@ -20,6 +20,6 @@
  "step_total": "3",
  "step_title": "절벽 앞면과 높이 그림자",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-18 19:57:56"
+ "phase": "QA",
+ "phase_since": "2026-09-18 20:08:49"
 }
