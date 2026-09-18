@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-18 19:48:09 KST",
- "updated_epoch": 1789728489,
+ "updated": "2026-09-18 19:56:27 KST",
+ "updated_epoch": 1789728987,
  "progress": {
   "groups_total": 15,
   "groups_done": 14,
@@ -20,6 +20,6 @@
  "step_total": "3",
  "step_title": "월드 카메라 2배",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-18 19:48:09"
+ "phase": "QA",
+ "phase_since": "2026-09-18 19:56:27"
 }
