@@ -7,7 +7,7 @@
 
 1. `current.md` — 이번 단계와 수용 기준
 2. `.loop/out/report.json` — 구현 세션의 보고 (없으면 그 자체로 불합격)
-3. `.loop/out/test.log` — `loop.sh` 가 돌린 기계 테스트 결과 (비어 있으면 아직 테스트 실행기가 없는 단계)
+3. `.loop/out/test.log` — `loop.sh` 가 돌린 기계 테스트 결과
 4. `git status` · `git diff HEAD` · 새 파일 — 실제로 바뀐 것
 5. 필요한 `spec/` 파일만 (`spec/README.md` 에서 고른다)
 

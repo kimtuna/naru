@@ -27,8 +27,7 @@
 - **입력은 엔진 안에서 흉내 낸다** — `Input.parse_input_event()`, GUT 의 입력 도구. OS 커서를 움직이지 않는다
 - **마우스 위치는 `game/core/input/` 의 `Pointer` 로만 읽는다.** `get_global_mouse_position()` 등을 게임 코드에서
   직접 부르면 창이 떠 있을 때 **사람의 실제 커서**를 읽는다. `harness/guard.sh` 가 기계로 막는다.
-  `Pointer` 가 아직 없으면 처음 필요한 단계에서 만든다: 평소엔 실제 위치, 테스트는 `Pointer.simulate(pos)` 값,
-  `NARU_SHOT=1` 이면 실제 커서를 읽지 않는다
+  테스트는 `Pointer.simulate(pos)` 로 위치를 흉내 낸다
 - **화면 확인은 노드 · 상태 검사가 먼저다** (노드가 있나, 보이나, 위치 · 크기 · 글자가 맞나).
   그래도 그림이 꼭 필요하면 `harness/shot.sh res://씬.tscn .loop/shots/이름.png` — 포커스를 안 뺏고 마우스가 통과하는 창에서
   게임이 스스로 찍는다. 찍은 PNG 는 Read 로 본다
