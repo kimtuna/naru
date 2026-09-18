@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-18 19:48:06 KST",
- "updated_epoch": 1789728486,
+ "updated": "2026-09-18 19:48:09 KST",
+ "updated_epoch": 1789728489,
  "progress": {
   "groups_total": 15,
   "groups_done": 14,
@@ -14,12 +14,12 @@
  "ended": "",
  "resume_at": "",
  "pid": "62002",
- "group": "G-014",
- "group_title": "등반 — 스파이크 · 기력 · 앵커 · 갈고리총",
- "step": "4",
- "step_total": "4",
- "step_title": "갈고리총",
+ "group": "G-015",
+ "group_title": "3/4 시점 시험 — 보이는 범위 줄이기 · 절벽 앞면 · 깊이 정렬",
+ "step": "1",
+ "step_total": "3",
+ "step_title": "월드 카메라 2배",
  "attempt": "1",
- "phase": "",
- "phase_since": "2026-09-17 06:17:59"
+ "phase": "구현",
+ "phase_since": "2026-09-18 19:48:09"
 }
