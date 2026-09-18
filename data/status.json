@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-18 20:08:49 KST",
- "updated_epoch": 1789729729,
+ "updated": "2026-09-18 20:11:24 KST",
+ "updated_epoch": 1789729884,
  "progress": {
   "groups_total": 15,
   "groups_done": 14,
   "groups_waiting": 0,
   "steps_total": 47,
-  "steps_done": 45
+  "steps_done": 46
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "62002",
  "group": "G-015",
  "group_title": "3/4 시점 시험 — 보이는 범위 줄이기 · 절벽 앞면 · 깊이 정렬",
- "step": "2",
+ "step": "3",
  "step_total": "3",
- "step_title": "절벽 앞면과 높이 그림자",
+ "step_title": "깊이 정렬",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-18 20:08:49"
+ "phase": "구현",
+ "phase_since": "2026-09-18 20:11:24"
 }

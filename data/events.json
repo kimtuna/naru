@@ -3704,5 +3704,96 @@
   "attempt": "1",
   "title": "G-015 1/3 월드 카메라 2배 — 통과 (시도 1)",
   "commit": "7108ca4"
+ },
+ {
+  "time": "2026-09-18 20:11:24 KST",
+  "epoch": 1789729884,
+  "report": {
+   "status": "done",
+   "summary": "G-015.2 절벽 앞면과 높이 그림자 — 이웃 높이로 칸 모양(평면·앞면·윗가장자리·옆면·경사)을 골라 그린다",
+   "problem": "지금은 절벽 칸이 어두운 테두리 네모일 뿐이라 어디가 높고 어디가 벽인지 안 읽힌다. 3/4 시점 시험을 위해 그리는 쪽만 바꿔 벽 · 윗가장자리 · 경사 · 그림자를 구별해야 했다. 부딪힌 문제: 절벽은 높은 쪽 경계 블록(2×2 칸)이라, 절벽 블록의 바깥 줄 칸은 4방향 이웃 중 더 높은 칸이 없다 (예: 높이 3 절벽인데 남쪽만 2). 수용 기준의 「더 높은 이웃」 규칙만으로는 이 칸들의 모양이 정해지지 않았다.",
+   "feedback_applied": "",
+   "approach": "① game/world/island/tile_look.gd (TileLook) — 순수 함수 pick(절벽인가, 높이, 이웃 8칸 높이) → Look {FLAT, CLIFF_FRONT, CLIFF_TOP, CLIFF_SIDE, SLOPE}. 절벽: 북쪽이 높으면 앞면 → 남쪽이 높으면 윗가장자리 → 동·서만 높으면 옆면. 더 높은 이웃이 없으면 같은 규칙을 더 낮은 이웃으로(남쪽이 낮으면 앞면 · 북쪽이 낮으면 윗가장자리 · 동서만 낮으면 옆면 · 대각선만 낮으면 그 남북), 아무 차이도 없으면 옆면. 절벽이 아닌 칸은 8방향에 더 낮은 이웃이 있으면 경사, 아니면 평면. shadowed()/shadow_at(): 절벽이 아닌 칸인데 북쪽이 더 높거나 북쪽이 절벽 앞면이면 그림자. ② tile_palette.gd (TilePalette) — 지형 색 · 높이 밝기 · 앞면 띠 어둡기 · 발치 그림자 · 윗가장자리 선 · 옆면 띠 · 경사 줄 · 그림자 세기를 한 곳에. ③ tile_painter.gd (TilePainter) — 앞면: 위가 밝고 아래로 어두워지는 가로 띠 4개, 여러 칸 높이 벽이면 벽 전체에 걸쳐 어두워지고(칸마다 다시 밝아지지 않게) 벽 맨 아래 칸에 발치 그림자. 윗가장자리: 윗면 + 북쪽 2px 어두운 선. 옆면: 어둡게 + 벽 쪽 세로 띠. 경사: 윗면 + 밝은 가로 줄 2개 (계단 느낌, 절벽과 구별). 그림자: 칸 위쪽 40% 반투명 검정. 윗면은 높이 한 단마다 밝게(기존 규칙). ④ island_chunk.gd 의 _draw 가 TilePainter 를 부른다. 충돌 · 판정 코드는 손대지 않았다. ⑤ 테스트 game/tests/world/island/test_tile_look.gd (규칙별 pick · 그림자 · 높이별 밝기 · 앞면 띠 밝기 순서 · 경사/절벽 구별 · 시드 섬 96×96 칸 전체가 규칙과 맞는지). ⑥ 화면: game/tests/shots/cliff_shot.tscn (임시 저장소로 시드 섬 게임 화면을 열고 앞면 절벽이 가로 4칸 넘게 이어진 곳 남쪽에 플레이어를 둔다) 를 harness/shot.sh 로 찍었다.",
+   "why": "모양 고르기를 이웃 높이만 받는 정적 함수로 떼어 두면 테스트가 지도 없이 규칙을 그대로 검사하고, 나중에 사람이 진짜 타일셋(오토타일)을 입힐 때도 같은 함수를 쓴다. 더 높은 이웃이 없는 절벽 칸을 「더 낮은 이웃 쪽」으로 가른 것은 절벽 블록이 2칸 두께라서 — 앞면 절벽의 아랫줄 칸은 북쪽이 같고 남쪽이 낮으니 역시 보는 쪽으로 선 벽이다. 이렇게 해야 벽이 2칸 높이로 이어져 보인다. 이 부분은 수용 기준의 세 규칙이 먼저 적용된 뒤에만 쓰이므로 기준과 부딪히지 않는다. 경사를 높은 쪽 칸에 둔 것은 절벽이 높은 쪽 경계 블록인 생성 규칙과 맞추려고. 기존 테스트가 IslandChunk.TERRAIN_COLORS · HEIGHT_LIGHTEN 을 읽어서 그 이름은 TilePalette 를 가리키는 별칭으로 남겼다 (값은 한 곳). 버린 대안: 셰이더/텍스처 — 색 네모 수준이면 되고 판정과 섞일 위험만 는다. 스크린샷용 씬은 GUT 가 안 읽도록 test_ 접두 없이 tests/shots/ 에 뒀다. 색 · 세기 값은 전부 임시다 (사람이 플레이해 보고 정한다). 전체 테스트 504/504 통과, guard 통과.",
+   "files": [
+    "game/world/island/tile_look.gd",
+    "game/world/island/tile_palette.gd",
+    "game/world/island/tile_painter.gd",
+    "game/world/island/island_chunk.gd",
+    "game/tests/world/island/test_tile_look.gd",
+    "game/tests/shots/cliff_shot.gd",
+    "game/tests/shots/cliff_shot.tscn",
+    ".loop/shots/g015-cliff.png"
+   ],
+   "shot": {
+    "path": ".loop/shots/g015-cliff.png",
+    "seed": 20260916,
+    "cliff_front_cell": [
+     115,
+     111
+    ],
+    "player_cell": [
+     115,
+     114
+    ]
+   },
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "칸을 어떻게 그릴지(평면 · 절벽 앞면 · 절벽 윗가장자리 · 절벽 옆면 · 경사)를 고르는 순수 함수가 있고, 이웃 높이로 정해진다 — 북쪽(화면 위) 이웃이 더 높은 절벽 칸은 앞면, 남쪽 이웃이 더 높으면 윗가장자리, 동 · 서만 높으면 옆면 (테스트)",
+     "ok": true,
+     "evidence": "game/world/island/tile_look.gd TileLook.pick(cliff, height, around) 은 정적 순수 함수이고, 규칙 순서는 N 높음→FRONT, S 높음→TOP, E/W 높음→SIDE 다. 테스트는 test_tile_look.gd 의 test_cliff_with_higher_north_is_front · test_cliff_with_higher_south_is_top_edge · test_cliff_with_only_east_or_west_higher_is_side · test_non_cliff_is_flat_or_slope 이고 test.log 기준 10/10 통과. 더 높은 이웃이 없을 때는 '더 낮은 이웃 쪽' 폴백을 쓰는데, 세 규칙이 먼저 적용되므로 기준과 부딪히지 않는다"
+    },
+    {
+     "criterion": "앞면은 세로로 서 있는 벽처럼 보이게 그린다 (위가 밝고 아래로 어두워지는 띠 + 아래쪽 그림자). 윗가장자리는 얇은 선. 경사는 절벽과 구별된다",
+     "ok": true,
+     "evidence": "TilePainter._front: FRONT_BANDS=4 개 띠를 FRONT_TOP_DARKEN→FRONT_BOTTOM_DARKEN 으로 그리고, 벽 끝에 FRONT_FOOT 발치 그림자. CLIFF_TOP 은 윗면 + 2px 선. SLOPE 는 윗면 + 밝은 가로 줄 2개. 테스트 test_front_face_is_light_on_top_dark_below · test_slope_is_told_apart_from_cliff. .loop/shots/g015-cliff.png 에서 줄무늬 벽 · 윗가장자리 선 · 발치 그림자를 눈으로 확인"
+    },
+    {
+     "criterion": "높은 땅의 남쪽 아래 칸에 그림자가 진다. 높이가 높을수록 윗면이 밝다",
+     "ok": true,
+     "evidence": "TileLook.shadowed/shadow_at 과 TilePalette.top 을 테스트 test_shadow_falls_south_of_higher_ground · test_higher_top_is_brighter (모든 지형 × 모든 높이) · test_island_cells_follow_rules 로 확인. 임시 프로브로 시드 20260916 섬 전체를 돌려 봄: 앞면 절벽 바로 남쪽의 절벽 아닌 칸 316개 중 316개에 그림자"
+    },
+    {
+     "criterion": "색 · 그림자 세기 값은 한 곳에 있다",
+     "ok": true,
+     "evidence": "game/world/island/tile_palette.gd (TilePalette). island_chunk.gd 의 TERRAIN_COLORS · HEIGHT_LIGHTEN · DEPOSIT_COLORS 는 TilePalette 를 가리키는 별칭일 뿐 값이 따로 있지 않다. 지운 CLIFF_COLOR · CLIFF_EDGE_PX 를 쓰는 곳은 grep 결과 없음"
+    },
+    {
+     "criterion": "판정 코드(이동 · 충돌 · 절벽 진입 · 등반 · 채취)는 바뀌지 않았고 기존 테스트가 그대로 통과한다",
+     "ok": true,
+     "evidence": "git diff HEAD 에서 바뀐 기존 파일은 island_chunk.gd 하나이고, 그것도 색 상수와 _draw/color_at 뿐이다. 충돌 몸체(_add_box 등)는 그대로. 삭제 · 완화 · skip 된 테스트 없음. test.log 504/504 통과, harness/guard.sh 통과"
+    },
+    {
+     "criterion": "`harness/shot.sh` 로 절벽이 보이는 화면을 찍어 `.loop/shots/g015-cliff.png` 로 남기고 report 에 경로와 찍은 시드 · 좌표를 적는다",
+     "ok": true,
+     "evidence": "파일이 있다 (10k). report.shot 은 seed 20260916 · cliff_front_cell [115,111] · player [115,114]. 프로브로 (115..120,111) 이 CLIFF_FRONT 임을 확인"
+    }
+   ],
+   "issues": [
+    "수용 기준에 적힌 기본 규칙(더 높은 이웃)은 실제 섬에서 한 번도 쓰이지 않는다. 시드 20260916 에서 절벽 836칸 중 북쪽이 더 높은 칸은 0개다. island_terrain.gd cliff_at 에 따르면 절벽은 '8방향에 더 낮은 이웃이 있는 높은 쪽 칸'이기 때문이다. 그래서 실제 그림은 전부 폴백 규칙(남쪽이 낮음→앞면 등)이 정한다. 동작은 맞지만 test_island_cells_follow_rules 의 '북/남이 더 높으면' 분기도 실제 지도에서는 돌지 않는다. 다음 단계나 사람이 알아 둘 것",
+    "report 의 '절벽 블록이 2칸 두께라 벽이 2칸 높이로 이어진다'는 설명은 사실과 다르다. 절벽 칸은 블록 안에서도 더 낮은 이웃이 있는 칸뿐이라 실제 벽은 대부분 1칸 줄이다. 섬 전체에서 앞면 칸 바로 북쪽이 절벽인 경우는 SIDE 53 · TOP 3 이고 FRONT 는 0이다. 그래서 _front_run 의 여러 칸 벽 처리는 사실상 안 쓰인다 (해롭지는 않음)",
+    "TilePainter.paint 는 칸마다 TileLook.of 를 여러 번 다시 계산한다 (_front_run 최대 8번, shadow_at 1번, 각각 이웃 8칸). 지금은 청크를 한 번만 그려서 괜찮다. 3단계(깊이 정렬)에서 자주 다시 그리게 되면 청크 단위로 look 을 캐시할 것",
+    "game/tests/shots/cliff_shot.gd 는 OS 임시 폴더에 naru_shot_* 저장 폴더를 만들고 지우지 않는다 (사소함)",
+    "절벽 모양 비율: 옆면 392 · 윗가장자리 242 · 앞면 202. 옆면이 가장 많다. 입체감 판단은 사람 몫이다 (디자인 평가 아님, 기록만)"
+   ],
+   "good": [
+    "판정 코드와 완전히 분리했다. 모양 고르기는 순수 함수, 색은 팔레트 한 곳, 그리기는 painter 로 역할이 깔끔하다",
+    "수용 기준만으로 정해지지 않는 경우(더 높은 이웃이 없는 절벽)를 스스로 찾아 report 에 밝혔고, 기준 규칙을 먼저 적용한 뒤 폴백하는 식으로 기준과 부딪히지 않게 풀었다",
+    "순수 함수 단위 테스트에 더해 실제 시드 섬 96×96 전체가 규칙과 맞는지 검사하는 테스트가 있다",
+    "기존 테스트가 쓰는 상수 이름은 별칭으로 남겨 값이 두 곳에 생기지 않게 했다"
+   ],
+   "feedback": ""
+  },
+  "test": "ee_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 117.5 ms (game _ready 99.7 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/island/test_tile_look.gd\n* test_cliff_with_higher_north_is_front\n* test_cliff_with_higher_south_is_top_edge\n* test_cliff_with_only_east_or_west_higher_is_side\n* test_cliff_without_higher_neighbor_uses_lower_side\n* test_non_cliff_is_flat_or_slope\n* test_shadow_falls_south_of_higher_ground\n* test_higher_top_is_brighter\n* test_front_face_is_light_on_top_dark_below\n* test_slope_is_told_apart_from_cliff\n* test_island_cells_follow_rules\n10/10 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              72\nTests               504\nPassing Tests       504\nAsserts           40027\nTime              205.608s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-015",
+  "step": "2",
+  "attempt": "1",
+  "title": "G-015 2/3 절벽 앞면과 높이 그림자 — 통과 (시도 1)",
+  "commit": "0f4d58f"
  }
 ]
