@@ -1,12 +1,12 @@
 {
- "updated": "2026-09-18 19:56:27 KST",
- "updated_epoch": 1789728987,
+ "updated": "2026-09-18 19:57:56 KST",
+ "updated_epoch": 1789729076,
  "progress": {
   "groups_total": 15,
   "groups_done": 14,
   "groups_waiting": 0,
   "steps_total": 47,
-  "steps_done": 44
+  "steps_done": 45
  },
  "state": "running",
  "reason": "",
@@ -16,10 +16,10 @@
  "pid": "62002",
  "group": "G-015",
  "group_title": "3/4 시점 시험 — 보이는 범위 줄이기 · 절벽 앞면 · 깊이 정렬",
- "step": "1",
+ "step": "2",
  "step_total": "3",
- "step_title": "월드 카메라 2배",
+ "step_title": "절벽 앞면과 높이 그림자",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-18 19:56:27"
+ "phase": "구현",
+ "phase_since": "2026-09-18 19:57:56"
 }

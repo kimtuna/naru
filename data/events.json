@@ -3637,5 +3637,72 @@
   "epoch": 1789728486,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-18 19:57:55 KST",
+  "epoch": 1789729075,
+  "report": {
+   "status": "done",
+   "summary": "G-015.1 월드 카메라 2배 — 보이는 월드 20×11.25칸, UI 는 640×360 그대로",
+   "problem": "한 화면에 보이는 월드(40×22.5칸)가 너무 많다. 월드만 2배로 확대하고 HUD · 가방 · 제작 · 설정 창은 그대로 둬야 하며, 섬 덩어리 만들기처럼 「보이는 범위」를 쓰는 코드가 새 범위를 따라야 한다.",
+   "feedback_applied": "",
+   "approach": "DisplayConfig.CAMERA_ZOOM 을 Vector2.ONE → Vector2(2, 2) 로 바꿨다. 플레이어 카메라는 이미 DisplayConfig.lock_camera 로 이 값을 받는다. 기준 화면 640×360 과 stretch 설정은 그대로라 창 크기가 달라도 보이는 월드는 640/2/16 × 360/2/16 = 20×11.25칸. HUD 는 CanvasLayer 라 카메라 배율을 타지 않는다. 「보이는 범위」를 쓰는 코드를 찾아보니 IslandView.visible_half_extent() 하나였고 이미 카메라 zoom 으로 나누고 있어 새 범위(반쪽 160×90px)를 자동으로 따른다. 재생(Regrowth)과 몹(MobSpawner/Mob)은 화면 범위를 쓰지 않는다(설치물 둘레 · 발견 반경 등 고정 거리만 씀) — 바꿀 것이 없다. Pointer 는 캔버스 변환으로 월드 좌표를 내므로 확대해도 조준 · 클릭이 맞다. 기존 test_display_scale.gd 의 VIEW_TILES 를 40×22.5 → 20×11.25 로 바꿨고(지우지 않음), test_world_zoom.gd 를 새로 넣었다: 배율이 DisplayConfig 한 곳에만 있는지(게임 코드 · 씬에서 zoom 대입을 찾음), 게임 카메라가 20×11.25칸을 보는지, 카메라를 1배로 돌려도 HUD · 열린 가방 칸들의 배치가 한 픽셀도 안 바뀌고 640×360 안에 있는지, 섬 덩어리가 새 범위의 네 귀퉁이를 덮고 범위+여유 밖에는 없는지. 전체 494 테스트 통과, guard 통과.",
+   "why": "카메라 zoom 을 쓰는 것이 월드만 확대하고 UI 를 건드리지 않는 가장 작은 변경이다. 대안인 기준 화면을 320×180 으로 줄이는 방법은 UI 까지 같이 커져 수용 기준(UI 640×360 그대로)과 어긋나고, 타일을 32px 로 키우는 방법은 그리는 코드 · 충돌 · 좌표 전부를 건드린다. 섬 덩어리의 여유(view_margin_px 160)는 그대로 뒀다 — 보이는 곳이 줄어도 여유는 이동 중 덩어리가 늦게 뜨지 않게 하는 값이라 줄일 이유가 없고, 나중에 바꾸기 싸다.",
+   "files": [
+    "game/settings/display/display_config.gd",
+    "game/tests/settings/display/test_display_scale.gd",
+    "game/tests/settings/display/test_world_zoom.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "criterion": "게임 화면에 보이는 월드가 가로 20칸 × 세로 11.25칸이다. 창 크기(1280×720 · 1920×1080 · 2560×1440 · 2560×1080 · 1280×800)가 달라도 같다",
+     "ok": true,
+     "evidence": "test_display_scale.gd::test_visible_world_range_is_same_for_every_window_size 가 다섯 창 크기마다 canvas_transform 역변환으로 실제 보이는 월드 사각형을 재서 20×11.25 를 확인. test_world_zoom.gd::test_game_camera_shows_twenty_by_eleven_tiles 도 같은 값. 직접 TEST_DIR=res://tests/settings/display 로 돌려 24/24 통과. CAMERA_ZOOM 을 Vector2.ONE 으로 되돌리는 변이를 넣자 두 파일에서 모두 (40,22.5)≠(20,11.25) 로 실패 — 테스트가 진짜로 잡는다 (변이는 되돌림)"
+    },
+    {
+     "criterion": "배율 값은 DisplayConfig 한 곳에 있고, 플레이어가 바꾸는 설정은 없다",
+     "ok": true,
+     "evidence": "display_config.gd:19 CAMERA_ZOOM := Vector2(2.0, 2.0), 적용은 lock_camera 한 곳. grep 결과 게임 코드 · 씬에서 zoom 을 대입하는 곳은 display_config.gd:24 뿐. test_zoom_is_two_in_display_config_only 가 .gd/.tscn 전체를 훑어 확인. 기존 test_no_input_action_changes_view_range · test_wheel_and_zoom_keys_do_not_change_camera · test_settings_screen_has_no_view_range_option 그대로 통과"
+    },
+    {
+     "criterion": "HUD · 가방 · 제작 · 설정 창 등 UI 크기와 배치는 그대로다 (640×360 기준)",
+     "ok": true,
+     "evidence": "game.tscn 에서 Info · Stamina · Hotbar · Inventory · Crafting · DeathChest · GameMenu 모두 Hud(CanvasLayer) 아래 — 카메라 변환을 받지 않는다. 월드 공간 Label/Control 은 없음(grep). 설정은 메뉴 씬이라 카메라와 무관. test_hud_and_windows_keep_base_screen_layout 이 가방을 연 채 zoom 2 와 1 의 HUD Control 전역 사각형이 같고 640×360 안에 있음을 확인. 기존 test_screen_fit.gd(HUD · 가방 · 제작 창 맞춤) 통과"
+    },
+    {
+     "criterion": "섬을 보이는 곳 둘레만 만드는 범위 · 재생 · 몹 등 「화면에 보이는 범위」를 쓰는 코드가 새 범위를 따른다",
+     "ok": true,
+     "evidence": "화면 범위를 쓰는 게임 코드는 island_view.gd:67 visible_half_extent() 하나(cam.zoom 으로 나눔) → 160×90px. test_island_chunks_follow_new_view_range 가 네 귀퉁이 덮기와 범위 밖 덩어리 없음을 확인. regrowth.gd 는 structure_radius · 플레이어 몸 칸만, 몹은 sight/lose/attack 고정 반경만 쓰고 화면 크기를 참조하지 않음(grep 확인). Pointer 는 canvas_transform 역변환이라 확대를 따라감"
+    },
+    {
+     "criterion": "40×22.5칸을 검사하던 기존 테스트는 새 값으로 바뀌었다 — 지운 것이 아니라 바꾼 것이다",
+     "ok": true,
+     "evidence": "git diff: test_display_scale.gd 의 VIEW_TILES 상수만 Vector2(40,22.5)→Vector2(20,11.25) 로 바뀜. 테스트 함수 · assert 삭제 · 완화 · skip 없음"
+    }
+   ],
+   "issues": [
+    "(기준 밖 · 참고) 몹 sight_radius 96px 가 새 세로 반쪽 시야 90px 보다 크다 — 화면 위아래 바로 밖의 몹이 플레이어를 먼저 알아챌 수 있다. 화면 범위 코드는 아니라 이번 기준 위반은 아님. 플레이 시험 때 사람이 볼 만한 점",
+    "(참고) test_zoom_is_two_in_display_config_only 의 zoom 대입 탐지는 문자열 패턴(`zoom =`, `.zoom =`)이라 `set(\"zoom\", …)` · `zoom*=` 같은 형태는 못 잡는다. 지금 코드엔 그런 곳이 없어 문제 없음",
+    "(참고) island_config view_margin_px 160 을 그대로 둬서 만드는 범위는 보이는 곳보다 꽤 넓다 — report 에 이유를 적었고 기준 위반 아님"
+   ],
+   "good": [
+    "변경이 상수 하나로 최소 — 기존 lock_camera · visible_half_extent 가 이미 zoom 을 따르는 구조를 잘 찾아 썼다",
+    "HUD 가 카메라 배율과 무관함을 zoom 1↔2 비교로 직접 증명하는 테스트를 넣었다",
+    "기존 테스트를 지우지 않고 기대값만 새 결정에 맞춰 바꿨고, 되돌리는 변이를 넣으면 실제로 실패한다",
+    "report 가 diff 와 일치한다 (파일 3개, 494 테스트 통과는 test.log 와 일치)"
+   ],
+   "feedback": ""
+  },
+  "test": "physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n    --- Awaiting 40 physics frames  ---\n* test_free_ground_is_walkable\n* test_island_edge_blocks\n    --- Awaiting 40 physics frames  ---\n* test_entering_256_island_is_quick_and_builds_only_near_view\n    entering 256x256 island: 115.2 ms (game _ready 97.3 ms)\n* test_walking_far_builds_new_chunks_and_frees_old_ones\n* test_lazy_map_equals_full_map_in_any_order\n9/9 passed.\n\n\nres://tests/world/island/test_island_world_seed.gd\n* test_game_builds_island_from_world_seed\n* test_seed_typed_at_world_creation_is_used\n2/2 passed.\n\n\nres://tests/world/lighting/test_lighting.gd\n* test_brightness_values_live_in_config_file\n* test_day_is_not_darkened\n* test_screen_darkens_when_night_comes\n* test_screen_brightens_again_in_the_morning\n* test_night_brightness_comes_from_config\n* test_darkness_is_a_canvas_modulate_in_the_world\n* test_light_can_be_placed\n* test_outside_radius_is_same_as_without_light\n* test_inside_radius_is_brighter_at_night\n* test_light_does_not_brighten_the_day\n* test_light_texture_covers_only_the_radius\n* test_drawn_light_matches_brightness_model\n12/12 passed.\n\n\nres://tests/world/lighting/test_lighting_game.gd\n* test_game_darkens_at_night\n* test_game_lamp_only_lights_its_radius\n2/2 passed.\n\n\nres://tests/world/regrowth/test_regrowth.gd\n* test_regrown_cells_match_the_seed_original\n* test_regrow_restores_cells_in_chunks_not_built_yet\n* test_originally_empty_cells_never_grow\n* test_nothing_regrows_before_its_period\n* test_period_counts_from_when_the_cell_was_emptied\n* test_regrow_redraws_the_cell\n* test_no_regrowth_around_structures\n* test_structure_on_the_cell_itself_blocks_regrowth\n* test_no_regrowth_where_the_player_stands\n* test_player_straddling_cells_blocks_all_of_them\n* test_periods_order_tree_stone_ore\n* test_regrowth_happens_in_order_tree_then_stone_then_ore\n* test_periods_come_from_the_config\n13/13 passed.\n\n\nres://tests/world/regrowth/test_regrowth_game.gd\n* test_game_regrows_felled_tree_after_player_walks_away\n* test_time_and_removal_times_survive_saving\n* test_world_data_round_trip_keeps_times\n3/3 passed.\n\n\nres://tests/world/test_game.gd\n* test_game_knows_character_and_world_names\n* test_exit_action_is_in_input_map\n* test_exit_key_saves_and_goes_to_main_menu\n* test_other_keys_do_not_exit\n* test_inventory_follows_character_across_worlds\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              71\nTests               494\nPassing Tests       494\nAsserts           30470\nTime              195.834s\n\n\n---- All tests passed! ----\n\nexit=0",
+  "type": "step_pass",
+  "group": "G-015",
+  "step": "1",
+  "attempt": "1",
+  "title": "G-015 1/3 월드 카메라 2배 — 통과 (시도 1)",
+  "commit": "7108ca4"
  }
 ]
