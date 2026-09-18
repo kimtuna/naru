@@ -4,27 +4,10 @@ extends Node2D
 ## 한 줄에서 이어진 막힌 칸은 네모 하나로 합쳐 충돌 모양 수를 줄인다.
 ## 절벽 칸은 따로 CliffBody (레이어 ClimbingConfig.CLIFF_LAYER) 에 둔다 — 스파이크를 끼면 지나간다.
 
-## 색은 임시다 — 아트는 사람이 나중에 넣는다. 지형마다 다른 색, 높이 한 단마다 조금씩 밝게.
-const TERRAIN_COLORS := {
-	IslandConfig.Terrain.GRASS: Color(0.33, 0.55, 0.3),
-	IslandConfig.Terrain.FOREST: Color(0.2, 0.42, 0.22),
-	IslandConfig.Terrain.MOUNTAIN: Color(0.45, 0.4, 0.34),
-	IslandConfig.Terrain.VOLCANO: Color(0.42, 0.2, 0.16),
-	IslandConfig.Terrain.SNOW: Color(0.72, 0.78, 0.82),
-	IslandConfig.Terrain.BEACH: Color(0.82, 0.76, 0.5),
-	IslandConfig.Terrain.SEA: Color(0.16, 0.34, 0.6),
-}
-const HEIGHT_LIGHTEN := 0.06
-## 절벽 칸 — 바닥 색 위에 어두운 테두리 (임시).
-const CLIFF_COLOR := Color(0.12, 0.1, 0.1)
-const CLIFF_EDGE_PX := 3.0
-const DEPOSIT_COLORS := {
-	IslandConfig.Deposit.TREE: Color(0.1, 0.35, 0.12),
-	IslandConfig.Deposit.STONE: Color(0.55, 0.55, 0.58),
-	IslandConfig.Deposit.IRON: Color(0.62, 0.45, 0.38),
-	IslandConfig.Deposit.SULFUR: Color(0.9, 0.85, 0.2),
-	IslandConfig.Deposit.HERB: Color(0.45, 0.8, 0.45),
-}
+## 색은 임시다 — 값은 TilePalette 한 곳에 있다. 여기 이름은 예전 이름 그대로 가리킨다.
+const TERRAIN_COLORS := TilePalette.TERRAIN
+const HEIGHT_LIGHTEN := TilePalette.HEIGHT_LIGHTEN
+const DEPOSIT_COLORS := TilePalette.DEPOSIT
 
 var map: IslandMap
 var chunk: Vector2i
@@ -108,22 +91,19 @@ func _add_box(b: StaticBody2D, cell: Vector2i, length: int) -> void:
 	b.add_child(col)
 
 
-## 칸의 바닥 색 — 지형 색을 높이만큼 밝게.
+## 칸의 윗면 색 — 지형 색을 높이만큼 밝게.
 func color_at(cell: Vector2i) -> Color:
-	var base: Color = TERRAIN_COLORS[map.terrain_at(cell)]
-	return base.lightened(HEIGHT_LIGHTEN * map.height_at(cell))
+	return TilePalette.top(map.terrain_at(cell), map.height_at(cell))
 
 
+## 칸마다 모양(평면 · 절벽 앞면 · 윗가장자리 · 옆면 · 경사)과 그림자는 TilePainter 가 그린다.
 func _draw() -> void:
 	var t := Vector2(tile_px, tile_px)
 	for y in range(_rect.position.y, _rect.end.y):
 		for x in range(_rect.position.x, _rect.end.x):
 			var cell := Vector2i(x, y)
 			var at := Vector2(cell - _rect.position) * float(tile_px)
-			draw_rect(Rect2(at, t), color_at(cell))
-			if map.is_cliff(cell):
-				draw_rect(Rect2(at + Vector2.ONE * CLIFF_EDGE_PX / 2.0, t - Vector2.ONE * CLIFF_EDGE_PX), CLIFF_COLOR,
-					false, CLIFF_EDGE_PX)
+			TilePainter.paint(self, at, tile_px, map, cell)
 			var deposit := map.deposit_at(cell)
 			if deposit != IslandConfig.Deposit.NONE:
 				draw_rect(Rect2(at + Vector2.ONE, t - Vector2.ONE * 2.0), DEPOSIT_COLORS[deposit])
