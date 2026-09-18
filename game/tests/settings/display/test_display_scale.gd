@@ -11,8 +11,8 @@ const WINDOWS := [
 	Vector2i(1280, 720), Vector2i(1920, 1080), Vector2i(2560, 1440),
 	Vector2i(2560, 1080), Vector2i(1280, 800),
 ]
-## 기준 화면 640×360 을 16px 타일로 본 칸 수.
-const VIEW_TILES := Vector2(40.0, 22.5)
+## 기준 화면 640×360 을 16px 타일 · 카메라 2배로 본 칸 수 (G-015: 40×22.5 → 20×11.25).
+const VIEW_TILES := Vector2(20.0, 11.25)
 ## 보이는 범위를 바꾸는 설정 · 조작을 가리키는 낱말 (이름 · 번역 키에 있으면 안 된다).
 const ZOOM_WORDS := ["zoom", "fov", "view_range", "viewrange", "view_distance", "camera"]
 
