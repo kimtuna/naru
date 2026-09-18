@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-18 20:26:38 KST",
- "updated_epoch": 1789730798,
+ "updated": "2026-09-18 20:27:32 KST",
+ "updated_epoch": 1789730852,
  "progress": {
   "groups_total": 15,
   "groups_done": 14,
@@ -8,10 +8,10 @@
   "steps_total": 47,
   "steps_done": 46
  },
- "state": "running",
- "reason": "",
+ "state": "stopped",
+ "reason": "사용자 중지",
  "started": "2026-09-18 19:48:06",
- "ended": "",
+ "ended": "2026-09-18 20:27:32",
  "resume_at": "",
  "pid": "62002",
  "group": "G-015",
@@ -20,6 +20,6 @@
  "step_total": "3",
  "step_title": "깊이 정렬",
  "attempt": "2",
- "phase": "구현",
+ "phase": "",
  "phase_since": "2026-09-18 20:26:38"
 }

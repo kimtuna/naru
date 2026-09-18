@@ -3867,5 +3867,11 @@
   "attempt": "1",
   "title": "G-015 3/3 깊이 정렬 — 재시도 (시도 1)",
   "detail": "- QA 피드백:\n기능 · 테스트 · 샷은 모두 맞다. 떨어진 이유는 하나: game/world/game.gd 가 305줄로 prompt.md 4절의 300줄 규칙을 넘었다 (HEAD 299줄에 depth() 6줄 추가). game.gd 를 300줄 이하로 줄여라 — 예: 저장 관련(save 쪽 world.anchors = anchors().to_list() 등 world 데이터를 모으고 푸는 부분, 약 290~305줄 부근)이나 _ready 의 load_list 묶음(39~59줄)을 별도 스크립트(예: game/world/game_state.gd 의 static 함수)로 빼거나, 한 줄짜리 접근자들이 몰린 곳을 정리한다. 동작은 바꾸지 말 것. 그 뒤 tools/test.sh 전체 통과(508개)와 wc -l game/world/game.gd ≤ 300 을 확인하라. 여유가 있으면 test_every_world_object_kind_is_in_the_depth_pool 에 chest · drop 도 _origin_is_center 검사를 넣어라 (DeathChest · DroppedItem 은 _draw 에서 Rect2(-half, half*2) 로 그리므로 그 네모로 검사)."
+ },
+ {
+  "time": "2026-09-18 20:27:32 KST",
+  "epoch": 1789730852,
+  "type": "stop",
+  "title": "루프 종료 — 사용자 중지"
  }
 ]
