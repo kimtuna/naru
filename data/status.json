@@ -1,8 +1,8 @@
 {
- "state": "stopped",
- "reason": "G-102 을 main 에 합치지 못했다 (충돌?)",
- "updated": "2026-09-21 07:55:25",
- "updated_epoch": 1789944925,
+ "state": "running",
+ "reason": "검사",
+ "updated": "2026-09-21 07:57:05",
+ "updated_epoch": 1789945025,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 8,
@@ -16,6 +16,6 @@
  "step": "3",
  "step_title": "월드 선택 · 생성 → 게임 들어가기",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-21 07:50:36"
+ "phase": "구현",
+ "phase_since": "2026-09-21 07:57:05"
 }
