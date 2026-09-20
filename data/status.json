@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-103\", \"step\": 4, \"title\": \"핫바\"}",
- "updated": "2026-09-21 08:00:41",
- "updated_epoch": 1789945241,
+ "reason": "",
+ "updated": "2026-09-21 08:22:46",
+ "updated_epoch": 1789946566,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 8,
   "groups_done": 3,
   "groups_waiting": 0,
   "steps_total": 20,
-  "steps_done": 7
+  "steps_done": 8
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-102",
- "step": "3",
- "step_title": "월드 선택 · 생성 → 게임 들어가기",
+ "group": "G-103",
+ "step": "4",
+ "step_title": "핫바",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-21 07:57:05"
+ "phase": "QA",
+ "phase_since": "2026-09-21 08:18:30"
 }
