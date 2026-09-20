@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 08:22:46",
- "updated_epoch": 1789946566,
+ "updated": "2026-09-21 08:50:29",
+ "updated_epoch": 1789948229,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 8,
   "groups_done": 3,
   "groups_waiting": 0,
   "steps_total": 20,
-  "steps_done": 8
+  "steps_done": 9
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-103",
- "step": "4",
- "step_title": "핫바",
+ "step": "5",
+ "step_title": "ESC 설정 창",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 08:18:30"
+ "phase_since": "2026-09-21 08:46:32"
 }
