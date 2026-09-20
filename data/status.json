@@ -1,9 +1,9 @@
 {
  "state": "stopped",
- "reason": "한 회차 시험 실행 뒤 멈춤 (사람이 지켜보는 중)",
- "updated": "2026-09-21 06:32:13",
- "updated_epoch": 1789939933,
- "ended": "2026-09-21 06:32:13",
+ "reason": "판별기 시험",
+ "updated": "2026-09-21 06:40:05",
+ "updated_epoch": 1789940405,
+ "ended": "2026-09-21 06:40:05",
  "progress": {
   "groups_total": 4,
   "groups_done": 2,
