@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "",
- "updated": "2026-09-21 07:55:22",
- "updated_epoch": 1789944922,
- "ended": "2026-09-21 06:48:20",
+ "state": "stopped",
+ "reason": "G-102 을 main 에 합치지 못했다 (충돌?)",
+ "updated": "2026-09-21 07:55:25",
+ "updated_epoch": 1789944925,
+ "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 8,
   "groups_done": 2,
