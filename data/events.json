@@ -1,0 +1,84 @@
+[
+ {
+  "time": "2026-09-21 05:51:49",
+  "epoch": 1789930309,
+  "type": "start",
+  "title": "루프 시작 — G-102 단계 1"
+ },
+ {
+  "time": "2026-09-21 06:07:36",
+  "epoch": 1789931256,
+  "type": "fail",
+  "title": "QA 불합격 — G-102 단계 1 (시도 1)",
+  "group": "G-102",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "저장 뼈대 — 캐릭터와 월드를 따로 저장·불러오기·목록·삭제",
+   "approach": "save_store.gd · character_data.gd · world_data.gd + 테스트 11개. 전체 66/66 통과",
+   "files": [
+    "game/settings/save/save_store.gd",
+    "game/settings/save/character_data.gd",
+    "game/settings/save/world_data.gd",
+    "game/tests/settings/save/test_save_store.gd"
+   ]
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "저장하고 불러오면 값이 같다",
+     "evidence": "test_character_round_trip · test_world_round_trip"
+    },
+    {
+     "ok": false,
+     "criterion": "캐릭터 슬롯은 3개다. 3개가 찬 상태에서 거부된다",
+     "evidence": "슬롯 테스트가 전부 상수를 써서, 상수를 3→5 로 고쳐 돌리니 11개가 그대로 통과했다"
+    },
+    {
+     "ok": true,
+     "criterion": "user:// 아래 저장 · 테스트는 임시 경로",
+     "evidence": "test_default_root_is_under_user"
+    }
+   ],
+   "issues": [
+    "사람이 2026-09-16 에 정한 '슬롯 3개'를 지켜 주는 테스트가 없다. 숫자 3을 못 박는 단언을 넣어라"
+   ]
+  }
+ },
+ {
+  "time": "2026-09-21 06:22:10",
+  "epoch": 1789932130,
+  "type": "pass",
+  "title": "통과 — G-102 단계 1 (저장 뼈대)",
+  "group": "G-102",
+  "step": "1",
+  "attempt": "2",
+  "commit": "98a8ae1",
+  "report": {
+   "problem": "저장 뼈대 — 캐릭터와 월드를 따로",
+   "approach": "QA 지적대로 숫자 3을 못 박는 단언과, 상수를 안 쓰고 세 번 저장해 네 번째가 거부되는지 보는 테스트를 넣었다"
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "캐릭터 슬롯은 3개다",
+     "evidence": "변이 주입으로 확인 — 상수를 바꾸면 테스트가 떨어진다"
+    }
+   ],
+   "good": [
+    "characters()/worlds() 일괄 읽기",
+    "저장 형식 버전"
+   ]
+  }
+ },
+ {
+  "time": "2026-09-21 06:32:34",
+  "epoch": 1789939954,
+  "type": "stop",
+  "title": "루프 멈춤 — 한 회차 시험 실행 뒤 (사람이 지켜보는 중)"
+ }
+]

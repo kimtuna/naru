@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나루 루프</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --ink: #1d1f22; --muted: #6b6f76; --line: #e3e1da;
+  --soft: #efede7; --accent: #1f6f8b;
+  --ok: #2f7d4f; --ok-bg: #e5f2ea; --warn: #9a6a00; --warn-bg: #fbf0d6;
+  --bad: #b3372f; --bad-bg: #f8e3e1; --idle: #596170; --idle-bg: #e8eaee;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171a; --panel: #1d2024; --ink: #e7e8ea; --muted: #9aa0a8; --line: #2e3238;
+    --soft: #25292e; --accent: #6cb6d0;
+    --ok: #7fcf9c; --ok-bg: #1d3326; --warn: #e6c068; --warn-bg: #3a3020;
+    --bad: #f08a82; --bad-bg: #3d2322; --idle: #aab1bc; --idle-bg: #2a2e34;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15171a; --panel: #1d2024; --ink: #e7e8ea; --muted: #9aa0a8; --line: #2e3238;
+  --soft: #25292e; --accent: #6cb6d0;
+  --ok: #7fcf9c; --ok-bg: #1d3326; --warn: #e6c068; --warn-bg: #3a3020;
+  --bad: #f08a82; --bad-bg: #3d2322; --idle: #aab1bc; --idle-bg: #2a2e34;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.6 "IBM Plex Sans KR", system-ui, sans-serif;
+}
+main { max-width: 920px; margin: 0 auto; padding: 28px 16px 64px; }
+h1 { font-size: 22px; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 36px 0 10px; font-weight: 600; }
+.top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.sub { color: var(--muted); font-size: 13px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+.status { margin-top: 16px; display: grid; gap: 14px; }
+.state { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-weight: 600; font-size: 13px; white-space: nowrap; }
+.badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.b-running { color: var(--ok); background: var(--ok-bg); }
+.b-running::before { animation: pulse 1.6s infinite; }
+.b-waiting, .b-error_wait, .b-stale { color: var(--warn); background: var(--warn-bg); }
+.b-crashed { color: var(--bad); background: var(--bad-bg); }
+.b-done, .b-stopped { color: var(--idle); background: var(--idle-bg); }
+@keyframes pulse { 50% { opacity: .3; } }
+.reason { font-weight: 500; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; font-size: 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; overflow-wrap: anywhere; }
+.bar { height: 8px; background: var(--soft); border-radius: 4px; overflow: hidden; display: flex; }
+.bar i { display: block; height: 100%; }
+.bar .d { background: var(--ok); } .bar .w { background: var(--warn); }
+.nums { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.nums b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.warn { color: var(--warn); font-size: 13px; }
+details { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); margin: 6px 0; }
+details > summary { cursor: pointer; padding: 9px 14px; list-style: none; display: flex; gap: 10px; align-items: baseline; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before { content: "▸"; color: var(--muted); font-size: 11px; transition: transform .15s; flex: none; }
+details[open] > summary::before { transform: rotate(90deg); }
+details > .body { padding: 2px 16px 14px 36px; }
+details details { background: var(--bg); }
+.time { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; flex: none; }
+.title { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.count { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.tag { font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 4px; white-space: nowrap; flex: none; }
+.t-ok { color: var(--ok); background: var(--ok-bg); } .t-fail { color: var(--warn); background: var(--warn-bg); }
+.t-bad { color: var(--bad); background: var(--bad-bg); } .t-info { color: var(--idle); background: var(--idle-bg); }
+.sec { margin-top: 12px; }
+.sec h4 { margin: 0 0 3px; font-size: 12.5px; color: var(--accent); font-weight: 600; }
+.sec p, .sec ul { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.sec ul { padding-left: 18px; white-space: normal; }
+pre { font-family: var(--mono); font-size: 12px; background: var(--soft); padding: 10px 12px; border-radius: 6px; overflow-x: auto; margin: 6px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+code { font-family: var(--mono); font-size: .9em; }
+.checks { list-style: none; padding: 0 !important; }
+.checks li { padding: 3px 0; }
+.steps { list-style: none; margin: 0; padding: 0; }
+.steps li { padding: 3px 0; display: flex; gap: 8px; }
+.steps .crit { color: var(--muted); font-size: 13px; padding-left: 26px; display: block; }
+.md h2, .md h3 { font-size: 14px; text-transform: none; letter-spacing: 0; color: var(--ink); margin: 14px 0 4px; }
+.md p, .md ul, .md ol { margin: 4px 0; }
+.empty { color: var(--muted); font-size: 14px; padding: 6px 2px; }
+button.theme { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 3px 9px; cursor: pointer; font: inherit; font-size: 12px; }
+@media (max-width: 560px) {
+  details > .body { padding-left: 16px; }
+  .kv { grid-template-columns: 1fr; }
+  .kv dt { margin-top: 6px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <h1>⛵ 나루 루프</h1>
+    <span class="sub"><span id="fetched"></span> <button class="theme" id="theme">테마</button></span>
+  </div>
+
+  <section class="panel status" id="status"><div class="empty">불러오는 중…</div></section>
+
+  <h2>결정 대기 <span id="dcount"></span></h2>
+  <div id="decisions"></div>
+
+  <h2>할 일 목록</h2>
+  <div id="list"></div>
+
+  <h2>작업 기록 — 무엇이 문제였고 어떻게 풀었나</h2>
+  <div id="events"></div>
+
+  <h2>루프 실행 기록</h2>
+  <div id="runs"></div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const md = (s) => (window.marked ? marked.parse(String(s || "")) : "<pre>" + esc(s) + "</pre>");
+
+try {
+  const t = localStorage.getItem("naru-theme");
+  if (t) document.documentElement.dataset.theme = t;
+} catch (e) {}
+$("theme").onclick = () => {
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const cur = document.documentElement.dataset.theme || (dark ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("naru-theme", next); } catch (e) {}
+};
+
+const STATE = {
+  running: "실행 중", waiting: "토큰 한도 대기", error_wait: "실행 오류 대기",
+  done: "완료", stopped: "멈춤", crashed: "비정상 종료", stale: "응답 없음?",
+};
+
+function ago(epoch) {
+  if (!epoch) return "";
+  const m = Math.round((Date.now() / 1000 - epoch) / 60);
+  if (m < 1) return "방금";
+  if (m < 60) return m + "분 전";
+  const h = Math.floor(m / 60);
+  return h < 24 ? `${h}시간 ${m % 60}분 전` : `${Math.floor(h / 24)}일 전`;
+}
+
+async function get(path, json) {
+  try {
+    const r = await fetch(path + "?t=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return json ? null : "";
+    return json ? await r.json() : await r.text();
+  } catch (e) { return json ? null : ""; }
+}
+
+function renderStatus(s) {
+  if (!s) { $("status").innerHTML = '<div class="empty">아직 기록이 없다 — 루프가 한 번도 푸시하지 않았다.</div>'; return; }
+  let state = s.state || "stopped";
+  const staleMin = (Date.now() / 1000 - (s.updated_epoch || 0)) / 60;
+  const stale = state === "running" && staleMin > 120;
+  const p = s.progress || {};
+  const pct = (n) => (p.steps_total ? (100 * n) / p.steps_total : 0);
+  const cur = s.group && state !== "done"
+    ? `${esc(s.group)} ${esc(s.group_title)} · ${esc(s.step)}/${esc(s.step_total)}단계 <b>${esc(s.step_title)}</b> · 시도 ${esc(s.attempt)}`
+    : "—";
+  $("status").innerHTML = `
+    <div class="state">
+      <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : (STATE[state] || esc(state))}</span>
+      <span class="reason">${esc(s.reason || (state === "running" ? "정상 동작 중" : ""))}</span>
+    </div>
+    ${stale ? `<div class="warn">「실행 중」인데 ${Math.round(staleMin)}분째 갱신이 없다. 맥이 꺼졌거나 잠들었거나 루프가 강제로 죽었을 수 있다.</div>` : ""}
+    <dl class="kv">
+      <dt>마지막 갱신</dt><dd>${esc(s.updated)} <span class="sub">(${ago(s.updated_epoch)})</span></dd>
+      <dt>지금 작업</dt><dd>${cur}</dd>
+      ${state === "running" && s.phase ? `<dt>단계</dt><dd>${esc(s.phase)} — ${esc(s.phase_since)} 부터</dd>` : ""}
+      ${s.resume_at ? `<dt>재개 예정</dt><dd>${esc(s.resume_at)}</dd>` : ""}
+      <dt>이번 실행</dt><dd>${esc(s.started)} 시작${s.ended && state !== "running" ? ` · ${esc(s.ended)} 종료` : ""}</dd>
+    </dl>
+    <div class="bar"><i class="d" style="width:${pct(p.steps_done || 0)}%"></i></div>
+    <div class="nums">
+      <span>단계 <b>${p.steps_done || 0}/${p.steps_total || 0}</b></span>
+      <span>묶음 완료 <b>${p.groups_done || 0}</b></span>
+      <span>결정 대기 <b>${p.groups_waiting || 0}</b></span>
+      <span>전체 묶음 <b>${p.groups_total || 0}</b></span>
+    </div>`;
+}
+
+function renderDecisions(text) {
+  const parts = []; let fence = false;
+  for (const line of text.split("\n")) {  // 코드 블록 안의 "## " 는 새 항목이 아니다
+    if (line.startsWith("```")) fence = !fence;
+    if (!fence && line.startsWith("## ")) parts.push(line);
+    else if (parts.length) parts[parts.length - 1] += "\n" + line;
+  }
+  $("dcount").textContent = parts.length ? `(${parts.length})` : "";
+  if (!parts.length) { $("decisions").innerHTML = '<div class="empty">없음</div>'; return; }
+  $("decisions").innerHTML = parts.reverse().map((p) => {
+    const [head, ...rest] = p.split("\n");
+    const reason = (rest.find((l) => l.startsWith("- 이유:")) || "").replace("- 이유:", "").trim();
+    return `<details><summary><span class="tag t-bad">대기</span><span class="title">${esc(head.slice(3))}</span><span class="count">${esc(reason)}</span></summary>
+      <div class="body md">${md(rest.join("\n"))}</div></details>`;
+  }).join("");
+}
+
+function parseList(text) {
+  const groups = []; let g = null, st = null;
+  for (const line of text.split("\n")) {
+    let m;
+    if ((m = line.match(/^## \[( |x|>)\] (\S+)\s+(.*)$/))) { g = { state: m[1], id: m[2], title: m[3], steps: [] }; groups.push(g); st = null; continue; }
+    if (line.startsWith("#")) { g = null; continue; }
+    if (!g) continue;
+    if ((m = line.match(/^- \[( |x)\] (\d+)\.\s+(.*)$/))) { st = { done: m[1] === "x", title: m[2] + ". " + m[3], crit: [] }; g.steps.push(st); continue; }
+    if ((m = line.match(/^\s+- 기준:\s*(.*)$/)) && st) st.crit.push(m[1]);
+  }
+  return groups;
+}
+
+function renderList(text, status) {
+  const groups = parseList(text);
+  if (!groups.length) { $("list").innerHTML = '<div class="empty">목록이 비어 있다</div>'; return; }
+  const TAG = { "x": ["t-ok", "완료"], ">": ["t-bad", "결정 대기"], " ": ["t-info", "할 일"] };
+  const firstTodo = groups.find((g) => g.state === " ");
+  $("list").innerHTML = groups.map((g) => {
+    const done = g.steps.filter((s) => s.done).length;
+    const isCur = firstTodo && g.id === firstTodo.id;
+    const [cls, label] = isCur ? ["t-fail", "진행 중"] : TAG[g.state];
+    return `<details ${isCur ? "open" : ""}><summary><span class="tag ${cls}">${label}</span>
+      <span class="title">${esc(g.id)} ${esc(g.title)}</span><span class="count">${done}/${g.steps.length}</span></summary>
+      <div class="body"><ul class="steps">${g.steps.map((s) => `<li><span>${s.done ? "✅" : "⬜"}</span><span>${esc(s.title)}
+        ${s.crit.map((c) => `<span class="crit">· ${md(c).replace(/^<p>|<\/p>\s*$/g, "")}</span>`).join("")}</span></li>`).join("")}</ul></div></details>`;
+  }).join("");
+}
+
+const TYPE = {
+  step_pass: ["t-ok", "통과"], step_fail: ["t-fail", "재시도"], group_done: ["t-ok", "묶음 완료"],
+  parked: ["t-bad", "결정 대기"], limit: ["t-fail", "토큰 한도"], resume: ["t-info", "재개"],
+  infra: ["t-bad", "실행 오류"], start: ["t-info", "시작"], stop: ["t-info", "종료"],
+};
+
+const sec = (label, v) => (v ? `<div class="sec"><h4>${label}</h4><p>${esc(v)}</p></div>` : "");
+const list = (label, arr) => (arr && arr.length ? `<div class="sec"><h4>${label}</h4><ul>${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>` : "");
+
+function eventBody(e) {
+  const r = e.report || {}, q = e.qa || {};
+  let h = "";
+  if (e.detail) h += `<div class="sec"><p>${esc(e.detail)}</p></div>`;
+  h += sec("무엇이 문제였나", r.problem);
+  h += sec("이전 피드백을 어떻게 반영했나", r.feedback_applied);
+  h += sec("어떻게 해결했나", r.approach);
+  h += sec("왜 이렇게 했나", r.why);
+  if (r.decision && r.decision.question) h += sec("사람에게 물은 것", r.decision.question);
+  if (q.checks && q.checks.length) {
+    h += `<div class="sec"><h4>QA 판정 — ${q.pass ? "통과" : "불합격"}</h4><ul class="checks">${q.checks.map((c) =>
+      `<li>${c.ok ? "✅" : "❌"} ${esc(c.criterion)}<br><span class="sub">${esc(c.evidence)}</span></li>`).join("")}</ul></div>`;
+  }
+  h += list("QA 가 찾은 문제", q.issues);
+  h += list("QA 가 본 좋은 점", q.good);
+  h += sec("QA 가 다음 시도에 준 피드백", q.feedback);
+  if (r.files && r.files.length) h += `<div class="sec"><h4>바뀐 파일</h4><p><code>${r.files.map(esc).join("</code>, <code>")}</code></p></div>`;
+  if (e.commit) h += `<div class="sec"><h4>커밋</h4><p><code>${esc(e.commit)}</code></p></div>`;
+  if (e.test) h += `<details><summary><span class="title">테스트 출력</span></summary><div class="body"><pre>${esc(e.test)}</pre></div></details>`;
+  return h || '<div class="empty">추가 내용 없음</div>';
+}
+
+function renderEvents(events) {
+  const work = events.filter((e) => !["start", "stop"].includes(e.type)).reverse();
+  if (!work.length) { $("events").innerHTML = '<div class="empty">아직 없음</div>'; return; }
+  const byDay = {};
+  for (const e of work) (byDay[e.time.slice(0, 10)] ||= []).push(e);
+  const days = Object.keys(byDay);
+  $("events").innerHTML = days.map((d, i) => {
+    const es = byDay[d];
+    const pass = es.filter((e) => e.type === "step_pass").length;
+    const fail = es.filter((e) => e.type === "step_fail").length;
+    return `<details ${i === 0 ? "open" : ""}><summary><span class="title"><b>${d}</b></span>
+      <span class="count">통과 ${pass} · 재시도 ${fail} · 기록 ${es.length}</span></summary><div class="body">
+      ${es.map((e) => {
+        const [cls, label] = TYPE[e.type] || ["t-info", e.type];
+        return `<details><summary><span class="time">${esc(e.time.slice(11))}</span><span class="tag ${cls}">${label}</span>
+          <span class="title">${esc((e.report && e.report.summary) ? e.title + " — " + e.report.summary : e.title)}</span></summary>
+          <div class="body">${eventBody(e)}</div></details>`;
+      }).join("")}</div></details>`;
+  }).join("");
+}
+
+function renderRuns(events) {
+  const runs = []; let cur = null;
+  for (const e of events) {
+    if (e.type === "start") { cur = { start: e.time, end: null, reason: "" }; runs.push(cur); }
+    else if (e.type === "stop" && cur) { cur.end = e.time; cur.reason = e.title.replace(/^루프 종료 — /, ""); cur = null; }
+    else if (cur) { cur.n = (cur.n || 0) + (e.type === "step_pass" ? 1 : 0); }
+  }
+  if (!runs.length) { $("runs").innerHTML = '<div class="empty">아직 없음</div>'; return; }
+  const rows = runs.reverse().map((r) =>
+    `<li><span class="time">${esc(r.start)}</span> → <span class="time">${esc(r.end || "실행 중")}</span>
+     ${r.end ? `· <b>${esc(r.reason)}</b>` : ""} · 통과 ${r.n || 0}단계</li>`).join("");
+  $("runs").innerHTML = `<details><summary><span class="title">실행 ${runs.length}회</span>
+    <span class="count">최근: ${esc(runs[0].reason || "실행 중")}</span></summary>
+    <div class="body"><ul class="steps" style="display:block">${rows}</ul></div></details>`;
+}
+
+async function load() {
+  const [s, ev, li, de] = await Promise.all([
+    get("data/status.json", true), get("data/events.json", true), get("data/list.md"), get("data/decisions.md"),
+  ]);
+  const openState = [...document.querySelectorAll("details")].map((d) => d.open);
+  renderStatus(s);
+  renderDecisions(de || "");
+  renderList(li || "", s);
+  renderEvents(ev || []);
+  renderRuns(ev || []);
+  if (openState.length) {
+    const all = document.querySelectorAll("details");
+    if (all.length === openState.length) all.forEach((d, i) => (d.open = openState[i]));
+  }
+  $("fetched").textContent = "불러옴 " + new Date().toLocaleTimeString("ko-KR", { hour12: false });
+}
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>
