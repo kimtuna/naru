@@ -1,21 +1,15 @@
 {
  "state": "running",
- "reason": "검사",
- "updated": "2026-09-21 07:57:05",
- "updated_epoch": 1789945025,
- "ended": "2026-09-21 07:55:25",
+ "reason": "{\"done\": false, \"bundle\": \"G-102\", \"step\": 2, \"title\": \"메인 화면 · 캐릭터 선택 · 캐릭터 생성\"}",
+ "updated": "2026-09-21 07:58:50",
+ "updated_epoch": 1789945130,
+ "ended": "2026-09-21 06:48:20",
  "progress": {
   "groups_total": 8,
   "groups_done": 2,
   "groups_waiting": 0,
   "steps_total": 20,
-  "steps_done": 7
+  "steps_done": 5
  },
- "started": "2026-09-21 06:54:49",
- "group": "G-102",
- "step": "3",
- "step_title": "월드 선택 · 생성 → 게임 들어가기",
- "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-21 07:57:05"
+ "started": "2026-09-21 07:58:50"
 }
