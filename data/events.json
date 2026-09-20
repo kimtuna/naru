@@ -80,5 +80,130 @@
   "epoch": 1789939954,
   "type": "stop",
   "title": "루프 멈춤 — 한 회차 시험 실행 뒤 (사람이 지켜보는 중)"
+ },
+ {
+  "time": "2026-09-21 06:54:51",
+  "epoch": 1789941291,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "캐릭터·월드 저장 뼈대에 「슬롯 3개」라는 숫자를 지켜 주는 테스트를 넣었다",
+   "approach": "저장·불러오기·슬롯·삭제는 이미 돌아가고 있었다. 문제는 QA 가 짚은 곳 하나였다 — 슬롯 테스트 다섯이 전부 SaveStore.CHARACTER_SLOTS 를 써서, 상수를 3 에서 5 로 고쳐도 테스트가 같이 따라가 전부 통과했다. 사람이 2026-09-16 에 정한 '슬롯 3개'를 지켜 주는 것이 아무것도 없었다. 상수를 쓰지 않는 테스트 둘을 넣었다. 하나는 상수 자체를 숫자 3 과 맞춰 보고(사람 결정이 조용히 바뀌는 것을 막는다), 하나는 상수를 전혀 안 보고 캐릭터를 세 번 저장해 세 번 다 성공하고 네 번째가 거부되는지 본다(상수와 실제 동작이 어긋나는 것까지 잡는다). 제대로 잡는지 확인하려고 QA 가 한 그대로 상수를 5 로 바꿔 돌려 보니 두 테스트가 세 곳에서 떨어졌고, 되돌리니 다시 통과했다. 나머지 슬롯 테스트는 상수를 쓰는 채로 두었다 — 슬롯 수와 무관하게 '차면 거부' '덮어쓰기는 된다' '지우면 자리가 난다'를 보는 것이라 그쪽이 맞다. 넣은 줄의 들여쓰기가 처음에 공백이었는데 파일은 탭을 쓰므로 탭으로 맞췄다. 전체 68개 통과, guard 통과.",
+   "why": "",
+   "files": [
+    "game/settings/save/save_store.gd",
+    "game/settings/save/character_data.gd",
+    "game/settings/save/world_data.gd",
+    "game/tests/settings/save/test_save_store.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "캐릭터와 월드를 각각 저장하고 불러오면 값이 저장 전과 같다",
+     "evidence": "test_save_store.gd:52 test_character_round_trip 이 이름·외형(Color 포함)·인벤토리를 실제로 파일에 쓰고 다시 읽어 네 값을 모두 비교한다. test_world_round_trip(72)은 이름·시드·만든 시각을 비교하고 created_at > 0 까지 본다. test_new_character_inventory_is_empty(66)은 빈 인벤토리가 빈 채로 돌아오는지 본다. test_character_and_world_are_stored_apart(95)는 캐릭터를 지워도 월드가 남는 것을 보여 둘이 따로 저장됨을 확인한다. 껍데기가 아니다 — 값은 FileAccess 로 디스크를 거쳐 돌아온다."
+    },
+    {
+     "ok": true,
+     "criterion": "캐릭터 슬롯은 3개다. 3개가 찬 상태에서 새로 저장하려 하면 거부된다. 캐릭터 · 월드를 삭제할 수 있다",
+     "evidence": "지난 회차 지적(상수를 5로 고쳐도 11개가 다 통과)이 고쳐졌다. test_character_slot_count_is_three(179)가 assert_eq(SaveStore.CHARACTER_SLOTS, 3) 로 숫자를 못 박고, test_exactly_three_characters_fit(184)는 상수를 아예 안 쓰고 세 번 저장 성공 · 네 번째 거부 · 저장본 3개 유지를 본다. 직접 변이를 넣어 확인했다 — (A) CHARACTER_SLOTS 를 3에서 5로 고치니 두 테스트가 정확히 떨어졌다(5 expected to equal 3, '4 번째는 거부된다'). (B) 상수는 3 그대로 두고 _resolve_id 의 '>= slots' 를 '> slots' 로만 어긋나게 하니 test_exactly_three_characters_fit 과 test_three_character_slots_then_refused 가 떨어졌다 — 상수와 실제 동작이 어긋나는 것까지 잡는다. 삭제는 test_deleting_frees_a_slot(135)이 지운 뒤 load 가 null 이고 빈 자리에 새로 들어가는지, test_delete_world(147)가 지운 뒤 목록이 비고 없는 것을 또 지우면 false 인지 본다. 변이를 되돌린 뒤 13개 전부 통과로 복구됨을 확인했다."
+    },
+    {
+     "ok": true,
+     "criterion": "저장 위치는 user:// 아래다. 테스트는 임시 경로를 써서 실제 사용자 저장을 건드리지 않는다",
+     "evidence": "save_store.gd:13 DEFAULT_ROOT 가 'user://saves' 이고 test_default_root_is_under_user(158)가 user:// 로 시작하는지 본다. test_test_root_is_not_the_real_save_dir(163)는 저장 전후로 실제 user://saves 의 존재 여부와 characters 파일 목록이 그대로인지, 임시 폴더에는 실제로 생겼는지를 본다. 변이로 확인했다 — _init 이 넘겨받은 경로를 무시하고 DEFAULT_ROOT 를 쓰게 고치니 이 테스트를 포함해 여섯 개가 떨어졌다. 그리고 내가 돌린 정상 전체 실행(68/68)은 실제 저장 폴더에 파일을 하나도 남기지 않았다 — 변이 실행 때만 5개가 남았고 그건 내가 지웠다."
+    }
+   ],
+   "issues": [],
+   "good": [
+    "기준에 없는 일괄 읽기 도우미: SaveStore.characters() · worlds() (save_store.gd:53, 92). 캐릭터/월드 선택 화면(다음 단계)에서 쓸 것이라 크지는 않다",
+    "기준에 없는 저장 형식 버전: VERSION := 1 과 번호가 다르면 읽지 않는 처리 (save_store.gd:12, 160). spec/01_settings/save.md 의 '형식 버전 (임시)' 를 따른 것이고 '임시' 표시도 있다",
+    "기준에 없는 동작 결정: 슬롯이 차 있어도 이미 있는 캐릭터를 덮어쓰는 것은 허용한다 (save_store.gd:29, test_full_slots_still_allow_overwrite:123). 합리적이지만 spec 에 적힌 줄은 아니다",
+    "기준에 없는 월드 슬롯 정책: 월드는 개수를 제한하지 않는다 (save_store.gd:67). F-10 미정을 그대로 두고 주석으로 밝혀 두었다"
+   ]
+  },
+  "test": "ab_real_cursor\n3/3 passed.\n\n\nres://tests/core/test_grid.gd\n* test_cell_center_round_trip\n* test_one_cell_is_one_meter\n2/2 passed.\n\n\nres://tests/core/test_guard.gd\n* test_no_direct_mouse_access_outside_pointer\n1/1 passed.\n\n\nres://tests/core/test_project_setup.gd\n* test_folders_match_spec_categories\n* test_renderer_is_forward_plus\n* test_visible_range_is_fixed_with_letterbox\n* test_input_actions_exist_with_bindings\n4/4 passed.\n\n\nres://tests/player/movement_controls/test_player.gd\n* test_capsule_is_about_1_8m\n* test_stands_on_floor\n* test_w_moves_where_camera_looks\n    --- Awaiting 0.6 seconds  ---\n* test_camera_turn_changes_w_direction\n* test_diagonal_speed_equals_straight_speed\n    --- Awaiting 0.8 seconds  ---\n    --- Awaiting 0.5 seconds  ---\n    --- Awaiting 0.8 seconds  ---\n    --- Awaiting 0.5 seconds  ---\n* test_jump_is_about_one_meter_and_no_air_jump\n* test_camera_pitch_is_clamped\n* test_camera_pulls_in_behind_wall_and_never_goes_further\n* test_fov_is_fixed_from_config\n9/9 passed.\n\n\nres://tests/settings/save/test_save_store.gd\n* test_character_round_trip\n* test_new_character_inventory_is_empty\n* test_world_round_trip\n* test_saving_again_overwrites\n* test_character_and_world_are_stored_apart\n* test_three_character_slots_then_refused\n* test_full_slots_still_allow_overwrite\n* test_deleting_frees_a_slot\n* test_delete_world\n* test_default_root_is_under_user\n* test_test_root_is_not_the_real_save_dir\n* test_character_slot_count_is_three\n* test_exactly_three_characters_fit\n13/13 passed.\n\n\nres://tests/settings/test_translation.gd\n* test_korean_and_english_po_are_registered\n* test_changing_language_changes_text\n* test_main_scene_label_uses_translation_key\n3/3 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n24/24 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:67)\n         [1] _ready (res://world/terrain/test_island.gd:38)\n         [2] before_all (res://tests/world/terrain/test_island_walk.gd:12)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n9/9 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               9\nTests                68\nPassing Tests        68\nAsserts            5754\nTime              128.94s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-21 07:30:29",
+  "epoch": 1789943429,
+  "type": "pass",
+  "title": "통과 — G-102 단계 2 (메인 화면 · 캐릭터 선택 · 캐릭터 생성)",
+  "group": "G-102",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "메인 화면 · 캐릭터 선택(3칸, 삭제 확인) · 캐릭터 생성(데이터로 정한 외형 칸 + 기본 도형 3D 미리보기)을 만들고 ESC 뒤로와 번역 키를 붙였다",
+   "approach": "화면들이 서로를 모르게 하려고 오가기를 MenuRoot 한 곳에 모았다 — 화면은 신호만 올리고(시작·생성·삭제·뒤로), 쌓고 되돌리는 것은 뿌리가 한다. ESC 도 뿌리가 받아 한 겹 되돌린다. 외형은 appearance.json 하나에서 읽어 줄을 만든다. 「코드 수정 없이 나타난다」를 말로만 두지 않으려고, 테스트가 진짜 데이터 파일에 칸을 하나 더한 사본을 만들어 그 파일로 화면을 띄우고 새 칸과 새 선택지가 도는지 본다. 번역은 두 겹으로 본다 — (1) 화면을 띄워 단추·이름표·입력칸 안내에 적힌 글자가 전부 번역 키 꼴인가, (2) 메뉴 파일에 따옴표로 적힌 키가 ko.po·en.po 에 빈칸 없이 있는가. 막혔던 것 셋: headless 에서 미리보기 재질을 set_surface_override_material 로 넣으면 더미 렌더러가 'Parameter material is null' 오류를 찍어 로그를 더럽혔다 — material_override 로 바꾸니 사라졌다. 되돌린 화면을 queue_free 로 지우니 GUT 가 미아(orphan) 130개로 셌다 — 되돌린 뒤 한 프레임 기다리게 했다(코드는 신호를 내는 단추가 그 화면 안에 있어서 바로 지우면 위험하다). 저장 id 가 시각+난수라 캐릭터가 몇 번 칸에 오는지 정해지지 않는다 — 이름의 자리를 짚는 대신 「그 이름이 칸에 있나」로 바꿨다. 범위: 월드 선택 화면은 다음 단계라 만들지 않았다. 있는 칸을 고르면 MenuRoot 가 world_select_requested(캐릭터 id) 를 올리는 데까지 하고, 그것을 테스트로 확인한다. 미리보기가 '보기 좋은가'는 루프가 판단하지 않는다 — 사람이 볼 지점이다.",
+   "why": "미리보기 도형과 기본 색 (character_preview.tscn 의 캡슐·공·상자 크기, character_preview.gd 의 BASE_COLORS) — 자리만 잡은 것이다. 디자인은 사람이 나중에 넣는다 (사람 결정 2026-09-16); appearance.json 의 칸 이름 · 선택지 · 색 · 크기 — spec/12_ui/menu.md 에 「커스터마이징 항목 목록 미정」이라 지금은 몸 · 머리 모양 · 머리 색 · 옷을 자리로 채웠다; 저장을 못 했을 때 보여 주는 MENU_SAVE_FAILED — 슬롯이 다 찼을 때 조용히 넘어가지 않으려고 둔 자리다. 문구는 사람이 나중에 다듬는다",
+   "files": [
+    "game/ui/menu/menu_root.gd",
+    "game/ui/menu/menu_root.tscn",
+    "game/ui/menu/main_menu.gd",
+    "game/ui/menu/main_menu.tscn",
+    "game/ui/menu/settings_screen.gd",
+    "game/ui/menu/settings_screen.tscn",
+    "game/ui/menu/character_select.gd",
+    "game/ui/menu/character_select.tscn",
+    "game/ui/menu/character_create.gd",
+    "game/ui/menu/character_create.tscn",
+    "game/ui/menu/character_preview.gd",
+    "game/ui/menu/character_preview.tscn",
+    "game/ui/menu/appearance_options.gd",
+    "game/ui/menu/appearance.json",
+    "game/project.godot",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/ui/menu/test_main_menu.gd",
+    "game/tests/ui/menu/test_character_select.gd",
+    "game/tests/ui/menu/test_character_create.gd",
+    "game/tests/ui/menu/test_character_preview.gd",
+    "game/tests/ui/menu/test_menu_navigation.gd",
+    "game/tests/ui/menu/test_menu_text.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "게임을 실행하면 메인 화면(시작 · 설정 · 종료)이 뜬다. 설정은 빈 자리(뒤로만)",
+     "evidence": "test_main_menu.gd — test_game_starts_at_the_main_menu 가 project.godot 의 main_scene 이 res://ui/menu/menu_root.tscn 인지 직접 읽어 보고(실제로 바뀌어 있다), MenuRoot.current() 가 MainMenu 인지 본다. test_main_menu_has_start_settings_quit 는 화면의 단추 글자를 트리에서 긁어모아 [MENU_START, MENU_SETTINGS, MENU_QUIT] 와 차례까지 같은지 본다 — 단추가 하나 빠지거나 늘면 깨진다. test_settings_is_empty_with_only_back 은 설정 화면의 단추가 [MENU_BACK] 뿐임을 같은 방식으로 확인하고, test_settings_back_returns_to_main_menu 가 뒤로를 눌러 MainMenu 로 돌아오는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "캐릭터 슬롯 3칸 — 있는 칸은 이름, 빈 칸은 「새 캐릭터」. 빈 칸 → 생성, 있는 칸 → 월드 선택. 삭제는 확인을 한 번 거친다",
+     "evidence": "test_character_select.gd — test_three_slots_all_empty_say_new_character 가 숫자 3 을 못 박아 세 칸을 짚으며 전부 MENU_NEW_CHARACTER 인지 보고, 빈 칸에는 삭제 단추가 없음을 자식 수로 확인한다. 화면의 칸 수는 SaveStore.CHARACTER_SLOTS 에서 나오고, 그 상수는 test_save_store.gd:179 test_character_slot_count_is_three 가 숫자 3 으로 못 박아 둔다(지난 회차 QA 지적이 고쳐졌다). test_saved_character_shows_its_name_and_rest_are_empty 는 있는 칸에 사람이 지은 이름이 뜨는지, test_empty_slot_opens_creation 과 test_saved_slot_goes_to_world_select_with_that_character 는 어느 신호가 나오고 어느 신호가 안 나오는지 둘 다 본다(assert_signal_not_emitted 로 뒤바뀜을 막는다). 삭제는 세 갈래로 본다 — 묻기만 하고 안 지움 · 아니오 → 남음 · 예 → 저장과 화면에서 사라지고 빈 칸이 하나 생김. 돌연변이 검사: _on_delete_pressed 가 확인을 건너뛰고 바로 지우게 고치니 2개가 깨졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "생성 화면 — 이름 입력과 외형 항목(몸 · 머리 모양 · 머리 색 · 옷)을 이전/다음으로 바꾼다. 항목과 선택지는 데이터 파일 하나에 있고, 추가하면 코드 수정 없이 나타난다 (테스트). 빈 이름은 거부된다",
+     "evidence": "test_character_create.gd — test_rows_come_from_the_data_file 이 화면에 늘어선 줄 이름을 appearance.json 에서 읽은 키 목록과 차례까지 맞춰 보고, 몸 · 머리 모양 · 머리 색 · 옷 네 칸이 있는지 따로 짚는다. test_added_item_shows_up_without_touching_the_code 는 진짜 appearance.json 을 읽어 freckles 칸을 하나 더한 임시 사본을 만들고 그 파일로 화면을 띄워, 새 칸이 나오고 새 선택지가 이전/다음으로 돌고 selection() 에 담기는지 본다 — 껍데기가 아니다. test_next_and_prev_walk_the_choices_and_wrap_around 는 첫 선택지에서 이전을 누르면 마지막 선택지로 감싸 도는 것까지 값 이름으로 확인한다. test_empty_name_is_refused 는 공백뿐인 이름으로 만들기를 눌러 저장이 0개이고 created 신호가 안 나오고 오류 글이 뜨는지 본다. 돌연변이 검사 두 번 — 빈 이름 검사를 지우니 3개 단언이 깨졌고, 칸 목록을 코드에 못 박으니 test_added_item_shows_up_without_touching_the_code 가 깨졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "미리보기는 기본 도형 3D 캐릭터여도 된다 — 고른 선택지에 따라 바뀐다",
+     "evidence": "test_character_preview.gd — test_preview_is_made_of_basic_3d_shapes 가 SubViewport 안의 Body · Head · Hair · Clothes 가 MeshInstance3D 인지 확인한다(씬은 CapsuleMesh · SphereMesh · BoxMesh 다). 나머지 네 테스트는 실제 생성 화면의 이전/다음 단추를 눌러 조각에 입힌 값이 따라 바뀌는지 본다 — 머리 색은 appearance.json 에 적힌 색(6b4326)과 똑같은지, 옷을 바꿔도 머리 색은 그대로인지(칸끼리 새지 않는지), 몸을 바꾸면 크기가 바뀌는지, 첫 선택지로 돌아오면 원래 모습으로 되돌아오는지. 돌연변이 검사: apply() 를 아무것도 안 하게 만드니 3개가 깨졌다. 「보기 좋은가」는 채점하지 않는다 — 사람 몫이다(사람 결정 2026-09-16)"
+    },
+    {
+     "ok": true,
+     "criterion": "메뉴 화면에서 ESC → 뒤로. 화면의 모든 글자가 번역 키이고 한국어 · 영어가 둘 다 있다",
+     "evidence": "test_menu_navigation.gd — 실제로 InputEventAction(menu_exit) 을 뷰포트에 밀어넣어 메인 → 선택 → 생성까지 쌓은 뒤 한 겹씩 되돌아오는지, 메인 화면에서는 그대로 머무는지 본다. menu_exit 은 project.godot 에서 Esc(physical_keycode 4194305)에 묶여 있다. 돌연변이 검사: _unhandled_input 의 조건을 막으니 2개가 깨졌다. 번역은 test_menu_text.gd 가 두 겹으로 본다 — (1) 네 화면을 실제로 띄워 Button · Label 의 text 와 LineEdit 의 placeholder 를 전부 긁어 번역 키 꼴인지 정규식으로 보고, 그 키가 ko.po · en.po 에 빈칸 아닌 값으로 있는지 확인한다(메뉴 씬에서 글자를 지닐 수 있는 노드는 이 셋뿐임을 확인했다), (2) 메뉴 폴더의 .gd · .tscn · .json 에 따옴표로 적힌 키를 모두 찾아 같은 검사를 하고, 하나도 못 찾으면 「검사가 헛돌고 있다」로 실패한다. test_menu_reads_korean_and_english 는 locale 을 바꿔 tr() 결과가 po 의 값과 같고 두 언어가 서로 다른지 본다. 새 키 36개 전부 ko · en 양쪽에 채워져 있다. 돌연변이 검사 두 번 — 단추에 「시작」을 생글자로 박으니 2개가 깨졌고, ko.po 에서 MENU_DELETE_CONFIRM 을 지우니 2개가 깨졌다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "MenuRoot 의 world_select_requested 신호 — 월드 선택 화면은 단계 3 이다. 다만 기준 2 의 「있는 칸 → 월드 선택」을 테스트로 확인하려면 어디까지 넘어가는지 볼 자리가 필요하니, 신호만 올리고 멈춘 것은 지나친 앞서감이 아니다",
+    "MENU_SAVE_FAILED 오류 표시 (character_create.gd:108) — 기준에 없다. 세 칸이 다 찬 상태에서 만들기를 눌렀을 때 조용히 넘어가지 않게 둔 자리다. report 에 임시라고 적혀 있고 문구는 사람이 다듬는다",
+    "project.godot 의 main_scene 을 test_island.tscn → menu_root.tscn 으로 바꿨다. 기준 1 이 요구하는 것이라 문제는 아니지만, 이제 게임을 그냥 실행하면 G-104 시험 섬이 뜨지 않는다 — 사람이 섬을 플레이해 보려면 에디터에서 world/terrain/test_island.tscn 을 직접 열어야 한다. 단계 3(월드 선택)에서 메뉴가 섬으로 들어가는 길을 이으면 풀린다",
+    "character_create.gd 에 CharacterCreate.back_requested 로 「저장 없이 뒤로」 · character_select.gd 에 Back 단추 — 기준에 명시되지 않았지만 기준 5 의 ESC 뒤로와 짝이 되는 자리다"
+   ]
+  },
+  "test": "st_created_character_keeps_name_and_chosen_look\n* test_says_so_when_it_cannot_save\n* test_back_goes_back_without_saving\n8/8 passed.\n\n\nres://tests/ui/menu/test_character_preview.gd\n* test_preview_is_made_of_basic_3d_shapes\n* test_hair_color_choice_changes_the_hair_color\n* test_clothes_choice_changes_the_clothes_color_only\n* test_body_choice_changes_the_body_size\n* test_going_back_to_the_first_choice_restores_the_look\n5/5 passed.\n\n\nres://tests/ui/menu/test_character_select.gd\n* test_three_slots_all_empty_say_new_character\n* test_saved_character_shows_its_name_and_rest_are_empty\n* test_slot_count_stays_three_even_when_full\n* test_empty_slot_opens_creation\n* test_saved_slot_goes_to_world_select_with_that_character\n* test_delete_asks_first_and_keeps_the_character\n* test_delete_cancelled_keeps_the_character\n* test_delete_confirmed_removes_the_character\n* test_back_goes_back\n9/9 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_game_starts_at_the_main_menu\n* test_main_menu_has_start_settings_quit\n* test_start_opens_character_select\n* test_settings_is_empty_with_only_back\n* test_settings_back_returns_to_main_menu\n* test_quit_button_asks_to_quit\n6/6 passed.\n\n\nres://tests/ui/menu/test_menu_navigation.gd\n* test_escape_goes_back_from_character_select\n* test_escape_goes_back_one_screen_at_a_time\n* test_escape_on_the_main_menu_stays\n* test_only_one_screen_is_visible_at_a_time\n* test_created_character_appears_in_the_slots\n* test_saved_slot_asks_the_root_for_world_select\n6/6 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n24/24 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:67)\n         [1] _ready (res://world/terrain/test_island.gd:38)\n         [2] before_all (res://tests/world/terrain/test_island_walk.gd:12)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n9/9 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              15\nTests               105\nPassing Tests       105\nAsserts            6016\nTime              128.986s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "2e19d29"
  }
 ]
