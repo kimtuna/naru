@@ -191,8 +191,12 @@ function renderStatus(s) {
 
 function renderDecisions(text) {
   const parts = []; let fence = false;
+  let started = false;
   for (const line of text.split("\n")) {  // 코드 블록 안의 "## " 는 새 항목이 아니다
     if (line.startsWith("```")) fence = !fence;
+    // 앞머리(제목 · 사용법)는 결정이 아니다 — `---` 아래부터가 진짜 항목이다.
+    if (!fence && line.trim() === "---") { started = true; continue; }
+    if (!started) continue;
     if (!fence && line.startsWith("## ")) parts.push(line);
     else if (parts.length) parts[parts.length - 1] += "\n" + line;
   }
