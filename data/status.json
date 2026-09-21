@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "",
- "updated": "2026-09-22 01:21:32",
- "updated_epoch": 1790007692,
- "ended": "2026-09-21 07:55:25",
+ "state": "stopped",
+ "reason": "합치기 전 워킹트리가 깨끗하지 않다:  M findings.md ",
+ "updated": "2026-09-22 01:21:34",
+ "updated_epoch": 1790007694,
+ "ended": "2026-09-22 01:21:34",
  "progress": {
   "groups_total": 15,
   "groups_done": 13,
