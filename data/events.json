@@ -1297,5 +1297,85 @@
   },
   "test": "ock\n3/3 passed.\n\n\nres://tests/world/day_night/test_game_clock.gd\n* test_a_full_day_comes_round_in_twenty_real_minutes\n* test_time_flows_on_its_own\n* test_the_sun_rises_and_sets_once_in_a_day\n* test_the_sky_follows_the_clock\n* test_the_days_are_counted_one_by_one\n* test_the_time_and_the_day_carry_over_a_save_and_a_load\n* test_a_brand_new_world_starts_on_the_first_morning\n7/7 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_tab_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n25/25 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n12/12 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              39\nTests               370\nPassing Tests       370\nAsserts            7459\nTime              242.504s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "5c4054e"
+ },
+ {
+  "time": "2026-09-21 16:39:22",
+  "epoch": 1789976362,
+  "type": "pass",
+  "title": "통과 — G-110 단계 2 (죽음 · 데스 상자 · 월드 설정)",
+  "group": "G-110",
+  "step": "2",
+  "attempt": "3",
+  "report": {
+   "problem": "죽으면 데스 상자가 떨어지고 스폰 지점에서 다시 시작한다 — 데스 페널티는 서버장이 게임 중에 켜고 끄는 월드 설정이다",
+   "approach": "앞 회차가 남긴 워킹트리에 죽음 · 데스 상자 · WorldSettings 가 이미 다 서 있었다 (report.json 만 없었다). 전체 테스트(406개)와 guard 를 돌려 성한 것을 확인한 뒤, 수용 기준을 한 줄씩 다시 짚었다. 하나가 비어 있었다 — 「서버장만 이 설정을 바꾼다」가 코드(WorldSettings.set_death_penalty)에서만 참이고 사람이 바꿀 길이 없었다. 설정 창의 「월드 설정」 버튼이 disabled = true 인 빈 자리로 남아 있었고, 그 자리를 채우는 것이 바로 이 단계다. WorldSettingsScreen 을 만들어 데스 페널티 스위치를 달고 PauseMenu → GameRoot.settings 로 이었다. 스위치를 얹을 때 set_pressed_no_signal 을 쓴 까닭은 화면에 값을 얹는 toggled 가 튀어 도로 설정을 바꾸러 가기 때문이다. 손님이 스위치를 내리면 WorldSettings 가 거부하고 화면이 원래 값으로 돌아간다 — 버튼을 감추는 것(set_host)은 보이기만 다루므로 막는 것이 아니다. 빈 자리를 채웠으므로 그것을 빈 자리로 굳혀 두던 test_pause_menu.gd 의 단언(assert disabled)도 눌러서 들어갈 수 있다는 쪽으로 고쳤다. 마지막으로 전체 415개 통과 · guard 통과.",
+   "why": "데스 상자 크기 0.7 × 0.6 × 0.7 m (death_chest.gd SIZE) — 눈에 보이고 조준점으로 짚을 만한 크기로 잡았다. 아트는 프로토타입 범위 밖이다; 상자에 담기는 범위 = 가방 · 핫바 전부, 장비 칸 제외 (spec/08_combat/damage-death.md 미정의 임시안 그대로); 30분의 시간 기준 = 월드가 돌아가는 동안의 실제 시간 (_process 로 흐른다). spec 의 임시안 그대로다; 죽자마자 그 자리에서 다시 시작한다 (death.gd) — 부활 대기 시간 · 무적 시간이 미정이라 없는 셈으로 두었다; Player.equipment 는 「가방이 아닌 자리」 표시 하나뿐이다 — 장비 칸 목록 · 스탯 · 세트 효과는 미정이라 정하지 않았다; GameRoot.is_host 가 늘 true 다 (앞 단계부터의 임시) — 손님이 들어올 수 있게 되면 월드가 정한다; 월드 설정 화면의 항목은 데스 페널티 하나다 — 나머지 항목이 미정이다 (spec/01_settings/world-settings.md 미정)",
+   "files": [
+    "game/combat/damage_death/death.gd",
+    "game/combat/damage_death/death_chest.gd",
+    "game/combat/damage_death/health.gd",
+    "game/settings/world_settings/world_settings.gd",
+    "game/settings/save/world_data.gd",
+    "game/settings/save/character_data.gd",
+    "game/player/movement_controls/player.gd",
+    "game/player/inventory_hotbar/inventory.gd",
+    "game/core/game_root.gd",
+    "game/world/terrain/test_island.gd",
+    "game/ui/menu/world_settings_screen.gd",
+    "game/ui/menu/world_settings_screen.tscn",
+    "game/ui/menu/pause_menu.gd",
+    "game/ui/menu/pause_menu.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/combat/damage_death/test_death.gd",
+    "game/tests/combat/damage_death/test_death_chest.gd",
+    "game/tests/settings/test_world_settings.gd",
+    "game/tests/settings/test_world_settings_in_game.gd",
+    "game/tests/ui/menu/test_world_settings_screen.gd",
+    "game/tests/ui/menu/test_pause_menu.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "페널티 켬이면 죽은 자리에 상자가 생기고 가방 · 핫바가 옮겨진다. 장비 칸은 안 옮긴다",
+     "evidence": "tests/combat/damage_death/test_death.gd 가 진짜 player.tscn 을 세우고 health().take() 로 정말 죽인다. test_dying_leaves_a_chest_where_you_died 는 죽은 자리 좌표(x·y·z)와 상자 자리를 0.2m 안에서 맞추고 스폰 지점과 10m 넘게 떨어졌음까지 본다. test_the_bag_and_the_hotbar_go_into_the_chest 는 핫바 첫 칸(0) · 핫바 끝 칸(HOTBAR_SLOTS-1) · 가방 칸(HOTBAR_SLOTS+5) 세 자리를 따로 채워 상자 안에서 칸 번호 그대로 찾고, 가방이 통째로 비었는지(to_array() == []) · 손도 빈손인지 본다. test_the_equipment_slots_stay_on_you 는 player.equipment 를 채워 두고 죽인 뒤 그대로 남았는지 · 상자 안에 그 아이템이 없는지 본다. test_falling_to_death_leaves_the_chest_where_you_landed 는 40m 에서 실제로 떨어뜨려 낙하 피해 → 죽음 → 상자까지 한 줄로 이어 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "상자는 30분 뒤 안의 것과 함께 사라진다. 여는 동안 타이머가 멈춘다 (테스트)",
+     "evidence": "tests/combat/damage_death/test_death_chest.gd 가 LIFETIME == 30*60 을 못 박고(test_the_timer_is_thirty_minutes), test_when_the_time_is_up_the_chest_goes_with_everything_in_it 이 시간이 다 된 뒤 items() == [] · is_empty() · 무리에서 빠짐 · queue_free 넷을 다 본다. 반대 경우도 있다 — test_the_chest_only_vanishes_once_the_time_is_up 은 수명보다 0.5초 모자랄 때 안 사라짐을 본다. 멈춤은 세 겹이다: tick 으로 밀어 본 것(test_the_timer_stops_while_the_chest_is_open) · 스스로 흐르는 _process 시간도 멈추는지(test_an_open_chest_stops_the_time_that_runs_on_its_own_too) · 닫으면 멈춘 자리에서 다시 도는지(test_closing_the_chest_starts_the_timer_again). tick 이 손으로 부를 때만 도는 껍데기가 아님을 test_the_time_runs_on_its_own 이 따로 막는다. 실제 여는 길(우클릭 → 조준 → open)까지 test_death.gd 의 test_the_right_click_opens_the_chest_in_front_and_stops_its_timer 가 진짜 InputEventMouseButton 을 밀어 넣어 확인한다"
+    },
+    {
+     "ok": true,
+     "criterion": "페널티 끔이면 죽어도 인벤토리가 그대로다. 서버장만 이 설정을 바꾸고, 바뀐 값이 저장된다",
+     "evidence": "끔: test_death.gd 의 test_dying_with_the_penalty_off_keeps_everything 이 죽기 전 배열을 떠 두고 죽인 뒤 그대로인지 · 상자가 0개인지 · died 가 null 과 함께 왔는지 본다. test_the_setting_decides_at_the_moment_you_die 는 켠 채 죽이고 → 끄고 → 다시 죽여 상자가 더 안 생김을 봐서 게임 도중 바꾼 값이 쓰이는지 확인한다. 서버장만: test_world_settings.gd 의 test_a_guest_cannot_change_it 이 is_host=false 에서 set_death_penalty 가 false 를 주고 값도 changed 신호도 그대로임을 보고, test_the_guests_change_does_not_reach_the_save 가 거부된 변경이 저장본에도 안 남음을 본다. 저장: test_the_changed_value_is_saved_and_comes_back 이 실제 SaveStore(임시 폴더)로 저장 → 로드해 꺼진 채인지 보고, test_the_setting_rides_on_the_world_not_the_character 가 월드 둘을 따로 저장해 꺼 둔 쪽만 꺼져 있음을 본다. 게임 안까지 이어지는 것은 test_world_settings_in_game.gd(들고 들어온 월드 값 = 설정 · Death 가 그 설정을 쥠 · 나갈 때 저장 · 손님은 게임 안에서도 거부)와 test_world_settings_screen.gd(사람이 ESC → 월드 설정 → 스위치를 내리면 그 자리에서 꺼지고 저장본에도 적힘, 손님은 버튼이 안 보이고 억지로 스위치를 내려도 거부되고 스위치가 도로 올라감)가 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "죽으면 스폰 지점에서 다시 시작한다",
+     "evidence": "test_death.gd 의 test_you_start_again_at_the_spawn_point 이 죽는 자리(12,·,8)와 멀리 떨어뜨린 SPAWN(25,·,-25)에서 respawned 신호 · 스폰 좌표 · is_dead()==false · 체력 가득 · controls_enabled 다섯을 본다. 막아야 할 경우도 들어 있다 — test_starting_again_is_not_counted_as_a_fall 이 한참 떨어지는 중(속력이 붙은 채) 죽여도 살아난 자리에서 또 안 다치는지 보고, 그래서 revive_at 의 velocity=0 이 껍데기가 아니다"
+    }
+   ],
+   "issues": [
+    "기준은 넷 다 통과다. 아래는 다음 세션이 알고 있어야 할 구멍이다 — 이번 단계를 막지는 않는다",
+    "진짜 섬의 배선(world/terrain/test_island.gd 의 _build_death)을 보는 테스트가 하나도 없다. death.player 와 death.spawn = spawn_position() 이 거기서만 정해지는데, 그 두 줄이 틀려도(예: spawn 을 안 넣어 Vector3.ZERO 로 남아 바다 한가운데서 살아나도) 415개가 전부 통과한다. tests/world/terrain/test_island_in_game.gd 에 섬을 세운 채 죽여서 상자가 떨어지고 섬의 spawn_position() 자리에 다시 서는지 보는 검사를 하나 붙여라",
+    "GameRoot 가 붙이는 death.respawned → _apply_input_block(창을 열어 둔 채 죽었다 살아나면 조작을 도로 막는다)을 확인하는 테스트가 없다. 설정 창을 연 채 죽이고 살아난 뒤 player.controls_enabled 가 false 인지 보는 검사를 tests/settings/test_world_settings_in_game.gd 또는 test_island_in_game.gd 에 붙여라",
+    "spec/08_combat/damage-death.md 의 「죽은 본인만 열고 꺼낼 수 있다」가 아직 없다 — DeathChest 에 주인이 없고 Death.open 은 누구든 연다. 이번 단계 기준에는 없으므로(멀티플레이 몫) 지금 고칠 일은 아니고, 그 단계에서 기준으로 올라와야 한다",
+    "상자 안의 것을 꺼내는 창이 없어 여닫기까지만 된다(death.gd 주석에 적혀 있다, spec/12_ui/hud.md 몫). 상자는 저장본에도 안 적혀 나갔다 들어오면 사라진다(death_chest.gd 주석에 적혀 있다, spec/01_settings/save.md 몫)"
+   ],
+   "good": [
+    "우클릭으로 상자를 여닫는 입력 경로 전체(Death._unhandled_input · interact · aimed_chest, test_island 에서 제작대보다 뒤에 붙여 우클릭을 먼저 받게 한 것). 기준은 「여는 동안 타이머가 멈춘다」뿐이지만 여는 길이 있어야 그 기준이 참이 되므로 과한 덤으로 보지 않는다",
+    "Player.equipment 와 CharacterData.equipment(to_dict/from_dict 저장까지). 「장비 칸은 안 옮긴다」를 말하려면 가방이 아닌 자리가 있어야 하므로 필요하나, 저장본에 칸을 넣은 것은 장비 단계(spec/02_player/equipment.md) 몫을 조금 앞당긴 것이다. 지금은 칸 이름 · 스탯 · 세트 효과가 전혀 없는 빈 Dictionary 하나뿐이라 순서를 크게 흐트러뜨리지는 않는다",
+    "GameRoot 의 death.respawned → _apply_input_block 배선(창 열어 둔 채 살아나면 조작을 도로 막는다). 기준에 없고 테스트도 없다",
+    "Health.refill() · Inventory.clear() — 다시 시작과 상자 옮김에 쓰이는 도구다",
+    "PauseMenu 의 「월드 설정」 버튼 disabled 제거 + WorldSettingsScreen 신설. 이 단계 제목이 「죽음 · 데스 상자 · 월드 설정」이고 기준에 「서버장만 이 설정을 바꾸고」가 있어 범위 안이다. 빈 자리를 지키던 test_pause_menu.gd 의 assert_true(disabled) 를 assert_false 로 고친 것도 그래서 맞다 — 사람이 정한 줄을 지운 것이 아니다"
+   ]
+  },
+  "test": "lock\n3/3 passed.\n\n\nres://tests/world/day_night/test_game_clock.gd\n* test_a_full_day_comes_round_in_twenty_real_minutes\n* test_time_flows_on_its_own\n* test_the_sun_rises_and_sets_once_in_a_day\n* test_the_sky_follows_the_clock\n* test_the_days_are_counted_one_by_one\n* test_the_time_and_the_day_carry_over_a_save_and_a_load\n* test_a_brand_new_world_starts_on_the_first_morning\n7/7 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_tab_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n25/25 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n12/12 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              44\nTests               415\nPassing Tests       415\nAsserts            7629\nTime              249.13s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "12f7bef"
  }
 ]

@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 15:46:49",
- "updated_epoch": 1789973209,
+ "updated": "2026-09-21 16:39:22",
+ "updated_epoch": 1789976362,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 16,
   "groups_done": 9,
   "groups_waiting": 0,
   "steps_total": 17,
-  "steps_done": 5
+  "steps_done": 6
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-110",
- "step": "1",
- "step_title": "체력 · 피해 · 총",
- "attempt": "1",
+ "step": "2",
+ "step_title": "죽음 · 데스 상자 · 월드 설정",
+ "attempt": "3",
  "phase": "QA",
- "phase_since": "2026-09-21 15:40:55"
+ "phase_since": "2026-09-21 16:32:50"
 }
