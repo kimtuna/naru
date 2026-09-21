@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 07:48:01",
- "updated_epoch": 1790030881,
+ "updated": "2026-09-22 08:27:56",
+ "updated_epoch": 1790033276,
  "ended": "2026-09-22 05:58:25",
  "progress": {
   "groups_total": 6,
-  "groups_done": 2,
+  "groups_done": 3,
   "groups_waiting": 0,
   "steps_total": 14,
-  "steps_done": 5
+  "steps_done": 6
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-119",
- "step": "2",
- "step_title": "몇 번 쳐야 부서진다",
+ "group": "G-120",
+ "step": "1",
+ "step_title": "놓고 열고 넣고 뺀다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 07:44:44"
+ "phase_since": "2026-09-22 08:24:43"
 }
