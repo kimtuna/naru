@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 18:18:04",
- "updated_epoch": 1789982284,
+ "updated": "2026-09-21 18:46:06",
+ "updated_epoch": 1789983966,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 14,
-  "groups_done": 10,
+  "groups_done": 11,
   "groups_waiting": 0,
   "steps_total": 13,
   "steps_done": 8
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-111",
- "step": "2",
- "step_title": "앵커 · 갈고리총",
- "attempt": "2",
+ "group": "G-112",
+ "step": "1",
+ "step_title": "발 디딜 틈과 약초 스팟",
+ "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 18:02:17"
+ "phase_since": "2026-09-21 18:46:06"
 }
