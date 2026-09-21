@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 06:55:25",
- "updated_epoch": 1790027725,
+ "updated": "2026-09-22 07:20:18",
+ "updated_epoch": 1790029218,
  "ended": "2026-09-22 05:58:25",
  "progress": {
   "groups_total": 6,
-  "groups_done": 1,
+  "groups_done": 2,
   "groups_waiting": 0,
   "steps_total": 14,
-  "steps_done": 3
+  "steps_done": 4
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-117",
- "step": "3",
- "step_title": "빈손에서 한 바퀴가 이어진다",
+ "group": "G-119",
+ "step": "1",
+ "step_title": "부수면 그대로 돌아온다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 06:46:59"
+ "phase_since": "2026-09-22 07:14:38"
 }
