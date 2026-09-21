@@ -1,15 +1,15 @@
 {
  "state": "running",
- "reason": "재개",
- "updated": "2026-09-22 06:28:29",
- "updated_epoch": 1790026109,
+ "reason": "",
+ "updated": "2026-09-22 06:55:25",
+ "updated_epoch": 1790027725,
  "ended": "2026-09-22 05:58:25",
  "progress": {
   "groups_total": 6,
   "groups_done": 1,
   "groups_waiting": 0,
   "steps_total": 14,
-  "steps_done": 2
+  "steps_done": 3
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-117",
@@ -17,5 +17,5 @@
  "step_title": "빈손에서 한 바퀴가 이어진다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 05:45:01"
+ "phase_since": "2026-09-22 06:46:59"
 }

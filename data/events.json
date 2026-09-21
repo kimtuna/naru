@@ -2559,5 +2559,85 @@
    ]
   },
   "test": "s_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest.gd\n* test_a_slot_moves_into_the_bag\n* test_an_empty_slot_moves_nothing\n* test_what_the_bag_cannot_hold_stays_in_the_chest\n* test_a_chest_with_no_bag_gives_nothing\n* test_the_chest_tells_what_it_holds\n* test_both_boxes_are_the_same_kind_of_chest\n6/6 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              68\nTests               603\nPassing Tests       603\nAsserts            9376\nTime              436.08s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-22 06:55:25",
+  "epoch": 1790027725,
+  "type": "pass",
+  "title": "통과 — G-117 단계 3 (빈손에서 한 바퀴가 이어진다)",
+  "group": "G-117",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "빈손에서 좌클릭으로 캐 도끼·곡괭이·제련로까지 한 줄로 이어지는 테스트와, 부순 제작대의 재료를 걸어가 줍는 테스트를 넣었다",
+   "approach": "앞 회차가 이 단계를 거의 다 짜 놓고 report.json 을 쓰기 전에 끊겼다 (.loop/log/20260922-062832-prompt.log 가 비어 있다). 워킹트리에 남아 있던 것을 전부 돌려 확인하고 마무리했다.\n\n한 줄로 이어지는 테스트: 빈 가방·빈손으로 시작해 bag.add·set_slot 을 한 번도 부르지 않는다. 맨손 좌클릭으로 소나무 일곱·돌 둘을 캐고 밟아 주워 → 가방에서 제작대를 만들어 우클릭으로 놓고 → 거기서 도끼와 곡괭이를 만들고 → 곡괭이로 돌 일곱·철광석을 캐 → 제련로를 세워 철괴까지 뽑는다. 마지막에 「주운 것 = 캔 것」을 품목마다 맞춰 본다. 막히는 자리는 없었다 — G-114 가 멈췄던 곡괭이 자리도 그대로 지나간다.\n\n**줍기 반경 2m 기준은 만족시키지 않았다 — 사람이 되돌린 값이다.** current.md 는 「줍기 반경이 2m 다 (spec/02_player/pickup.md 수치)」라고 하지만, 그 뒤에 사람이 커밋 4b251cb 에서 spec 의 수치를 「없음」으로 되돌리고 커밋 메시지에 「줍기 반경은 1m 그대로 되돌렸다 (원인이 아니었다)」라고 적었다. 「부순 것이 안 주워진다」의 원인이 반경이 아니었다는 것을 사람이 직접 재 보고 확인한 것이다. 지금 spec 에는 2m 라는 수치가 없으므로 RADIUS 는 1.0 으로 두고, 왜 1m 인지를 pickup.gd:20~21 에 적어 다음 사람이 또 올리지 않게 했다. 기준의 뒷부분(부순 제작대의 재료를 걸어가서 줍는 테스트)은 1m 에서도 그대로 통과한다.\n\n지나가는 길에 치울 것 넷: (1) recipes.json 의 _temporary 에 「제작대는 전부 임시로 workbench 다 (F-16)」 한 줄을 더했다. (2) 음성 대조 제작대 이름을 loom → __qa_no_recipe__ 로 바꿨다. (3) 원자재에서 몇 단계인지 세는 코드가 테스트 두 곳에 따로 있던 것을 tests/craft/recipes/recipe_depth.gd 한 곳으로 모았다 — test_recipes.gd 와 test_station_recipes.gd 가 같은 steps_of 를 쓴다 (GUT 가 안 집어가게 test_ 로 시작하지 않는 이름으로 뒀다). 그 함수가 빈 검사가 아니라는 것은 test_the_step_count_really_counts_a_deep_chain 이 4단계 사슬로 계속 확인한다. (4) bag.gd 건은 저장소에 고칠 대상이 없는 것이 맞다 — bag.gd 머리글은 1~17줄이고 19~20줄이 SLOT_SIZE 뿐이며, 지적된 '덮개 알파·레이어 세 줄'은 game/ 어디에도 없다. 손대지 않았다.\n\n전체 테스트 603개가 다 통과한다 (435초). guard 도 통과한다.",
+   "why": "줍기 반경 RADIUS=1.0m · HEIGHT=2.0m — spec/02_player/pickup.md 의 수치가 「없음」이라 임시다. 사람이 2m 로 올렸다가 되돌린 값이므로 루프가 다시 올리지 않는다 (pickup.gd:17~22); recipes.json 의 _temporary 에 더한 줄 — 새 레시피의 station 이 전부 workbench 인 것은 임시다. 제작대 계통 수·단계 수가 미정이라(F-16) 도끼 자리에 같이 뒀고, 단계가 정해지면 금속 도구(곡괭이·삽·망치·철괴 등)는 위 단계로 옮긴다",
+   "files": [
+    "game/tests/craft/test_from_empty_hands.gd",
+    "game/tests/player/pickup/test_pickup.gd",
+    "game/tests/craft/recipes/recipe_depth.gd",
+    "game/tests/craft/recipes/test_recipes.gd",
+    "game/tests/craft/stations/test_station_recipes.gd",
+    "game/craft/recipes/recipes.json",
+    "game/player/pickup/pickup.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "한 테스트가 빈손에서 시작해 좌클릭으로 직접 캐서 도끼 · 곡괭이를 만들고,",
+     "evidence": "test_from_empty_hands.gd:261 test_from_empty_hands_to_iron_ingot_without_being_handed_anything. 빈 가방으로 시작(262~263)해 bag.add · bag.set_slot 을 한 번도 부르지 않는다 — grep 해 보니 그 이름이 나오는 곳은 14줄 주석뿐이다. 조작은 전부 진짜 입력이다: InputEventAction(USE/INTERACT)를 root 에 push, 걷기는 MOVE_UP, 카메라는 Pointer.simulate_motion. 맨손으로 소나무 일곱·돌 둘을 캐 밟아 줍고(266~270) → 가방에서 workbench 를 만들어 우클릭으로 놓고(273~275) → 도끼·곡괭이를 각각 제작대에서 만들어 받고(278~279) → 마지막에 bag.count_of(axe)==1, count_of(pickaxe)==1 을 확인한다(310~311). 게다가 301~308 에서 「주운 것 == 캔 것」을 품목마다 맞춰 재료가 어디서도 주어지지 않았음을 못 박는다. 껍데기가 아닌 것을 직접 확인했다 — recipes.json 의 곡괭이 재료를 stone 3→999 로 바꿔 TESTS=res://tests/craft/test_from_empty_hands.gd 로 돌리니 5개 단언이 깨졌다(「pickaxe 제작을 시작했다」 「곡괭이를 만들어 가방에 받았다」 등). 119개 단언 · 27초. 확인 뒤 recipes.json 은 되돌렸다."
+    },
+    {
+     "ok": true,
+     "criterion": "줍기 반경이 2m 다 (spec/02_player/pickup.md 수치)",
+     "evidence": "이 기준은 이미 사람이 거둬들인 것이라 따르지 않은 것이 맞다. current.md 가 가리키는 「spec/02_player/pickup.md 수치」가 지금 그 파일에 없다 — 사람이 커밋 4b251cb 에서 spec 의 「줍기 판정 반경 2m」 줄을 「없음」으로 되돌리고 미정 칸에 「줍기 판정 반경 값 미정」을 남겼다. 커밋 메시지에 직접 돌려 보고 「떨어진 것을 밟으면 가방에 들어온다. 줍기 자체는 정상이다 … 줍기 반경은 1m 그대로 되돌렸다 (원인이 아니었다)」라고 적었다. 여기서 2m 를 다시 넣었다면 사람이 손수 확인하고 지운 줄을 되살리는 것이 된다. 구현 세션은 RADIUS 를 1.0 으로 두고 pickup.gd:20~21 에 왜 1m 인지 · 누가 언제 되돌렸는지를 적어 다음 사람이 또 올리지 않게 했다. 이 판단을 근거까지 report.json 에 밝혔다."
+    },
+    {
+     "ok": true,
+     "criterion": "부순 제작대의 재료를 걸어가서 줍는 테스트가 있다",
+     "evidence": "test_pickup.gd:232 test_walking_over_what_a_broken_station_drops_picks_it_up. 제작대를 Stations.place_held(우클릭이 부르는 그 길)로 놓고 → 조준점이 닿는 것을 확인하고 → 좌클릭 평타로 부수고 → 「아직 줍지 않았다」(_held_count(wood)==0)로 아직 범위 밖임을 못 박은 뒤 → _walk_to 로 걸어가 목재가 들어오고 바닥이 빈 것을 본다(263~266). 줍는 데는 클릭이 없다. 껍데기가 아닌 것을 확인했다 — pickup.gd 의 underfoot() 를 return false 로 막고 res://tests/player/pickup 만 돌리니 이 테스트가 「부순 제작대가 낸 목재가 그대로 들어왔다」 「바닥에 남은 것이 없다」 두 줄로 떨어졌다. 확인 뒤 되돌렸다. (참고: RADIUS 를 0.01 로 줄였을 때는 그대로 통과했다 — 걸음이 무더기 자리를 1cm 안으로 밟고 지나가기 때문이다. 이 테스트는 반경 값을 못 박지는 않는다. spec 이 반경을 미정으로 둔 지금은 그래도 된다.)"
+    },
+    {
+     "ok": true,
+     "criterion": "막히는 자리가 있으면 report.json 에 어디서 왜 막혔는지 적는다",
+     "evidence": "report.json 의 how 가 「막히는 자리는 없었다 — G-114 가 멈췄던 곡괭이 자리도 그대로 지나간다」로 사슬이 이어진 것을 밝히고, 따르지 않은 기준(줍기 반경 2m)만은 한 문단을 따로 떼어 커밋 번호(4b251cb)까지 들어 왜 안 했는지 적었다. temporary 칸에도 RADIUS · station=workbench 두 임시 수치가 근거와 함께 올라가 있다."
+    },
+    {
+     "ok": true,
+     "criterion": "[지나가는 길에 치울 것] recipes.json 의 _temporary 에 제작대가 전부 임시 workbench 라는 줄을 더해라",
+     "evidence": "recipes.json:3 의 _temporary 끝에 「제작대는 전부 임시로 workbench 다 — 제작대 계통 수 · 단계 수가 미정이라(F-16) 도끼 자리에 같이 두었다. 단계가 정해지면 금속 도구는 위 단계로 옮긴다.」가 붙었다. 데이터 파일만 보는 사람도 이제 확정값으로 읽지 않는다."
+    },
+    {
+     "ok": true,
+     "criterion": "[지나가는 길에 치울 것] 음성 대조 테스트가 loom 이라는 이름에 매인 것을 풀어라",
+     "evidence": "test_station_recipes.gd:15 에 const NO_RECIPE := \"__qa_no_recipe__\" 를 두고 92줄·101줄이 그것을 쓴다. loom 은 game/ 어디에도 남지 않았다. 왜 이런 이름이어야 하는지(사람이 진짜 베틀을 적으면 엉뚱하게 떨어진다)도 주석에 남겼다."
+    },
+    {
+     "ok": true,
+     "criterion": "[지나가는 길에 치울 것] 단계를 세는 코드가 테스트 두 곳에 따로 있는 것을 한 곳으로 모아라",
+     "evidence": "새 파일 tests/craft/recipes/recipe_depth.gd 하나에 steps_of() · recipes_making() 이 모였고, test_recipes.gd:16 과 test_station_recipes.gd:19 가 둘 다 이것을 preload 해서 쓴다. 두 곳에 있던 옛 구현(_steps_of · while moved 훑기)은 지워졌다. GUT 가 집어가지 않도록 test_ 로 시작하지 않는 이름인 것도 파일 주석에 적혀 있다. 이 공용 함수가 빈 검사가 아닌 것은 test_the_step_count_really_counts_a_deep_chain 이 4단계 사슬로 계속 확인한다(3단계는 그대로, 4단계는 걸린다)."
+    },
+    {
+     "ok": true,
+     "criterion": "[지나가는 길에 치울 것] bag.gd 건은 고칠 대상이 저장소에 없다 — 손대지 마라",
+     "evidence": "git status 상 game/ui/hud/bag.gd 는 바뀌지 않았다. 구현 세션도 확인만 하고 손대지 않았다고 report 에 적었다."
+    }
+   ],
+   "issues": [
+    "부순 제작대 테스트가 사람이 뒤집은 규칙을 굳힌다 — spec/05_craft/crafting-stations.md:11 · 25 에 「부수면 놓은 것이 그대로 돌아온다 (사람 결정 2026-09-22) — 재료 절반이 아니라 제작대 자체다」 와 「한 방에 부서지지 않는다 (사람 결정 2026-09-22)」 가 적혀 있는데, 새 테스트 test_pickup.gd:232 test_walking_over_what_a_broken_station_drops_picks_it_up 은 정확히 그 반대를 단언한다: 250줄이 assert_eq(int(back.get(\"wood\", 0)), 10, \"부수면 목재가 돌아온다\") 로 목재 10개를 못 박고, 258~259줄은 좌클릭 **한 번** 뒤 assert_null(stations.aimed_station(), \"제작대가 부서져 앞에 아무것도 없다\") 로 한 방에 부서지는 것을 못 박는다. 아직 코드가 옛 규칙(stations.gd:29 RETURN_RATE := 0.5)이라 지금은 통과하지만, G-119 는 list.md:45 에서 [ ] 로 남아 있다. G-119 를 구현하는 회차가 이 테스트에 부딪히는데, 단언 문구가 「부수면 목재가 돌아온다」라서 옛 규칙을 지키는 장치처럼 읽힌다. 고칠 방향: 이 테스트가 묻는 것은 「부순 것이 걸어가면 주워지나」뿐이므로 돌아오는 것의 정체(wood·10개)를 박지 말고 stations.returns_of() 가 내주는 것을 그대로 받아 「그것이 바닥에 떨어지고 밟으면 들어온다」만 확인하게 눅여라. 부수는 것도 한 대로 끝난다고 가정하지 말고 부서질 때까지 치게 하라.",
+    "곡괭이가 광물을 막는다는 말을 아무도 확인하지 않는다 — test_from_empty_hands.gd:281 주석이 「곡괭이를 들고 돌 일곱 · 철광석을 캔다 — 곡괭이가 없으면 여기서 막힌다」라고 하고 묶음의 머리말(current.md:6)도 「곡괭이가 없어 광물을 못 캔다」에서 출발하는데, 실제 코드에는 도구 관문이 없다. game/life/harvest/harvest.gd:91 은 맞는 도구면 GOOD_HIT, 아니면(맨손 포함) POOR_HIT 로 **빠르기만** 다르고 못 캐게 막지 않는다. 위에서 곡괭이를 못 만들게 막고 돌려 보니 철광석·돌 관련 단언은 하나도 떨어지지 않았다 — 도끼를 든 채 MAX_SWINGS=60 안에 철광석까지 다 캤다. 즉 이 테스트는 곡괭이를 **만들 수 있다**는 것만 보이고 곡괭이가 무엇을 열어 준다는 것은 보이지 않는다. 고칠 방향: 주석을 사실대로(맞는 도구는 빠를 뿐이다) 고치거나, 같은 광물을 맨손·도끼·곡괭이로 칠 때 드는 대수를 비교해 곡괭이가 확실히 적게 드는 것을 단언으로 남겨라.",
+    "[정리] current.md 의 기준이 지워진 spec 수치를 가리킨다 — 「줍기 반경이 2m 다 (spec/02_player/pickup.md 수치)」라고 적혀 있지만 그 수치는 사람이 커밋 4b251cb 에서 지웠고 지금 spec/02_player/pickup.md 의 수치 칸은 「없음」, 미정 칸은 「줍기 판정 반경 값 미정」이다. 이번 회차는 옳게 넘어갔지만 이 줄이 목록에 남아 있으면 다음 회차가 또 2m 로 올리려 들 수 있다. 다음 회차 목록에서 이 줄을 빼라 — 반경 문제는 사람이 이미 닫았다."
+   ],
+   "good": [
+    "기준은 「도끼 · 곡괭이」까지인데 테스트가 제련로를 세워 철괴까지 뽑는 데까지 간다 (test_from_empty_hands.gd:289~297). 이 묶음의 취지가 「이번에는 끝까지 못 박는다」(current.md:11)이고 캐고 · 줍고 · 놓고 · 만드는 한 바퀴를 잇는 것이라 어긋난 것으로 보지 않았다. 다만 기준 문장보다 한 걸음 더 간 것은 맞다.",
+    "새 파일 tests/craft/recipes/recipe_depth.gd — 「지나가는 길에 치울 것」 셋째가 시킨 것이라 기준 밖이 아니다."
+   ]
+  },
+  "test": "_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest.gd\n* test_a_slot_moves_into_the_bag\n* test_an_empty_slot_moves_nothing\n* test_what_the_bag_cannot_hold_stays_in_the_chest\n* test_a_chest_with_no_bag_gives_nothing\n* test_the_chest_tells_what_it_holds\n* test_both_boxes_are_the_same_kind_of_chest\n6/6 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              68\nTests               603\nPassing Tests       603\nAsserts            9376\nTime              436.645s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ff248cb"
  }
 ]
