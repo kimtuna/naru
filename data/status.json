@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 08:50:29",
- "updated_epoch": 1789948229,
+ "updated": "2026-09-21 09:08:07",
+ "updated_epoch": 1789949287,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 8,
-  "groups_done": 3,
+  "groups_done": 4,
   "groups_waiting": 0,
   "steps_total": 20,
-  "steps_done": 9
+  "steps_done": 10
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-103",
- "step": "5",
- "step_title": "ESC 설정 창",
+ "group": "G-105",
+ "step": "2",
+ "step_title": "인벤토리",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 08:46:32"
+ "phase_since": "2026-09-21 09:02:27"
 }
