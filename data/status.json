@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 13:40:58",
- "updated_epoch": 1789965658,
+ "updated": "2026-09-21 14:03:07",
+ "updated_epoch": 1789966987,
  "ended": "2026-09-21 07:55:25",
  "progress": {
-  "groups_total": 9,
+  "groups_total": 16,
   "groups_done": 7,
   "groups_waiting": 0,
-  "steps_total": 22,
-  "steps_done": 19
+  "steps_total": 17,
+  "steps_done": 2
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-108",
- "step": "1",
- "step_title": "하루 20분",
- "attempt": "2",
+ "step": "2",
+ "step_title": "버프 음식 1종",
+ "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 13:34:52"
+ "phase_since": "2026-09-21 13:58:42"
 }
