@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 17:12:41",
- "updated_epoch": 1789978361,
+ "updated": "2026-09-21 18:18:04",
+ "updated_epoch": 1789982284,
  "ended": "2026-09-21 07:55:25",
  "progress": {
-  "groups_total": 16,
+  "groups_total": 14,
   "groups_done": 10,
   "groups_waiting": 0,
-  "steps_total": 17,
-  "steps_done": 7
+  "steps_total": 13,
+  "steps_done": 8
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-111",
- "step": "1",
- "step_title": "벽면에 붙어 오른다 · 기력",
- "attempt": "1",
+ "step": "2",
+ "step_title": "앵커 · 갈고리총",
+ "attempt": "2",
  "phase": "QA",
- "phase_since": "2026-09-21 17:04:52"
+ "phase_since": "2026-09-21 18:02:17"
 }
