@@ -1,15 +1,15 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-114\", \"step\": 3, \"title\": \"내 섬 선착장을 짓는다\", \"last\": true}",
- "updated": "2026-09-22 01:24:18",
- "updated_epoch": 1790007858,
+ "reason": "{\"done\": false, \"bundle\": \"G-114\", \"merge\": true}",
+ "updated": "2026-09-22 01:26:05",
+ "updated_epoch": 1790007965,
  "ended": "2026-09-22 01:21:34",
  "progress": {
   "groups_total": 15,
   "groups_done": 13,
   "groups_waiting": 0,
   "steps_total": 42,
-  "steps_done": 38
+  "steps_done": 39
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-114",
@@ -17,5 +17,5 @@
  "step_title": "내 섬 선착장을 짓는다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-22 01:22:27"
+ "phase_since": "2026-09-22 01:24:21"
 }
