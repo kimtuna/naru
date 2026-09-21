@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 14:34:50",
- "updated_epoch": 1789968890,
+ "updated": "2026-09-21 15:07:49",
+ "updated_epoch": 1789970869,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 16,
   "groups_done": 8,
   "groups_waiting": 0,
   "steps_total": 17,
-  "steps_done": 3
+  "steps_done": 4
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-109",
- "step": "1",
- "step_title": "섬 · 플레이어 · 하늘을 게임 씬에 붙인다",
+ "step": "2",
+ "step_title": "월드 시드가 자원 배치를 정한다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 14:29:30"
+ "phase_since": "2026-09-21 14:57:11"
 }
