@@ -118,7 +118,7 @@
 ## [ ] G-108 하루 20분 · 버프 음식
 - spec: spec/03_world/day-night.md, spec/09_expedition/common.md, spec/04_life/farming.md
 - 결정: 하루 20분 (roadmap.md 프로토타입)
-- [ ] 1. 하루 20분
+- [x] 1. 하루 20분
   - 기준: 게임 시간이 20분에 한 바퀴 돌고, 해가 뜨고 진다 (Sky3D 를 쓴다)
   - 기준: 날짜가 센다. 저장했다 불러와도 시각과 날짜가 이어진다
   - 기준: 작물 성장 · 자원 재생이 이 날짜를 쓴다
