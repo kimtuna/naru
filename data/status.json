@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 11:31:12",
- "updated_epoch": 1789957872,
+ "updated": "2026-09-21 12:10:31",
+ "updated_epoch": 1789960231,
  "ended": "2026-09-21 07:55:25",
  "progress": {
-  "groups_total": 8,
+  "groups_total": 9,
   "groups_done": 5,
   "groups_waiting": 0,
-  "steps_total": 20,
-  "steps_done": 15
+  "steps_total": 22,
+  "steps_done": 16
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-106",
- "step": "1",
- "step_title": "제작대 설치 · 열기",
- "attempt": "1",
+ "step": "2",
+ "step_title": "레시피 · 타이머 · 출력 버퍼",
+ "attempt": "2",
  "phase": "QA",
- "phase_since": "2026-09-21 11:25:55"
+ "phase_since": "2026-09-21 12:05:45"
 }
