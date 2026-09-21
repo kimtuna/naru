@@ -53,7 +53,7 @@
 ## [x] G-113 개척 섬 — 화산 섬 · 배 (2026-09-21)
 - 끝났다. 단계와 기준은 archive/list-3d-done.md
 
-## [ ] G-114 막힌 진행을 푼다 — 맨손 제작 · 하루 40분 · 개발용 상자
+## [x] G-114 막힌 진행을 푼다 — 맨손 제작 · 하루 40분 · 개발용 상자
 - spec: spec/02_player/inventory-hotbar.md, spec/05_craft/recipes.md, spec/03_world/day-night.md,
   spec/01_settings/world-settings.md
 - **지금 게임이 여기서 끝난다** — 빈손으로 시작하는데 도끼도 제작대도 만들 방법이 없다
@@ -77,7 +77,7 @@
 ## [ ] G-115 HUD · 조작 — E 가방 · 칸 옮기기 · 체력 · 시계 · 맵
 - spec: spec/12_ui/hud.md, spec/01_settings/input.md, spec/02_player/inventory-hotbar.md
 - 전부 화면에 보이는 것이라 한 묶음이다. 사람이 플레이해 보고 한꺼번에 짚었다 (2026-09-21)
-- [ ] 1. E 로 가방 · 칸끼리 옮기기
+- [x] 1. E 로 가방 · 칸끼리 옮기기
   - 기준: 가방이 **E** 로 열리고 닫힌다 (Tab 에서 옮겼다). ESC 는 그대로다
   - 기준: 끌어다 놓아 칸 자리를 바꾼다. 핫바와 가방 사이도 오간다 (테스트)
   - 기준: 같은 것 위에 놓으면 합쳐지고, 한 칸을 넘는 몫은 원래 자리에 남는다 (테스트)

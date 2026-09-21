@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-114\", \"merge\": true}",
- "updated": "2026-09-22 01:26:05",
- "updated_epoch": 1790007965,
+ "reason": "",
+ "updated": "2026-09-22 01:50:10",
+ "updated_epoch": 1790009410,
  "ended": "2026-09-22 01:21:34",
  "progress": {
   "groups_total": 15,
-  "groups_done": 13,
+  "groups_done": 14,
   "groups_waiting": 0,
   "steps_total": 42,
-  "steps_done": 39
+  "steps_done": 40
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-114",
- "step": "3",
- "step_title": "내 섬 선착장을 짓는다",
+ "group": "G-115",
+ "step": "1",
+ "step_title": "E 로 가방 · 칸끼리 옮기기",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-22 01:24:21"
+ "phase": "QA",
+ "phase_since": "2026-09-22 01:46:19"
 }
