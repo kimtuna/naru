@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 07:20:18",
- "updated_epoch": 1790029218,
+ "updated": "2026-09-22 07:48:01",
+ "updated_epoch": 1790030881,
  "ended": "2026-09-22 05:58:25",
  "progress": {
   "groups_total": 6,
   "groups_done": 2,
   "groups_waiting": 0,
   "steps_total": 14,
-  "steps_done": 4
+  "steps_done": 5
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-119",
- "step": "1",
- "step_title": "부수면 그대로 돌아온다",
+ "step": "2",
+ "step_title": "몇 번 쳐야 부서진다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 07:14:38"
+ "phase_since": "2026-09-22 07:44:44"
 }
