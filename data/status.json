@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 02:53:25",
- "updated_epoch": 1790013205,
+ "updated": "2026-09-22 02:53:28",
+ "updated_epoch": 1790013208,
  "ended": "2026-09-22 01:21:34",
  "progress": {
   "groups_total": 16,
-  "groups_done": 14,
+  "groups_done": 15,
   "groups_waiting": 0,
   "steps_total": 44,
   "steps_done": 42
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-115",
- "step": "3",
- "step_title": "맵 (M) — 걸은 만큼 밝혀진다",
+ "group": "G-116",
+ "step": "1",
+ "step_title": "껍데기 테스트 갚기",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-22 02:48:46"
+ "phase": "구현",
+ "phase_since": "2026-09-22 02:53:28"
 }
