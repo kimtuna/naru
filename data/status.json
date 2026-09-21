@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 10:40:49",
- "updated_epoch": 1789954849,
+ "updated": "2026-09-21 11:04:53",
+ "updated_epoch": 1789956293,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 8,
   "groups_done": 4,
   "groups_waiting": 0,
   "steps_total": 20,
-  "steps_done": 13
+  "steps_done": 14
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-105",
- "step": "5",
- "step_title": "밟으면 줍힌다",
+ "step": "6",
+ "step_title": "자원 재생",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 10:35:34"
+ "phase_since": "2026-09-21 11:00:18"
 }
