@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-117\", \"step\": 1, \"title\": \"도구 4종과 등반 장비 3종을 다 만든다\", \"last\": false}",
- "updated": "2026-09-22 04:23:43",
- "updated_epoch": 1790018623,
+ "reason": "",
+ "updated": "2026-09-22 04:46:36",
+ "updated_epoch": 1790019996,
  "ended": "2026-09-22 01:21:34",
  "progress": {
   "groups_total": 6,
   "groups_done": 1,
   "groups_waiting": 0,
   "steps_total": 14,
-  "steps_done": 0
+  "steps_done": 1
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-117",
  "step": "1",
  "step_title": "도구 4종과 등반 장비 3종을 다 만든다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-22 04:14:20"
+ "phase": "QA",
+ "phase_since": "2026-09-22 04:43:05"
 }
