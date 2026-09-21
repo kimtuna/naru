@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 22:15:09",
- "updated_epoch": 1789996509,
+ "updated": "2026-09-21 22:24:36",
+ "updated_epoch": 1789997076,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 14,
   "groups_done": 12,
   "groups_waiting": 0,
-  "steps_total": 13,
-  "steps_done": 11
+  "steps_total": 37,
+  "steps_done": 35
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-113",
  "step": "2",
  "step_title": "화산 섬 — 유황이 나는 섬",
- "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-21 22:15:09"
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-21 22:18:31"
 }

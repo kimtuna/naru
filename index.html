@@ -219,6 +219,8 @@ function parseList(text) {
     if (!g) continue;
     if ((m = line.match(/^- \[( |x)\] (\d+)\.\s+(.*)$/))) { st = { done: m[1] === "x", title: m[2] + ". " + m[3], crit: [] }; g.steps.push(st); continue; }
     if ((m = line.match(/^\s+- 기준:\s*(.*)$/)) && st) st.crit.push(m[1]);
+    // 단계를 archive 로 내린 묶음은 설명 줄만 남는다 — 그것을 보여 준다.
+    else if (!st && (m = line.match(/^- (?!spec:)(.+)$/))) g.note = (g.note ? g.note + " " : "") + m[1];
   }
   return groups;
 }
@@ -233,8 +235,8 @@ function renderList(text, status) {
     const isCur = firstTodo && g.id === firstTodo.id;
     const [cls, label] = isCur ? ["t-fail", "진행 중"] : TAG[g.state];
     return `<details ${isCur ? "open" : ""}><summary><span class="tag ${cls}">${label}</span>
-      <span class="title">${esc(g.id)} ${esc(g.title)}</span><span class="count">${done}/${g.steps.length}</span></summary>
-      <div class="body"><ul class="steps">${g.steps.map((s) => `<li><span>${s.done ? "✅" : "⬜"}</span><span>${esc(s.title)}
+      <span class="title">${esc(g.id)} ${esc(g.title)}</span><span class="count">${g.steps.length ? `${done}/${g.steps.length}` : (g.state === "x" ? "끝남" : "—")}</span></summary>
+      <div class="body">${g.steps.length ? "" : `<div class="empty">${esc(g.note || "단계 기록이 archive 로 옮겨졌다")}</div>`}<ul class="steps">${g.steps.map((s) => `<li><span>${s.done ? "✅" : "⬜"}</span><span>${esc(s.title)}
         ${s.crit.map((c) => `<span class="crit">· ${md(c).replace(/^<p>|<\/p>\s*$/g, "")}</span>`).join("")}</span></li>`).join("")}</ul></div></details>`;
   }).join("");
 }
