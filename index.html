@@ -107,6 +107,8 @@ button.theme { background: none; border: 1px solid var(--line); color: var(--mut
 
   <h2>결정 대기 <span id="dcount"></span></h2>
   <div id="decisions"></div>
+  <h2>루프가 찾은 것 <span id="fcount"></span></h2>
+  <div id="findings"></div>
 
   <h2>할 일 목록</h2>
   <div id="list"></div>
@@ -210,6 +212,16 @@ function renderDecisions(text) {
   }).join("");
 }
 
+// QA 가 통과시키면서 남긴 지적 — 사람이 골라 list.md 로 옮긴다 (harness/findings.py).
+function renderFindings(text) {
+  const items = (text || "").split("\n").filter((l) => l.startsWith("- `"));
+  $("fcount").textContent = items.length ? `(${items.length})` : "";
+  $("findings").innerHTML = items.length
+    ? `<ul class="steps">${items.map((l) => `<li><span>·</span><span>${md(l.slice(2))
+        .replace(/^<p>|<\/p>\s*$/g, "")}</span></li>`).join("")}</ul>`
+    : '<div class="empty">없음</div>';
+}
+
 function parseList(text) {
   const groups = []; let g = null, st = null;
   for (const line of text.split("\n")) {
@@ -310,12 +322,13 @@ function renderRuns(events) {
 }
 
 async function load() {
-  const [s, ev, li, de] = await Promise.all([
-    get("data/status.json", true), get("data/events.json", true), get("data/list.md"), get("data/decisions.md"),
+  const [s, ev, li, de, fi] = await Promise.all([
+    get("data/status.json", true), get("data/events.json", true), get("data/list.md"), get("data/decisions.md"), get("data/findings.md"),
   ]);
   const openState = [...document.querySelectorAll("details")].map((d) => d.open);
   renderStatus(s);
   renderDecisions(de || "");
+  renderFindings(fi || "");
   renderList(li || "", s);
   renderEvents(ev || []);
   renderRuns(ev || []);
