@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 19:59:57",
- "updated_epoch": 1789988397,
+ "updated": "2026-09-21 20:34:36",
+ "updated_epoch": 1789990476,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 14,
   "groups_done": 11,
   "groups_waiting": 0,
   "steps_total": 13,
-  "steps_done": 9
+  "steps_done": 10
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-112",
- "step": "1",
- "step_title": "발 디딜 틈과 약초 스팟",
- "attempt": "4",
+ "step": "2",
+ "step_title": "삽 좌클릭 스킬체크",
+ "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 19:50:54"
+ "phase_since": "2026-09-21 20:27:34"
 }
