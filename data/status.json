@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 10:04:44",
- "updated_epoch": 1789952684,
+ "updated": "2026-09-21 10:26:17",
+ "updated_epoch": 1789953977,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 8,
   "groups_done": 4,
   "groups_waiting": 0,
   "steps_total": 20,
-  "steps_done": 11
+  "steps_done": 12
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-105",
  "step": "4",
  "step_title": "좌클릭 평타로 캔다",
- "attempt": "1",
+ "attempt": "2",
  "phase": "QA",
- "phase_since": "2026-09-21 10:04:44"
+ "phase_since": "2026-09-21 10:20:53"
 }
