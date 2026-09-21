@@ -4,7 +4,6 @@ QA 가 **통과시키면서** 남긴 지적이다 — 기준은 만족했지만 
 사람이 읽고 필요한 것만 `list.md` 로 옮긴 뒤 **그 줄을 지운다.** 남은 줄 = 아직 안 본 것.
 루프는 이 파일을 읽지 않는다 (세션이 앞질러 가지 않게).
 
-- `09-22 03:41` **G-117.1** 재료 검사가 유황광석까지 허용한다 ‖ 재료 검사가 유황광석까지 허용한다 — (막는 것은 아니다) test_tool_recipes.gd:173 이 허용 재료를 Harvest.DROPS 에서 뽑는데, 거기에는 sulfur_ore 도 들어 있다(harvest.gd:28). sulfur_ore 는 개척섬에만 나므로 부두를 놓기 전에는 못 얻는데도, 도구 레시피에 sulfur_ore 를 넣으면 이 테스트가 그대로 통과한다. 지금 네 레시피는 wood · stone · iron_ore 만 써서 실제로 어긋난 곳은 없다. 「내 섬에서 나는 것」으로 좁히려면 IslandResources 의 섬별 광물 목록(test_island_has_its_own_ores_only 이 쓰는 것)을 빼서 허용 목록을 만들어라.
 - `09-22 01:50` **G-115.1** Tab 이 더는 가방을 열지 않는다는 것을 지키는 검사가 없다 ‖ Tab 이 더는 가방을 열지 않는다는 것을 지키는 검사가 없다. 기준의 「Tab 에서 옮겼다」 쪽을 되돌아가지 않게 막으려면 test_bag.gd 의 test_e_is_bound_to_the_inventory_action 에 한 줄을 더해라 — InputMap.action_get_events(InputActions.INVENTORY) 안에 physical_keycode == KEY_TAB 인 것이 하나도 없다는 단언. 지금 코드는 맞게 되어 있어 이번 기준은 통과지만, 누가 Tab 을 다시 넣어도 아무도 못 잡는다
 - `09-21 23:36` **G-114.1** test_from_empty_hands_to_the_first_axe 의 1단계(맨손으로 나무·돌 캐기… ‖ test_from_empty_hands_to_the_first_axe 의 1단계(맨손으로 나무·돌 캐기)만 실제로 치지 않고 game.inventory.add() 로 건너뛴다. 맨손 채집은 test_harvest.gd 가 따로 보고 있어 사슬 자체는 끊기지 않았지만, 「빈손에서」가 한 테스트 안에서 끝까지 이어지려면 나중에 여기서도 좌클릭으로 나무·돌을 쳐서 줍는 대목을 넣으면 더 단단하다. 이번 통과를 막는 것은 아니다
 - `09-21 16:39` **G-110.2** spec/08_combat/damage-death.md 의 「죽은 본인만 열고 꺼낼 수 있다」가 아직… ‖ spec/08_combat/damage-death.md 의 「죽은 본인만 열고 꺼낼 수 있다」가 아직 없다 — DeathChest 에 주인이 없고 Death.open 은 누구든 연다. 이번 단계 기준에는 없으므로(멀티플레이 몫) 지금 고칠 일은 아니고, 그 단계에서 기준으로 올라와야 한다
