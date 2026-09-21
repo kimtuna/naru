@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 04:46:36",
- "updated_epoch": 1790019996,
+ "updated": "2026-09-22 05:13:40",
+ "updated_epoch": 1790021620,
  "ended": "2026-09-22 01:21:34",
  "progress": {
   "groups_total": 6,
   "groups_done": 1,
   "groups_waiting": 0,
   "steps_total": 14,
-  "steps_done": 1
+  "steps_done": 2
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-117",
- "step": "1",
- "step_title": "도구 4종과 등반 장비 3종을 다 만든다",
+ "step": "2",
+ "step_title": "제작대 4종",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 04:43:05"
+ "phase_since": "2026-09-22 05:09:26"
 }
