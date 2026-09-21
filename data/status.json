@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 00:08:50",
- "updated_epoch": 1790003330,
+ "updated": "2026-09-22 00:41:10",
+ "updated_epoch": 1790005270,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 15,
   "groups_done": 13,
   "groups_waiting": 0,
   "steps_total": 42,
-  "steps_done": 37
+  "steps_done": 38
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-114",
  "step": "2",
  "step_title": "하루 40분 · 개발용 상자",
- "attempt": "1",
+ "attempt": "2",
  "phase": "QA",
- "phase_since": "2026-09-22 00:08:50"
+ "phase_since": "2026-09-22 00:37:50"
 }
