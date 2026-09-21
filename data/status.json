@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 09:23:27",
- "updated_epoch": 1789950207,
+ "updated": "2026-09-21 09:39:22",
+ "updated_epoch": 1789951162,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 8,
   "groups_done": 4,
   "groups_waiting": 0,
   "steps_total": 20,
-  "steps_done": 10
+  "steps_done": 11
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-105",
  "step": "3",
  "step_title": "도구 4종과 「손에 든 것」",
- "attempt": "1",
+ "attempt": "2",
  "phase": "QA",
- "phase_since": "2026-09-21 09:23:27"
+ "phase_since": "2026-09-21 09:35:39"
 }
