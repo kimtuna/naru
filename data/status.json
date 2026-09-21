@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-21 22:51:02",
- "updated_epoch": 1789998662,
+ "reason": "{\"done\": false, \"bundle\": \"G-114\", \"step\": 1, \"title\": \"가방에서 맨손으로 만든다 — 상자 · 나무 제작대 · 횃불\"}",
+ "updated": "2026-09-21 23:03:14",
+ "updated_epoch": 1789999394,
  "ended": "2026-09-21 07:55:25",
  "progress": {
-  "groups_total": 14,
-  "groups_done": 12,
+  "groups_total": 15,
+  "groups_done": 13,
   "groups_waiting": 0,
-  "steps_total": 37,
+  "steps_total": 41,
   "steps_done": 36
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-113",
- "step": "2",
- "step_title": "화산 섬 — 유황이 나는 섬",
- "attempt": "2",
- "phase": "QA",
- "phase_since": "2026-09-21 22:43:54"
+ "group": "G-114",
+ "step": "1",
+ "step_title": "생활 → 보급 → 배 → 새 자원 → 더 나은 생활",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-21 22:51:06"
 }
