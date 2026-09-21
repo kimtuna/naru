@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 12:10:31",
- "updated_epoch": 1789960231,
+ "updated": "2026-09-21 12:37:17",
+ "updated_epoch": 1789961837,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 9,
-  "groups_done": 5,
+  "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 22,
-  "steps_done": 16
+  "steps_done": 17
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-106",
- "step": "2",
- "step_title": "레시피 · 타이머 · 출력 버퍼",
- "attempt": "2",
+ "group": "G-107",
+ "step": "1",
+ "step_title": "개간과 되돌리기",
+ "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 12:05:45"
+ "phase_since": "2026-09-21 12:32:52"
 }
