@@ -4,7 +4,6 @@ QA 가 **통과시키면서** 남긴 지적이다 — 기준은 만족했지만 
 사람이 읽고 필요한 것만 `list.md` 로 옮긴 뒤 **그 줄을 지운다.** 남은 줄 = 아직 안 본 것.
 루프는 이 파일을 읽지 않는다 (세션이 앞질러 가지 않게).
 
-- `09-22 01:21` **G-114.3** 막는 것은 아니다 (기준은 다 통과했다) — 다음에 건드릴 때 같이 보면 좋을 것: TestIsland.dock_position() 은 dock 이 null 이면 터진다. 저장을 일부러 깼을 때 test_going_back_to_the_frontier_island_finds_it_as_i_left_it 이 'Invalid access to property global_position on Nil' 로 죽었다. 지금은 선착장 없이는 섬을 떠날 수 없어 닿지 않는 길이지만, 앞으로 선착장을 부수거나 옛 저장본을 읽게 되면 배에서 내리다 게임이 죽는다. dock 이 없으면 스폰 자리로 내리게 두는 편이 안전하다.
 - `09-21 23:36` **G-114.1** test_tools.gd::test_tool_names_are_not_written_in_the_code 의 예외가 ToolCatalog.DEFAULT_PATH 하나에서 recipes.json 까지 둘로 늘었다. 레시피 파일은 데이터가 맞으니 타당한 완화지만, 앞으로 도구 이름을 코드에 박으면서 「데이터 파일이니까」로 예외를 더 늘리지 않게 다음 세션이 조심할 것
 - `09-21 23:36` **G-114.1** 가벼운 것 하나 — test_from_empty_hands_to_the_first_axe 의 1단계(맨손으로 나무·돌 캐기)만 실제로 치지 않고 game.inventory.add() 로 건너뛴다. 맨손 채집은 test_harvest.gd 가 따로 보고 있어 사슬 자체는 끊기지 않았지만, 「빈손에서」가 한 테스트 안에서 끝까지 이어지려면 나중에 여기서도 좌클릭으로 나무·돌을 쳐서 줍는 대목을 넣으면 더 단단하다. 이번 통과를 막는 것은 아니다
 - `09-21 22:51` **G-113.2** (막는 것 아님) 임시 표시가 분화구 값에만 붙어 있다. island_blueprint.gd 의 crater_* 에는 「임시」가 적혀 있지만 화산 몸통(mountain_height 170 · mountain_radius 200 · mountain_profile 1.0 · ridge_strength 0.35)과 둘레 절벽(cliff_step 32 · cliff_coverage 0.9 · path_angle_deg 20)은 어디에도 임시라고 적혀 있지 않다. spec/03_world/frontier-islands.md 의 「분화구 크기 · 깊이는 임시」를 「설계 값은 모두 임시 — 사람이 같이 다듬는다」로 넓혀라.

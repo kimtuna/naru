@@ -1,15 +1,15 @@
 {
- "state": "stopped",
- "reason": "합치기 전 워킹트리가 깨끗하지 않다:  M findings.md ",
- "updated": "2026-09-22 01:21:34",
- "updated_epoch": 1790007694,
+ "state": "running",
+ "reason": "{\"done\": false, \"bundle\": \"G-114\", \"step\": 3, \"title\": \"내 섬 선착장을 짓는다\", \"last\": true}",
+ "updated": "2026-09-22 01:22:25",
+ "updated_epoch": 1790007745,
  "ended": "2026-09-22 01:21:34",
  "progress": {
   "groups_total": 15,
   "groups_done": 13,
   "groups_waiting": 0,
   "steps_total": 42,
-  "steps_done": 39
+  "steps_done": 38
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-114",
