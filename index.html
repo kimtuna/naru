@@ -213,13 +213,31 @@ function renderDecisions(text) {
 }
 
 // QA 가 통과시키면서 남긴 지적 — 사람이 골라 list.md 로 옮긴다 (harness/findings.py).
+// 한 줄이 「- `날짜` **묶음.단계** 제목 ‖ 본문」이다. 제목만 보이고 눌러야 펼쳐진다 —
+// QA 가 쓰는 글이 길어서 그대로 늘어놓으면 읽을 수가 없다.
 function renderFindings(text) {
-  const items = (text || "").split("\n").filter((l) => l.startsWith("- `"));
-  $("fcount").textContent = items.length ? `(${items.length})` : "";
-  $("findings").innerHTML = items.length
-    ? `<ul class="steps">${items.map((l) => `<li><span>·</span><span>${md(l.slice(2))
-        .replace(/^<p>|<\/p>\s*$/g, "")}</span></li>`).join("")}</ul>`
-    : '<div class="empty">없음</div>';
+  const rows = (text || "").split("\n").filter((l) => l.startsWith("- `")).map((l) => {
+    const m = l.match(/^- `([^`]*)`\s*\*\*([^*]*)\*\*\s*([\s\S]*)$/);
+    if (!m) return null;
+    const [head, ...rest] = m[3].split(" ‖ ");
+    return { when: m[1], at: m[2], title: head.trim(), body: rest.join(" ‖ ").trim() };
+  }).filter(Boolean);
+  $("fcount").textContent = rows.length ? `(${rows.length})` : "";
+  if (!rows.length) { $("findings").innerHTML = '<div class="empty">없음</div>'; return; }
+  // 묶음별로 모은다 — 어느 묶음이 빚을 많이 남겼는지가 한눈에 보인다.
+  const by = new Map();
+  for (const r of rows) {
+    const g = (r.at.split(".")[0] || "?");
+    if (!by.has(g)) by.set(g, []);
+    by.get(g).push(r);
+  }
+  $("findings").innerHTML = [...by].map(([g, list]) => `
+    <details><summary><span class="tag t-info">${esc(g)}</span>
+      <span class="title">남긴 것</span><span class="count">${list.length}</span></summary>
+      <div class="body">${list.map((r) => `
+        <details><summary><span class="title">${esc(r.title)}</span>
+          <span class="count">${esc(r.at)} · ${esc(r.when)}</span></summary>
+          <div class="body md">${md(r.body || r.title)}</div></details>`).join("")}</div></details>`).join("");
 }
 
 function parseList(text) {
