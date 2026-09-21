@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-21 16:39:22",
- "updated_epoch": 1789976362,
+ "updated": "2026-09-21 17:12:41",
+ "updated_epoch": 1789978361,
  "ended": "2026-09-21 07:55:25",
  "progress": {
   "groups_total": 16,
-  "groups_done": 9,
+  "groups_done": 10,
   "groups_waiting": 0,
   "steps_total": 17,
-  "steps_done": 6
+  "steps_done": 7
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-110",
- "step": "2",
- "step_title": "죽음 · 데스 상자 · 월드 설정",
- "attempt": "3",
+ "group": "G-111",
+ "step": "1",
+ "step_title": "벽면에 붙어 오른다 · 기력",
+ "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-21 16:32:50"
+ "phase_since": "2026-09-21 17:04:52"
 }
