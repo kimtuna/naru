@@ -1790,5 +1790,70 @@
   },
   "test": "rontier_island_does_not_carry_my_islands_marks\n* test_sailing_back_finds_my_island_as_i_left_it\n* test_each_island_is_saved_on_its_own\n* test_going_back_to_the_frontier_island_finds_it_as_i_left_it\n7/7 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_tab_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              53\nTests               486\nPassing Tests       486\nAsserts            8387\nTime              402.829s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "1f75373"
+ },
+ {
+  "time": "2026-09-21 23:03:16",
+  "epoch": 1789999396,
+  "type": "start",
+  "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-21 23:36:38",
+  "epoch": 1790001398,
+  "type": "pass",
+  "title": "통과 — G-114 단계 1 (가방에서 맨손으로 만든다 — 상자 · 나무 제작대 · 횃불)",
+  "group": "G-114",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "가방에 「맨손으로 만드는 것」 자리를 붙여 상자 · 나무 제작대 · 횃불 셋을 레시피 데이터로 만들게 했다",
+   "approach": "무엇이 맨손 레시피인지를 **레시피 데이터 한 칸**으로 갈랐다 — recipes.json 의 station 이 \"hand\" 인 줄이다. stations.json 에 없는 이름이라 어느 제작대에도 뜨지 않고, 거꾸로 제작대 레시피는 station 이 달라 가방에 뜨지 않는다. 가르는 일을 데이터가 다 하므로 HandCraft · Bag 은 레시피 이름을 하나도 모른다(테스트가 코드에 이름이 안 박혔는지 본다). 막혔던 것은 두 가지였다. (1) 가방에는 제작대의 타이머 · 출력 버퍼가 없다 — 맨손 제작은 그 자리에서 가방에 들어가게 했다(seconds 0, 임시). (2) 가방이 꽉 찼을 때 재료만 사라질 수 있었다 — 재료를 먼저 빼고 그 빈 칸에 결과물을 넣되, 끝내 자리가 없으면 넣은 몫을 도로 빼고 재료를 되돌린다(목재 20을 다 쓰는 제작대가 이 경우다). 「빈손에서 첫 도끼까지」를 이으려고 가공대에 도끼 레시피(목재 3 · 돌 2)를 한 줄 더 적었다 — 둘 다 맨손으로 캘 수 있는 것이다. 고친 기존 테스트 둘: test_recipes 는 제작대 없는 맨손 레시피를 예외로 두었고, test_tools 의 「도구 이름이 코드에 박히면 안 된다」는 레시피 파일을 봐주게 했다 — 거기 적힌 axe 는 코드가 아니라 「이 레시피에서 도끼가 나온다」는 데이터다. 전체 501개 통과 · guard 통과.",
+   "why": "맨손 제작은 타이머도 출력 버퍼도 없이 그 자리에서 만들어진다 (recipes.json 의 맨손 줄은 seconds 0) — 「제작은 즉시 완성되지 않는다」는 제작대의 규칙이고(spec/05_craft/crafting-stations.md) 가방에는 버퍼가 없다. 맨손 제작 시간은 spec 에 없다; 맨손 레시피 재료: 상자 목재 8 · 횃불 목재 2 — 전체 아이템 · 레시피 목록이 미정이다. 나무 제작대만 stations.json 의 cost(목재 20) 를 그대로 썼다 — 부술 때 돌아오는 양(RETURN_RATE)과 어긋나지 않게; 도끼 레시피 목재 3 · 돌 2 · 5초 — 「빈손에서 첫 도끼까지」를 이으려고 넣은 줄이다. 도구 레시피 값은 미정이다; 상자 · 횃불은 아직 아이템일 뿐이다 — 넣고 빼기 · 불 밝히기는 이번 수용 기준에 없다",
+   "files": [
+    "game/craft/recipes/recipes.json",
+    "game/craft/recipes/recipe_catalog.gd",
+    "game/craft/recipes/hand_craft.gd",
+    "game/ui/hud/bag.gd",
+    "game/ui/hud/bag.tscn",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/craft/recipes/test_hand_craft.gd",
+    "game/tests/ui/hud/test_bag_hand_craft.gd",
+    "game/tests/craft/recipes/test_recipes.gd",
+    "game/tests/combat/tools_as_weapons/test_tools.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "가방에 「맨손으로 만드는 것」 자리가 있고 셋만 나온다 (사람 결정 2026-09-21)",
+     "evidence": "tests/ui/hud/test_bag_hand_craft.gd::test_the_bag_has_a_made_by_hand_panel 이 진짜 GameRoot 를 띄워 hand_panel().is_visible_in_tree() 와 이름표가 CRAFT_BY_HAND 인지 본다. test_only_the_three_hand_recipes_show_up_there 는 늘어선 줄 이름이 정확히 [chest, workbench, torch] 인지 배열 통째로 비교하고 줄마다 보이는지도 본다 (크기 비교가 아니라 순서까지). tests/craft/recipes/test_hand_craft.gd::test_exactly_three_recipes_are_made_by_hand 이 데이터 쪽에서 같은 것을 본다. spec/05_craft/recipes.md:11 의 사람 결정 줄과 셋이 그대로 맞는다. 일부러 깨 봤다 — recipes.json 에서 chest 의 station 을 hand→workbench 로 바꾸니 test_hand_craft 에서 7개가 깨졌다 (되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "레시피 데이터에 한 줄 더 적으면 코드 수정 없이 늘어난다. 제작대가 필요한 레시피는 여기 안 뜬다 (테스트)",
+     "evidence": "늘어남: test_bag_hand_craft::test_a_hand_recipe_added_to_the_file_shows_up_in_the_bag 이 진짜 레시피 파일 + 한 줄로 임시 파일을 만들어 끼우고, 줄이 하나 늘었는지 · 그 줄을 눌러 실제로 만들어지는지(count_of == 1)까지 본다. 「코드 수정 없이」는 껍데기가 아니다 — test_hand_craft::test_a_hand_recipe_added_to_the_file_shows_up_without_touching_the_code 이 hand_craft.gd · recipe_catalog.gd · bag.gd 세 소스에 그 이름이 없는지 먼저 확인한 뒤에 늘어남을 본다. 안 뜸: test_a_station_recipe_added_to_the_file_does_not_show_up_in_the_bag(한 줄 더 적어도 목록은 그대로 셋) 과 test_a_recipe_that_needs_a_station_does_not_show_up_there(진짜 파일의 제작대 레시피 전부를 훑어 가방 목록에 없는지 본다) 두 방향으로 본다. 데이터 쪽도 같은 짝이 있고, hand.make(\"plank\") 가 거부되며 재료도 축나지 않는 것까지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "나무 제작대를 만들어 땅에 놓고 열면 앞 묶음의 제작이 그대로 돈다 — 빈손에서 첫 도끼까지 이어진다 (테스트)",
+     "evidence": "test_bag_hand_craft::test_from_empty_hands_to_the_first_axe 가 GameRoot · 진짜 Player · Stations 를 다 띄우고 한 줄로 잇는다: 빈 가방 확인 → 가방 열어 workbench 줄 누르기 → 핫바에서 손에 들기 → 내려다보고 진짜 우클릭으로 땅에 설치(CraftingStation.GROUP 에 하나 생김, 가방에서 빠짐) → 조준해 우클릭으로 열기(game.station_open() · station_kind()) → start_craft → 시작 직후 버퍼 빔 확인 → craft_tick 뒤 버퍼에 도끼 → collect → 가방에 도끼 1 → ToolCatalog 에 든 진짜 도구인지까지. 일부러 깨 봤다 — axe 의 station 을 workbench→smelter 로 바꾸니 이 테스트만 4군데에서 깨졌다 (되돌렸다). 맨손 채집 대목은 직접 치지 않고 Harvest.POOR_HIT > 0 · DROPS 표로 확인한 뒤 재료를 가방에 바로 넣는데, 맨손 채집 자체는 tests/life/harvest/test_harvest.gd::test_a_tree_falls_faster_to_the_axe_than_to_the_wrong_tool_or_bare_hands 가 이미 본다"
+    }
+   ],
+   "issues": [
+    "가벼운 것 하나 — test_from_empty_hands_to_the_first_axe 의 1단계(맨손으로 나무·돌 캐기)만 실제로 치지 않고 game.inventory.add() 로 건너뛴다. 맨손 채집은 test_harvest.gd 가 따로 보고 있어 사슬 자체는 끊기지 않았지만, 「빈손에서」가 한 테스트 안에서 끝까지 이어지려면 나중에 여기서도 좌클릭으로 나무·돌을 쳐서 줍는 대목을 넣으면 더 단단하다. 이번 통과를 막는 것은 아니다",
+    "test_tools.gd::test_tool_names_are_not_written_in_the_code 의 예외가 ToolCatalog.DEFAULT_PATH 하나에서 recipes.json 까지 둘로 늘었다. 레시피 파일은 데이터가 맞으니 타당한 완화지만, 앞으로 도구 이름을 코드에 박으면서 「데이터 파일이니까」로 예외를 더 늘리지 않게 다음 세션이 조심할 것"
+   ],
+   "good": [
+    "가공대(workbench) 도끼 레시피를 한 줄 더 적었다 (목재 3 · 돌 2 · 5초). 기준 3 의 「빈손에서 첫 도끼까지」를 이으려면 필요한 줄이라 범위 안으로 본다. 수치는 report 의 temporary 에 임시로 적혀 있고 recipes.json 의 _temporary 가 재료·개수·시간을 다 임시로 덮는다",
+    "ITEM_chest · ITEM_torch 번역을 넣었다. 상자·횃불은 아직 아이템일 뿐이고 넣고 빼기·불 밝히기는 안 만들었다 — current.md 의 「참고」가 말한 대로이고 이번 기준에는 없다",
+    "게임 밖: harness/step.py · loop.sh · tools/test.sh · harness/changed_tests.py 가 함께 바뀌어 있다 (TESTS 로 바뀐 파일만 돌리는 길). report 의 changed 목록에 없고 game/ 밖이라 이번 단계와 무관해 보인다. test.log 는 전체 55스크립트 501테스트가 다 돈 결과가 맞다"
+   ]
+  },
+  "test": "rontier_island_does_not_carry_my_islands_marks\n* test_sailing_back_finds_my_island_as_i_left_it\n* test_each_island_is_saved_on_its_own\n* test_going_back_to_the_frontier_island_finds_it_as_i_left_it\n7/7 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_tab_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              55\nTests               501\nPassing Tests       501\nAsserts            8534\nTime              391.736s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "51690a3"
  }
 ]
