@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 09:21:15",
- "updated_epoch": 1790036475,
+ "updated": "2026-09-22 09:50:31",
+ "updated_epoch": 1790038231,
  "ended": "2026-09-22 05:58:25",
  "progress": {
   "groups_total": 6,
   "groups_done": 4,
   "groups_waiting": 0,
   "steps_total": 14,
-  "steps_done": 8
+  "steps_done": 9
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-118",
- "step": "1",
- "step_title": "탄약과 재장전",
+ "step": "2",
+ "step_title": "우클릭 조준 (아이언사이트)",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 09:18:00"
+ "phase_since": "2026-09-22 09:46:00"
 }
