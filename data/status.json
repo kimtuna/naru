@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 01:14:10",
- "updated_epoch": 1790093650,
+ "updated": "2026-09-23 01:33:07",
+ "updated_epoch": 1790094787,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 13,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 52,
-  "steps_done": 27
+  "steps_done": 28
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "15",
- "step_title": "섬 배선을 지키는 테스트 ① — 물 · 죽음 · 조작 잠금",
+ "step": "16",
+ "step_title": "섬 배선을 지키는 테스트 ② — 예광탄 · 붙이는 차례 · 음식",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 01:08:34"
+ "phase_since": "2026-09-23 01:26:48"
 }
