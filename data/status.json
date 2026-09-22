@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-133\", \"step\": 1, \"title\": \"기둥\", \"last\": false}",
- "updated": "2026-09-23 04:33:05",
- "updated_epoch": 1790105585,
+ "reason": "",
+ "updated": "2026-09-23 04:33:07",
+ "updated_epoch": 1790105587,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 17,
@@ -12,10 +12,10 @@
   "steps_done": 40
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-128",
+ "group": "G-133",
  "step": "1",
- "step_title": "막힌 공간을 방으로 안다",
+ "step_title": "기둥",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-23 04:31:12"
+ "phase_since": "2026-09-23 04:33:07"
 }
