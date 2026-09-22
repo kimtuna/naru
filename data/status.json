@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 10:31:55",
- "updated_epoch": 1790040715,
+ "updated": "2026-09-22 10:59:09",
+ "updated_epoch": 1790042349,
  "ended": "2026-09-22 05:58:25",
  "progress": {
   "groups_total": 6,
   "groups_done": 4,
   "groups_waiting": 0,
   "steps_total": 14,
-  "steps_done": 9
+  "steps_done": 10
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-118",
  "step": "3",
  "step_title": "예광탄과 탄착",
- "attempt": "2",
+ "attempt": "3",
  "phase": "QA",
- "phase_since": "2026-09-22 10:31:55"
+ "phase_since": "2026-09-22 10:55:28"
 }
