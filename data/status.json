@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-900\", \"step\": 8, \"title\": \"「임시」 표시를 붙인다 ① — 밭 · 작물 · 섬 설계 값\", \"last\": false}",
- "updated": "2026-09-22 20:51:11",
- "updated_epoch": 1790077871,
+ "reason": "",
+ "updated": "2026-09-22 21:14:12",
+ "updated_epoch": 1790079252,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 40,
-  "steps_done": 19
+  "steps_done": 20
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
  "step": "8",
- "step_title": "제작대 이름 다섯(ITEM_workbench · smelter · cook_table · cook_st… (G-106 단계 1)",
+ "step_title": "「임시」 표시를 붙인다 ① — 밭 · 작물 · 섬 설계 값",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-22 20:40:48"
+ "phase": "QA",
+ "phase_since": "2026-09-22 21:11:00"
 }
