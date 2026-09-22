@@ -5799,5 +5799,58 @@
   },
   "test": "\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             116\nTests              1007\nPassing Tests      1007\nAsserts           15195\nTime              573.825s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "d01e2fa"
+ },
+ {
+  "time": "2026-09-23 06:09:51",
+  "epoch": 1790111391,
+  "type": "pass",
+  "title": "통과 — G-128 단계 1 (막힌 공간을 방으로 안다)",
+  "group": "G-128",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "막힌 공간을 방으로 안다 — Rooms.find(판 단위 flood fill)와 Buildings.rooms() · 테스트 6개 (바뀐 곳만: 59개 통과)",
+   "approach": "벽은 판 사이 변에, 지붕은 판 위에 서므로 방은 판(토대 한 장) 단위로 잰다. 바닥 있는 판에서 이웃 판으로 번져 가며(벽 · 문이 선 변은 막힘, 문은 열려 있어도 막힘), 바닥 없는 이웃이나 천장(한 층 위 지붕) 없는 판을 만나면 그 무리 전체가 샌 것으로 버린다. 층은 높이(STAIRS_SLACK 안쪽)로 갈라 위 · 아래가 따로 잰다. 계단 위에는 지붕이 얹히지 않으므로 계단이 딛는 판은 아래층 천장이 막힌 것으로 친다(계단은 닫힌 것). 위층에서 계단 자리는 바닥 없는 구멍이고, 그 위(한 층 더 위)에도 지붕을 얹을 수 없어(짚으면 아래 토대가 잡혀 계단 자리 'taken') 위층 방은 구멍을 난간 벽 · 문으로 둘러 빼야 막힌다 — 테스트는 3×4장 건물에 계단 · 난간 · 계단 꼭대기 문으로 실제 놓는 규칙(place_at)대로 지어 두 방을 확인한다. 최소 넓이 MIN_CELLS = 토대 한 장 9칸: 토대 없는 맨땅 한 판을 이웃 토대의 벽 넷과 지붕으로 막아도 방이 아니다. 방은 부를 때마다 새로 잰다(따로 저장하지 않음) — 헐면 다음에 잴 때 사라진다. 방 종류표(데이터 파일)는 다음 단계 몫이라 만들지 않았다.",
+   "why": "",
+   "files": [
+    "game/build/rooms.gd",
+    "game/build/buildings.gd",
+    "game/tests/build/test_rooms.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "사방 벽과 지붕으로 막히면 방이 생기고, 벽이나 지붕 하나를 헐면 사라진다 (테스트)",
+     "evidence": "test_rooms.gd test_walls_and_a_roof_make_a_room_and_breaking_one_unmakes_it — place_at 으로 토대·벽4 를 세워 지붕 전 0개, 지붕 뒤 1개(판·바닥높이까지 확인), 벽 하나 헐면 0, 다시 세우면 1, 지붕 헐면 0. test_an_open_side_between_two_plates... 가 트인 두 장=한 방(18칸), 가운데 벽=두 방도 확인. test.log 6/6 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "문이 있어도 **닫힌 것으로** 본다 (테스트)",
+     "evidence": "test_a_door_counts_as_closed_even_when_open — 닫힌 문 1개, toggle() 로 연 뒤에도 1개, 문을 헐면 0(대조). 일부러 깨 봄: _walled 에서 열린 문을 빼게 바꾸니 이 테스트가 실패했다 (되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "계단으로 이어진 2층에서 위 · 아래가 **각각 따로** 방이다 (테스트)",
+     "evidence": "test_two_storeys_joined_by_stairs_are_two_rooms — 3×4장 건물에 실제 place_at 규칙으로 계단·지붕(계단 구멍엔 안 얹힘을 단언)·위층 벽·난간·문·지붕을 세워 방 2개, 높이별로 아래 12장/위 10장 넓이까지 확인, 위층 벽 하나 헐면 아래층만 남음"
+    },
+    {
+     "ok": true,
+     "criterion": "토대 한 장(3×3칸)이 가장 작은 방이다 — 그보다 작으면 방이 아니다 (테스트)",
+     "evidence": "test_one_foundation_is_the_smallest_room — MIN_CELLS==9, 토대 한 장을 막으면 방 1개·9칸. test_less_than_one_foundation_of_floor_is_not_a_room — 토대 없는 맨땅 판을 이웃 벽 넷+지붕으로 막아도 방 0. 벽·지붕이 판 단위라 판보다 작은 막힌 공간은 구조상 생기지 않는다. 다만 아래 problems 의 보강 지적 참고"
+    }
+   ],
+   "issues": [
+    "맨땅 판 테스트가 엉뚱한 이유로 통과한다 — game/tests/build/test_rooms.gd test_less_than_one_foundation_of_floor_is_not_a_room 은 이웃 토대 넷에 지붕·바깥벽이 없어 그쪽이 새서 0개가 된다. 맨땅 판이 방으로 잡히는지는 실제로 가려지지 않는다. 또 Rooms._fill 의 `cells < MIN_CELLS` 는 넓이가 늘 9의 배수라 닿지 않는 죽은 검사다 — `cells < 0` 으로 바꿔도 6개가 다 통과했다. 고치는 법: 이웃 넷에도 바깥 변 벽과 지붕을 얹어 각자 막힌 방이 되게 한 뒤 rooms().size()==4 이고 어느 방의 plates 에도 Vector2i.ZERO 가 없는지 단언하라. MIN_CELLS 검사는 지우거나 주석에 「판 단위라 늘 참 — 방 크기의 뜻만 적는다」로 밝혀라"
+   ],
+   "good": [
+    "Buildings.rooms() 편의 함수 — 기준 확인에 쓰이는 얇은 입구라 문제 없음"
+   ]
+  },
+  "test": "laces_it\n* test_a_pillar_needs_a_floor_and_shows_the_other_color_on_bare_ground\n* test_a_pillar_snaps_to_the_plate_on_every_floor\n* test_a_pillar_does_not_block_the_way\n    --- Awaiting 2.0 seconds  ---\n    --- Awaiting 2.0 seconds  ---\n* test_a_pillar_comes_in_wood_and_stone_with_translated_names\n5/5 passed.\n\n\nres://tests/build/test_building_preview.gd\n* test_holding_a_foundation_shows_where_it_will_go_snapped_to_the_grid\n* test_nothing_is_shown_when_the_hand_holds_something_else\n* test_the_right_click_puts_it_where_the_preview_was\n* test_a_taken_spot_shows_another_color_and_the_click_places_nothing\n* test_a_chest_inside_the_nine_cells_takes_the_spot\n* test_steep_ground_shows_another_color_and_the_click_places_nothing\n* test_a_tilted_slope_is_steep_but_a_gentle_one_is_not\n* test_water_shows_another_color_and_the_click_places_nothing\n* test_the_colors_are_really_different\n* test_the_plank_is_called_wooden_plank\n10/10 passed.\n\n\nres://tests/build/test_building_roof_stairs.gd\n* test_a_roof_closes_the_top_of_its_cells\n    --- Awaiting 60 physics frames  ---\n* test_the_roof_is_the_next_floor_and_walls_stand_on_it\n* test_the_stairs_take_you_up_to_the_next_floor\n* test_stairs_need_a_floor_ahead\n* test_breaking_a_wall_returns_the_wall_itself_into_the_bag\n* test_every_piece_comes_back_as_itself\n* test_what_was_built_is_still_there_after_leaving_and_returning\n7/7 passed.\n\n\nres://tests/build/test_building_roof_support.gd\n* test_a_pillar_holds_nine_roofs_around_it\n* test_a_wall_or_door_holds_six_roofs_three_along_two_across\n* test_without_support_a_held_roof_shows_the_other_color_and_is_not_placed\n* test_bare_ground_beyond_the_reach_is_not_a_roof_spot\n* test_the_counts_come_from_one_value\n5/5 passed.\n\n\nres://tests/build/test_building_walls.gd\n* test_a_foundation_covers_three_by_three_cells_and_becomes_a_flat_floor\n    --- Awaiting 40 physics frames  ---\n* test_a_foundation_goes_only_on_the_ground\n* test_the_wall_preview_snaps_to_the_foundation_edge_the_aim_is_nearest\n* test_a_wall_needs_a_foundation_edge_and_one_edge_holds_one_wall\n* test_walking_crosses_a_bare_edge\n    --- Awaiting 1.2 seconds  ---\n* test_a_wall_blocks_the_way\n    --- Awaiting 1.2 seconds  ---\n    --- Awaiting 1.2 seconds  ---\n* test_a_door_opens_and_closes_with_the_right_click_and_lets_you_through_when_open\n    --- Awaiting 1.2 seconds  ---\n    --- Awaiting 1.2 seconds  ---\n* test_a_closed_door_blocks_again_and_holding_a_piece_does_not_stop_the_door\n    --- Awaiting 1.2 seconds  ---\n* test_every_piece_comes_in_wood_and_stone_with_translated_names\n9/9 passed.\n\n\nres://tests/build/test_placeable.gd\n* test_every_kind_of_station_returns_itself\n* test_a_dock_returns_a_dock\n    6 Orphans\n        * [Dock:<StaticBody3D#711890832026>(dock.gd)] + 5\n* test_a_chest_returns_a_chest\n* test_what_comes_back_is_the_item_that_was_placed_not_its_materials\n* test_the_cell_a_placed_thing_stands_on_is_taken\n* test_the_taken_cell_does_not_care_what_kind_stands_there\n* test_a_newly_placeable_thing_gets_the_same_rule_for_free\n* test_the_recipes_of_the_things_that_are_not_placeable_yet_are_there\n* test_hitting_something_else_does_not_heal_what_was_already_hit\n* test_a_thing_that_was_never_hit_is_whole\n* test_something_that_is_not_placed_is_not_broken_this_way\n11/11 passed.\n\n\nres://tests/build/test_rooms.gd\n* test_walls_and_a_roof_make_a_room_and_breaking_one_unmakes_it\n* test_an_open_side_between_two_plates_joins_them_into_one_room\n* test_a_door_counts_as_closed_even_when_open\n* test_two_storeys_joined_by_stairs_are_two_rooms\n* test_one_foundation_is_the_smallest_room\n* test_less_than_one_foundation_of_floor_is_not_a_room\n6/6 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               8\nTests                59\nPassing Tests        59\nAsserts            1209\nTime              34.974s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "193af25"
  }
 ]
