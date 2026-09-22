@@ -5852,5 +5852,65 @@
   },
   "test": "laces_it\n* test_a_pillar_needs_a_floor_and_shows_the_other_color_on_bare_ground\n* test_a_pillar_snaps_to_the_plate_on_every_floor\n* test_a_pillar_does_not_block_the_way\n    --- Awaiting 2.0 seconds  ---\n    --- Awaiting 2.0 seconds  ---\n* test_a_pillar_comes_in_wood_and_stone_with_translated_names\n5/5 passed.\n\n\nres://tests/build/test_building_preview.gd\n* test_holding_a_foundation_shows_where_it_will_go_snapped_to_the_grid\n* test_nothing_is_shown_when_the_hand_holds_something_else\n* test_the_right_click_puts_it_where_the_preview_was\n* test_a_taken_spot_shows_another_color_and_the_click_places_nothing\n* test_a_chest_inside_the_nine_cells_takes_the_spot\n* test_steep_ground_shows_another_color_and_the_click_places_nothing\n* test_a_tilted_slope_is_steep_but_a_gentle_one_is_not\n* test_water_shows_another_color_and_the_click_places_nothing\n* test_the_colors_are_really_different\n* test_the_plank_is_called_wooden_plank\n10/10 passed.\n\n\nres://tests/build/test_building_roof_stairs.gd\n* test_a_roof_closes_the_top_of_its_cells\n    --- Awaiting 60 physics frames  ---\n* test_the_roof_is_the_next_floor_and_walls_stand_on_it\n* test_the_stairs_take_you_up_to_the_next_floor\n* test_stairs_need_a_floor_ahead\n* test_breaking_a_wall_returns_the_wall_itself_into_the_bag\n* test_every_piece_comes_back_as_itself\n* test_what_was_built_is_still_there_after_leaving_and_returning\n7/7 passed.\n\n\nres://tests/build/test_building_roof_support.gd\n* test_a_pillar_holds_nine_roofs_around_it\n* test_a_wall_or_door_holds_six_roofs_three_along_two_across\n* test_without_support_a_held_roof_shows_the_other_color_and_is_not_placed\n* test_bare_ground_beyond_the_reach_is_not_a_roof_spot\n* test_the_counts_come_from_one_value\n5/5 passed.\n\n\nres://tests/build/test_building_walls.gd\n* test_a_foundation_covers_three_by_three_cells_and_becomes_a_flat_floor\n    --- Awaiting 40 physics frames  ---\n* test_a_foundation_goes_only_on_the_ground\n* test_the_wall_preview_snaps_to_the_foundation_edge_the_aim_is_nearest\n* test_a_wall_needs_a_foundation_edge_and_one_edge_holds_one_wall\n* test_walking_crosses_a_bare_edge\n    --- Awaiting 1.2 seconds  ---\n* test_a_wall_blocks_the_way\n    --- Awaiting 1.2 seconds  ---\n    --- Awaiting 1.2 seconds  ---\n* test_a_door_opens_and_closes_with_the_right_click_and_lets_you_through_when_open\n    --- Awaiting 1.2 seconds  ---\n    --- Awaiting 1.2 seconds  ---\n* test_a_closed_door_blocks_again_and_holding_a_piece_does_not_stop_the_door\n    --- Awaiting 1.2 seconds  ---\n* test_every_piece_comes_in_wood_and_stone_with_translated_names\n9/9 passed.\n\n\nres://tests/build/test_placeable.gd\n* test_every_kind_of_station_returns_itself\n* test_a_dock_returns_a_dock\n    6 Orphans\n        * [Dock:<StaticBody3D#711890832026>(dock.gd)] + 5\n* test_a_chest_returns_a_chest\n* test_what_comes_back_is_the_item_that_was_placed_not_its_materials\n* test_the_cell_a_placed_thing_stands_on_is_taken\n* test_the_taken_cell_does_not_care_what_kind_stands_there\n* test_a_newly_placeable_thing_gets_the_same_rule_for_free\n* test_the_recipes_of_the_things_that_are_not_placeable_yet_are_there\n* test_hitting_something_else_does_not_heal_what_was_already_hit\n* test_a_thing_that_was_never_hit_is_whole\n* test_something_that_is_not_placed_is_not_broken_this_way\n11/11 passed.\n\n\nres://tests/build/test_rooms.gd\n* test_walls_and_a_roof_make_a_room_and_breaking_one_unmakes_it\n* test_an_open_side_between_two_plates_joins_them_into_one_room\n* test_a_door_counts_as_closed_even_when_open\n* test_two_storeys_joined_by_stairs_are_two_rooms\n* test_one_foundation_is_the_smallest_room\n* test_less_than_one_foundation_of_floor_is_not_a_room\n6/6 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               8\nTests                59\nPassing Tests        59\nAsserts            1209\nTime              34.974s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "193af25"
+ },
+ {
+  "time": "2026-09-23 06:20:56",
+  "epoch": 1790112056,
+  "type": "pass",
+  "title": "통과 — G-128 단계 2 (방 종류를 데이터로 정한다)",
+  "group": "G-128",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "방 종류표를 데이터 파일(build/rooms.json)로 만들고 RoomCatalog 로 읽어 Buildings.rooms() 가 방마다 kind 를 준다. ROOM_ 번역 키(ko·en)를 넣었고, 맨땅 판 테스트를 고쳤다 — 바뀐 곳만: 119개 통과, po 를 읽는 테스트 21개 파일: 208개 통과",
+   "approach": "방 종류표는 build/rooms.json 이다. 한 줄은 {key, needs{핵심 오브젝트 아이템: 요구 개수}} 이고, 한 줄의 needs 가 카테고리 하나다. RoomCatalog 는 방 이름을 하나도 모른다(StationCatalog 와 같은 방식). kind_of(contents) 는 핵심 오브젝트가 하나라도 든 방 종류를 센다 — 정확히 하나이고 요구 수량을 다 채우면 그 방, 아니면 잡실(misc)이다. 그래서 조리대만 있으면 주방 카테고리 하나지만 모자라서 잡실이 된다. 핵심 오브젝트가 아닌 것(상자 등)은 세지 않는다. JSON 의 수는 실수로 읽히므로 읽을 때 정수로 고친다. 첫 내용은 spec 표 다섯 방이다(가공대=workbench, 밭=farm_plot). 목장·광산은 그 오브젝트가 아직 게임에 없어 적지 않았고, 이 사정을 _later 줄에 남겼다. 게임과 잇기: Rooms.contents(room, things) 가 방이 드는 판 위, 방 바닥부터 한 층 위(천장) 아래에 선 제작대·밭을 센다. Buildings.rooms() 는 방마다 kind 를 붙인다. 밭(FieldPatch)은 방 판정을 흐리지 않도록 Placeable.GROUP 에 넣지 않았다. 대신 field_patches 라는 제 그룹에 들게 했다. 번역 키는 ROOM_<key> 이며 ROOM_misc 를 포함해 ko·en 여섯 개다. 테스트: 원래 표에 한 줄(창고: 상자 2)을 붙인 파일을 user:// 에 써 load_from 으로 읽으면 새 방이 생긴다. 실제로 막은 방에서 표를 바꾸면 종류도 바뀐다. 한 칸짜리 막힌 방에 제작대·밭을 실제로 놓고 제작소·대장간·연구소·주방·농장·잡실이 되는지 본다. 방 밖과 지붕 위에 놓은 것은 섞이지 않는다. (앞 단계 QA) 맨땅 판 테스트는 이웃 넷에도 바깥 세 변 벽과 지붕을 얹어 각자 막힌 방으로 만들었다. 그 위에서 rooms().size()==4 이고 어느 방의 plates 에도 Vector2i.ZERO 가 없음을 단언한다. Rooms._fill 의 죽은 검사 `cells < MIN_CELLS` 는 지웠고, MIN_CELLS 주석에 「판 단위라 늘 참 — 방 크기의 뜻만 적는다」를 적었다. 돌린 것: changed_tests 로 고른 14개 파일에서 119개가 통과했다. .po 는 changed_tests 가 거르므로 po 를 읽는 테스트 21개 파일도 따로 돌렸고 208개가 통과했다.",
+   "why": "",
+   "files": [
+    "game/build/rooms.json",
+    "game/build/room_catalog.gd",
+    "game/build/rooms.gd",
+    "game/build/buildings.gd",
+    "game/life/farming/field_patch.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/build/test_room_kinds.gd",
+    "game/tests/build/test_rooms.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "방 종류표가 **데이터 파일**이다 — 한 줄 적으면 코드를 안 고쳐도 새 방이 생긴다 (테스트)",
+     "evidence": "game/build/rooms.json 을 RoomCatalog.load_from 이 읽고, RoomCatalog 에는 방 이름이 하나도 없다. test_one_more_line_in_the_data_file_makes_a_new_room 이 원래 파일에 storeroom 한 줄을 붙여 user:// 에 쓰고 읽어 새 방이 생기고 원래 표에는 없음을 단언한다. test_the_game_reads_its_rooms_from_the_data_file 은 실제로 막은 방에서 Buildings.room_catalog 를 바꾸면 rooms() 의 kind 가 misc→pantry 로 바뀌는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "첫 내용은 spec 의 표다 — 농장(밭) · 제작소(가공대) · 대장간(제련로) · 연구소(연구대) · 주방(조리대 + 조리용 화로 둘 다) (테스트)",
+     "evidence": "test_the_first_content_is_the_spec_table 이 다섯 key 와 needs 를 차례대로 대조한다. test_every_core_object_is_a_real_item 이 아이템 이름이 ITEM_ 번역 키로 있는지 본다. test_rooms_by_what_stands_inside · test_a_kitchen_needs_both_the_table_and_the_stove · test_a_field_inside_makes_a_farm 이 실제 막힌 방에 제작대 · 밭을 놓아 제작소 · 대장간 · 연구소 · 주방 · 농장을 확인한다. 목장 · 광산은 오브젝트가 게임에 없어 빠졌고, 이 사정을 rooms.json 의 _later 에 적었다. 요구 수량 검사를 pass 로 바꿔 깨 보니 tests/build 에서 4개가 실패했다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "핵심 오브젝트가 없거나 둘 이상 섞이면 **잡실**이다 (테스트)",
+     "evidence": "test_none_or_mixed_is_misc 가 빈 방 · 상자만 · 가공대+제련로 · 밭+주방 · 화로만 · 0개를 잡실로 단언하고, 핵심이 아닌 상자가 섞여도 제작소임을 본다. 실제 방에서도 test_rooms_by_what_stands_inside(가공대+제련로→misc) · test_a_field_inside_makes_a_farm(밭+가공대→misc, 방 밖 · 지붕 위 것은 안 섞임)이 확인한다"
+    },
+    {
+     "ok": true,
+     "criterion": "방 이름은 번역 키다 (ko · en 둘 다)",
+     "evidence": "ko.po · en.po 에 ROOM_farm/workshop/smithy/lab/kitchen/misc 여섯 개가 있다. test_room_names_are_translation_keys_in_ko_and_en 이 표의 모든 key 와 misc 에 대해 두 말이 다 비어 있지 않고 서로 다른지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 맨땅 판 테스트가 엉뚱한 이유로 통과한다 — … 이웃 넷에도 바깥 변 벽과 지붕을 얹어 각자 막힌 방이 되게 한 뒤 rooms().size()==4 이고 어느 방의 plates 에도 Vector2i.ZERO 가 없는지 단언하라. MIN_CELLS 검사는 지우거나 주석에 「판 단위라 늘 참 — 방 크기의 뜻만 적는다」로 밝혀라",
+     "evidence": "test_less_than_one_foundation_of_floor_is_not_a_room 이 이웃 넷에 바깥 세 변 벽과 지붕을 얹고 rooms().size()==4, 어느 방 plates 에도 bare(ZERO)가 없음, 이웃 방마다 cells==MIN_CELLS 를 단언한다. Rooms._fill 의 `cells < MIN_CELLS` 검사를 지웠고, MIN_CELLS 주석에 그 문구를 적었다. test.log 에서 test_rooms.gd 6/6 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ay\n11/11 passed.\n\n\nres://tests/build/test_room_kinds.gd\n* test_one_more_line_in_the_data_file_makes_a_new_room\n* test_the_game_reads_its_rooms_from_the_data_file\n* test_the_first_content_is_the_spec_table\n* test_every_core_object_is_a_real_item\n* test_rooms_by_what_stands_inside\n* test_a_kitchen_needs_both_the_table_and_the_stove\n* test_a_field_inside_makes_a_farm\n* test_none_or_mixed_is_misc\n* test_room_names_are_translation_keys_in_ko_and_en\n9/9 passed.\n\n\nres://tests/build/test_rooms.gd\n* test_walls_and_a_roof_make_a_room_and_breaking_one_unmakes_it\n* test_an_open_side_between_two_plates_joins_them_into_one_room\n* test_a_door_counts_as_closed_even_when_open\n* test_two_storeys_joined_by_stairs_are_two_rooms\n* test_one_foundation_is_the_smallest_room\n* test_less_than_one_foundation_of_floor_is_not_a_room\n6/6 passed.\n\n\nres://tests/life/farming/test_crops.gd\n* test_a_seed_goes_into_a_tilled_field_only\n* test_plant_water_and_harvest_on_a_placed_field_by_right_clicks\n* test_a_second_seed_does_not_go_on_top_of_a_growing_crop\n* test_water_does_not_stay_on_a_field_with_nothing_planted\n* test_an_unripe_crop_is_not_harvested\n* test_a_crop_left_without_water_does_not_grow\n* test_the_water_lasts_one_day_only\n* test_wheat_is_full_grown_after_three_watered_days\n* test_pulling_an_unripe_crop_gives_the_seed_back\n* test_the_returned_seed_can_be_planted_again\n* test_a_full_grown_crop_is_harvested\n* test_each_growth_stage_looks_different\n* test_the_crop_grows_taller_as_it_ripens\n* test_the_crop_stands_on_the_field\n* test_breaking_the_field_takes_the_crop_out_with_it\n* test_the_watering_tool_comes_from_the_data_file\n* test_every_crop_and_its_seed_have_a_korean_and_an_english_name\n17/17 passed.\n\n\nres://tests/life/farming/test_farm_save.gd\n* test_placed_fields_are_still_there_after_leaving_and_returning\n* test_a_grown_crop_is_still_grown_after_leaving_and_returning\n* test_an_empty_field_comes_back_empty\n* test_a_field_turned_back_does_not_come_back\n* test_each_island_keeps_its_own_fields\n* test_restoring_twice_does_not_stack\n* test_the_island_state_carries_fields_and_crops\n7/7 passed.\n\n\nres://tests/life/farming/test_farming_temporary_notes.gd\n* test_the_cliff_slope_is_marked_temporary\n* test_the_cliff_slope_still_matches_the_walking_limit\n* test_the_water_drying_rule_is_marked_temporary\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/life/farming/test_farmland.gd\n* test_holding_a_plot_and_right_clicking_places_a_field\n* test_the_field_snaps_to_the_one_cell_grid\n* test_a_field_is_not_placed_twice_on_the_same_cell\n* test_nothing_is_placed_without_a_plot_in_hand\n* test_no_tool_turns_bare_ground_into_a_field\n* test_no_tool_turns_a_placed_field_back_by_right_click\n* test_a_placed_field_breaks_back_into_the_plot_like_other_placeables\n* test_the_field_breaks_whatever_is_in_hand\n* test_breaking_a_field_uses_the_same_rule_as_a_station\n* test_hitting_a_mob_standing_on_a_field_leaves_the_field_alone\n* test_hitting_a_body_standing_on_a_field_leaves_the_field_alone\n* test_a_left_click_on_bare_ground_breaks_nothing\n* test_a_field_is_not_placed_on_water\n* test_the_default_water_rule_is_below_sea_level\n* test_a_field_is_not_placed_on_a_steep_slope\n* test_a_field_is_placed_on_a_gentle_slope\n* test_a_field_is_not_placed_on_a_cliff\n* test_the_steep_line_is_a_45_degree_slope\n* test_a_field_is_not_placed_on_a_station_spot\n19/19 passed.\n\n\nres://tests/life/farming/test_fertilizer_farm_plot.gd\n* test_fertilizer_is_made_from_lime\n* test_a_farm_plot_is_made_from_fertilizer_and_soil\n* test_from_lime_and_soil_all_the_way_to_a_farm_plot\n* test_the_counts_are_written_down_as_temporary\n4/4 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              14\nTests               119\nPassing Tests       119\nAsserts            1769\nTime              55.236s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "afdbea3"
  }
 ]

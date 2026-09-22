@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 06:09:51",
- "updated_epoch": 1790111391,
+ "updated": "2026-09-23 06:20:56",
+ "updated_epoch": 1790112056,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 19,
   "groups_done": 11,
   "groups_waiting": 0,
   "steps_total": 69,
-  "steps_done": 46
+  "steps_done": 47
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-128",
- "step": "1",
- "step_title": "막힌 공간을 방으로 안다",
+ "step": "2",
+ "step_title": "방 종류를 데이터로 정한다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 06:08:08"
+ "phase_since": "2026-09-23 06:19:26"
 }
