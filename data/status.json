@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 19:34:57",
- "updated_epoch": 1790073297,
+ "updated": "2026-09-22 19:55:46",
+ "updated_epoch": 1790074546,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 83,
-  "steps_done": 16
+  "steps_done": 17
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "4",
- "step_title": "GameRoot.set_menu_open(false) 이 씬 안 모든 Player 의 controls_… (G-103 단계 5)",
+ "step": "5",
+ "step_title": "클릭 차단은 창이 실제로 삼키는 것을 확인하지 못했다 (G-103 단계 5)",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 19:33:03"
+ "phase_since": "2026-09-22 19:53:58"
 }
