@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 13:34:49",
- "updated_epoch": 1790051689,
+ "updated": "2026-09-22 14:00:41",
+ "updated_epoch": 1790053241,
  "ended": "2026-09-22 11:31:53",
  "progress": {
   "groups_total": 5,
-  "groups_done": 1,
+  "groups_done": 2,
   "groups_waiting": 0,
   "steps_total": 62,
-  "steps_done": 2
+  "steps_done": 3
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-121",
- "step": "2",
- "step_title": "남은 시간과 출력 버퍼",
+ "group": "G-122",
+ "step": "1",
+ "step_title": "벽에만 걸린다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 13:30:45"
+ "phase_since": "2026-09-22 13:58:12"
 }
