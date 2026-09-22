@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 14:00:41",
- "updated_epoch": 1790053241,
+ "updated": "2026-09-22 14:29:30",
+ "updated_epoch": 1790054970,
  "ended": "2026-09-22 11:31:53",
  "progress": {
   "groups_total": 5,
   "groups_done": 2,
   "groups_waiting": 0,
-  "steps_total": 62,
-  "steps_done": 3
+  "steps_total": 64,
+  "steps_done": 4
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-122",
- "step": "1",
- "step_title": "벽에만 걸린다",
+ "step": "2",
+ "step_title": "갈고리 탄과 탄약 표시",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 13:58:12"
+ "phase_since": "2026-09-22 14:24:32"
 }
