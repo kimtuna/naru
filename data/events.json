@@ -5435,5 +5435,63 @@
   },
   "test": "oes_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n* test_the_pillars_stand_at_the_shore_corners_and_leave_the_landing_spot_clear\n* test_the_plank_has_no_body_so_the_one_who_lands_walks_out\n* test_hitting_the_shore_pillar_breaks_the_dock_and_gives_it_back\n* test_a_broken_dock_does_not_stay_in_standing\n* test_landing_without_a_dock_falls_back_to_the_spawn\n* test_the_other_pillar_can_be_aimed_at_too\n* test_a_dock_fixed_in_the_map_cannot_be_broken\n15/15 passed.\n\n\nres://tests/world/frontier_islands/test_island_key.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:150)\n         [1] _ready (res://world/terrain/test_island.gd:87)\n         [2] _build_island (res://core/game_root.gd:128)\n         [3] _ready (res://core/game_root.gd:105)\n         [4] _stand_opened_world_on (res://tests/world/frontier_islands/test_island_key.gd:287)\n         [5] before_all (res://tests/world/frontier_islands/test_island_key.gd:29)\n         [6] _call_before_all (res://addons/gut/gut.gd:684)\n         [7] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_every_island_that_starts_broken_has_an_unlock_item\n* test_the_unlock_item_is_made_only_at_the_research_bench\n* test_no_other_station_and_no_bare_hand_makes_the_unlock_item\n* test_the_research_bench_offers_the_unlock_item\n* test_the_key_is_not_made_of_what_only_the_locked_island_has\n* test_the_unlock_item_is_named_in_both_languages\n* test_inserting_the_key_at_the_dock_opens_the_island\n* test_after_the_key_the_boat_goes_to_that_island\n* test_nothing_opens_without_the_key_in_hand\n* test_the_key_is_not_spent_on_an_island_that_is_already_open\n* test_an_island_opened_with_the_key_stays_open_after_saving_and_loading\n* test_the_dock_of_an_opened_island_has_its_plank\n12/12 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              23\nTests               238\nPassing Tests       238\nAsserts            3633\nTime              88.957s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "736ced0"
+ },
+ {
+  "time": "2026-09-23 04:31:09",
+  "epoch": 1790105469,
+  "type": "pass",
+  "title": "통과 — G-127 단계 3 (밭을 놓고 농사를 짓는다)",
+  "group": "G-127",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "밭(farm_plot)을 들고 우클릭하면 1칸 격자에 스냅되어 놓이고(45° 넘는 경사 · 물 · 설치물 자리엔 안 놓임), 삽 개간을 없앴고, 놓은 밭과 작물(단계 · 오늘 물)이 섬마다 저장된다 — 바뀐 곳만(changed_tests.py) 60개 스크립트 542개 테스트 통과",
+   "approach": "밭은 삽으로 맨땅을 가는 방식이었다(Farmland.interact 가 tills 도구면 맨땅→밭). 이것을 「손에 든 farm_plot 을 놓는다」로 바꿨다: Farmland.FIELD_ITEM(farm_plot)을 들고 우클릭하면 place_held 가 조준 칸을 확인(물 · 45° 넘는 경사 · 제작대 자리 · 이미 밭이면 거절)한 뒤 가방에서 한 개를 빼고 칸 한가운데(Grid.cell_to_world)에 흙판을 놓는다. 삽(tools.json 의 tills)은 이제 놓은 밭을 맨땅으로 되돌리기만 한다 — spec 수용 기준 「간 밭에 삽을 들고 우클릭하면 맨땅으로 돌아간다」가 그대로 남아 있어서다. 맨땅에 삽을 우클릭하면 아무 일도 없다. Crops 는 farm_plot 을 든 우클릭을 무시한다(심긴 칸에서 뽑히지 않게). 저장은 Farmland.standing/restore([{cell, height}]) · Crops.standing/restore([{cell, kind, stage, watered}])를 만들어 IslandState 의 fields · crops 키로 섬마다 담고, 되돌릴 때는 밭을 먼저 · 작물을 나중에 놓는다. 되돌리며 옛 밭을 치울 때 untilled 를 알리지 않는다 — 알리면 그 위 작물이 뽑혀 씨앗이 가방에 들어온다. 테스트: 진짜 GameRoot · 진짜 우클릭으로 놓기 · 스냅(흙판 x·z 가 칸 한가운데, 한 칸=1m) · 60° 비탈 판에는 안 놓이고 30° 비탈 판에는 놓임(면 기울기를 법선으로 확인) · 맨땅 삽 우클릭 3번에도 밭 없음 · 놓은 밭에서 심기→물→수확 한 바퀴를 우클릭만으로, 저장은 SaveStore 로 디스크에 썼다 읽는 길(상자 저장 테스트와 같은 방식)로 밭 칸 · 높이 · 작물 단계 · 오늘 물 · 섬마다 따로 · 두 번 복원해도 안 겹침을 본다. 섬 위 테스트(test_island_walk)의 삽 개간 두 곳도 farm_plot 놓기로 바꿨다. 확인: TEST_DIR=tests/life/farming 5개 스크립트 46개 통과, 바뀐 곳만(changed_tests.py) 60개 스크립트 542개 통과 — 전체는 돌리지 않았다. 덧붙여 두면: 삽으로 되돌린 밭은 farm_plot 으로 돌아오지 않는다(예전 개간 되돌리기와 같이 그냥 사라진다) — 기준에 없어 손대지 않았다.",
+   "why": "",
+   "files": [
+    "game/life/farming/farmland.gd",
+    "game/life/farming/crops.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/settings/save/world_data.gd",
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/tests/life/farming/test_farmland.gd",
+    "game/tests/life/farming/test_crops.gd",
+    "game/tests/life/farming/test_farm_save.gd",
+    "game/tests/world/terrain/test_island_walk.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "밭은 1칸 격자에 **스냅**되어 놓이고, 급한 경사에는 놓이지 않는다 (테스트)",
+     "evidence": "test_farmland: test_the_field_snaps_to_the_one_cell_grid 가 진짜 우클릭으로 놓은 흙판의 x·z 가 Grid.cell_to_world 칸 한가운데이고 크기가 1칸임을 본다. test_a_field_is_not_placed_on_a_steep_slope 는 60° 비탈 판을 세워 법선이 60° 임을 확인한 뒤 우클릭해 밭이 없고 가방 수가 그대로임을 보고, test_a_field_is_placed_on_a_gentle_slope(30°)가 반대쪽을 막는다. 일부러 깨 봄: place_held 에서 can_till 검사를 빼자 물 · 60° 비탈 · 절벽 · 설치물 테스트 4개가 실패했다 (되돌려 놓음)"
+    },
+    {
+     "ok": true,
+     "criterion": "**삽 개간이 사라졌다** — 맨땅에 삽을 우클릭해도 밭이 생기지 않는다 (테스트)",
+     "evidence": "test_farmland: test_the_shovel_no_longer_turns_bare_ground_into_a_field 는 삽이 tools.json 에 여전히 tills 로 적혀 있음을 먼저 확인한 뒤 맨땅에 진짜 우클릭을 3번 하고 밭이 없으며 interact() 가 false 임을 본다. test_the_shovel_right_click_on_a_placed_field_turns_it_back... 은 되돌린 맨땅에 다시 삽질해도 밭이 안 생김을 본다. test_crops 의 test_a_seed_goes_into_a_tilled_field_only 도 삽질 뒤 심기지 않음을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "놓은 밭에 심고 · 물 주고 · 수확하는 것이 그대로 된다 (테스트)",
+     "evidence": "test_crops: test_plant_water_and_harvest_on_a_placed_field_by_right_clicks 가 GameRoot 에서 farm_plot 을 우클릭으로 놓고(가방에서 빠짐 확인) → 씨앗 우클릭 → 물뿌리개 우클릭을 days_of 만큼 → 빈손 우클릭 수확, 밀이 가방에 들어오고 밭이 남는지까지 본다. 나머지 test_crops 도 모두 놓은 밭(_till = SLOT_PLOT 우클릭)을 거친다"
+    },
+    {
+     "ok": true,
+     "criterion": "놓은 밭과 자란 작물이 저장본에 남는다 (테스트)",
+     "evidence": "test_farm_save(새 파일): IslandState.of → SaveStore 로 디스크에 쓰고 읽음 → 새 Farmland/Crops 에 IslandState.apply 하는 길로, 밭 칸 · 높이 · 흙판 위치, 다 자란 작물 · 1단계 작물 · 오늘 준 물, 빈 밭, 되돌린 밭이 안 돌아옴, 섬마다 따로, 두 번 복원해도 안 겹침을 본다. 전체 테스트(test.log 맨 윗줄 '전체') 112 스크립트 978개 모두 통과, guard 통과"
+    }
+   ],
+   "issues": [
+    "[결정] 삽으로 되돌린 밭이 사라진다 — 놓은 밭(farm_plot, 비료+흙으로 만든 것)에 삽을 우클릭하면 맨땅으로 돌아가고 farm_plot 은 가방으로 돌아오지 않는다(farmland.gd untill). spec/04_life/farming.md 29줄은 「맨땅으로 돌아간다」만 적었고, 만든 물건을 되돌릴 때 돌려받는지는 적혀 있지 않다. 개간이 공짜였던 옛날과 달리 이제 밭은 석회가 드는 물건이라, 돌려받을지(설치물 부수기처럼) · 그냥 없어질지 사람이 정해야 한다"
+   ],
+   "good": []
+  },
+  "test": "d\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             112\nTests               978\nPassing Tests       978\nAsserts           14188\nTime              568.73s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "b467012"
  }
 ]

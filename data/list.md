@@ -242,7 +242,7 @@
   - 기준: **비료 + 흙**으로 밭을 만든다 (테스트)
   - 기준: 재료 개수는 임시다 — 코드와 report 에 「임시」라고 적는다
   - 기준: (앞 단계 QA) 없는 파일을 가리키는 주석 — game/tests/life/harvest/test_harvest.gd 의 test_each_resource_drops_its_own_yield 주석이 「그것은 test_harvest_soil_lime.gd 가 본다」라고 하는데 그런 파일은 없다. 흙은 같은 파일의 test_mining_a_rock_drops_soil_along_with_the_stone 이 본다 — 주석을 그렇게 고쳐라
-- [ ] 3. 밭을 놓고 농사를 짓는다
+- [x] 3. 밭을 놓고 농사를 짓는다
   - 기준: 밭은 1칸 격자에 **스냅**되어 놓이고, 급한 경사에는 놓이지 않는다 (테스트)
   - 기준: **삽 개간이 사라졌다** — 맨땅에 삽을 우클릭해도 밭이 생기지 않는다 (테스트)
   - 기준: 놓은 밭에 심고 · 물 주고 · 수확하는 것이 그대로 된다 (테스트)

@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 04:10:42",
- "updated_epoch": 1790104242,
+ "updated": "2026-09-23 04:31:09",
+ "updated_epoch": 1790105469,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 16,
   "groups_done": 8,
   "groups_waiting": 0,
   "steps_total": 61,
-  "steps_done": 39
+  "steps_done": 40
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-127",
- "step": "2",
- "step_title": "비료와 밭을 만든다",
+ "step": "3",
+ "step_title": "밭을 놓고 농사를 짓는다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 04:09:26"
+ "phase_since": "2026-09-23 04:29:53"
 }
