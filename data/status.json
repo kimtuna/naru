@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 14:59:38",
- "updated_epoch": 1790056778,
+ "updated": "2026-09-22 15:25:48",
+ "updated_epoch": 1790058348,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 6,
   "groups_done": 3,
   "groups_waiting": 1,
-  "steps_total": 68,
-  "steps_done": 5
+  "steps_total": 71,
+  "steps_done": 6
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-124",
- "step": "1",
- "step_title": "탄창을 총에 붙인다",
+ "step": "2",
+ "step_title": "탄 네 종 — 제 탄으로만 채워진다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 14:56:07"
+ "phase_since": "2026-09-22 15:21:24"
 }
