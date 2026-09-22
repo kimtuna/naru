@@ -1,14 +1,14 @@
 {
- "state": "done",
- "reason": "list.md 의 할 일을 모두 처리했다",
- "updated": "2026-09-22 11:31:53",
- "updated_epoch": 1790044313,
+ "state": "running",
+ "reason": "{\"done\": false, \"bundle\": \"G-121\", \"step\": 1, \"title\": \"레시피를 골라 만든다\", \"last\": false}",
+ "updated": "2026-09-22 11:47:58",
+ "updated_epoch": 1790045278,
  "ended": "2026-09-22 11:31:53",
  "progress": {
-  "groups_total": 5,
+  "groups_total": 7,
   "groups_done": 5,
   "groups_waiting": 0,
-  "steps_total": 10,
+  "steps_total": 14,
   "steps_done": 10
  },
  "started": "2026-09-21 06:54:49",
