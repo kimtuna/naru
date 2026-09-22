@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 18:28:20",
- "updated_epoch": 1790069300,
+ "updated": "2026-09-22 18:41:32",
+ "updated_epoch": 1790070092,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
-  "groups_done": 5,
+  "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 83,
-  "steps_done": 12
+  "steps_done": 13
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-125",
- "step": "3",
- "step_title": "연구대 열쇠로 연다",
+ "group": "G-900",
+ "step": "1",
+ "step_title": "test_enter_game.gd:109 test_the_other_world_did_not_get_t… (G-102 단계 3)",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 18:25:35"
+ "phase_since": "2026-09-22 18:39:23"
 }
