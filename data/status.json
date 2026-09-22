@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 17:56:49",
- "updated_epoch": 1790067409,
+ "updated": "2026-09-22 18:28:20",
+ "updated_epoch": 1790069300,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 5,
   "groups_waiting": 0,
-  "steps_total": 82,
-  "steps_done": 11
+  "steps_total": 83,
+  "steps_done": 12
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-125",
- "step": "2",
- "step_title": "개척 섬은 부서진 채로 시작한다",
+ "step": "3",
+ "step_title": "연구대 열쇠로 연다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 17:53:06"
+ "phase_since": "2026-09-22 18:25:35"
 }
