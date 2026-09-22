@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 18:41:32",
- "updated_epoch": 1790070092,
+ "updated": "2026-09-22 18:53:51",
+ "updated_epoch": 1790070831,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 83,
-  "steps_done": 13
+  "steps_done": 14
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "1",
- "step_title": "test_enter_game.gd:109 test_the_other_world_did_not_get_t… (G-102 단계 3)",
+ "step": "2",
+ "step_title": "「비우면 무작위」를 UI 를 거쳐 확인하는 테스트가 없다 (G-102 단계 3)",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 18:39:23"
+ "phase_since": "2026-09-22 18:52:04"
 }
