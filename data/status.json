@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 01:55:05",
- "updated_epoch": 1790096105,
+ "updated": "2026-09-23 02:00:11",
+ "updated_epoch": 1790096411,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 13,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 52,
-  "steps_done": 30
+  "steps_done": 31
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "18",
- "step_title": "껍데기 테스트를 고친다 ② — Tab · 재료 검사 · 제작대 레시피",
+ "step": "19",
+ "step_title": "껍데기 테스트를 고친다 ③ — 부순 제작대 · 설치물 · 버퍼 시간",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 01:53:06"
+ "phase_since": "2026-09-23 01:59:27"
 }
