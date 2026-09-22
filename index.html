@@ -107,8 +107,6 @@ button.theme { background: none; border: 1px solid var(--line); color: var(--mut
 
   <h2>결정 대기 <span id="dcount"></span></h2>
   <div id="decisions"></div>
-  <h2>루프가 할 잔일 <span id="fcount"></span></h2>
-  <div id="findings"></div>
 
   <h2>할 일 목록</h2>
   <div id="list"></div>
@@ -212,23 +210,6 @@ function renderDecisions(text) {
   }).join("");
 }
 
-// 루프가 회차마다 들고 가 처리하는 잔일 (harness/findings.py · chores.md).
-// 한 줄이 「- (어디서) 무엇」이다. 긴 글이라 제목만 보이고 눌러야 펼쳐진다.
-function renderFindings(text) {
-  const rows = (text || "").split("\n").filter((l) => l.startsWith("- (")).map((l) => {
-    const m = l.match(/^- \(([^)]*)\)\s*([\s\S]*)$/);
-    if (!m) return null;
-    const body = m[2].trim();
-    const cut = body.search(/ — |\. /);
-    return { at: m[1], title: (cut > 8 ? body.slice(0, cut) : body).slice(0, 70), body: body };
-  }).filter(Boolean);
-  $("fcount").textContent = rows.length ? `(${rows.length})` : "";
-  if (!rows.length) { $("findings").innerHTML = '<div class="empty">없음</div>'; return; }
-  $("findings").innerHTML = `<ul class="steps">${rows.map((r) => `<li><span>·</span><span>
-    <details><summary><span class="title">${esc(r.title)}</span><span class="count">${esc(r.at)}</span></summary>
-    <div class="body md">${md(r.body)}</div></details></span></li>`).join("")}</ul>`;
-}
-
 function parseList(text) {
   const groups = []; let g = null, st = null;
   for (const line of text.split("\n")) {
@@ -329,13 +310,12 @@ function renderRuns(events) {
 }
 
 async function load() {
-  const [s, ev, li, de, fi] = await Promise.all([
-    get("data/status.json", true), get("data/events.json", true), get("data/list.md"), get("data/decisions.md"), get("data/chores.md"),
+  const [s, ev, li, de] = await Promise.all([
+    get("data/status.json", true), get("data/events.json", true), get("data/list.md"), get("data/decisions.md"),
   ]);
   const openState = [...document.querySelectorAll("details")].map((d) => d.open);
   renderStatus(s);
   renderDecisions(de || "");
-  renderFindings(fi || "");
   renderList(li || "", s);
   renderEvents(ev || []);
   renderRuns(ev || []);

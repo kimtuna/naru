@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "{\"done\": false, \"bundle\": \"G-121\", \"step\": 1, \"title\": \"레시피를 골라 만든다\", \"last\": false}",
- "updated": "2026-09-22 11:47:58",
- "updated_epoch": 1790045278,
+ "updated": "2026-09-22 12:33:24",
+ "updated_epoch": 1790048004,
  "ended": "2026-09-22 11:31:53",
  "progress": {
-  "groups_total": 7,
-  "groups_done": 5,
+  "groups_total": 5,
+  "groups_done": 1,
   "groups_waiting": 0,
-  "steps_total": 14,
-  "steps_done": 10
+  "steps_total": 58,
+  "steps_done": 0
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-116",
+ "group": "G-121",
  "step": "1",
- "step_title": "껍데기 테스트 갚기 — 값을 바꿔도 통과하던 넷",
+ "step_title": "레시피를 골라 만든다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-22 11:25:05"
+ "phase": "구현",
+ "phase_since": "2026-09-22 11:48:01"
 }
