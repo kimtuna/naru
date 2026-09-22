@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-23 04:31:09",
- "updated_epoch": 1790105469,
+ "reason": "{\"done\": false, \"bundle\": \"G-133\", \"step\": 1, \"title\": \"기둥\", \"last\": false}",
+ "updated": "2026-09-23 04:33:05",
+ "updated_epoch": 1790105585,
  "ended": "2026-09-22 23:56:40",
  "progress": {
-  "groups_total": 16,
-  "groups_done": 8,
+  "groups_total": 17,
+  "groups_done": 9,
   "groups_waiting": 0,
-  "steps_total": 61,
+  "steps_total": 65,
   "steps_done": 40
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-127",
- "step": "3",
- "step_title": "밭을 놓고 농사를 짓는다",
+ "group": "G-128",
+ "step": "1",
+ "step_title": "막힌 공간을 방으로 안다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-23 04:29:53"
+ "phase": "구현",
+ "phase_since": "2026-09-23 04:31:12"
 }
