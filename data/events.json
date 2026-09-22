@@ -3464,5 +3464,66 @@
   "epoch": 1790055030,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-22 14:59:38",
+  "epoch": 1790056778,
+  "type": "pass",
+  "title": "통과 — G-124 단계 1 (탄창을 총에 붙인다)",
+  "group": "G-124",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "탄창을 Attack 하나에서 떼어 총마다 따로 붙였다 — 크기는 tools.json 한 곳에서 온다",
+   "approach": "문제는 탄창이 총이 아니라 평타(Attack)에 하나 붙어 있던 것이다 — 총을 바꿔 들어도 같은 탄창을 나눠 썼고, 크기는 Magazine.SIZE 상수 하나로 코드에 박혀 있었다. 셋을 고쳤다. (1) Magazine 의 const SIZE 를 없애고 만들 때 크기를 받는 var size 로 바꿨다. (2) Attack 이 탄창 하나 대신 '총 이름 → 탄창' 사전을 들고, 처음 손에 드는 총에 그때 하나 붙인 뒤 내려놓아도 그대로 둔다 — 그래서 총 A 로 쏜 뒤 B 를 들어도 B 는 제 탄창이고, 내려놓았다 다시 들어도 남은 탄이 그대로다. 재장전 시간은 붙어 있는 탄창 전부를 흘려 준다(다른 총을 들었다고 재장전이 멈춰 서지 않게). 총을 들지 않았으면 magazine() 이 null 이라, 화면 표시와 재장전이 그것으로 먼저 걸러진다. (3) 탄창 크기는 tools.json 의 magazine 필드 한 곳에서만 오고 ToolCatalog.magazine_size() 로 읽는다. '총마다 다르다'를 보려면 총이 둘 있어야 해서, spec 표의 2단 리볼버(6발)를 도구·레시피·번역에 한 자루 넣었다(기존 gun 은 30발). '값이 한 곳에 있다'는 눈으로 확인할 수 없어, 임시 tools.json 사본에서 탄창 크기 숫자만 바꾸고 게임 안 탄창이 따라오는지 보는 테스트로 확인한다 — 코드 어딘가에 발 수가 박혀 있으면 그 테스트가 떨어진다. 화면 표시(AmmoLabel)도 Magazine.SIZE 대신 든 총 탄창의 size 를 읽는다. Magazine.SIZE 를 쓰던 기존 테스트 넷은 ToolCatalog 에 크기를 묻도록 고쳤다. 검사: 골라 돌리기로 combat/tools_as_weapons 55개·ui/hud 117개·life/climbing 42개·craft 58개가 통과했고, 마지막에 전체를 한 번 돌려 82개 스크립트 750개 테스트가 전부 통과했다(496.9초).",
+   "why": "리볼버 탄창 6발 — spec/08_combat/tools-as-weapons.md 표의 값이고 spec 이 '권총 9발만 사람이 정했고 나머지는 임시'라고 적어 두었다. tools.json 의 magazine 에 있다; 기존 gun 의 탄창 30발 — 전에 코드에 박혀 있던 값을 그대로 tools.json 으로 옮겼다. 표에 없는 임시 총이라 계통이 붙으면 없어질 자리다; 리볼버 레시피 wood 2 + iron_ore 6 · 손에 드는 상자 크기와 색 — 다른 도구와 같은 임시값이다 (재료 개수는 전체 아이템 목록이 미정, 아트는 프로토타입 범위 밖); ToolCatalog.DEFAULT_MAGAZINE = 1 — 파일에 탄창 크기를 안 적었을 때. 표의 가장 아랫단(임시변통)이 1발이라 거기 맞췄다",
+   "files": [
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/combat/tools_as_weapons/magazine.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/ui/hud/ammo_label.gd",
+    "game/craft/recipes/recipes.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/combat/tools_as_weapons/test_per_gun_magazine.gd",
+    "game/tests/combat/tools_as_weapons/test_magazine.gd",
+    "game/tests/ui/hud/test_ammo_label.gd",
+    "game/tests/ui/hud/test_grapple_ammo_label.gd",
+    "game/tests/life/climbing/test_grapple_ammo.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "총 A 로 쏜 뒤 총 B 를 들면 B 의 남은 탄이 그대로다 (테스트)",
+     "evidence": "test_per_gun_magazine.gd:109 test_switching_guns_keeps_each_magazine 이 진짜 캐릭터에 진짜 좌클릭으로 gun 을 3발 쏘고 revolver 를 들어 6/6 인지, 되돌아와 gun 이 27발 그대로인지 본다. test_reloading_one_gun_does_not_fill_the_other 가 재장전까지 든 총에만 드는지 본다. 일부러 깨 봤다 — attack.gd 의 _magazines 키를 총 이름 대신 하나로 묶으니 이 테스트 3개·단언 7개가 떨어졌다 (되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "총을 내려놓았다 다시 들어도 남은 탄이 그대로다 (테스트)",
+     "evidence": "test_per_gun_magazine.gd:139 test_putting_the_gun_down_keeps_its_rounds 가 4발 쏜 뒤 도끼 · 빈손을 거쳐 다시 총을 들어도 26발인지 본다. test_an_empty_gun_stays_empty_after_being_put_down 이 비운 총도 다시 들어 찬 채가 아닌지 본다. 일부러 깨 봤다 — magazine() 이 총을 놓을 때 탄창을 버리게 하니 test_putting_the_gun_down_keeps_its_rounds 가 떨어졌다 (되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "탄창 크기가 총마다 다르고, 값은 한 곳에 있다 (테스트)",
+     "evidence": "test_the_two_guns_have_different_magazine_sizes 가 두 총의 크기가 다른지와 각 탄창이 그 크기로 차는지 본다. test_the_magazine_size_comes_from_the_data_file 이 진짜 tools.json 사본에서 탄창 숫자만 바꿔 게임 안 탄창이 따라오는지 본다. test_every_shooting_tool_in_the_file_says_how_big_its_magazine_is 가 쏘는 도구 전부에 magazine 이 적혀 있어 코드 기본값에 기대지 않는지 본다. 일부러 깨 봤다 — ToolCatalog.magazine_size() 가 30 을 박아 돌려주게 하니 두 테스트가 떨어졌다 (되돌렸다). 기존 테스트 넷도 Magazine.SIZE 상수를 지우고 ToolCatalog 에 묻도록 바뀌었다 — 코드에 발 수가 남은 곳이 없다"
+    }
+   ],
+   "issues": [
+    "tools.json 의 gun 30발이 spec 표에 없는 총이다 — tools.json 의 _temporary 는 「탄창 크기는 spec 표의 값이고 권총 9발만 사람이 정했다」고 적었는데, gun 은 그 표(권총·산탄총·돌격소총·저격총 4계통 16자루) 어디에도 없는 예전 총이다. 30발도 표에서 온 값이 아니라 전에 코드에 박혀 있던 값을 옮긴 것이다. 단계 3 「열여섯 자루와 사다리」에서 이것을 지워야 할지 남겨야 할지가 지금 파일만 봐서는 안 보인다. tools.json 의 _temporary 에 「gun 은 표에 없는 예전 총이고 30발은 표가 아니라 옛 코드에서 온 값이다 — 계통이 붙으면 없어질 자리」를 한 줄 더 적어라",
+    "빈 총 테스트가 탄창을 놓는 길을 지나지 않는다 — test_per_gun_magazine.gd:157 test_an_empty_gun_stays_empty_after_being_put_down 은 주석에 「가장 아픈 자리」라 적었지만, 도끼를 든 동안 attack.magazine() 을 한 번도 부르지 않아 「손에서 놓을 때」 도는 코드를 지나지 않는다. 실제로 magazine() 이 총을 놓을 때 탄창을 버리도록 깨 보니 이 테스트만 통과했다 (형제 테스트 test_putting_the_gun_down_keeps_its_rounds 가 잡아 주므로 기준은 막혀 있다 — 통과를 막는 것은 아니다). _hold(AXE) 뒤에 형제 테스트처럼 assert_null(attack.magazine(), \"도끼에는 탄창이 없다\") 한 줄을 넣어 놓는 길을 지나게 하라"
+   ],
+   "good": [
+    "revolver 도구 한 자루를 tools.json · recipes.json · ko.po · en.po 에 넣었다 — 기준 3 「총마다 다르다」를 보려면 총이 둘 있어야 하니 필요한 일이지만, spec 표의 2단 권총이라 단계 3 「열여섯 자루와 사다리」의 몫을 한 자루 미리 당긴 셈이다. 번역은 ko · en 둘 다 있다",
+    "Attack.magazine_of(key) 를 공개 함수로 냈다 — 기준에 없지만 손에 안 든 총의 탄창을 테스트가 들여다보는 데 쓴다 (기준 1 의 「B 는 쏜 채로 그대로다」를 볼 길이 달리 없다)",
+    "재장전 시간을 붙어 있는 탄창 전부에 흘린다 (_process) — 기준에 없다. 다른 총을 들었다고 재장전이 멈춰 서지 않게 한 것이고, 이를 확인하는 테스트는 없다"
+   ]
+  },
+  "test": "counts_down\n* test_when_it_is_done_the_time_left_disappears\n* test_the_buffer_slots_stand_empty_until_something_is_made\n* test_what_was_made_shows_up_in_a_buffer_slot\n* test_a_recipe_that_makes_many_shows_how_many_are_waiting\n* test_pressing_the_buffer_slot_brings_it_into_the_bag\n* test_until_it_is_pressed_what_was_made_stays_in_the_buffer\n* test_when_the_buffer_is_full_the_window_says_the_next_craft_will_not_start\n* test_an_empty_buffer_says_nothing\n* test_collecting_makes_room_and_crafting_can_start_again\n* test_closing_and_reopening_keeps_the_timer_and_the_buffer\n* test_reopening_a_station_does_not_show_another_stations_buffer\n* test_the_buffer_message_has_a_korean_and_an_english_word\n15/15 passed.\n\n\nres://tests/ui/hud/test_station_window.gd\n* test_opening_a_station_lists_that_stations_recipes\n* test_another_station_lists_its_own_recipes\n* test_closing_the_station_empties_the_list\n* test_each_row_shows_what_comes_out_and_what_it_costs\n* test_a_recipe_that_makes_many_at_once_says_so\n* test_with_an_empty_bag_no_recipe_can_be_chosen\n* test_only_the_recipes_whose_materials_are_in_the_bag_can_be_chosen\n* test_a_row_that_cannot_be_chosen_does_nothing_when_pressed\n* test_a_row_goes_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n8/8 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              36\nTests               373\nPassing Tests       373\nAsserts            3001\nTime              164.599s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "c201259"
  }
 ]
