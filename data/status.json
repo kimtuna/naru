@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-121\", \"step\": 1, \"title\": \"레시피를 골라 만든다\", \"last\": false}",
- "updated": "2026-09-22 12:35:27",
- "updated_epoch": 1790048127,
+ "reason": "",
+ "updated": "2026-09-22 13:00:50",
+ "updated_epoch": 1790049650,
  "ended": "2026-09-22 11:31:53",
  "progress": {
   "groups_total": 5,
   "groups_done": 1,
   "groups_waiting": 0,
-  "steps_total": 58,
-  "steps_done": 0
+  "steps_total": 59,
+  "steps_done": 1
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-121",
  "step": "1",
  "step_title": "레시피를 골라 만든다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-22 12:33:27"
+ "phase": "QA",
+ "phase_since": "2026-09-22 12:56:30"
 }
