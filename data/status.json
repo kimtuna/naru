@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 04:52:56",
- "updated_epoch": 1790106776,
+ "updated": "2026-09-23 05:15:58",
+ "updated_epoch": 1790108158,
  "ended": "2026-09-22 23:56:40",
  "progress": {
-  "groups_total": 18,
+  "groups_total": 19,
   "groups_done": 9,
   "groups_waiting": 0,
-  "steps_total": 67,
-  "steps_done": 42
+  "steps_total": 68,
+  "steps_done": 43
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-133",
- "step": "2",
- "step_title": "받치는 것이 있어야 지붕이 놓인다",
+ "step": "3",
+ "step_title": "연쇄로 무너진다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 04:51:27"
+ "phase_since": "2026-09-23 05:12:45"
 }
