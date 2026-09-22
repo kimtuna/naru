@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 20:40:46",
- "updated_epoch": 1790077246,
+ "updated": "2026-09-22 20:40:48",
+ "updated_epoch": 1790077248,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
@@ -13,9 +13,9 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "7",
- "step_title": "bag.tscn 안의 수치 두 개에 「임시」 표시가 없다 (G-105 단계 2)",
+ "step": "8",
+ "step_title": "제작대 이름 다섯(ITEM_workbench · smelter · cook_table · cook_st… (G-106 단계 1)",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-22 20:34:33"
+ "phase": "구현",
+ "phase_since": "2026-09-22 20:40:48"
 }
