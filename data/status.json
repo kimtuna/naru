@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 19:55:46",
- "updated_epoch": 1790074546,
+ "updated": "2026-09-22 20:16:45",
+ "updated_epoch": 1790075805,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 83,
-  "steps_done": 17
+  "steps_done": 18
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "5",
- "step_title": "클릭 차단은 창이 실제로 삼키는 것을 확인하지 못했다 (G-103 단계 5)",
+ "step": "6",
+ "step_title": "막 색 Color(0,0,0,0.55) 가 pause_menu.tscn 안에 있어 「임시」 표시를 달… (G-103 단계 5)",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 19:53:58"
+ "phase_since": "2026-09-22 20:14:15"
 }
