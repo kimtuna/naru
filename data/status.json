@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-123\", \"step\": 2, \"title\": \"데스 상자\", \"last\": true}",
- "updated": "2026-09-22 15:50:26",
- "updated_epoch": 1790059826,
+ "reason": "",
+ "updated": "2026-09-22 16:19:40",
+ "updated_epoch": 1790061580,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 7,
   "groups_done": 3,
   "groups_waiting": 0,
   "steps_total": 75,
-  "steps_done": 7
+  "steps_done": 8
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-123",
  "step": "2",
  "step_title": "데스 상자",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-22 15:49:03"
+ "phase": "QA",
+ "phase_since": "2026-09-22 16:16:28"
 }
