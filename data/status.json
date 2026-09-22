@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 20:16:45",
- "updated_epoch": 1790075805,
+ "updated": "2026-09-22 20:40:46",
+ "updated_epoch": 1790077246,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 83,
-  "steps_done": 18
+  "steps_done": 19
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "6",
- "step_title": "막 색 Color(0,0,0,0.55) 가 pause_menu.tscn 안에 있어 「임시」 표시를 달… (G-103 단계 5)",
+ "step": "7",
+ "step_title": "bag.tscn 안의 수치 두 개에 「임시」 표시가 없다 (G-105 단계 2)",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 20:14:15"
+ "phase_since": "2026-09-22 20:34:33"
 }

@@ -116,10 +116,11 @@
   - 기준: 클릭 차단은 창이 실제로 삼키는 것을 확인하지 못했다. headless 에는 커서가 없어 Godot GUI 판정이 안 돌기 때문에, 지금 테스트는 「좌클릭의 유일한 효과인 커서 재잡기가 안 일어난다」로 대신 본다. G-105 에서 좌클릭이 평타가 되면 이 확인이 비어 버린다 — 평타를 넣을 때 「창이 떠 있으면 평타가 안 나간다」를 직접 보는 테스트를 같이 짜라.
 - [x] 6. 막 색 Color(0,0,0,0.55) 가 pause_menu.tscn 안에 있어 「임시」 표시를 달… (G-103 단계 5)
   - 기준: 막 색 Color(0,0,0,0.55) 가 pause_menu.tscn 안에 있어 「임시」 표시를 달 수 없다. report.json 에만 적혀 있어 다음 사람이 보기 어렵다 — pause_menu.gd 머리말에 「막 색은 임시, 디자인은 사람이 나중에」 한 줄을 남겨라.
-- [ ] 7. bag.tscn 안의 수치 두 개에 「임시」 표시가 없다 (G-105 단계 2)
+- [x] 7. bag.tscn 안의 수치 두 개에 「임시」 표시가 없다 (G-105 단계 2)
   - 기준: 막는 것은 아니다. bag.tscn 안의 수치 두 개에 「임시」 표시가 없다 — Dim 의 알파 0.55 와 Window CanvasLayer 의 layer = 5 다. report.json 의 temporary 에는 적혀 있지만 .tscn 을 여는 사람은 그걸 못 본다. bag.gd 머리글 주석에 덮개 색과 레이어 값이 임시라는 줄을 한 줄 보태라 (SLOT_SIZE 는 이미 잘 적혀 있다).
 - [ ] 8. 제작대 이름 다섯(ITEM_workbench · smelter · cook_table · cook_st… (G-106 단계 1)
   - 기준: 제작대 이름 다섯(ITEM_workbench · smelter · cook_table · cook_stove · research_bench)이 ko.po · en.po 에 있는지 보는 테스트가 없다. 지금 두 파일에 다 들어 있어 게임 글자는 맞지만, stations.json 은 「한 줄 더 적으면 코드를 안 고쳐도 나타난다」가 설계다 — 다음에 한 줄 더 적으면 화면에 번역 안 된 ITEM_xxx 날글자가 그대로 뜨고 아무도 안 잡는다. 도구 쪽에는 이미 그 테스트가 있다 (game/tests/combat/tools_as_weapons/test_tools.gd:90-94 — 카탈로그를 훑어 po 두 개에 ITEM_<이름> 이 있는지 본다). 같은 모양으로 StationCatalog.load_from().keys() 를 훑어 ko.po · en.po 둘 다에 ITEM_<key> 가 있는지 보는 테스트를 test_stations.gd 에 하나 더 짜라.
+  - 기준: (앞 단계 QA) 주석을 줄바꿈하면 테스트가 깨진다 — 막는 것은 아니다. test_bag_temporary_note.gd 의 _note_line 은 「덮개 색」이 있는 **한 줄**만 집어 거기서 임시·사람·layer·Color 를 다 찾는다. 그래서 bag.gd:18 은 210바이트짜리 한 줄로 남을 수밖에 없다 — 같은 머리글의 다른 줄은 전부 130바이트 안쪽에서 접혀 있어 이 줄만 튄다. 실제로 값은 그대로 두고 줄만 둘로 접어 돌려 보니 4개 중 2개가 깨졌다(「누가 나중에 정하는지가 없다」·「적어 둔 layer 가 씬과 다르다: -1 expected to equal 5」). 적어 둔 말이 멀쩡한데 모양만 고쳤다고 깨지는 것은 지키는 것이 아니라 걸리적거리는 것이다. _note_line 이 한 줄이 아니라 **머리글 전체**(_header 가 이미 모아 둔 것)를 돌려주게 고치고, 세 검사(임시·사람·layer·Color·layer 숫자)를 그 머리글 전체에서 찾게 바꿔라. 그러면 bag.gd:18 을 이웃 줄처럼 두 줄로 접어도 통과해야 한다 — 고친 뒤 접어서 돌려 4/4 가 나오는지, 값을 0.4·3 으로 낡혀 여전히 깨지는지 둘 다 확인하라
 - [ ] 9. 레시피 결과물의 번역 키를 지켜 주는 테스트가 없다 (G-106 단계 2)
   - 기준: 레시피 결과물의 번역 키를 지켜 주는 테스트가 없다. recipes.json 에 줄을 하나 더 적으면(이번 기준이 바로 그것이다) ITEM_<output> 이 ko.po · en.po 에 없어도 아무도 안 잡고, 화면에는 번역 키가 그대로 뜬다. game/tests/combat/tools_as_weapons/test_tools.gd:94 가 하는 방식대로 recipes.json 의 output 마다 두 po 파일에 키가 있는지 보는 테스트를 짜라. (지금 있는 네 개 plank · stone_block · iron_ingot · sulfur 는 한국어 · 영어 둘 다 들어 있다.)
 - [ ] 10. CraftingStation.craft_progress() 와 craft_recipe() 는 부르는 곳… (G-106 단계 2)
