@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-23 05:16:00",
- "updated_epoch": 1790108160,
+ "reason": "{\"done\": false, \"bundle\": \"G-134\", \"step\": 1, \"title\": \"도구 없이 캔다\", \"last\": false}",
+ "updated": "2026-09-23 05:16:46",
+ "updated_epoch": 1790108206,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 19,
