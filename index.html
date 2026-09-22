@@ -107,7 +107,7 @@ button.theme { background: none; border: 1px solid var(--line); color: var(--mut
 
   <h2>결정 대기 <span id="dcount"></span></h2>
   <div id="decisions"></div>
-  <h2>루프가 찾은 것 <span id="fcount"></span></h2>
+  <h2>루프가 할 잔일 <span id="fcount"></span></h2>
   <div id="findings"></div>
 
   <h2>할 일 목록</h2>
@@ -212,32 +212,21 @@ function renderDecisions(text) {
   }).join("");
 }
 
-// QA 가 통과시키면서 남긴 지적 — 사람이 골라 list.md 로 옮긴다 (harness/findings.py).
-// 한 줄이 「- `날짜` **묶음.단계** 제목 ‖ 본문」이다. 제목만 보이고 눌러야 펼쳐진다 —
-// QA 가 쓰는 글이 길어서 그대로 늘어놓으면 읽을 수가 없다.
+// 루프가 회차마다 들고 가 처리하는 잔일 (harness/findings.py · chores.md).
+// 한 줄이 「- (어디서) 무엇」이다. 긴 글이라 제목만 보이고 눌러야 펼쳐진다.
 function renderFindings(text) {
-  const rows = (text || "").split("\n").filter((l) => l.startsWith("- `")).map((l) => {
-    const m = l.match(/^- `([^`]*)`\s*\*\*([^*]*)\*\*\s*([\s\S]*)$/);
+  const rows = (text || "").split("\n").filter((l) => l.startsWith("- (")).map((l) => {
+    const m = l.match(/^- \(([^)]*)\)\s*([\s\S]*)$/);
     if (!m) return null;
-    const [head, ...rest] = m[3].split(" ‖ ");
-    return { when: m[1], at: m[2], title: head.trim(), body: rest.join(" ‖ ").trim() };
+    const body = m[2].trim();
+    const cut = body.search(/ — |\. /);
+    return { at: m[1], title: (cut > 8 ? body.slice(0, cut) : body).slice(0, 70), body: body };
   }).filter(Boolean);
   $("fcount").textContent = rows.length ? `(${rows.length})` : "";
   if (!rows.length) { $("findings").innerHTML = '<div class="empty">없음</div>'; return; }
-  // 묶음별로 모은다 — 어느 묶음이 빚을 많이 남겼는지가 한눈에 보인다.
-  const by = new Map();
-  for (const r of rows) {
-    const g = (r.at.split(".")[0] || "?");
-    if (!by.has(g)) by.set(g, []);
-    by.get(g).push(r);
-  }
-  $("findings").innerHTML = [...by].map(([g, list]) => `
-    <details><summary><span class="tag t-info">${esc(g)}</span>
-      <span class="title">남긴 것</span><span class="count">${list.length}</span></summary>
-      <div class="body">${list.map((r) => `
-        <details><summary><span class="title">${esc(r.title)}</span>
-          <span class="count">${esc(r.at)} · ${esc(r.when)}</span></summary>
-          <div class="body md">${md(r.body || r.title)}</div></details>`).join("")}</div></details>`).join("");
+  $("findings").innerHTML = `<ul class="steps">${rows.map((r) => `<li><span>·</span><span>
+    <details><summary><span class="title">${esc(r.title)}</span><span class="count">${esc(r.at)}</span></summary>
+    <div class="body md">${md(r.body)}</div></details></span></li>`).join("")}</ul>`;
 }
 
 function parseList(text) {
@@ -341,7 +330,7 @@ function renderRuns(events) {
 
 async function load() {
   const [s, ev, li, de, fi] = await Promise.all([
-    get("data/status.json", true), get("data/events.json", true), get("data/list.md"), get("data/decisions.md"), get("data/findings.md"),
+    get("data/status.json", true), get("data/events.json", true), get("data/list.md"), get("data/decisions.md"), get("data/chores.md"),
   ]);
   const openState = [...document.querySelectorAll("details")].map((d) => d.open);
   renderStatus(s);
