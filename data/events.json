@@ -3684,5 +3684,83 @@
   },
   "test": "ave.gd\n* test_the_chest_and_what_is_inside_are_still_there_after_leaving_and_returning\n* test_an_empty_chest_comes_back_empty\n* test_a_broken_chest_does_not_come_back\n* test_each_island_keeps_its_own_chests\n* test_restoring_twice_does_not_stack_chests\n5/5 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              85\nTests               768\nPassing Tests       768\nAsserts           10914\nTime              527.347s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "d3dbb0c"
+ },
+ {
+  "time": "2026-09-22 16:59:46",
+  "epoch": 1790063986,
+  "type": "pass",
+  "title": "통과 — G-124 단계 3 (열여섯 자루와 사다리)",
+  "group": "G-124",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "총 열여섯 자루(네 계통 × 네 단)를 제작 사다리에 올리고, 단마다 탄 수 · 재장전 시간을 달리했다",
+   "approach": "spec 표의 열여섯 자루를 tools.json 에 한 줄씩 적었다 — 계통(family) · 단(tier) · 들어가는 탄 수 · 재장전 시간(reload)을 전부 데이터에 두고, ToolCatalog 에 families · guns_of · tier · reload_seconds 를 붙였다. 재장전 시간은 지금까지 Magazine 의 상수 하나였는데 그러면 「단이 오를수록 손이 덜 간다」를 표현할 길이 없어, 총마다 받는 값으로 바꿨다(적히지 않으면 옛 상수가 기본값). 레시피는 열여섯 줄 + 총알 넷을 고쳤다.\n\n걸린 곳 셋: (1) 기존 총 이름 'gun' 은 표에 없는 이름이라 3단 돌격소총(assault_rifle)으로 갈음했다 — 표 밖의 총이 한 자루 더 남으면 사다리가 거짓말이 된다. 쓰던 테스트 11곳의 const 를 함께 고쳤다. (2) 「윗단일수록 비싸다」를 재료 개수로 세면 거꾸로 읽힌다(철괴 1 = 철광석 2). 그래서 테스트가 레시피를 **원자재까지 거슬러 올라가** 센다. 같은 이유로 test_tool_recipes 의 「재료는 wood·stone·iron_ore 뿐」 검사는 철괴·유황을 쓰는 윗단을 막았다 — 「캐서 얻거나 만들 길이 닿는가」로 넓히고, 없는 재료가 정말 걸리는지(없는광석)까지 함께 본다. (3) 총이 늘자 남의 테스트 셋이 깨졌다: 핫바 열 칸에 도구 스무 개를 넣던 곳, 권총탄이 한 번에 30발이라 가정하고 버퍼를 채우던 곳, 한 발짜리 총에 「한 발 쏴 둔다」를 되풀이하던 곳. 셋 다 숫자를 박지 않도록 고쳤다.\n\n재장전 시간은 데이터만 보고 넘기지 않았다 — 1단(파이프 권총 3.0초)과 4단(정밀 권총 1.2초)을 같이 재장전해 4단이 먼저 끝나는 것을 진짜 시간으로 본다. 반대로 test_ammo_kinds 는 총이 둘에서 열여섯으로 늘어 자루마다 몇 초씩 기다리면 몇 분이 되므로, R 은 진짜 키로 누르되 시간만 앞당기게 바꿨다.\n\n전체 테스트를 돌렸다: 87개 파일 781개 전부 통과, 501초. 다만 이 501초는 harness 의 godot 10분 제한에 가까워지고 있다 — 다음에 한 묶음만 더 무거워지면 전체 실행이 잘릴 수 있다.",
+   "why": "열여섯 자루의 재장전 시간 3.6~1.2초 (tools.json 의 reload) — spec 미정이다. 「윗단일수록 짧다」만 지키고 값은 쏴 보고 정한다; 열여섯 자루의 제작 재료 (recipes.json) — 윗단일수록 원자재 환산으로 비싸게만 잡았다. 3단 · 4단은 철+유황 조합이다: 개척 섬 금속이 미정이라 spec 이 그때까지 이 조합으로 두라고 적어 두었다; 손에 드는 상자 크기 · 색 열여섯 자루분 — 아트는 프로토타입 범위 밖이라 늘 임시다; 기존 총 'gun' 을 표의 3단 돌격소총 'assault_rifle' 로 갈음했다 — 이름은 번역 키라 나중에 바꿀 수 있다",
+   "files": [
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/combat/tools_as_weapons/magazine.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/craft/recipes/recipes.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/combat/tools_as_weapons/test_gun_ladder.gd",
+    "game/tests/ui/hud/test_ammo_label_by_gun.gd",
+    "game/tests/combat/tools_as_weapons/test_ammo_kinds.gd",
+    "game/tests/combat/tools_as_weapons/test_magazine.gd",
+    "game/tests/combat/tools_as_weapons/test_per_gun_magazine.gd",
+    "game/tests/combat/tools_as_weapons/test_tools.gd",
+    "game/tests/combat/tools_as_weapons/test_attack.gd",
+    "game/tests/combat/tools_as_weapons/test_aiming.gd",
+    "game/tests/combat/tools_as_weapons/test_bullet_trace.gd",
+    "game/tests/craft/recipes/test_tool_recipes.gd",
+    "game/tests/life/climbing/test_grapple_ammo.gd",
+    "game/tests/player/inventory_hotbar/test_held_item.gd",
+    "game/tests/ui/hud/test_ammo_label.gd",
+    "game/tests/ui/hud/test_grapple_ammo_label.gd",
+    "game/tests/ui/hud/test_station_output.gd",
+    "game/tests/ui/hud/test_station_window.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "계통마다 네 단이 제작 사다리에 있다 — 윗단일수록 재료가 비싸다 (테스트)",
+     "evidence": "test_gun_ladder.gd 의 test_the_file_has_four_families_of_four_tiers 가 spec 표를 파일 안에 그대로 옮겨 놓고 계통 넷 · 단 넷 · 단 번호까지 맞춘다. test_every_gun_can_be_crafted 는 이름만 세지 않고 열여섯 자루를 **진짜 제작대에서 만들어 가방에 받는다**. test_a_higher_tier_costs_more 는 원자재까지 거슬러 올라가(_raw_cost) 계통 안에서 단이 오를수록 비싼지 본다 — 철괴 1 = 철광석 2 라 재료 개수만 세면 거꾸로 읽히는 것을 피했다. 껍데기가 아닌지 일부러 깨 보았다: recipes.json 에서 anti_materiel_rifle 레시피를 지우고 match_pistol 을 3단보다 싸게(철괴 10→2) 바꾸니 두 테스트가 각각 '레시피가 있다' · '원자재 6개 > 16개' 로 떨어졌다. 본 뒤 파일을 되돌렸다 (sha 일치 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "단이 오를수록 재장전에 손이 덜 간다 — 들어가는 탄 수 · 재장전 시간이 단마다 다르다 (테스트)",
+     "evidence": "탄 수는 test_each_tier_holds_the_number_of_rounds_the_table_says 가 열여섯 자루를 spec 표 값과 하나씩 맞춘다. 재장전 시간은 둘로 본다 — test_reload_gets_shorter_as_the_tier_rises 가 데이터의 단조 감소를, test_the_shorter_reload_really_shows_up_in_play 가 1단(파이프 권총 3.0초)과 4단(정밀 권총 1.2초)을 같이 재장전해 **진짜 시간으로** 4단이 먼저 끝나고 1단은 아직 도는 것을 본다. 데이터가 쓰이지 않아도 통과하는 짜임이 아니다. 깨 보기: tools.json 에서 light_machine_gun 탄 수 60→59, match_pistol reload 1.2→4.0 으로 바꾸니 세 테스트가 '60발이 들어간다' · '4.0초 < 1.8초' · '1단은 아직 재장전 중이다' 로 떨어졌다. 되돌렸다"
+    },
+    {
+     "ok": true,
+     "criterion": "HUD 의 남은 탄 표시가 든 총에 맞게 바뀐다",
+     "evidence": "test_ammo_label_by_gun.gd 가 탄창이 아니라 **화면의 글자**(_label().text)를 읽는다. test_each_gun_shows_its_own_number_of_rounds 는 열여섯 자루를 하나씩 들어 저마다 제 숫자로 뜨는지 보고(쏘는 도구가 16개인지도 함께 센다), test_switching_guns_switches_the_number_on_screen 은 60발짜리로 한 발 쏜 뒤 1발짜리로 바꿔 들어 앞 총의 숫자가 남지 않는 것 · 도로 들면 쏜 만큼 줄어 있던 그대로인 것까지 본다. 숫자를 한 곳에 박아 두는 짜임이면 전부 떨어진다"
+    },
+    {
+     "ok": true,
+     "criterion": "총알 레시피의 재료 · 개수가 spec 표와 같다 — 단계 2 가 지어낸 값을 표대로 고친다 (테스트)",
+     "evidence": "recipes.json 이 표 그대로 바뀌었다 — 권총탄 철괴1+유황1→10발 · 산탄 철괴1+유황2→8발 · 돌격소총탄 철괴2+유황2→30발 · 저격탄 철괴3+유황2→5발. 단계 2 의 지어낸 값(30 · 16 · 30 · 10)은 남아 있지 않다. test_the_round_recipes_match_the_table 이 표를 테스트 안에 적어 두고 재료 가짓수까지 맞추고, test_a_round_really_comes_out_of_the_station_in_that_many 는 파일이 아니라 **가방에 들어온 개수**를 센다. 깨 보기: 권총탄 count 10→12 로 바꾸니 두 테스트가 다 떨어졌다. 되돌렸다"
+    }
+   ],
+   "issues": [
+    "[결정] 전체 테스트 501초가 하네스 제한 600초에 닿는다 — harness/bin/godot:14 의 LIMIT 기본값이 600초인데 이번 전체 실행이 501.8초였다 (.loop/out/test.log 의 Run Summary). 묶음이 하나만 더 무거워지면 합치기 전 전체 실행이 통째로 끊긴다. 하네스는 세션이 못 고친다 (LOOP.md 1절) — 제한을 올릴지, 전체 실행을 폴더별로 쪼갤지, 느린 테스트의 실제 기다림을 줄일지 사람이 골라야 한다. 같은 파일 12번 줄의 실측 주석도 낡았다: 「전체 테스트 55개 94초」인데 지금은 87개 파일 781개 501초다",
+    "쓰이지 않는 gun_at() 이 남았다 — game/combat/tools_as_weapons/tool_catalog.gd:170 의 gun_at(계통, 단) 을 부르는 곳이 게임 코드에도 테스트에도 없다 (grep 결과 정의 한 줄뿐). guns_of() · tier() 만으로 사다리가 다 읽힌다. 그 함수를 지워라 — 쓸 곳이 생기면 그때 다시 붙이면 된다"
+   ],
+   "good": [
+    "ToolCatalog.gun_at() — 기준이 요구하지 않은 조회 함수. 쓰는 곳이 없다 (problems 에 적었다)",
+    "기존 총 'gun' 을 표의 3단 'assault_rifle' 로 갈음하고 쓰던 테스트 열한 곳의 이름을 함께 고쳤다 — 표 밖의 총이 한 자루 남으면 사다리가 거짓이 되므로 기준 안의 일로 본다",
+    "test_tool_recipes 의 「재료는 wood·stone·iron_ore 뿐」 검사를 「캐서 얻거나 만들 길이 닿는가」로 넓혔다 — 윗단 총이 철괴·유황을 써서 필요해진 손질이다. 빈 검사가 되지 않도록 「없는광석」이 정말 걸리는지 보는 음성 검사를 함께 넣었다",
+    "test_ammo_kinds 의 재장전 기다림을 진짜 초 기다리기에서 시간만 앞당기기(_pass_reload)로 바꿨다 — 총이 둘에서 열여섯으로 늘어 그대로 두면 파일 하나가 몇 분이 된다. R 은 여전히 진짜 키로 누르고, 앞당기는 것은 평타가 매 프레임 부르는 그 step() 이다",
+    "한 발짜리 총(파이프 권총 · 파이프 샷건 · 사냥총)이 생기며 「한 발 쏴 둔다」를 되풀이하던 자리, 핫바 열 칸에 도구 스무 개를 넣던 자리, 권총탄 30발을 가정하던 자리 셋을 숫자에 기대지 않게 고쳤다"
+   ]
+  },
+  "test": "ave.gd\n* test_the_chest_and_what_is_inside_are_still_there_after_leaving_and_returning\n* test_an_empty_chest_comes_back_empty\n* test_a_broken_chest_does_not_come_back\n* test_each_island_keeps_its_own_chests\n* test_restoring_twice_does_not_stack_chests\n5/5 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              87\nTests               781\nPassing Tests       781\nAsserts           11936\nTime              501.831s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "e8a0cff"
  }
 ]
