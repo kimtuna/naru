@@ -4978,5 +4978,55 @@
   },
   "test": "time_is_shown\n* test_while_crafting_the_time_left_is_shown\n* test_the_time_left_counts_down\n* test_when_it_is_done_the_time_left_disappears\n* test_the_buffer_slots_stand_empty_until_something_is_made\n* test_what_was_made_shows_up_in_a_buffer_slot\n* test_a_recipe_that_makes_many_shows_how_many_are_waiting\n* test_pressing_the_buffer_slot_brings_it_into_the_bag\n* test_until_it_is_pressed_what_was_made_stays_in_the_buffer\n* test_when_the_buffer_is_full_the_window_says_the_next_craft_will_not_start\n* test_an_empty_buffer_says_nothing\n* test_collecting_makes_room_and_crafting_can_start_again\n* test_closing_and_reopening_keeps_the_timer_and_the_buffer\n* test_reopening_a_station_does_not_show_another_stations_buffer\n* test_the_buffer_message_has_a_korean_and_an_english_word\n15/15 passed.\n\n\nres://tests/ui/hud/test_station_window.gd\n* test_opening_a_station_lists_that_stations_recipes\n* test_another_station_lists_its_own_recipes\n* test_closing_the_station_empties_the_list\n* test_each_row_shows_what_comes_out_and_what_it_costs\n* test_a_recipe_that_makes_many_at_once_says_so\n* test_with_an_empty_bag_no_recipe_can_be_chosen\n* test_only_the_recipes_whose_materials_are_in_the_bag_can_be_chosen\n* test_a_row_that_cannot_be_chosen_does_nothing_when_pressed\n* test_a_row_goes_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              23\nTests               241\nPassing Tests       241\nAsserts            3872\nTime              124.948s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "cefe795"
+ },
+ {
+  "time": "2026-09-23 02:08:00",
+  "epoch": 1790096880,
+  "type": "pass",
+  "title": "통과 — G-900 단계 20 (껍데기 테스트를 고친다 ④ — 빈 총 · 총마다 다른 탄 · 맨손 사슬)",
+  "group": "G-900",
+  "step": "20",
+  "attempt": "1",
+  "report": {
+   "problem": "껍데기 테스트 넷을 조였다 — 빈 총이 놓는 길을 지나고, 총마다 다른 탄을 보고, 첫 도끼 사슬이 맨손 채집부터 이어지고, 빈 무더기를 거른다. 바뀐 곳만: 4개 파일 28개 통과",
+   "approach": "셋은 기준에 적힌 한 줄씩을 넣었다: 빈 총 테스트는 도끼를 든 동안 magazine() 을 물어 「손에서 놓을 때」 도는 길을 지나게 했고, 탄 종류 테스트는 _guns() 가 먹는 탄을 Dictionary 에 모아 둘 이상인지 보며, 줍기 테스트는 무더기가 비어 있지 않은지 먼저 본다. 첫 도끼 사슬은 1단계에서 inventory.add() 로 건너뛰던 것을 바꿨다 — 조준점 앞 2m 에 소나무 한 그루를 세워 맨손 좌클릭으로 넘기고, 같은 자리에 돌 한 덩이를 세워 또 넘긴 뒤, 그 자리까지 W 로 걸어가 두 무더기를 주워 가방에 목재 · 돌이 들어왔는지 본다. 제작대 + 도끼 값(목재 23 · 돌 2)을 다 캐려면 맨손으로 수백 대라, 캔 것을 뺀 모자란 만큼만 채워 넣는다. 섬 없이 띄우는 화면이라 Pickup · ResourceView · Harvest 는 테스트에서 붙였다. 돌린 것: changed_tests.py 가 고른 4개 파일, 28개 통과 (전체는 돌리지 않았다).",
+   "why": "",
+   "files": [
+    "game/tests/combat/tools_as_weapons/test_per_gun_magazine.gd",
+    "game/tests/combat/tools_as_weapons/test_ammo_kinds.gd",
+    "game/tests/player/pickup/test_pickup.gd",
+    "game/tests/ui/hud/test_bag_hand_craft.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "빈 총 테스트가 탄창을 놓는 길을 지나지 않는다 — _hold(AXE) 뒤에 assert_null(attack.magazine(), \"도끼에는 탄창이 없다\") 한 줄을 넣어 놓는 길을 지나게 하라",
+     "evidence": "test_per_gun_magazine.gd:167 에 그 줄이 들어갔다. attack.gd magazine() 이 총을 안 들었을 때 _magazines.clear() 하도록 일부러 깨 TEST_DIR=res://tests/combat/tools_as_weapons 로 돌리니 test_an_empty_gun_stays_empty_after_being_put_down 이 「다시 들어도 비어 있다」(6≠0) 로 깨졌다 — 이제 이 테스트도 놓는 길을 지킨다. 되돌린 뒤 git diff 는 비어 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "총마다 다른 탄을 먹는지 아무 테스트도 안 본다 — test_every_gun_in_the_file_says_which_round_it_eats 에 _guns() 의 ammo_item 을 모아 assert_gt(seen.size(), 1, \"총마다 먹는 탄이 다르다\")",
+     "evidence": "test_ammo_kinds.gd:169~175 에 seen 딕셔너리와 단언이 들어갔다. ToolCatalog.ammo_item() 이 늘 \"pistol_ammo\" 를 돌려주게 깨고 폴더를 돌리니 「총마다 먹는 탄이 다르다」 1개가 실패했다 (전에는 62개 전부 통과). 되돌렸다"
+    },
+    {
+     "ok": true,
+     "criterion": "가벼운 것 하나 — test_from_empty_hands_to_the_first_axe 의 1단계를 실제 좌클릭으로 나무·돌을 쳐서 줍게",
+     "evidence": "test_bag_hand_craft.gd 의 _fell_by_hand 가 조준점 앞에 소나무 · 바위를 세우고 맨손(held 비었음 단언) 좌클릭 InputEventAction 으로 is_gone 까지 친다. 그다음 W 로 걸어가 무더기 2개가 0이 되고 wood>0 · stone>0 을 단언한다. 모자란 값만 채운다는 것은 주석에 밝혔다. test.log 에서 6/6 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 줍기 테스트가 빈 무더기를 거르지 않는다 — var count := drop.count 바로 뒤에 assert_gt(count, 0, ...)",
+     "evidence": "test_pickup.gd:272 에 assert_gt(count, 0, \"떨어진 무더기에 무엇이 들어 있다\") 가 그 자리에 들어갔다. test.log 에서 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "time_is_shown\n* test_while_crafting_the_time_left_is_shown\n* test_the_time_left_counts_down\n* test_when_it_is_done_the_time_left_disappears\n* test_the_buffer_slots_stand_empty_until_something_is_made\n* test_what_was_made_shows_up_in_a_buffer_slot\n* test_a_recipe_that_makes_many_shows_how_many_are_waiting\n* test_pressing_the_buffer_slot_brings_it_into_the_bag\n* test_until_it_is_pressed_what_was_made_stays_in_the_buffer\n* test_when_the_buffer_is_full_the_window_says_the_next_craft_will_not_start\n* test_an_empty_buffer_says_nothing\n* test_collecting_makes_room_and_crafting_can_start_again\n* test_closing_and_reopening_keeps_the_timer_and_the_buffer\n* test_reopening_a_station_does_not_show_another_stations_buffer\n* test_the_buffer_message_has_a_korean_and_an_english_word\n15/15 passed.\n\n\nres://tests/ui/hud/test_station_window.gd\n* test_opening_a_station_lists_that_stations_recipes\n* test_another_station_lists_its_own_recipes\n* test_closing_the_station_empties_the_list\n* test_each_row_shows_what_comes_out_and_what_it_costs\n* test_a_recipe_that_makes_many_at_once_says_so\n* test_with_an_empty_bag_no_recipe_can_be_chosen\n* test_only_the_recipes_whose_materials_are_in_the_bag_can_be_chosen\n* test_a_row_that_cannot_be_chosen_does_nothing_when_pressed\n* test_a_row_goes_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              25\nTests               254\nPassing Tests       254\nAsserts            4017\nTime              132.247s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "38fbf18"
  }
 ]
