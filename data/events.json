@@ -6009,5 +6009,65 @@
   },
   "test": "_comment\n4/4 passed.\n\n\nres://tests/test_po_is_in_one_place.gd\n* test_only_one_file_parses_the_po\n* test_the_tests_that_read_the_po_call_that_one_place\n* test_the_one_place_really_is_there\n* test_the_check_catches_a_second_parser\n* test_the_walk_really_finds_the_test_files\n5/5 passed.\n\n\nres://tests/ui/hud/test_bag_hand_craft.gd\n* test_the_bag_has_a_made_by_hand_panel\n* test_only_the_three_hand_recipes_show_up_there\n* test_a_recipe_that_needs_a_station_does_not_show_up_there\n* test_a_hand_recipe_added_to_the_file_shows_up_in_the_bag\n* test_a_station_recipe_added_to_the_file_does_not_show_up_in_the_bag\n* test_from_empty_hands_to_the_first_axe\n6/6 passed.\n\n\nres://tests/ui/hud/test_bag_temporary_note.gd\n* test_the_header_says_the_dim_and_the_layer_are_temporary\n* test_the_header_quotes_the_color_the_scene_actually_uses\n* test_the_header_quotes_the_layer_the_bag_actually_sits_on\n* test_the_note_does_not_stick_to_the_slot_size\n* test_the_check_catches_a_missing_or_stale_note\n5/5 passed.\n\n\nres://tests/ui/hud/test_station_collect_note.gd\n* test_the_spec_lists_the_per_slot_collect_as_undecided\n* test_one_collect_really_takes_the_whole_buffer\n* test_every_buffer_slot_is_wired_to_the_same_press\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/ui/menu/test_character_create.gd\n* test_rows_come_from_the_data_file\n* test_row_shows_the_item_label_and_the_chosen_value\n* test_next_and_prev_walk_the_choices_and_wrap_around\n* test_added_item_shows_up_without_touching_the_code\n* test_empty_name_is_refused\n* test_created_character_keeps_name_and_chosen_look\n* test_says_so_when_it_cannot_save\n* test_back_goes_back_without_saving\n8/8 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/ui/menu/test_pause_menu_dim_note.gd\n* test_the_header_says_the_dim_color_is_temporary\n* test_the_header_quotes_the_color_the_scene_actually_uses\n* test_the_check_catches_a_missing_or_stale_note\n3/3 passed.\n\n\nres://tests/world/day_night/test_day_length.gd\n* test_the_day_length_is_written_in_exactly_one_place\n* test_the_one_place_says_forty_minutes\n* test_a_fresh_clock_and_island_take_the_same_value\n3/3 passed.\n\n\nres://tests/world/frontier_islands/test_island_design_notes.gd\n* test_the_island_list_says_the_sulfur_design_is_temporary\n* test_the_sulfur_blueprint_the_note_talks_about_is_still_there\n* test_the_blueprint_header_marks_every_value_temporary\n* test_the_mountain_and_cliff_values_are_still_in_the_blueprint\n* test_the_spec_marks_the_whole_design_temporary\n* test_the_spec_line_does_not_repeat_itself\n* test_no_test_leans_on_the_two_islands_being_different_sizes\n* test_the_island_split_is_still_checked_by_what_is_in_it\n* test_the_check_catches_a_missing_or_narrow_note\n9/9 passed.\n\n\nres://tests/world/storage/test_reach_temporary_notes.gd\n* test_the_chest_reach_is_marked_temporary\n* test_the_station_reach_is_marked_temporary\n* test_both_notes_still_tell_the_truth_about_being_the_same_value\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              30\nTests               210\nPassing Tests       210\nAsserts            3131\nTime              89.315s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "faf2be8"
+ },
+ {
+  "time": "2026-09-23 07:32:44",
+  "epoch": 1790116364,
+  "type": "pass",
+  "title": "통과 — G-130 단계 2 (소리에 반응한다)",
+  "group": "G-130",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "동물이 발소리 · 피격 · 총소리를 듣는다 — 비적대는 소리를 낸 쪽에서 달아나고, 적대는 그쪽으로 달려오며 사람이 보이면 쫓아가 문다. 바뀐 곳만 68개 스크립트 · 649개 테스트 통과 (전체는 돌리지 않았다)",
+   "approach": "소리를 한 곳(Sound)으로 모았다: 내는 쪽은 Sound.make(자리, 갈래, 낸 것) 한 줄만 부르고, 들리는 반경(Sound.RADIUS — 발소리 10 · 피격 25 · 총소리 60m, 임시) 안의 듣는 것 무리에게 간다. 내는 곳은 셋 — 사람이 땅을 디디며 걸으면 0.4초마다 발소리(player.gd), 총을 쏘면 총소리(attack.gd), 체력 있는 것이 평타 · 투사체에 맞으면 맞은 소리(attack.gd · projectile.gd). Animal 은 듣고: 비적대는 소리를 낸 쪽에서 가장 멀어지는 내비메시 위 자리(9 방향을 재 보고 고른다 — 곧장 뒤가 물 · 절벽이면 비스듬히)로 5 m/s 로 달아나고, 적대는 낸 쪽으로 4 m/s 로 달려간다. 맞은 소리는 제 몸에서 나지만 쏜 쪽을 봐야 하므로 늘 「낸 것」의 자리를 기준으로 삼는다. 적대는 0.25초마다 둘레를 살펴 15m 안에 가린 것 없는(광선) 사람이 보이면 쫓고, 1.8m 안이면 1초마다 10씩 문다. 적대가 눈으로 사람을 찾도록 Player 를 players 무리에 넣었다. 테스트는 두 겹 — 내는 쪽은 듣는 흉내(Ear)로 진짜 걷기 · 진짜 사격 · 진짜 투사체가 소리를 내는지, 듣는 쪽은 진짜 섬에서 소리를 들려주고 멀어지나 · 다가오나를 쟀다. 막힌 것 둘: (1) 첫 시험에서 지도가 한 번도 갱신되기 전에 물어 엔진 오류 → 갱신 번호가 0 이면 기다린다. (2) 적대가 소리 난 곳에 닿은 뒤 (보이는 사람이 없어) 다시 거닐어 마지막 자리로 재면 멀었다 → 가장 가까이 온 때를 잰다. 일부러 비적대/적대 갈래를 뒤집어 보니 반응 테스트 6개가 깨졌다. 앞 단계 QA: animal_nav.gd 의 MAX_SLOPE · MAX_CLIMB · AGENT_RADIUS 에 「임시」를 달고 spec 수치에 한 줄 더했다.",
+   "why": "들리는 반경 발소리 10 m · 피격 25 m · 총소리 60 m (sound.gd) — 총 종류 · 동물마다 다른가 미정; 발소리 간격 0.4초 (sound.gd) · 발소리가 나는 속력 0.5 m/s (player.gd); 소리에 달아나는 속력 5 m/s · 한 번에 달아나는 거리 18 m (animal.gd) — 도망 속도 미정; 적대가 달려오는 속력 4 m/s · 보는 거리 15 m · 무는 거리 1.8 m · 무는 피해 10 · 무는 사이 1초 (animal.gd) — 동물 목록 미정; 내비메시 비탈 40° · 턱 0.5 m · 몸 반지름 0.5 m (animal_nav.gd) — 동물 목록 미정",
+   "files": [
+    "game/life/hunting/sound.gd",
+    "game/life/hunting/animal.gd",
+    "game/life/hunting/animal_nav.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/combat/tools_as_weapons/projectile.gd",
+    "game/player/movement_controls/player.gd",
+    "game/tests/life/hunting/test_animal_sound.gd",
+    "spec/04_life/hunting.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "발소리 · 피격 · 총소리를 **비적대는 피하고 적대는 쫓는다** (테스트)",
+     "evidence": "test_animal_sound.gd — 내는 쪽: 진짜 걷기(test_walking_player_makes_footsteps_standing_does_not) · 진짜 사격(test_firing_a_gun_makes_a_gunshot) · 진짜 투사체 명중(test_a_hit_body_makes_a_hit_sound)이 Ear 에 소리를 알리는지 · 반경 밖이면 안 들리는지 본다. 듣는 쪽: 세 소리 각각 비적대가 FLEE 로 바뀌고 8m 넘게 멀어지는지(test_prey_flees_*), 적대가 CHASE 로 바뀌고 2m 안까지 오는지(test_hostile_comes_*), 반경 밖 소리는 무시하는지(test_sound_out_of_reach_is_not_heard). test.log 에서 15/15 통과, 구현 세션은 갈래를 뒤집으면 6개가 깨진다고 했다"
+    },
+    {
+     "ok": true,
+     "criterion": "적대는 보이면 공격한다 (테스트)",
+     "evidence": "test_hostile_bites_a_player_it_sees — 8m 트인 자리의 사람을 쫓아가 bit 신호를 내고 사람 체력이 준다. test_hostile_does_not_bite_what_it_cannot_see(보는 거리 밖) · test_prey_never_bites(비적대)가 막아야 할 쪽을 본다. 다만 가려짐(광선) 쪽은 테스트가 지키지 않는다 — problems 참고"
+    },
+    {
+     "ok": true,
+     "criterion": "소리가 들리는 반경이 값으로 있고 「임시」다",
+     "evidence": "sound.gd RADIUS {발소리 10 · 피격 25 · 총소리 60} 위 주석에 「전부 임시」, spec/04_life/hunting.md 수치에도 「임시」로 한 줄. test_hearing_radius_is_a_temporary_value 가 주석의 「임시」와 세 값이 0보다 큰지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 내비메시 비탈 · 몸 값에 「임시」 표시가 없다 — animal_nav.gd MAX_SLOPE · MAX_CLIMB · AGENT_RADIUS 에 「임시」를 달고 spec 수치에 한 줄",
+     "evidence": "animal_nav.gd 에 두 줄 「임시 — 동물 목록 미정」 주석 추가, spec 수치에 「내비메시 비탈 40° · 턱 0.5 m · 몸 반지름 0.5 m — 임시」 추가. test_nav_body_values_are_marked_temporary 가 MAX_SLOPE · AGENT_RADIUS 윗줄을 본다"
+    }
+   ],
+   "issues": [
+    "사람 몸이 걸을 때만 돈다 — game/player/movement_controls/player.gd 에서 _physics_process 끝의 `_turn_body(delta)` 가 새 함수 _footsteps 본문 맨 끝으로 딸려 들어갔다(181행). _footsteps 는 땅에 없거나 0.5 m/s 보다 느리면 일찍 return 하므로, 점프 중 · 물가 · 벽 앞에서 막혀 멈췄을 때 · 방향을 튼 직후 멈췄을 때 몸이 보는 쪽으로 돌지 않는다 (HEAD 에서는 늘 돌았다). `_turn_body(delta)` 를 _footsteps 에서 빼 _physics_process 의 `_footsteps(delta)` 다음 줄로 되돌려라. 테스트: 공중(점프 직후)에서 _facing 을 바꾸고 몇 프레임 뒤 몸(_body.basis)이 그쪽으로 돌았는지 보는 단언을 더하라",
+    "가려진 사람도 보는 것이 테스트에 안 걸린다 — animal.gd _sees 의 광선 검사를 `return true` 로 바꿔도 tests/life/hunting 21개가 다 통과했다(QA 가 깨 보고 되돌렸다). test_hostile_does_not_bite_what_it_cannot_see 는 SIGHT 밖 거리만 본다. SIGHT 안(예: 8m)이지만 사이에 벽(StaticBody3D 상자)을 세운 사람을 적대가 CHASE 하지 않고 bit 도 없는지 보는 테스트를 더하라"
+   ],
+   "good": [
+    "적대가 무는 것(bit 신호 · BITE_DAMAGE 10 / 1초 · BITE_RANGE 1.8m)은 「보이면 공격한다」의 몫이라 기준 안으로 본다",
+    "Player 를 players 무리(Player.GROUP)에 넣고 발소리 속력 STEP_SPEED 0.5 m/s(임시)를 더했다 — 발소리 · 시야에 필요한 것"
+   ]
+  },
+  "test": "the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/storage/test_reach_temporary_notes.gd\n* test_the_chest_reach_is_marked_temporary\n* test_the_station_reach_is_marked_temporary\n* test_both_notes_still_tell_the_truth_about_being_the_same_value\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              84\nTests               749\nPassing Tests       749\nAsserts            8806\nTime              444.125s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "b274462"
  }
 ]

@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 07:07:59",
- "updated_epoch": 1790114879,
+ "updated": "2026-09-23 07:32:44",
+ "updated_epoch": 1790116364,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 19,
   "groups_done": 12,
   "groups_waiting": 0,
   "steps_total": 69,
-  "steps_done": 49
+  "steps_done": 50
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-130",
- "step": "1",
- "step_title": "걸어 다닌다",
+ "step": "2",
+ "step_title": "소리에 반응한다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 07:06:19"
+ "phase_since": "2026-09-23 07:30:24"
 }

@@ -310,7 +310,7 @@
   - 기준: 동물이 섬 위를 걸어 다닌다 — 물 · 절벽에 빠지거나 끼이지 않는다 (테스트)
   - 기준: 길찾기 수단을 하나로 정하고 spec 에 적는다 (내비메시)
   - 기준: 값(걷는 속도 · 도는 반경)은 한 곳에 있고 「임시」라고 적는다
-- [ ] 2. 소리에 반응한다
+- [x] 2. 소리에 반응한다
   - 기준: 발소리 · 피격 · 총소리를 **비적대는 피하고 적대는 쫓는다** (테스트)
   - 기준: 적대는 보이면 공격한다 (테스트)
   - 기준: 소리가 들리는 반경이 값으로 있고 「임시」다
@@ -318,6 +318,8 @@
 - [ ] 3. 도망간다
   - 기준: 체력 30% 아래면 도망간다 — 적대도 마찬가지다 (테스트)
   - 기준: 도망 속도가 평소보다 **뚜렷이 빠르다** (테스트)
+  - 기준: (앞 단계 QA) 사람 몸이 걸을 때만 돈다 — game/player/movement_controls/player.gd 에서 _physics_process 끝의 `_turn_body(delta)` 가 새 함수 _footsteps 본문 맨 끝으로 딸려 들어갔다(181행). _footsteps 는 땅에 없거나 0.5 m/s 보다 느리면 일찍 return 하므로, 점프 중 · 물가 · 벽 앞에서 막혀 멈췄을 때 · 방향을 튼 직후 멈췄을 때 몸이 보는 쪽으로 돌지 않는다 (HEAD 에서는 늘 돌았다). `_turn_body(delta)` 를 _footsteps 에서 빼 _physics_process 의 `_footsteps(delta)` 다음 줄로 되돌려라. 테스트: 공중(점프 직후)에서 _facing 을 바꾸고 몇 프레임 뒤 몸(_body.basis)이 그쪽으로 돌았는지 보는 단언을 더하라
+  - 기준: (앞 단계 QA) 가려진 사람도 보는 것이 테스트에 안 걸린다 — animal.gd _sees 의 광선 검사를 `return true` 로 바꿔도 tests/life/hunting 21개가 다 통과했다(QA 가 깨 보고 되돌렸다). test_hostile_does_not_bite_what_it_cannot_see 는 SIGHT 밖 거리만 본다. SIGHT 안(예: 8m)이지만 사이에 벽(StaticBody3D 상자)을 세운 사람을 적대가 CHASE 하지 않고 bit 도 없는지 보는 테스트를 더하라
 
 ## [ ] G-131 부위별 사냥 — 머리 · 몸통 · 다리
 - spec: spec/04_life/hunting.md
