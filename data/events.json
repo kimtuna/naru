@@ -5552,5 +5552,68 @@
   },
   "test": "_empty_buffer_says_nothing\n* test_collecting_makes_room_and_crafting_can_start_again\n* test_closing_and_reopening_keeps_the_timer_and_the_buffer\n* test_reopening_a_station_does_not_show_another_stations_buffer\n* test_the_buffer_message_has_a_korean_and_an_english_word\n15/15 passed.\n\n\nres://tests/ui/hud/test_station_window.gd\n* test_opening_a_station_lists_that_stations_recipes\n* test_another_station_lists_its_own_recipes\n* test_closing_the_station_empties_the_list\n* test_each_row_shows_what_comes_out_and_what_it_costs\n* test_a_recipe_that_makes_many_at_once_says_so\n* test_with_an_empty_bag_no_recipe_can_be_chosen\n* test_only_the_recipes_whose_materials_are_in_the_bag_can_be_chosen\n* test_a_row_that_cannot_be_chosen_does_nothing_when_pressed\n* test_a_row_goes_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n* test_the_pillars_stand_at_the_shore_corners_and_leave_the_landing_spot_clear\n* test_the_plank_has_no_body_so_the_one_who_lands_walks_out\n* test_hitting_the_shore_pillar_breaks_the_dock_and_gives_it_back\n* test_a_broken_dock_does_not_stay_in_standing\n* test_landing_without_a_dock_falls_back_to_the_spawn\n* test_the_other_pillar_can_be_aimed_at_too\n* test_a_dock_fixed_in_the_map_cannot_be_broken\n15/15 passed.\n\n\nres://tests/world/frontier_islands/test_island_key.gd\n* test_every_island_that_starts_broken_has_an_unlock_item\n* test_the_unlock_item_is_made_only_at_the_research_bench\n* test_no_other_station_and_no_bare_hand_makes_the_unlock_item\n* test_the_research_bench_offers_the_unlock_item\n* test_the_key_is_not_made_of_what_only_the_locked_island_has\n* test_the_unlock_item_is_named_in_both_languages\n* test_inserting_the_key_at_the_dock_opens_the_island\n* test_after_the_key_the_boat_goes_to_that_island\n* test_nothing_opens_without_the_key_in_hand\n* test_the_key_is_not_spent_on_an_island_that_is_already_open\n* test_an_island_opened_with_the_key_stays_open_after_saving_and_loading\n* test_the_dock_of_an_opened_island_has_its_plank\n12/12 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              28\nTests               264\nPassing Tests       264\nAsserts            4011\nTime              124.095s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "7211504"
+ },
+ {
+  "time": "2026-09-23 04:43:54",
+  "epoch": 1790106234,
+  "type": "start",
+  "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-23 04:52:56",
+  "epoch": 1790106776,
+  "type": "pass",
+  "title": "통과 — G-133 단계 2 (받치는 것이 있어야 지붕이 놓인다)",
+  "group": "G-133",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "지붕은 받치는 것(기둥 9장 3×3 · 벽/문 6장 3×2)이 닿는 판에만 놓이고, 없으면 미리보기가 빨강(no_support)이다. 바뀐 곳 33개 파일 235개 테스트 통과",
+   "approach": "장 수는 BuildPiece.ROOF_SPAN 한 곳({pillar=3×3, wall=3×2}, 「임시」 주석)에 두고, BuildPiece.roof_plates() 가 기둥(제 판이 가운데) · 벽/문(변 (축,선,칸)에서 벽을 따라 3장 × 변 양쪽 한 장씩)이 받치는 판을 낸다. Buildings.plan_roof_at 은 그 층의 받침이 판을 덮지 않으면 why=\"no_support\"(ok=false → 미리보기 BAD_COLOR · place_held 거부). 기둥 둘레 9장처럼 바닥이 없는 판에도 지붕이 뻗어야 해서, 짚은 곳에 바닥이 없으면 그 판을 받치는 것의 층(_support_level, floor_at 과 같은 층 고르기)으로 높이를 잡는다. 바닥도 받침도 없으면 전처럼 no_floor. 그 판에 바닥이 없을 때 미리보기가 depth 가 없어 멈출 수 있던 것도 depth 를 늘 넣어 막았다. 새 테스트는 5×5 판을 하나씩 짚고 전부 놓아 실제로 9장 · 6장만 놓이는지 센다(기둥 · 북쪽 벽 · 동쪽 벽 · 문, 위층 기둥). 손으로 드는 경우는 진짜 우클릭으로 받침 없이 빨강 · 안 놓임 → 벽을 세우면 초록 · 놓임을 본다. 지붕을 받침 없이 놓던 기존 테스트(roof_stairs · pillar)에는 벽이나 기둥 받침을 더했다(저장 테스트는 건축물 7→8개). 「바깥으로 2장」은 방향이 모호하다: 벽은 두 판 사이 변에 서서 안팎이 따로 없으므로 변 양쪽으로 한 장씩으로 읽었고, spec 미정에 적었다. 앞 단계 QA 몫으로 spec 미정에 「기둥 굵기 · 레시피 미정 (지금 임시 0.3m · 재료 2개)」를 더했다. 테스트: tests/build 47개 통과, changed_tests 로 고른 33개 파일 235개 통과(전체는 돌리지 않았다).",
+   "why": "BuildPiece.ROOF_SPAN — 기둥 3×3 · 벽/문 3×2 장 (spec 에 임시로 적힌 값 그대로); 벽의 가로지르는 2장은 변 양쪽 한 장씩으로 읽었다 — spec 「바깥으로 2장」의 방향이 적혀 있지 않다",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/build/buildings.gd",
+    "game/tests/build/test_building_roof_support.gd",
+    "game/tests/build/test_building_roof_stairs.gd",
+    "game/tests/build/test_building_pillar.gd",
+    "spec/06_build/building.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "기둥에서 지붕 **9장**(3×3), 벽에서 **6장**(3×2)까지 놓인다 (테스트)",
+     "evidence": "test_building_roof_support.gd test_a_pillar_holds_nine_roofs_around_it · test_a_wall_or_door_holds_six_roofs_three_along_two_across 가 5×5 판을 하나씩 짚어 plan_roof_at 의 ok 를 판마다 확인하고 실제로 전부 놓아 9장 · 6장만 놓였는지 센다 (기둥 · 위층 기둥 · 북쪽/동쪽 벽 · 문). 일부러 ROOF_SPAN 기둥을 5×5 로 바꾸자 tests/build 에서 3개가 실패했다 (되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "받치는 것이 없는 자리에는 **놓이지 않고**, 미리보기가 다른 색이다 (테스트)",
+     "evidence": "test_without_support_a_held_roof_shows_the_other_color_and_is_not_placed — 토대만 있을 때 plan.why == no_support, preview_color == BAD_COLOR, 진짜 우클릭 뒤 지붕 0개 · 가방 2개 그대로. 벽을 세우면 OK_COLOR 로 바뀌고 놓인다 (대조). test_bare_ground_beyond_the_reach_is_not_a_roof_spot 가 기둥 두 장 밖 맨땅과 받침 없는 토대에서 place_at 이 null 인지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "장 수는 값 한 곳에 있고 「임시」라고 적는다",
+     "evidence": "BuildPiece.ROOF_SPAN (build_piece.gd:63) 한 곳, 주석에 「수는 **임시**」. roof_plates() 가 이 값에서만 판을 낸다. test_the_counts_come_from_one_value 가 값과 roof_plates().size() 를 맞춰 본다. spec 결정 줄(21·40행)에도 임시로 적혀 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 기둥 임시 수치가 spec 미정에 없다 — … spec/06_build/building.md 「미정」에 「기둥 굵기 · 레시피 미정 (지금 임시 0.3m · 재료 2개)」 한 줄을 더해라",
+     "evidence": "spec/06_build/building.md 54행에 그 문장 그대로 더해졌다"
+    }
+   ],
+   "issues": [
+    "[결정] 벽이 받치는 2장의 방향 — spec 23행은 「벽을 따라 3장 × 바깥으로 2장 — 직선이라 기준이 한쪽으로 치우친다」인데, 구현은 벽이 선 변 **양쪽으로 한 장씩**(치우침 없음)으로 읽었다 (build_piece.gd roof_plates, spec 미정 55행). 벽에는 안팎이 없어 「바깥」이 어느 쪽인지 spec 이 말하지 않는다 — 양쪽 한 장씩으로 둘지, 한쪽(예: 토대가 있는 쪽 · 플레이어가 선 쪽)으로 2장 치우치게 할지 사람이 골라야 한다. 고르면 roof_plates 의 across 계산과 test_building_roof_support.gd 의 north/east 기대 판만 바꾸면 된다"
+   ],
+   "good": [
+    "바닥 없는 판에도 받침이 닿으면 지붕이 뻗도록 plan_roof_at 에 _support_level 을 더했다 — 기둥 9장(3×3)을 놓으려면 필요한 것이라 기준 안으로 본다",
+    "no_floor 응답에 depth 를 늘 넣어 미리보기 멈춤을 막았다 (작은 곁고침)"
+   ]
+  },
+  "test": "_comment\n4/4 passed.\n\n\nres://tests/test_po_is_in_one_place.gd\n* test_only_one_file_parses_the_po\n* test_the_tests_that_read_the_po_call_that_one_place\n* test_the_one_place_really_is_there\n* test_the_check_catches_a_second_parser\n* test_the_walk_really_finds_the_test_files\n5/5 passed.\n\n\nres://tests/ui/hud/test_bag_hand_craft.gd\n* test_the_bag_has_a_made_by_hand_panel\n* test_only_the_three_hand_recipes_show_up_there\n* test_a_recipe_that_needs_a_station_does_not_show_up_there\n* test_a_hand_recipe_added_to_the_file_shows_up_in_the_bag\n* test_a_station_recipe_added_to_the_file_does_not_show_up_in_the_bag\n* test_from_empty_hands_to_the_first_axe\n6/6 passed.\n\n\nres://tests/ui/hud/test_bag_temporary_note.gd\n* test_the_header_says_the_dim_and_the_layer_are_temporary\n* test_the_header_quotes_the_color_the_scene_actually_uses\n* test_the_header_quotes_the_layer_the_bag_actually_sits_on\n* test_the_note_does_not_stick_to_the_slot_size\n* test_the_check_catches_a_missing_or_stale_note\n5/5 passed.\n\n\nres://tests/ui/hud/test_station_collect_note.gd\n* test_the_spec_lists_the_per_slot_collect_as_undecided\n* test_one_collect_really_takes_the_whole_buffer\n* test_every_buffer_slot_is_wired_to_the_same_press\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/ui/menu/test_character_create.gd\n* test_rows_come_from_the_data_file\n* test_row_shows_the_item_label_and_the_chosen_value\n* test_next_and_prev_walk_the_choices_and_wrap_around\n* test_added_item_shows_up_without_touching_the_code\n* test_empty_name_is_refused\n* test_created_character_keeps_name_and_chosen_look\n* test_says_so_when_it_cannot_save\n* test_back_goes_back_without_saving\n8/8 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/ui/menu/test_pause_menu_dim_note.gd\n* test_the_header_says_the_dim_color_is_temporary\n* test_the_header_quotes_the_color_the_scene_actually_uses\n* test_the_check_catches_a_missing_or_stale_note\n3/3 passed.\n\n\nres://tests/world/day_night/test_day_length.gd\n* test_the_day_length_is_written_in_exactly_one_place\n* test_the_one_place_says_forty_minutes\n* test_a_fresh_clock_and_island_take_the_same_value\n3/3 passed.\n\n\nres://tests/world/frontier_islands/test_island_design_notes.gd\n* test_the_island_list_says_the_sulfur_design_is_temporary\n* test_the_sulfur_blueprint_the_note_talks_about_is_still_there\n* test_the_blueprint_header_marks_every_value_temporary\n* test_the_mountain_and_cliff_values_are_still_in_the_blueprint\n* test_the_spec_marks_the_whole_design_temporary\n* test_the_spec_line_does_not_repeat_itself\n* test_no_test_leans_on_the_two_islands_being_different_sizes\n* test_the_island_split_is_still_checked_by_what_is_in_it\n* test_the_check_catches_a_missing_or_narrow_note\n9/9 passed.\n\n\nres://tests/world/storage/test_reach_temporary_notes.gd\n* test_the_chest_reach_is_marked_temporary\n* test_the_station_reach_is_marked_temporary\n* test_both_notes_still_tell_the_truth_about_being_the_same_value\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              33\nTests               235\nPassing Tests       235\nAsserts            3328\nTime              73.695s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d398927"
  }
 ]
