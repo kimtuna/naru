@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 21:14:12",
- "updated_epoch": 1790079252,
+ "updated": "2026-09-22 21:37:07",
+ "updated_epoch": 1790080627,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 40,
-  "steps_done": 20
+  "steps_done": 21
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "8",
- "step_title": "「임시」 표시를 붙인다 ① — 밭 · 작물 · 섬 설계 값",
+ "step": "9",
+ "step_title": "「임시」 표시를 붙인다 ② — 상자 · 제작 창 · 갈고리총 · spec 미정",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 21:11:00"
+ "phase_since": "2026-09-22 21:34:16"
 }
