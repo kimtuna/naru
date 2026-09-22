@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 01:48:51",
- "updated_epoch": 1790095731,
+ "updated": "2026-09-23 01:55:05",
+ "updated_epoch": 1790096105,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 13,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 52,
-  "steps_done": 29
+  "steps_done": 30
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "17",
- "step_title": "껍데기 테스트를 고친다 ① — 절벽 · 약초 수 · 화산 띠",
+ "step": "18",
+ "step_title": "껍데기 테스트를 고친다 ② — Tab · 재료 검사 · 제작대 레시피",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 01:47:12"
+ "phase_since": "2026-09-23 01:53:06"
 }
