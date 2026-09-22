@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-22 19:13:37",
- "updated_epoch": 1790072017,
+ "updated": "2026-09-22 19:34:57",
+ "updated_epoch": 1790073297,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 6,
   "groups_waiting": 0,
   "steps_total": 83,
-  "steps_done": 15
+  "steps_done": 16
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "3",
- "step_title": "Player._ready() 가 조건 없이 Pointer.set_captured(true) 를 한다 (G-103 단계 5)",
+ "step": "4",
+ "step_title": "GameRoot.set_menu_open(false) 이 씬 안 모든 Player 의 controls_… (G-103 단계 5)",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-22 19:11:40"
+ "phase_since": "2026-09-22 19:33:03"
 }
