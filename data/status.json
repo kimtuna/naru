@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-22 22:43:06",
- "updated_epoch": 1790084586,
+ "reason": "{\"done\": false, \"bundle\": \"G-900\", \"step\": 12, \"title\": \"쓰레기와 죽은 코드를 지운다\", \"last\": false}",
+ "updated": "2026-09-22 22:43:51",
+ "updated_epoch": 1790084631,
  "ended": "2026-09-22 14:35:20",
  "progress": {
-  "groups_total": 12,
+  "groups_total": 13,
   "groups_done": 6,
   "groups_waiting": 0,
-  "steps_total": 49,
+  "steps_total": 52,
   "steps_done": 23
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-900",
- "step": "11",
- "step_title": "낡은 주석을 사실대로 ② — 제작 창 · 갈고리총 · 저장",
+ "step": "12",
+ "step_title": "쓰레기와 죽은 코드를 지운다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-22 22:39:24"
+ "phase": "구현",
+ "phase_since": "2026-09-22 22:43:09"
 }
