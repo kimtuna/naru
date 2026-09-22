@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "{\"done\": false, \"bundle\": \"G-900\", \"step\": 12, \"title\": \"쓰레기와 죽은 코드를 지운다\", \"last\": false}",
- "updated": "2026-09-22 22:43:51",
- "updated_epoch": 1790084631,
+ "updated": "2026-09-22 22:44:09",
+ "updated_epoch": 1790084649,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 13,
