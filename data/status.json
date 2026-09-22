@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "{\"done\": true}",
- "updated": "2026-09-22 11:31:51",
- "updated_epoch": 1790044311,
- "ended": "2026-09-22 05:58:25",
+ "state": "done",
+ "reason": "list.md 의 할 일을 모두 처리했다",
+ "updated": "2026-09-22 11:31:53",
+ "updated_epoch": 1790044313,
+ "ended": "2026-09-22 11:31:53",
  "progress": {
   "groups_total": 5,
   "groups_done": 5,
