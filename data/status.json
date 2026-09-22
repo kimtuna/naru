@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 07:58:40",
- "updated_epoch": 1790117920,
+ "updated": "2026-09-23 08:18:21",
+ "updated_epoch": 1790119101,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 20,
-  "groups_done": 12,
+  "groups_done": 13,
   "groups_waiting": 0,
   "steps_total": 74,
-  "steps_done": 51
+  "steps_done": 52
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-130",
- "step": "3",
- "step_title": "도망간다",
+ "group": "G-135",
+ "step": "1",
+ "step_title": "웅크리기",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 07:56:11"
+ "phase_since": "2026-09-23 08:16:17"
 }
