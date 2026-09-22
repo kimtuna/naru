@@ -5499,5 +5499,58 @@
   "epoch": 1790105587,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-23 04:43:03",
+  "epoch": 1790106183,
+  "type": "pass",
+  "title": "통과 — G-133 단계 1 (기둥)",
+  "group": "G-133",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "기둥(나무 · 석재)을 넣었다 — 바닥 판 한가운데에 스냅되어 미리 보이고 우클릭으로 놓이며, 가늘어서 판을 가로지르는 통행을 막지 않는다. 바뀐 곳만 28개 스크립트 · 264개 테스트 통과",
+   "approach": "spec 은 「기둥 하나가 지붕 9장(3×3), 기둥이 가운데」라 기둥을 바닥(토대 · 지붕) 한 장의 한가운데에 스냅되게 했다 (plan_pillar_at — floor_at 으로 짚은 층의 판을 찾고 그 윗면 한가운데). 벽처럼 변에 서지 않으므로 네 변이 그대로 비고, 0.3m 로 가늘어 캐릭터가 판 위를 비켜 지나간다 — 진짜 이동 키로 기둥이 선 판을 남쪽 끝에서 북쪽 변 너머까지 가로지르는 것을 두 재료 모두 확인했다. 미리 보기는 놓일 기둥과 같은 상자를 같은 자리에 띄우고, 바닥이 없거나(맨땅) 이미 기둥이 선 판은 빨강이다. 계단이 딛는 판과는 서로 막는다 (기둥이 쐐기를 뚫으므로). 레시피는 제작대에서 나무판자 2 · 석재 블록 2, 이름은 ITEM_wood_pillar · ITEM_stone_pillar (ko · en). shot.sh build 그림에 지붕 밑 기둥을 넣어 보니 지붕 밑면까지 닿는다. 지붕을 받치는 규칙 · 무너짐은 다음 단계의 몫이라 손대지 않았다",
+   "why": "BuildPiece.PILLAR_WIDTH = 0.3m — spec 에 수치가 없다. 캐릭터(지름 0.7m)가 한 판 위 어느 쪽으로든 비켜 지나갈 만큼 가늘게; 기둥 레시피 나무판자 2 · 석재 블록 2 — spec 에 수치가 없다. 벽(4)보다 작은 부재라 절반으로",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/build/buildings.gd",
+    "game/craft/recipes/recipes.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_pillar.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "기둥을 만들어 놓을 수 있다. **통행을 막지 않는다** (테스트)",
+     "evidence": "test_holding_a_pillar_previews_it_snapped_to_the_middle_of_the_floor_and_right_click_places_it 가 진짜 우클릭으로 기둥이 서고 가방에서 하나 빠지는지 본다. test_a_pillar_does_not_block_the_way 는 진짜 이동 키로 기둥 선 판을 남→북으로 가로지르는지 나무·석재 둘 다 본다. 일부러 깨 봄: PILLAR_WIDTH 를 0.3→2.9 로 바꾸자 이 테스트가 두 재료 모두 실패했다 (z=3.31 에서 멈춤) — 껍데기가 아니다. 되돌려 두었다"
+    },
+    {
+     "ok": true,
+     "criterion": "나무판자 · 석재 블록 두 재료로 만든다. 글자는 번역 키다 (ko · en)",
+     "evidence": "recipes.json 에 wood_pillar(plank 2) · stone_pillar(stone_block 2), 제작대. test_a_pillar_comes_in_wood_and_stone_with_translated_names 가 레시피 재료 키 · 출력 · 제작대와 ITEM_wood_pillar · ITEM_stone_pillar 가 ko.po · en.po 둘 다 비어 있지 않고 서로 다른지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "다른 건축물처럼 격자에 스냅되고 미리 보인다 (테스트)",
+     "evidence": "첫 테스트가 네 방향에서 한가운데가 아닌 곳을 겨눠도 plan 의 at 이 판 한가운데이고, 미리 보기가 기둥과 같은 BoxMesh 로 그 자리에 초록으로 뜨며 우클릭 위치가 미리 보인 자리와 같음을 본다. 맨땅은 no_floor + BAD_COLOR, 같은 판 둘째 기둥은 taken + BAD_COLOR. test_a_pillar_snaps_to_the_plate_on_every_floor 가 판 A·B · 지붕(위층) 위 스냅을 본다"
+    }
+   ],
+   "issues": [
+    "기둥 임시 수치가 spec 미정에 없다 — 기둥 굵기 0.3m 는 build_piece.gd 에 「임시」로 적혀 있으나 레시피(나무판자 2 · 석재 블록 2)는 recipes.json 에 주석을 달 수 없어 어디에도 「임시」라고 남지 않았다. spec/06_build/building.md 「미정」에 「기둥 굵기 · 레시피 미정 (지금 임시 0.3m · 재료 2개)」 한 줄을 더해라 (막는 것은 아니다)"
+   ],
+   "good": [
+    "기둥과 계단이 서로 같은 판을 막는다 (plan_pillar_at · plan_stairs_at 의 taken) — 쐐기를 뚫지 않게 하려는 것으로 합리적이며 테스트가 있다",
+    "shots.gd 의 build 그림에 지붕 밑 석재 기둥을 넣었다 (디버그 그림)"
+   ]
+  },
+  "test": "_empty_buffer_says_nothing\n* test_collecting_makes_room_and_crafting_can_start_again\n* test_closing_and_reopening_keeps_the_timer_and_the_buffer\n* test_reopening_a_station_does_not_show_another_stations_buffer\n* test_the_buffer_message_has_a_korean_and_an_english_word\n15/15 passed.\n\n\nres://tests/ui/hud/test_station_window.gd\n* test_opening_a_station_lists_that_stations_recipes\n* test_another_station_lists_its_own_recipes\n* test_closing_the_station_empties_the_list\n* test_each_row_shows_what_comes_out_and_what_it_costs\n* test_a_recipe_that_makes_many_at_once_says_so\n* test_with_an_empty_bag_no_recipe_can_be_chosen\n* test_only_the_recipes_whose_materials_are_in_the_bag_can_be_chosen\n* test_a_row_that_cannot_be_chosen_does_nothing_when_pressed\n* test_a_row_goes_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n* test_the_pillars_stand_at_the_shore_corners_and_leave_the_landing_spot_clear\n* test_the_plank_has_no_body_so_the_one_who_lands_walks_out\n* test_hitting_the_shore_pillar_breaks_the_dock_and_gives_it_back\n* test_a_broken_dock_does_not_stay_in_standing\n* test_landing_without_a_dock_falls_back_to_the_spawn\n* test_the_other_pillar_can_be_aimed_at_too\n* test_a_dock_fixed_in_the_map_cannot_be_broken\n15/15 passed.\n\n\nres://tests/world/frontier_islands/test_island_key.gd\n* test_every_island_that_starts_broken_has_an_unlock_item\n* test_the_unlock_item_is_made_only_at_the_research_bench\n* test_no_other_station_and_no_bare_hand_makes_the_unlock_item\n* test_the_research_bench_offers_the_unlock_item\n* test_the_key_is_not_made_of_what_only_the_locked_island_has\n* test_the_unlock_item_is_named_in_both_languages\n* test_inserting_the_key_at_the_dock_opens_the_island\n* test_after_the_key_the_boat_goes_to_that_island\n* test_nothing_opens_without_the_key_in_hand\n* test_the_key_is_not_spent_on_an_island_that_is_already_open\n* test_an_island_opened_with_the_key_stays_open_after_saving_and_loading\n* test_the_dock_of_an_opened_island_has_its_plank\n12/12 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              28\nTests               264\nPassing Tests       264\nAsserts            4011\nTime              124.095s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "7211504"
  }
 ]
