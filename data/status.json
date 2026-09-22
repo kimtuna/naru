@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 04:43:03",
- "updated_epoch": 1790106183,
+ "updated": "2026-09-23 04:43:05",
+ "updated_epoch": 1790106185,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 17,
@@ -13,9 +13,9 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-133",
- "step": "1",
- "step_title": "기둥",
+ "step": "2",
+ "step_title": "받치는 것이 있어야 지붕이 놓인다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-23 04:42:02"
+ "phase": "구현",
+ "phase_since": "2026-09-23 04:43:05"
 }
