@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-123\", \"step\": 1, \"title\": \"부순 것이 되살아나지 않는다\", \"last\": false}",
- "updated": "2026-09-22 15:28:06",
- "updated_epoch": 1790058486,
+ "reason": "",
+ "updated": "2026-09-22 15:49:01",
+ "updated_epoch": 1790059741,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 7,
   "groups_done": 3,
   "groups_waiting": 0,
-  "steps_total": 74,
-  "steps_done": 6
+  "steps_total": 75,
+  "steps_done": 7
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-124",
- "step": "3",
- "step_title": "열여섯 자루와 사다리",
+ "group": "G-123",
+ "step": "1",
+ "step_title": "부순 것이 되살아나지 않는다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-22 15:25:50"
+ "phase": "QA",
+ "phase_since": "2026-09-22 15:47:06"
 }

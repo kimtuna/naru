@@ -50,7 +50,7 @@
 - spec: spec/01_settings/save.md, spec/08_combat/damage-death.md
 - 결정: **밭 · 횃불은 뺀다** (사람 결정 2026-09-22) — 농사는 사람이 다시 설계 중이고(farming.md:7),
   횃불은 놓는 길 자체가 없다(lighting.md 미정). 저장은 이미 섬별로 된다 (world/frontier_islands/island_state.gd)
-- [ ] 1. 부순 것이 되살아나지 않는다
+- [x] 1. 부순 것이 되살아나지 않는다
   - 기준: 부순 제작대 · 상자 · 선착장이 나갔다 들어와도 되살아나지 않는다 (테스트)
   - 기준: `game/settings/save/world_data.gd:6` 의 낡은 주석을 사실대로 고친다 —
     설치물 · 상자(안의 것까지) · 선착장 · 밝힌 지도는 이미 담긴다
@@ -226,6 +226,8 @@
   - 기준: 갈고리총 주석이 없어진 상수를 가리킨다 — game/life/climbing/grapple.gd:14 가 「총알(Magazine.AMMO_ITEM)로는 채워지지 않는다」고 적었는데 Magazine.AMMO_ITEM 은 이번 단계에서 없어졌다. 읽는 사람이 없는 것을 찾게 된다. 그 줄을 「총알(탄 네 종, tools.json 의 ammo_kinds)로는 채워지지 않는다」로 고쳐라
 - [ ] 62. list.md 가 216줄이다 (G-124 단계 2)
   - 기준: list.md 가 216줄이다 — 세션이 읽는 md 는 150줄 이하라는 줄(LOOP.md 9행)을 넘긴 지 오래다 (HEAD~12 에 143줄 → 지금 216줄). 늘어난 몫은 대부분 G-900 의 단계마다 붙은 긴 「기준:」 줄이다. 이번 단계가 만든 문제는 아니지만 정리 묶음이 아직 없다. 끝난 묶음의 단계 줄을 접거나 지워 150줄 안으로 줄여라
+- [ ] 63. 같은 파일에 낡은 주석이 하나 더 남았다 (G-123 단계 1)
+  - 기준: 같은 파일에 낡은 주석이 하나 더 남았다 — game/settings/save/world_data.gd:23 의 `var islands` 주석이 아직 `{gone(캔 자리), taken(캔 날), stations(지은 것), map(밝힌 지도)}` 넷만 센다. 두 줄 위에서 새로 고친 주석(상자 · 선착장도 담긴다)과 바로 어긋난다. island_state.gd 의 of() 가 담는 여섯 키(gone · taken · stations · chests · docks · map)를 그대로 적어라. 단계는 통과시켰다 — 기준이 6번 줄만 짚었다
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
