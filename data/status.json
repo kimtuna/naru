@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-22 15:25:48",
- "updated_epoch": 1790058348,
+ "reason": "{\"done\": false, \"bundle\": \"G-123\", \"step\": 1, \"title\": \"부순 것이 되살아나지 않는다\", \"last\": false}",
+ "updated": "2026-09-22 15:28:06",
+ "updated_epoch": 1790058486,
  "ended": "2026-09-22 14:35:20",
  "progress": {
-  "groups_total": 6,
+  "groups_total": 7,
   "groups_done": 3,
-  "groups_waiting": 1,
-  "steps_total": 71,
+  "groups_waiting": 0,
+  "steps_total": 74,
   "steps_done": 6
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-124",
- "step": "2",
- "step_title": "탄 네 종 — 제 탄으로만 채워진다",
+ "step": "3",
+ "step_title": "열여섯 자루와 사다리",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-22 15:21:24"
+ "phase": "구현",
+ "phase_since": "2026-09-22 15:25:50"
 }
