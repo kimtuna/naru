@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-125\", \"step\": 1, \"title\": \"기둥을 겨눈다\", \"last\": false}",
- "updated": "2026-09-22 17:01:03",
- "updated_epoch": 1790064063,
+ "reason": "",
+ "updated": "2026-09-22 17:31:09",
+ "updated_epoch": 1790065869,
  "ended": "2026-09-22 14:35:20",
  "progress": {
   "groups_total": 9,
   "groups_done": 5,
   "groups_waiting": 0,
   "steps_total": 82,
-  "steps_done": 9
+  "steps_done": 10
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-125",
  "step": "1",
  "step_title": "기둥을 겨눈다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-22 16:59:49"
+ "phase": "QA",
+ "phase_since": "2026-09-22 17:27:44"
 }
