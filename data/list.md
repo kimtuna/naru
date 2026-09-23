@@ -497,7 +497,7 @@
   - 기준: **섬 위에서의 HUD** 도 찍는다 — 회색 배경이 아니라 진짜 배경 위에서 읽히는지 본다
   - 기준: (앞 단계 QA) 핫바 높이 80 이 두 곳에 적혀 있다 — 테마 Window/hotbar_room=80 과 game/ui/hud/hotbar.tscn 의 offset_top=-80.0 이 따로 산다(단계 1 이 없앤 「같은 값 두 곳」이 다시 생겼다). hotbar.gd _ready 에서 offset_top = -UiTheme.window(&"hotbar_room") 로 걸고 .tscn 값은 지우거나, 두 값이 같은지 단언하는 테스트를 tests/ui/layout 에 넣어라
   - 기준: (앞 단계 QA) 재는 검사 테스트가 고아 노드 31개를 남긴다 — test.log 의 test_station_windows_fit_the_screen 뒤에 「31 Orphans」(Button 줄들). station_window._rebuild 가 queue_free 전에 떼어낸 줄이거나 테스트가 st.free() 로 창보다 먼저 제작대를 지운 탓으로 보인다. 원인을 찾아 없애고 after_each 에서 assert_no_new_orphans 로 지켜라
-- [ ] 4. (앞 단계 QA) 모자란 줄이 눈으로 안 갈린다
+- [x] 4. (앞 단계 QA) 모자란 줄이 눈으로 안 갈린다
   - 기준: 모자란 줄이 눈으로 안 갈린다 — workbench_en.png 에서 Match pistol(철괴 10 필요, 가방 6)처럼 disabled 인 줄도 다른 줄과 똑같이 흰 글자다. 레시피 글자가 Button 글자가 아니라 자식 Label 이라 disabled 색을 안 탄다(station_window.gd 레시피 줄 만드는 곳). 테마에 모자란 줄 글자색을 두고 disabled 일 때 Label 에 걸어라. 테스트: 모자란 줄의 Label 색이 고를 수 있는 줄과 다른지 단언
   - 기준: (앞 단계 QA) 영어에서 철광석·철괴 칸이 둘 다 Iron — drag_en · workbench_en 핫바/가방 칸이 'Iron' 'Iron' 으로 같아 보인다(칸 글자 줄임). 줄여도 둘이 갈리게 칸 이름 줄임 규칙이나 짧은 이름 키를 두고, 가방 칸 글자가 아이템마다 다른지 단언하는 테스트를 넣어라
   - 기준: (앞 단계 QA) 섬 위 HUD 글자가 풀밭에서 흐리다 — island_en.png 의 알림 한 줄 · Hunger/Thirst 글자가 밝은 풀 위에서 잘 안 읽힌다. 테마 Label 에 그림자(shadow_color · shadow_offset)나 바탕 판을 걸어라
