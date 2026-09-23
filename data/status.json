@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 04:09:11",
- "updated_epoch": 1790190551,
+ "updated": "2026-09-24 04:28:13",
+ "updated_epoch": 1790191693,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 29,
   "groups_done": 22,
   "groups_waiting": 0,
   "steps_total": 115,
-  "steps_done": 79
+  "steps_done": 80
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-140",
- "step": "3",
- "step_title": "계단이 한 장에 들어가고 아래가 뚫린다",
+ "step": "4",
+ "step_title": "(앞 단계 QA) building.md 계단 결정 줄의 「지금은」이 낡았다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 04:08:04"
+ "phase_since": "2026-09-24 04:27:43"
 }
