@@ -639,7 +639,7 @@
   - 기준: **총은 닳지 않는다** — 내구도가 없다 (테스트)
   - 기준: (앞 단계 QA) spec 「미정」 줄이 낡았다 — spec/08_combat/tools-as-weapons.md:101 「재장전 시간 · 조준 배율 · 흩어짐 · 탄착 남는 시간 미정」인데 조준 배율(0.5) · 흩어짐(총마다 퍼짐)은 2026-09-24 표로 정해졌다. 그 둘을 빼고, 대신 이번에 지어낸 반동 되돌림 값(Attack.RECOIL_HOLD 0.15초 · RECOIL_RETURN 20°/초 · RECOIL_MAX 15°)과 Projectile.max_range(유효 거리×2, 최소 60m)가 미정이라고 한 줄 적어라. 사람 결정 줄은 건드리지 마라
   - 기준: (앞 단계 QA) 기다림 루프가 도우미 밖에 두 곳 더 있다 — game/tests/combat/tools_as_weapons/test_aiming.gd:122 이 「ready_in() > 0 or recoil_degrees() > 0」을 따로 돌고, game/tests/settings/save/test_round_trip.gd:309 는 ready_in() 만 기다린다(반동은 안 기다림). 둘 다 click_helper.gd 의 Click.click 을 부르게 하거나, 기다림만 떼어 click_helper 에 static settle(tree, attack) 로 두고 부르게 하라
-- [ ] 4. 무게가 속도를 바꾼다
+- [x] 4. 무게가 속도를 바꾼다
   - 기준: **모든 아이템에 무게**가 있다 — 데이터에 없으면 테스트가 실패한다 (테스트)
   - 기준: 가진 무게가 기준을 넘으면 **1kg 마다 -1%, 최대 -40%** 로 느려진다 (테스트)
   - 기준: **배고픔 · 목마름이 정한 속도에 곱해진다** — 둘이 섞이지 않는다 (테스트)

@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 08:06:37",
- "updated_epoch": 1790204797,
+ "updated": "2026-09-24 08:52:02",
+ "updated_epoch": 1790207522,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 26,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 89
+  "steps_done": 90
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-141",
  "step": "4",
  "step_title": "무게가 속도를 바꾼다",
- "attempt": "1",
- "phase": "기계 검사",
- "phase_since": "2026-09-24 08:06:37"
+ "attempt": "2",
+ "phase": "QA",
+ "phase_since": "2026-09-24 08:50:45"
 }
