@@ -464,7 +464,7 @@
   - 기준: 글자는 전부 번역 키다 (ko · en 둘 다)
   - 기준: 찍어서 눈으로 확인한다 (`harness/shot.sh --ui <폴더> chest`)
   - 색은 임시다 — 사람이 보고 정한다
-- [ ] 2. (앞 단계 QA) 찍기 도구에 디버그 print 가 남았다
+- [x] 2. (앞 단계 QA) 찍기 도구에 디버그 print 가 남았다
   - 기준: 찍기 도구에 디버그 print 가 남았다 — game/core/debug/ui_shots.gd 139줄 print("DBG ", player._control_locks, …) 가 남아 있고 남의 private 변수(_control_locks)까지 읽는다. 그 줄을 지워라
   - 기준: (앞 단계 QA) death_aim 자리가 세운 것을 안 치운다 — ui_shots.gd _aim_death_chest 가 ShotGround · ShotDeath · StorageChest · DevBox 를 stations 가 아니라 game 에 붙여 _reset 이 치우지 않는다. 뒤 자리(menu · ammo)를 chest 와 같이 찍으면 상자 셋과 바닥이 배경에 남는다. 자리 끝에서 free 하거나 stations 에 붙여 _reset 이 치우게 하라
   - 기준: (앞 단계 QA) 창의 '멈춰 있다' 테스트가 멈춤을 지키지 않는다 — test_chest_window_death.gd test_the_number_in_the_window_does_not_move_while_open 은 창이 _rebuild 때만 글자를 쓰므로 DeathChest.tick 이 열린 상자를 줄여도 통과한다. chest.seconds_left() 가 tick(120) 뒤에도 300 그대로인지 함께 단언하라
