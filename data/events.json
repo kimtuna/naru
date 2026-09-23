@@ -7886,5 +7886,89 @@
    ],
    "decision": null
   }
+ },
+ {
+  "time": "2026-09-24 03:41:14",
+  "epoch": 1790188874,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "계단이 토대 한 장(3×3칸) 안의 얇은 비탈 판이 되어 밑으로 걸어 지나가고, 걸어서 위층에 오르며, 방 판정도 그대로다 — 바뀐 곳 테스트 105개 파일 952개 통과",
+   "approach": "계단이 토대 두 장을 차지했고 속이 꽉 찬 쐐기(PrismMesh)였다. STAIRS_PLATES 를 1 로 줄이고, 판을 기울이지 않고 밀어서(shear) 세운 얇은 비탈 판(두께 0.2m)으로 바꿨다. 기울이면 두께만큼 옆 판으로 튀어나가지만, 밀면 앞뒤 끝이 곧게 서서 판 한 장 안에 머문다. 몸은 밀린 모양을 그대로 받을 수 없어서 여덟 꼭짓점으로 볼록 몸을 만들었다. 한 장(3m)에 한 층(3.2m)을 오르면 약 47°라 캐릭터의 45° 한도를 넘는다. 그래서 몸에 『여기까지는 바닥』 기울기를 메타(Player.WALK_ANGLE_META)로 적을 수 있게 했고, 플레이어는 닿은 몸의 메타를 보고 floor_max_angle 을 올린다. 계단을 벗어나면 45°로 돌아가고, 지형에는 이 메타가 없어서 절벽 규칙은 그대로다. 처음 해 보니 꼭대기에서 위층 바닥 모서리가 약 50° 면으로 잡혀 멈췄다(여유 1°는 멈추고 3°는 아슬아슬해서 5°로 잡았다). 계단이 앞 판을 딛지 않으므로 앞에 판이 없어도 놓인다. 방 판정은 그대로라 계단 판은 아래층 천장이 막힌 것으로 치고, 위층 구멍은 한 장이다. 테스트는 몸 꼭짓점과 그림이 판 안에 있는지, 계단 밑 0.5m·1m 에 몸이 없는지, 서쪽 판에서 동쪽 판으로 계단 밑을 걸어 건너는지, D에서 북쪽으로 걷기만 해서 위층 바닥 높이에 서는지, 계단 밑 자리가 아래층 방 ID 에 드는지를 본다. 그림은 harness/shot.sh 에 build_stairs 자리를 새로 만들어 옆에서 낮게 찍었다. 얇은 판이 제 판 뒷변에서 앞변까지만 오르고 밑으로 풀밭이 보인다. spec 미정 줄 『계단 길이 임시 두 장』을 지금 상태로 고쳤다(사람 결정 줄은 건드리지 않았다).",
+   "why": "BuildPiece.STAIRS_THICKNESS = 0.2m — spec 에 수치가 없어서 토대·지붕과 같은 두께로 잡았다; BuildPiece.STAIRS_WALK_MARGIN_DEG = 5° — 계단 기울기(약 46.8°)보다 이만큼 가팔라도 계단 몸 위에서는 바닥으로 친다. 꼭대기 모서리가 약 50°로 잡혀 1°로는 멈췄고 3°는 아슬아슬했다",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/build/buildings.gd",
+    "game/player/movement_controls/player.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_roof_stairs.gd",
+    "game/tests/build/test_rooms.gd",
+    "game/tests/build/test_building_pillar.gd",
+    "spec/06_build/building.md"
+   ],
+   "decision": null
+  }
+ },
+ {
+  "time": "2026-09-24 04:09:11",
+  "epoch": 1790190551,
+  "type": "pass",
+  "title": "통과 — G-140 단계 3 (계단이 한 장에 들어가고 아래가 뚫린다)",
+  "group": "G-140",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "계단을 토대 한 장(3×3칸) 안의 얇은 비탈 판으로 바꿔 밑으로 걸어 지나가게 했다 — 바뀐 곳 105개 스크립트 · 952개 테스트 통과",
+   "approach": "구현은 끊긴 앞 회차가 이미 해 두었고 커밋 62d7f22 에 들어 있다. 이번 회차는 그것을 확인하고 채점까지 마쳤다. 무엇이 문제였나: 계단은 두 장을 차지하는 속이 꽉 찬 쐐기(PrismMesh)였다. 어떻게 풀었나: STAIRS_PLATES=1 로 바꾸고, 계단을 두께 0.2m 의 판(BoxMesh)으로 만들어 기울이지 않고 밀어서(shear) 비탈로 세웠다. 그래서 앞 · 뒤 끝이 곧게 서 판 한 장 밖으로 안 나가고, 밑은 비어 있다. 몸은 그 판의 여덟 꼭짓점으로 만든 볼록 몸(ConvexPolygonShape3D)이다. 한 장에 한 층을 오르면 약 47° 라 걸을 수 있는 기울기 45° 를 넘는다 — 그래서 계단 몸에 WALK_ANGLE_META(계단 기울기+5°)를 적어 두고, Player 는 닿은 몸의 메타를 보고 floor_max_angle 을 그때만 늘린다. 지형은 메타가 없어 45° 절벽 규칙이 그대로다. 계단이 앞 판을 요구하던 검사를 없앴다. 테스트: 계단 몸 · 그림이 판 한 장 안인가 · 계단 밑 0.5/1m 가 비었는가 · 계단 밑으로 서→동 가로질러 걷기 · 걸어서 위층에 오르기 · 계단 밖에선 기울기가 원래대로 돌아오는가 · 2층 건물에서 계단 밑 자리도 아래층 방 id 인가. 확인: tests/build 85개 통과. 바뀐 곳에 걸리는 105개 스크립트 · 952개 테스트도 전부 통과했다 — 커밋이 끝난 뒤라 기본 비교로는 changed_tests.py 가 아무것도 안 골라서 31ab78c 와 비교해 골랐다. harness/shot.sh build_stairs 로 찍은 그림(/tmp/g1403)에서 계단이 판 한 장 안의 얇은 비탈이고 밑이 비어 보인다.",
+   "why": "BuildPiece.STAIRS_THICKNESS = 0.2m (토대 · 지붕 두께와 같다) — spec 에 계단 판 두께가 없다; BuildPiece.STAIRS_WALK_MARGIN_DEG = 5° — 꼭대기에서 위층 바닥 모서리에 닿는 면이 약 50° 로 잡혀 1° 로는 멈췄다",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/build/buildings.gd",
+    "game/player/movement_controls/player.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_roof_stairs.gd",
+    "game/tests/build/test_rooms.gd",
+    "game/tests/build/test_building_pillar.gd",
+    "spec/06_build/building.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "계단이 토대 한 장(3×3칸) 안에 들어간다 — 지금은 두 장을 먹는다 (테스트)",
+     "evidence": "test_building_roof_stairs.gd::test_the_stairs_fit_in_one_foundation — 토대 한 장만 깔고 네 방향 모두 plan_stairs_at ok · plates == [그 판 하나] 를 단언하고, 놓인 계단의 몸(ConvexPolygonShape3D 꼭짓점 여덟) 과 그림(MeshInstance AABB) 이 판 한 장의 x·z 범위 안인지 축마다 잰다. STAIRS_PLATES 가 2 면 plates 단언 · 앞 판 없는 ok 단언이 깨진다. 전체 테스트(test.log, 147 스크립트 · 1265 테스트) 에서 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "계단 아래로 걸어 지나갈 수 있다 — 속이 꽉 찬 쐐기가 아니다 (테스트). 난간은 없다",
+     "evidence": "test_you_can_walk_under_the_stairs — 계단 판 한가운데 바닥 위 0.5m · 1m 에 point query 로 아무 몸도 없음을 단언(쐐기면 그 높이가 1.6m 까지 차 깨진다), 위로 쏜 광선이 계단 판 밑면(rise/2 − 두께)에 닿음을 확인, 그리고 캐릭터가 서쪽 판에서 동쪽 판까지 계단 밑을 바닥 높이 그대로(y+0.2 아래) 걸어 건너는지 본다. 난간을 만드는 코드는 없다"
+    },
+    {
+     "ok": true,
+     "criterion": "걸어서 위층에 오르는 것이 그대로 된다 (테스트)",
+     "evidence": "test_the_stairs_take_you_up_to_the_next_floor — 계단 없이는 못 오른다는 대조 뒤, 우클릭으로 계단을 놓고 D 에서 북쪽으로 걷기만 해서 위층 바닥 높이(±0.1) 에 서고 A 북쪽 변을 넘었는지 단언. stairs_angle_deg > floor_max_angle_deg(45°) 도 단언해 WALK_ANGLE_META 없이는 오를 수 없는 경우임을 못박고, 계단을 벗어나면 floor_max_angle 이 45° 로 돌아오는지도 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "계단 밑을 지나다녀도 층이 새지 않는다 — 방 판정은 그대로다 (테스트)",
+     "evidence": "test_rooms.gd::test_two_storeys_joined_by_stairs_are_two_rooms — 한 장 계단으로 고쳐 아래층 12장 · 위층 11장 두 방이 따로 서는지, 그리고 계단 밑 자리(A 앞쪽 1m 위) 의 Rooms.id_at 이 아래층 방 id 인지 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 눈으로 확인한다 — 칸 밖으로 안 삐져나오고 밑이 비어 보인다",
+     "evidence": "shots.gd 에 build_stairs 자리를 더했고 /tmp/g1403/build_stairs.png 를 직접 봤다 — 계단이 토대 한 장 위의 얇은 비탈 판이고 앞 · 뒤 끝이 판 가장자리 안에 곧게 서며, 밑으로 뒤 풍경이 뚫려 보인다. build.png 에서도 판 한 장 안이다"
+    }
+   ],
+   "issues": [
+    "building.md 계단 결정 줄의 「지금은」이 낡았다 — spec/06_build/building.md 18~20줄이 아직 「지금은 두 장을 먹고 속이 꽉 찬 쐐기라 계단 밑이 죽은 공간이다」라고 말한다. 사람 결정 문장(「계단은 토대 한 장(3×3칸)에 들어가고, 아래가 뚫려 있다 (사람 결정 2026-09-24)」 · 난간 없음 · 아트 단계)은 그대로 두고, 「지금은 …」 절만 「(G-140.3 에서 한 장 · 얇은 비탈 판으로 바꿨다)」처럼 지난 일로 고쳐라",
+    "_stairs_edges 가 늘 빈 목록을 돌려준다 — game/build/buildings.gd 의 _stairs_edges 는 STAIRS_PLATES=1 이 된 뒤로 쓰이는 데가 없다(주석에 「다시 늘면 쓰인다」). 한 장 계단이 정해졌으니 함수와 부르는 곳을 지우거나, 남길 거면 테스트 하나로 한 장일 때 빈 목록임을 못박아라"
+   ],
+   "good": []
+  },
+  "test": "\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             147\nTests              1265\nPassing Tests      1265\nAsserts           39960\nTime              840.197s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "50d38e0"
  }
 ]

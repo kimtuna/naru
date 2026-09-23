@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-140\", \"step\": 3, \"title\": \"계단이 한 장에 들어가고 아래가 뚫린다\", \"last\": true}",
- "updated": "2026-09-24 03:41:12",
- "updated_epoch": 1790188872,
+ "reason": "",
+ "updated": "2026-09-24 04:09:11",
+ "updated_epoch": 1790190551,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 29,
   "groups_done": 22,
   "groups_waiting": 0,
-  "steps_total": 114,
-  "steps_done": 78
+  "steps_total": 115,
+  "steps_done": 79
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-140",
  "step": "3",
  "step_title": "계단이 한 장에 들어가고 아래가 뚫린다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-24 03:02:22"
+ "phase": "QA",
+ "phase_since": "2026-09-24 04:08:04"
 }
