@@ -491,12 +491,16 @@
   - 기준: 지금 어긋난 곳은 **목록으로 뱉기만** 한다. 고치는 것은 G-901 의 몫이다
   - 기준: (앞 단계 QA) 제작대 창이 화면 아래로 넘친다 — /tmp/g129/after/workbench.png 에서 레시피 목록이 화면 아래로 잘린다(돌격소총탄 줄이 반쯤 잘림). station_window 목록을 ScrollContainer 로 감싸거나 창 높이를 화면 안에 맞추고, 창 Rect 가 get_viewport_rect() 안에 드는지 단언하는 테스트를 이 묶음의 재는 검사 단계에 넣어라
   - 기준: (앞 단계 QA) 맨손 제작 줄이 핫바를 덮는다 — /tmp/g129/after/bag.png 에서 「횃불」 버튼이 핫바 5·6번 칸 위에 겹친다. 가방 창(bag.tscn Center/Box)의 아래 끝이 핫바 위 끝보다 위인지 재는 테스트를 짜고 배치를 고쳐라
-- [ ] 3. 찍는 폭
+- [x] 3. 찍는 폭
   - 기준: **한국어 · 영어 둘 다** 찍는다 — 영어가 길어 칸을 넘치는 것이 흔하다
   - 기준: **만지는 중**을 찍는다 — 칸을 끌고 있는 중 · 재료가 모자란 줄
   - 기준: **섬 위에서의 HUD** 도 찍는다 — 회색 배경이 아니라 진짜 배경 위에서 읽히는지 본다
   - 기준: (앞 단계 QA) 핫바 높이 80 이 두 곳에 적혀 있다 — 테마 Window/hotbar_room=80 과 game/ui/hud/hotbar.tscn 의 offset_top=-80.0 이 따로 산다(단계 1 이 없앤 「같은 값 두 곳」이 다시 생겼다). hotbar.gd _ready 에서 offset_top = -UiTheme.window(&"hotbar_room") 로 걸고 .tscn 값은 지우거나, 두 값이 같은지 단언하는 테스트를 tests/ui/layout 에 넣어라
   - 기준: (앞 단계 QA) 재는 검사 테스트가 고아 노드 31개를 남긴다 — test.log 의 test_station_windows_fit_the_screen 뒤에 「31 Orphans」(Button 줄들). station_window._rebuild 가 queue_free 전에 떼어낸 줄이거나 테스트가 st.free() 로 창보다 먼저 제작대를 지운 탓으로 보인다. 원인을 찾아 없애고 after_each 에서 assert_no_new_orphans 로 지켜라
+- [ ] 4. (앞 단계 QA) 모자란 줄이 눈으로 안 갈린다
+  - 기준: 모자란 줄이 눈으로 안 갈린다 — workbench_en.png 에서 Match pistol(철괴 10 필요, 가방 6)처럼 disabled 인 줄도 다른 줄과 똑같이 흰 글자다. 레시피 글자가 Button 글자가 아니라 자식 Label 이라 disabled 색을 안 탄다(station_window.gd 레시피 줄 만드는 곳). 테마에 모자란 줄 글자색을 두고 disabled 일 때 Label 에 걸어라. 테스트: 모자란 줄의 Label 색이 고를 수 있는 줄과 다른지 단언
+  - 기준: (앞 단계 QA) 영어에서 철광석·철괴 칸이 둘 다 Iron — drag_en · workbench_en 핫바/가방 칸이 'Iron' 'Iron' 으로 같아 보인다(칸 글자 줄임). 줄여도 둘이 갈리게 칸 이름 줄임 규칙이나 짧은 이름 키를 두고, 가방 칸 글자가 아이템마다 다른지 단언하는 테스트를 넣어라
+  - 기준: (앞 단계 QA) 섬 위 HUD 글자가 풀밭에서 흐리다 — island_en.png 의 알림 한 줄 · Hunger/Thirst 글자가 밝은 풀 위에서 잘 안 읽힌다. 테마 Label 에 그림자(shadow_color · shadow_offset)나 바탕 판을 걸어라
 
 ## [ ] G-901 UI 개선 — 창을 훑어 고친다
 - spec: spec/12_ui/hud.md, spec/12_ui/menu.md, spec/01_settings/display.md
@@ -601,6 +605,10 @@
   - 기준: 제작대 목록 휠 스크롤이 확인되지 않았다 — 구현 세션이 headless push_input 휠로 스크롤을 못 움직였다고 적었다. Scroll 이 PASS 라 휠을 받는지, scroll_vertical 을 직접 바꿔 아래 줄이 보이는 자리로 오는지 단언하는 테스트를 test_station_window.gd 에 넣어라
 - [ ] 14. ui_shots 의 _reset 이 제작대 창을 못 닫는다 (G-129 단계 2)
   - 기준: ui_shots 의 _reset 이 제작대 창을 못 닫는다 — stations.open(null) 은 무시되어 chest 사진에 앞 제련로 창이 남고 can_start SCRIPT ERROR 가 난다(구현 세션 보고). stations.close() 로 바꾸고 찍는 폭 단계에서 chest.png 를 열어 확인하라
+- [ ] 15. shot.sh 쓰임 줄이 낡았다 (G-129 단계 3)
+  - 기준: shot.sh 쓰임 줄이 낡았다 — harness/shot.sh 5줄의 자리 목록(hud · bag · workbench · smelter · chest · menu)에 drag · ammo · island 가 없고 _ko/_en 두 장이라는 말도 없다. ui_shots_kit.gd PLACES 를 가리키게 고쳐라
+- [ ] 16. 섬 사진 테스트가 얕다 (G-129 단계 3)
+  - 기준: 섬 사진 테스트가 얕다 — test_island_shot_builds_the_real_island 는 island_scene 이 null 이 아닌지만 본다. 세운 뒤 game.island()(세운 섬)가 있고 HUD(hotbar)가 보이는지까지 단언하거나, 이름대로 '섬을 세운다'를 확인하게 고쳐라
 
 ## [ ] G-990 점검 — 한 바퀴 돌아보고 빠진 것을 찾는다
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 (사람 결정 2026-09-23)

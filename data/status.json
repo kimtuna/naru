@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 23:39:15",
- "updated_epoch": 1790174355,
+ "updated": "2026-09-24 00:05:53",
+ "updated_epoch": 1790175953,
  "ended": "2026-09-23 18:44:23",
  "progress": {
   "groups_total": 26,
   "groups_done": 20,
   "groups_waiting": 0,
-  "steps_total": 96,
-  "steps_done": 71
+  "steps_total": 99,
+  "steps_done": 72
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-129",
- "step": "2",
- "step_title": "재는 검사",
+ "step": "3",
+ "step_title": "찍는 폭",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 23:38:01"
+ "phase_since": "2026-09-24 00:02:22"
 }
