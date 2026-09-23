@@ -484,7 +484,7 @@
   - 기준: 같은 값이 코드와 `.tscn` 두 곳에 적혀 있던 것이 사라진다 (막대 폭이 그랬다) (테스트)
   - 기준: 창들이 그 Theme 을 쓴다 — 글자 크기 · 칸 크기가 창마다 제각각이지 않다 (테스트)
   - 기준: 고치기 전후를 찍어 눈으로 확인한다 (bag · workbench · chest)
-- [ ] 2. 재는 검사
+- [x] 2. 재는 검사
   - 기준: 열리는 창을 **전부** 열어 놓고 잰다 — ① **1280×720 안에 들어오나**
     ② 서로 **겹치나**(창이 핫바를 가린다) ③ 글자가 **칸을 넘나** (테스트)
   - 기준: **창 목록을 손으로 적지 않는다** — 새 창을 더하면 저절로 검사에 들어온다 (테스트)
@@ -495,6 +495,8 @@
   - 기준: **한국어 · 영어 둘 다** 찍는다 — 영어가 길어 칸을 넘치는 것이 흔하다
   - 기준: **만지는 중**을 찍는다 — 칸을 끌고 있는 중 · 재료가 모자란 줄
   - 기준: **섬 위에서의 HUD** 도 찍는다 — 회색 배경이 아니라 진짜 배경 위에서 읽히는지 본다
+  - 기준: (앞 단계 QA) 핫바 높이 80 이 두 곳에 적혀 있다 — 테마 Window/hotbar_room=80 과 game/ui/hud/hotbar.tscn 의 offset_top=-80.0 이 따로 산다(단계 1 이 없앤 「같은 값 두 곳」이 다시 생겼다). hotbar.gd _ready 에서 offset_top = -UiTheme.window(&"hotbar_room") 로 걸고 .tscn 값은 지우거나, 두 값이 같은지 단언하는 테스트를 tests/ui/layout 에 넣어라
+  - 기준: (앞 단계 QA) 재는 검사 테스트가 고아 노드 31개를 남긴다 — test.log 의 test_station_windows_fit_the_screen 뒤에 「31 Orphans」(Button 줄들). station_window._rebuild 가 queue_free 전에 떼어낸 줄이거나 테스트가 st.free() 로 창보다 먼저 제작대를 지운 탓으로 보인다. 원인을 찾아 없애고 after_each 에서 assert_no_new_orphans 로 지켜라
 
 ## [ ] G-901 UI 개선 — 창을 훑어 고친다
 - spec: spec/12_ui/hud.md, spec/12_ui/menu.md, spec/01_settings/display.md
@@ -593,6 +595,12 @@
   - 기준: chest 찍기에 제작대 창이 남아 겹친다 — /tmp/g129/after/chest.png 에 앞 자리의 제작대 창이 그대로 깔린다. ui_shots 가 제작대를 먼저 치워 StationWindow._refresh 가 풀린 제작대로 can_start 를 부르는 SCRIPT ERROR 가 난다(보고서 기준, 고치기 전에도 났다). 자리를 바꿀 때 창을 먼저 닫거나 _refresh 에서 is_instance_valid 로 막고, 찍은 로그에 SCRIPT ERROR 가 없는지 보라
 - [ ] 11. shot.sh 기본 해상도가 1280x720 이 아니다 (G-129 단계 1)
   - 기준: shot.sh 기본 해상도가 1280x720 이 아니다 — 찍힌 PNG 가 1600x900 이다. 화면은 1280×720 고정(spec/01_settings/display.md)이라 찍는 폭도 그에 맞춰라 (이 묶음 「찍는 폭」 단계의 몫)
+- [ ] 12. 조준점 겹침은 창이 뜨면 해가 없을 수 있다 (G-129 단계 2)
+  - 기준: 조준점 겹침은 창이 뜨면 해가 없을 수 있다 — UIMEASURE 목록 4곳 중 3곳이 Crosshair/H 를 가린다는 줄이다. 창이 열리면 조준점을 숨기는지(게임 쪽) 아니면 재는 검사가 Crosshair 를 가려도 되는 쪽으로 빼야 하는지 G-901 에서 정하고, 어느 쪽이든 목록이 진짜 흠만 뱉게 하라
+- [ ] 13. 제작대 목록 휠 스크롤이 확인되지 않았다 (G-129 단계 2)
+  - 기준: 제작대 목록 휠 스크롤이 확인되지 않았다 — 구현 세션이 headless push_input 휠로 스크롤을 못 움직였다고 적었다. Scroll 이 PASS 라 휠을 받는지, scroll_vertical 을 직접 바꿔 아래 줄이 보이는 자리로 오는지 단언하는 테스트를 test_station_window.gd 에 넣어라
+- [ ] 14. ui_shots 의 _reset 이 제작대 창을 못 닫는다 (G-129 단계 2)
+  - 기준: ui_shots 의 _reset 이 제작대 창을 못 닫는다 — stations.open(null) 은 무시되어 chest 사진에 앞 제련로 창이 남고 can_start SCRIPT ERROR 가 난다(구현 세션 보고). stations.close() 로 바꾸고 찍는 폭 단계에서 chest.png 를 열어 확인하라
 
 ## [ ] G-990 점검 — 한 바퀴 돌아보고 빠진 것을 찾는다
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 (사람 결정 2026-09-23)

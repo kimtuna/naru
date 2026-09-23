@@ -7392,5 +7392,70 @@
   },
   "test": "_of_an_empty_or_missing_slot\n* test_a_bag_slot_moves_into_the_chest\n* test_putting_in_onto_the_same_item_stacks_it\n* test_putting_in_onto_another_item_swaps_the_two\n* test_nothing_goes_into_a_slot_the_chest_does_not_have\n* test_the_chest_tells_what_it_holds\n* test_every_box_is_the_same_kind_of_chest\n10/10 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              82\nTests               806\nPassing Tests       806\nAsserts           28810\nTime              422.288s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "6b6f807"
+ },
+ {
+  "time": "2026-09-23 23:39:15",
+  "epoch": 1790174355,
+  "type": "pass",
+  "title": "통과 — G-129 단계 2 (재는 검사)",
+  "group": "G-129",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "재는 검사(tests/ui/layout)를 세웠다 — 열리는 창을 저절로 찾아 하나씩 열고 ① 1280×720 안 ② 핫바 · HUD · 같이 뜬 창과 겹침 ③ 글자 넘침을 재어 목록으로 뱉는다. 앞 단계 QA 둘(제작대 창 넘침 · 가방이 핫바를 덮음)은 고쳤다. 바뀐 곳만 돈 테스트 60개 파일 599개 통과",
+   "approach": "문제: 창이 화면에 드는지 · 핫바를 가리는지 · 글자가 넘치는지 재는 검사가 없어 PNG 로만 보였다. 해법: (1) tests/ui/layout/ui_measure.gd — 창 목록을 손으로 적지 않는다. GameRoot 의 CanvasLayer 에 바로 달린 Control 가운데 처음에 숨어 있는 것이 창(Bag · Map · StationWindow · ChestWindow · PauseMenu · Notice · LoadingScreen 7개), 그 밖과 캐릭터 HUD 전부가 가리면 안 되는 쪽이다. 그려진 것만 잰다(틀 Container · 빈 Control 과 화면을 덮는 Dim 은 뺀다, 스크롤 틀에 잘린 몫은 안 잰다). ①은 가장 바깥 넘친 것만, ②는 쌍마다 한 줄, ③은 이름표 · 단추 폭과 글자를 담은 칠한 틀(단추 · 판) 밖으로 나오는지. (2) test_window_layout.gd — 창을 하나씩 알맞게 채워 열고(제작대는 레시피가 가장 많은 것, 상자는 개발용 상자+가방) 잰 목록을 UIMEASURE 로 뱉기만 한다(목록 때문에 떨어지지 않음). 새 창을 Window 층에 달면 저절로 재어지는지, 재는 법 셋이 가짜 창에서 잡는지도 본다. (3) QA 둘 고침: 제작대 창은 레시피 목록을 ScrollContainer 로 감싸고 창 자리를 안내 줄 아래(chest_top)부터 핫바 위(테마 Window hotbar_room=80, 새 값)까지로 잡아 줄이 넘치면 목록만 스크롤된다(상자 창 _fit 과 같은 방식, 남은 시간 · 버퍼 찼다 줄이 뜰 높이까지 미리 뺀다). 가방은 Center 아래 끝을 hotbar_room 만큼 올렸다. 1280x720 으로 찍어(HARNESS_SHOT_RESOLUTION) PNG 를 열어 봤다 — 제작대 창이 화면 안 · 핫바 위에 스크롤 막대와 함께 들고, 가방 맨손 제작 줄이 핫바 위에 있다. 기존 test_station_window 의 「줄 위의 것은 모두 IGNORE」는 Scroll 이 PASS(상자 창과 같이 휠을 받는다 — 받고도 넘기니 삼키지 않는다)인 것을 받도록 고쳤다. headless 에서 휠을 흉내 내 스크롤을 재 보려 했으나 push_input 휠이 어느 설정에서도 스크롤을 움직이지 않아 확인하지 못했다. 지금 목록에 남은 4곳(G-901 몫): Notice 가 배고픔 게이지를 가린다 · 가방 · 제작대 창 · 설정 창이 조준점을 가린다(창이 뜨면 조준은 안 쓰므로 해가 없을 수 있다 — G-901 에서 볼 것). 기준 밖이라 두고 온 것: ui_shots 의 _reset 이 stations.open(null) 로 닫아(null 은 무시된다) chest 사진에 앞 자리 제련로 창이 남고 can_start SCRIPT ERROR 가 난다 — 찍는 폭 단계 몫. 테스트: tests/ui/layout 10개 통과. 끝내기 전 바뀐 곳만(changed_tests 60개 파일, 599개) 통과. 전체는 돌리지 않았다.",
+   "why": "테마 Window hotbar_room = 80 — 창이 비워 두는 화면 아래 몫(핫바 위 끝까지). hotbar.tscn 의 offset_top -80 과 같게 잡은 임시값, 모양은 사람이 정한다",
+   "files": [
+    "game/tests/ui/layout/ui_measure.gd",
+    "game/tests/ui/layout/test_window_layout.gd",
+    "game/ui/hud/station_window.gd",
+    "game/ui/hud/station_window.tscn",
+    "game/ui/hud/bag.gd",
+    "game/ui/theme/naru_theme.tres",
+    "game/ui/theme/ui_theme.gd",
+    "game/tests/ui/hud/test_station_window.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "열리는 창을 **전부** 열어 놓고 잰다 — ① **1280×720 안에 들어오나** ② 서로 **겹치나**(창이 핫바를 가린다) ③ 글자가 **칸을 넘나** (테스트)",
+     "evidence": "tests/ui/layout/test_window_layout.gd 의 _measure_all 이 창 7개(Bag · Map · StationWindow · ChestWindow · PauseMenu · Notice · LoadingScreen)를 하나씩 채워 열고 ui_measure.gd 의 off_screen · overlap(HUD 전부 + 같이 뜬 창끼리) · text_overflow 로 잰다. 재는 법 셋은 가짜 창 테스트(test_off_screen_is_caught · test_overlap_is_caught_but_dim_is_not · test_text_overflow_is_caught)가 잡을 때와 조용할 때를 둘 다 단언한다. test_measures_on_the_fixed_screen 이 뷰포트가 1280×720 인지 본다. test.log 에서 10/10 통과, UIMEASURE 목록 4곳 출력"
+    },
+    {
+     "ok": true,
+     "criterion": "**창 목록을 손으로 적지 않는다** — 새 창을 더하면 저절로 검사에 들어온다 (테스트)",
+     "evidence": "ui_measure.windows() 가 GameRoot 의 CanvasLayer 에 달린 Control 가운데 처음에 숨은 것을 창으로 잡는다. test_new_window_is_measured_without_touching_the_test 가 이름 모르는 폭 2000 Panel 을 Window 층에 달고 목록에 들어와 넘침이 뜨는지 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "지금 어긋난 곳은 **목록으로 뱉기만** 한다. 고치는 것은 G-901 의 몫이다",
+     "evidence": "test_list_what_is_off 가 목록을 gut.p · print(UIMEASURE) 로 뱉고 목록 때문에 떨어지지 않는다. test.log 950줄에 4곳(Notice 가 배고픔 게이지 · 가방/제작대/설정 창이 조준점)이 찍혔다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 제작대 창이 화면 아래로 넘친다 — /tmp/g129/after/workbench.png 에서 레시피 목록이 화면 아래로 잘린다(돌격소총탄 줄이 반쯤 잘림). station_window 목록을 ScrollContainer 로 감싸거나 창 높이를 화면 안에 맞추고, 창 Rect 가 get_viewport_rect() 안에 드는지 단언하는 테스트를 이 묶음의 재는 검사 단계에 넣어라",
+     "evidence": "station_window.tscn 에 Scroll(ScrollContainer) 을 넣고 _fit 이 창 자리에 맞춘다. test_station_windows_fit_the_screen 이 제작대 종류마다 Panel rect 가 get_viewport_rect() 안인지 · 화면 밖 없음 · 핫바 안 가림을 단언한다. QA 가 _fit 의 clampf 를 빼(목록 높이 그대로) 돌리자 workbench 창 S:(520,1821) 로 3개 단언이 떨어졌다 — 되돌림 확인"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 맨손 제작 줄이 핫바를 덮는다 — /tmp/g129/after/bag.png 에서 「횃불」 버튼이 핫바 5·6번 칸 위에 겹친다. 가방 창(bag.tscn Center/Box)의 아래 끝이 핫바 위 끝보다 위인지 재는 테스트를 짜고 배치를 고쳐라",
+     "evidence": "bag.gd _ready 가 Center.offset_bottom = -hotbar_room. test_bag_stays_above_hotbar 가 Center/Box 아래 끝 < 핫바 Slots 위 끝 · 겹침 없음(가방만 · 상자와 같이)을 단언한다. QA 가 그 줄을 지워 돌리자 664 > 640 과 torch 가 Slots/4 를 가린다로 3개 단언이 떨어졌다 — 되돌림 확인"
+    }
+   ],
+   "issues": [
+    "핫바 높이 80 이 두 곳에 적혀 있다 — 테마 Window/hotbar_room=80 과 game/ui/hud/hotbar.tscn 의 offset_top=-80.0 이 따로 산다(단계 1 이 없앤 「같은 값 두 곳」이 다시 생겼다). hotbar.gd _ready 에서 offset_top = -UiTheme.window(&\"hotbar_room\") 로 걸고 .tscn 값은 지우거나, 두 값이 같은지 단언하는 테스트를 tests/ui/layout 에 넣어라",
+    "재는 검사 테스트가 고아 노드 31개를 남긴다 — test.log 의 test_station_windows_fit_the_screen 뒤에 「31 Orphans」(Button 줄들). station_window._rebuild 가 queue_free 전에 떼어낸 줄이거나 테스트가 st.free() 로 창보다 먼저 제작대를 지운 탓으로 보인다. 원인을 찾아 없애고 after_each 에서 assert_no_new_orphans 로 지켜라",
+    "조준점 겹침은 창이 뜨면 해가 없을 수 있다 — UIMEASURE 목록 4곳 중 3곳이 Crosshair/H 를 가린다는 줄이다. 창이 열리면 조준점을 숨기는지(게임 쪽) 아니면 재는 검사가 Crosshair 를 가려도 되는 쪽으로 빼야 하는지 G-901 에서 정하고, 어느 쪽이든 목록이 진짜 흠만 뱉게 하라",
+    "제작대 목록 휠 스크롤이 확인되지 않았다 — 구현 세션이 headless push_input 휠로 스크롤을 못 움직였다고 적었다. Scroll 이 PASS 라 휠을 받는지, scroll_vertical 을 직접 바꿔 아래 줄이 보이는 자리로 오는지 단언하는 테스트를 test_station_window.gd 에 넣어라",
+    "ui_shots 의 _reset 이 제작대 창을 못 닫는다 — stations.open(null) 은 무시되어 chest 사진에 앞 제련로 창이 남고 can_start SCRIPT ERROR 가 난다(구현 세션 보고). stations.close() 로 바꾸고 찍는 폭 단계에서 chest.png 를 열어 확인하라"
+   ],
+   "good": []
+  },
+  "test": "_of_an_empty_or_missing_slot\n* test_a_bag_slot_moves_into_the_chest\n* test_putting_in_onto_the_same_item_stacks_it\n* test_putting_in_onto_another_item_swaps_the_two\n* test_nothing_goes_into_a_slot_the_chest_does_not_have\n* test_the_chest_tells_what_it_holds\n* test_every_box_is_the_same_kind_of_chest\n10/10 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              83\nTests               816\nPassing Tests       816\nAsserts           28947\nTime              427.329s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "23ebb2c"
  }
 ]
