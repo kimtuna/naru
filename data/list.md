@@ -469,7 +469,7 @@
   - 기준: (앞 단계 QA) death_aim 자리가 세운 것을 안 치운다 — ui_shots.gd _aim_death_chest 가 ShotGround · ShotDeath · StorageChest · DevBox 를 stations 가 아니라 game 에 붙여 _reset 이 치우지 않는다. 뒤 자리(menu · ammo)를 chest 와 같이 찍으면 상자 셋과 바닥이 배경에 남는다. 자리 끝에서 free 하거나 stations 에 붙여 _reset 이 치우게 하라
   - 기준: (앞 단계 QA) 창의 '멈춰 있다' 테스트가 멈춤을 지키지 않는다 — test_chest_window_death.gd test_the_number_in_the_window_does_not_move_while_open 은 창이 _rebuild 때만 글자를 쓰므로 DeathChest.tick 이 열린 상자를 줄여도 통과한다. chest.seconds_left() 가 tick(120) 뒤에도 300 그대로인지 함께 단언하라
 
-## [ ] G-129 UI 바탕 — Theme · 재는 검사 · 찍는 폭
+## [x] G-129 UI 바탕 — Theme · 재는 검사 · 찍는 폭
 - **자가 피드백**: 검사가 깨끗해질 때까지 단계를 계속 붙인다 (사람 결정 2026-09-23) —
   고치고 → 다시 훑고 → 또 고친다. 맨 뒤 묶음으로 미루지 않는다
 - spec: spec/12_ui/hud.md, spec/12_ui/menu.md, spec/01_settings/display.md, LOOP.md 5절
