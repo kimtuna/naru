@@ -8322,5 +8322,63 @@
   },
   "test": "\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             153\nTests              1296\nPassing Tests      1296\nAsserts           40694\nTime              844.672s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "2ec8a80"
+ },
+ {
+  "time": "2026-09-24 06:43:25",
+  "epoch": 1790199805,
+  "type": "pass",
+  "title": "통과 — G-141 단계 1 (연사 딜레이와 자동)",
+  "group": "G-141",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "총마다 연사 딜레이(tools.json 의 fire_delay)와 자동(auto — 돌격소총 3·4단만)을 붙였다. 바뀐 곳에 걸리는 38개 파일 382개 테스트 통과 + 새 test_fire_rate 10개 통과",
+   "approach": "간격은 총마다 붙은 탄창(Magazine)이 센다 — spend() 가 fire_delay 만큼 _cooldown 을 걸고 step() 이 줄이며 can_shoot() 이 막는다. 그래서 좌클릭이든 자동이든 shoot() 을 거치는 모든 길이 같은 간격을 지키고, 탄창이 총마다라 간격도 총마다다. 자동은 Attack 이 좌클릭 누름/뗌 입력으로 _trigger_down 을 들고 있다가 _process 에서 든 총이 auto 면 shoot() 을 부른다. 창이 떠 조작이 꺼지면 _trigger_down 을 풀어, 뗌 입력을 창이 먹어도 저절로 이어 쏘지 않는다. 남은 간격은 저장본(Magazine.to_dict 의 cooldown)에 담았다. 기존 테스트의 좌클릭 도우미는 누르기만 하고 떼지 않았다 — 그대로 두면 돌격소총(자동)이 이어 쏘고 연타가 간격에 막힌다. 그래서 도우미가 떼기까지 하고 간격이 지나기를 기다리게 고쳤다 (test_magazine · per_gun_magazine · attack · bullet_trace · ammo_label · ammo_label_by_gun). shoot() 을 곧바로 두 번 부르던 test_round_trip · test_aiming 에도 기다림을 넣었다. 돌린 것: changed_tests.py 가 고른 38개 파일 382개 테스트 전부 통과(318초). 그 뒤 test_fire_rate 에 저장 테스트 하나를 더해 그 파일만 다시 돌렸다(10/10). 전체는 돌리지 않았다.",
+   "why": "tools.json 의 fire_delay 값 13개 — spec 표(사람이 2026-09-24 에 올린 임시 값) 그대로. 사람이 쏴 보고 정한다. 한 발짜리 총 셋(파이프 권총 · 파이프 샷건 · 사냥총)은 표의 「—」라 적지 않았다(0 — 재장전이 다음 발을 막는다)",
+   "files": [
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/combat/tools_as_weapons/magazine.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/tests/combat/tools_as_weapons/test_fire_rate.gd",
+    "game/tests/combat/tools_as_weapons/test_magazine.gd",
+    "game/tests/combat/tools_as_weapons/test_per_gun_magazine.gd",
+    "game/tests/combat/tools_as_weapons/test_attack.gd",
+    "game/tests/combat/tools_as_weapons/test_bullet_trace.gd",
+    "game/tests/combat/tools_as_weapons/test_aiming.gd",
+    "game/tests/ui/hud/test_ammo_label.gd",
+    "game/tests/ui/hud/test_ammo_label_by_gun.gd",
+    "game/tests/settings/save/test_round_trip.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "좌클릭을 아무리 빨리 눌러도 **총마다 정해진 간격**보다 빨리 안 나간다 (테스트)",
+     "evidence": "test_fire_rate.gd test_mashing_never_beats_each_guns_fire_delay 가 진짜 캐릭터에 진짜 좌클릭 누름·뗌을 프레임마다 넣어 탄 둘 이상 드는 13자루 전부를 delay*2+0.05초 연타하고 2~3발 · 발 사이 간격 >= delay-0.02 를 단언한다(간격을 안 막으면 수십 발이 나가 떨어진다). test_the_magazine_holds_the_next_round_until_the_delay_is_over 가 탄창 단위로 delay-0.01 까지 막히고 지나면 나가는지, test_the_delay_is_counted_per_gun 이 총마다 따로 세는지 본다. 값은 spec 표(2026-09-24)와 13자루 모두 일치, 한 발짜리 셋은 표의 「—」. test.log 바뀐 곳 38개 383개 전부 통과 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "**돌격소총 3 · 4단만** 꾹 누르면 이어 나간다. 나머지는 눌러야 한 발이다 (테스트)",
+     "evidence": "test_only_assault_rifle_tiers_three_and_four_are_automatic 가 16자루 전부 family==rifle && tier∈{3,4} 일 때만 auto 인지, 자동 목록이 정확히 [assault_rifle, light_machine_gun] 인지 단언. test_holding_the_trigger_keeps_firing_only_on_automatic_guns 가 16자루를 0.6초 꾹 눌러 자동은 >2발·간격 준수·떼면 멈춤, 나머지는 정확히 1발을 단언. test_a_semi_automatic_gun_fires_again_when_pressed_again · test_a_window_opening_stops_automatic_fire 가 다시 누름과 창이 뜰 때 풀림을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "값은 데이터 한 곳(tools.json)에 있고 「임시」라고 적는다",
+     "evidence": "fire_delay · auto 가 tools.json 에만 있고 ToolCatalog.fire_delay/auto 로 읽는다(코드에 숫자·총 이름 없음). _temporary 에 「연사 딜레이(fire_delay)도 전부 임시다」, _fields 에 fire_delay · auto 설명. test_the_delay_and_auto_come_from_the_data_file 이 파일 사본에서 리볼버를 auto·0.05초로 바꿔 꾹 눌러 >3발 나가는지 본다. test_the_values_are_marked_temporary_in_the_data_file 이 _temporary 에 fire_delay 를 확인"
+    }
+   ],
+   "issues": [
+    "좌클릭 도우미가 여섯 파일에 복사됐다 — _release_click() 과 「ready_in() 이 0 이 될 때까지 기다림」이 test_magazine · test_per_gun_magazine · test_attack · test_bullet_trace · test_ammo_label · test_ammo_label_by_gun 에 똑같이 붙었다. 다음에 좌클릭 규칙(반동 등)이 바뀌면 여섯 곳을 고쳐야 한다. game/tests/ 아래 공용 도우미(예: tests/combat/tools_as_weapons/click_helper.gd 의 static func click(tree, attack))로 모아 여섯 파일이 부르게 하라 (막는 것은 아니다)"
+   ],
+   "good": [
+    "남은 연사 딜레이(cooldown)를 저장본에 담았다(Magazine.to_dict) — 기준 밖이지만 save.md 「담는 것이 기본」에 맞는 덤이고 test_the_remaining_delay_survives_save_and_load 로 확인된다"
+   ]
+  },
+  "test": "\n* test_the_time_left_counts_down\n* test_when_it_is_done_the_time_left_disappears\n* test_the_buffer_slots_stand_empty_until_something_is_made\n* test_what_was_made_shows_up_in_a_buffer_slot\n* test_a_recipe_that_makes_many_shows_how_many_are_waiting\n* test_pressing_the_buffer_slot_brings_it_into_the_bag\n* test_until_it_is_pressed_what_was_made_stays_in_the_buffer\n* test_when_the_buffer_is_full_the_window_says_the_next_craft_will_not_start\n* test_an_empty_buffer_says_nothing\n* test_collecting_makes_room_and_crafting_can_start_again\n* test_closing_and_reopening_keeps_the_timer_and_the_buffer\n* test_reopening_a_station_does_not_show_another_stations_buffer\n* test_the_buffer_message_has_a_korean_and_an_english_word\n15/15 passed.\n\n\nres://tests/ui/hud/test_target_bars.gd\n* test_bars_show_only_while_aiming_at_an_animal\n* test_bars_hide_when_aiming_away\n* test_only_the_aimed_animal_shows_among_many\n* test_health_bar_follows_and_changes_color_in_the_sedation_zone\n* test_sedation_gauge_follows_the_animal\n* test_no_numbers_percent_or_ticks\n6/6 passed.\n\n\nres://tests/ui/menu/test_pause_menu.gd\n* test_escape_opens_the_pause_menu\n* test_escape_again_closes_it\n* test_resume_closes_it\n* test_the_pause_menu_has_the_five_items\n* test_world_settings_is_for_the_host_only\n* test_settings_opens_the_empty_settings_screen\n* test_going_to_the_main_menu_saves_first\n* test_going_to_the_main_menu_returns_to_the_main_screen\n* test_quitting_the_game_saves_first\n* test_the_open_window_covers_the_screen_and_swallows_clicks\n* test_a_click_does_not_reach_the_game_while_open\n* test_moving_does_not_reach_the_game_while_open\n* test_the_camera_does_not_turn_while_open\n* test_the_mouse_cursor_is_visible_while_open\n* test_a_player_entering_while_open_does_not_steal_the_cursor\n* test_the_camera_does_not_turn_for_a_player_that_entered_while_open\n* test_the_world_keeps_running_while_open\n* test_the_player_still_falls_while_open\n* test_the_left_click_does_not_swing_while_a_window_is_open\n19/19 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              38\nTests               383\nPassing Tests       383\nAsserts            4288\nTime              319.143s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "e8bf053"
  }
 ]

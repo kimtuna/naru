@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 06:23:34",
- "updated_epoch": 1790198614,
+ "updated": "2026-09-24 06:43:25",
+ "updated_epoch": 1790199805,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
-  "groups_done": 25,
+  "groups_done": 26,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 86
+  "steps_done": 87
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-144",
- "step": "2",
- "step_title": "계단도 지붕을 받친다",
+ "group": "G-141",
+ "step": "1",
+ "step_title": "연사 딜레이와 자동",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 06:22:04"
+ "phase_since": "2026-09-24 06:42:33"
 }
