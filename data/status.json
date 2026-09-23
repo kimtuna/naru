@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 07:24:52",
- "updated_epoch": 1790202292,
+ "updated": "2026-09-24 07:52:18",
+ "updated_epoch": 1790203938,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 26,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 88
+  "steps_done": 89
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-141",
- "step": "2",
- "step_title": "피해 · 거리 · 퍼짐 · 반동",
+ "step": "3",
+ "step_title": "한 발씩 장전",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 07:20:53"
+ "phase_since": "2026-09-24 07:49:49"
 }
