@@ -8380,5 +8380,84 @@
   },
   "test": "\n* test_the_time_left_counts_down\n* test_when_it_is_done_the_time_left_disappears\n* test_the_buffer_slots_stand_empty_until_something_is_made\n* test_what_was_made_shows_up_in_a_buffer_slot\n* test_a_recipe_that_makes_many_shows_how_many_are_waiting\n* test_pressing_the_buffer_slot_brings_it_into_the_bag\n* test_until_it_is_pressed_what_was_made_stays_in_the_buffer\n* test_when_the_buffer_is_full_the_window_says_the_next_craft_will_not_start\n* test_an_empty_buffer_says_nothing\n* test_collecting_makes_room_and_crafting_can_start_again\n* test_closing_and_reopening_keeps_the_timer_and_the_buffer\n* test_reopening_a_station_does_not_show_another_stations_buffer\n* test_the_buffer_message_has_a_korean_and_an_english_word\n15/15 passed.\n\n\nres://tests/ui/hud/test_target_bars.gd\n* test_bars_show_only_while_aiming_at_an_animal\n* test_bars_hide_when_aiming_away\n* test_only_the_aimed_animal_shows_among_many\n* test_health_bar_follows_and_changes_color_in_the_sedation_zone\n* test_sedation_gauge_follows_the_animal\n* test_no_numbers_percent_or_ticks\n6/6 passed.\n\n\nres://tests/ui/menu/test_pause_menu.gd\n* test_escape_opens_the_pause_menu\n* test_escape_again_closes_it\n* test_resume_closes_it\n* test_the_pause_menu_has_the_five_items\n* test_world_settings_is_for_the_host_only\n* test_settings_opens_the_empty_settings_screen\n* test_going_to_the_main_menu_saves_first\n* test_going_to_the_main_menu_returns_to_the_main_screen\n* test_quitting_the_game_saves_first\n* test_the_open_window_covers_the_screen_and_swallows_clicks\n* test_a_click_does_not_reach_the_game_while_open\n* test_moving_does_not_reach_the_game_while_open\n* test_the_camera_does_not_turn_while_open\n* test_the_mouse_cursor_is_visible_while_open\n* test_a_player_entering_while_open_does_not_steal_the_cursor\n* test_the_camera_does_not_turn_for_a_player_that_entered_while_open\n* test_the_world_keeps_running_while_open\n* test_the_player_still_falls_while_open\n* test_the_left_click_does_not_swing_while_a_window_is_open\n19/19 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              38\nTests               383\nPassing Tests       383\nAsserts            4288\nTime              319.143s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "e8bf053"
+ },
+ {
+  "time": "2026-09-24 07:24:52",
+  "epoch": 1790202292,
+  "type": "pass",
+  "title": "통과 — G-141 단계 2 (피해 · 거리 · 퍼짐 · 반동)",
+  "group": "G-141",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "총마다 피해 · 알 수 · 유효 거리(거리별 감쇠) · 퍼짐(조준 0.5 · 걸음 1.5 · 웅크림 0.6) · 반동 · 탄속(저격총만 400)을 tools.json 에 붙이고 좌클릭 테스트 도우미를 한 곳으로 모았다. 바뀐 곳만: 92개 파일 878개 테스트 통과",
+   "approach": "spec 표(2026-09-24)의 피해 · 알 수 · 유효 거리 · 퍼짐 · 반동을 tools.json 의 총마다 적었다. 산탄총에는 falloff 0.2, 저격총에는 speed 400 을 붙였다(값은 데이터 한 곳에만 있다). ToolCatalog 에 이 값들을 읽는 함수를 더했다. Projectile 은 상수 대신 알마다 speed · max_range · damage · effective_range · falloff 를 들고, 맞을 때 난 거리(_flown)로 피해 몫을 곱한다: 유효 거리 안 1 → 두 배까지 곧게 준다 → 그 밖은 falloff. 부위 배율은 원래대로 맞은 쪽(Animal.take_hit)이 곱한다. Attack.shoot 는 pellet_of(gun, dir) 로 알마다 값을 붙이고, 산탄총은 알 수만큼 따로 퍼뜨린다. 방아쇠 한 번에 shot 은 한 번만 난다(연사 테스트가 발 수를 센다). 알마다는 새 신호 pellet 이 나고, 예광탄 · 탄착은 pellet 을 보게 바꿨다. 퍼짐은 총의 spread 에 조준 0.5 · 걸음 1.5 · 웅크림 0.6 을 곱한다. 걸음은 수평 속력이 Player.STEP_SPEED 이상일 때다. 반동: 쏠 때마다 Attack._recoil 이 오르고 Player.set_recoil_pitch 로 시선(조준점)도 같이 오른다(마우스 pitch 와 따로 든다). 마지막 발 뒤 RECOIL_HOLD 가 지나면 초당 RECOIL_RETURN 도씩 돌아온다. 그래서 간격이 RECOIL_HOLD 보다 짧은 연사는 발마다 쌓인다. 앞 단계 QA 지적대로 여섯 파일의 좌클릭 도우미를 tests/combat/tools_as_weapons/click_helper.gd 의 static click(tree, attack) · release(tree) 로 모았다. 이 도우미는 연사 딜레이와 함께 반동이 제자리로 올 때까지도 기다린다. 옛 상수(AIM_SPREAD_DEG · Projectile.DAMAGE)를 쓰던 test_aiming · test_attack 은 총의 퍼짐 · 피해를 읽게 고쳤다. 쏜 뒤에는 반동으로 조준점이 오르므로 쏘기 전 방향과 비교하게 했다. 반동 상태는 저장하지 않는다(1초도 안 돼 돌아오는 흔들림). 저장 왕복에서는 그 값이 0이라 달라지지 않고, DONT_SAVE 에 넣으면 오히려 낡은 항목으로 걸린다. 그래서 까닭은 코드 주석(player.gd · attack.gd)에 남겼다. 돌린 것: tools_as_weapons 폴더 12개 파일 118개 테스트 통과. 그 뒤 changed_tests.py 가 고른 92개 파일 878개 테스트도 전부 통과했다(651초). 전체는 돌리지 않았다. 표의 무게 · 소리, 표와 다른 재장전 시간은 이 단계 기준에 없어 손대지 않았다.",
+   "why": "tools.json 의 damage · pellets · effective · spread · recoil · falloff · speed — spec 표(2026-09-24) 그대로, 전부 임시; Attack.AIM_SPREAD 0.5 · WALK_SPREAD 1.5 · CROUCH_SPREAD 0.6 — spec 값, 임시; Attack.RECOIL_HOLD 0.15초(쏜 뒤 이만큼 지나야 돌아오기 시작) · RECOIL_RETURN 20°/초 · RECOIL_MAX 15° — spec 에 값이 없어 정했다. 사람이 쏴 보고 정한다; Projectile.max_range = max(60, 유효 거리 × 2) — 두 배 너머도 줄어든 피해로 맞도록 날아갈 길이를 임시로 잡았다; 걷는다의 기준 = 수평 속력이 Player.STEP_SPEED(발소리가 나는 빠르기) 이상",
+   "files": [
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/combat/tools_as_weapons/projectile.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/combat/tools_as_weapons/bullet_trace.gd",
+    "game/player/movement_controls/player.gd",
+    "game/tests/combat/tools_as_weapons/click_helper.gd",
+    "game/tests/combat/tools_as_weapons/test_gun_stats.gd",
+    "game/tests/combat/tools_as_weapons/test_attack.gd",
+    "game/tests/combat/tools_as_weapons/test_aiming.gd",
+    "game/tests/combat/tools_as_weapons/test_magazine.gd",
+    "game/tests/combat/tools_as_weapons/test_per_gun_magazine.gd",
+    "game/tests/combat/tools_as_weapons/test_bullet_trace.gd",
+    "game/tests/ui/hud/test_ammo_label.gd",
+    "game/tests/ui/hud/test_ammo_label_by_gun.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "**총마다 피해가 다르고** 부위 배율이 곱해진다 (테스트)",
+     "evidence": "test_gun_stats.test_the_data_file_carries_the_spec_table 가 열여섯 자루의 피해를 spec 표와 대조하고, test_each_gun_puts_its_own_damage_on_the_bullet 가 실제로 쏜 알마다 제 피해가 붙는지(서로 다른 값 10가지 넘음) 본다. test_the_guns_damage_is_multiplied_by_the_body_part 는 진짜 동물의 다리 · 몸통 · 머리에 쏴서 깎인 체력이 피해×0.5 · ×1.0 · ×1.3 인지 두 총으로 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "**유효 거리 밖에서 피해가 줄고**, 산탄총은 급하게 준다 (테스트)",
+     "evidence": "test_the_falloff_curve 가 곡선(100%→두 배에서 60%→그 밖 60%)과 산탄총만 0.2 인지 보고, test_a_real_bullet_hurts_less_past_its_effective_range 가 진짜 몹을 유효 거리 절반 · 2.5배에 세워 쏴서 22→13, 9→2 로 준다고 본다. Projectile.damage_at 에서 감쇠를 빼 보니 두 단언이 깨졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "산탄총은 **알이 여럿** 나간다 (테스트)",
+     "evidence": "test_a_shotgun_fires_many_pellets_for_one_round 가 열여섯 자루를 다 쏴서 산탄총은 표의 알 수(8·9)만큼, 나머지는 1알이 나가고 탄은 한 발만 주는지 본다. test_pellets_spread_out_separately 가 알마다 방향이 다르고 퍼짐 안인지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "퍼짐이 **조준 절반 · 걸으며 1.5배 · 웅크리면 0.6배** (테스트)",
+     "evidence": "test_spread_halves_when_aiming_grows_when_walking_and_shrinks_when_crouching 가 진짜 Aiming · 속도 · 웅크리기 입력으로 각 배율과 겹침(0.5×0.6)을 보고, test_real_shots_stay_inside_the_scaled_spread 가 실제 흩어진 방향이 줄어든 각 안이면서 그 각을 다 쓰는지 본다. CROUCH_SPREAD 를 1.0 으로 바꿔 보니 세 단언이 깨졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "**반동**으로 총구가 올라가고 안 쏘면 돌아온다. 연사는 발마다 쌓인다 (테스트)",
+     "evidence": "test_the_muzzle_climbs_and_comes_back 가 쏜 뒤 반동각 · 플레이어 시선 pitch · aim_direction.y 가 오르고 기다리면 제자리인지 본다. test_automatic_fire_stacks_recoil_shot_by_shot 가 돌격소총을 진짜 입력으로 꾹 눌러 발마다 kick×n 으로 쌓이는지 본다. 누적을 빼 보니(매 발 kick 로 덮어씀) 2~5번째 발 단언이 깨졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "저격총 탄속만 400m/s 다 (테스트)",
+     "evidence": "test_only_sniper_rifles_fly_at_400 가 열여섯 자루의 데이터 값과 실제 쏜 알의 speed 가 저격 계통만 400, 나머지 60 인지 보고, test_a_sniper_bullet_really_covers_more_ground_per_frame 가 물리 프레임당 실제 이동 거리로 400 · 60 m/s 를 잰다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 좌클릭 도우미가 여섯 파일에 복사됐다 — _release_click() 과 「ready_in() 이 0 이 될 때까지 기다림」이 test_magazine · test_per_gun_magazine · test_attack · test_bullet_trace · test_ammo_label · test_ammo_label_by_gun 에 똑같이 붙었다. 다음에 좌클릭 규칙(반동 등)이 바뀌면 여섯 곳을 고쳐야 한다. game/tests/ 아래 공용 도우미(예: tests/combat/tools_as_weapons/click_helper.gd 의 static func click(tree, attack))로 모아 여섯 파일이 부르게 하라 (막는 것은 아니다)",
+     "evidence": "tests/combat/tools_as_weapons/click_helper.gd 에 static click(tree, attack) · release(tree) 가 생겼고 여섯 파일 모두 이것을 preload 해 부른다. 여섯 파일에 _release_click 이 더는 없다. 바뀐 곳 92파일 878테스트 통과 (test.log)"
+    }
+   ],
+   "issues": [
+    "spec 「미정」 줄이 낡았다 — spec/08_combat/tools-as-weapons.md:101 「재장전 시간 · 조준 배율 · 흩어짐 · 탄착 남는 시간 미정」인데 조준 배율(0.5) · 흩어짐(총마다 퍼짐)은 2026-09-24 표로 정해졌다. 그 둘을 빼고, 대신 이번에 지어낸 반동 되돌림 값(Attack.RECOIL_HOLD 0.15초 · RECOIL_RETURN 20°/초 · RECOIL_MAX 15°)과 Projectile.max_range(유효 거리×2, 최소 60m)가 미정이라고 한 줄 적어라. 사람 결정 줄은 건드리지 마라",
+    "기다림 루프가 도우미 밖에 두 곳 더 있다 — game/tests/combat/tools_as_weapons/test_aiming.gd:122 이 「ready_in() > 0 or recoil_degrees() > 0」을 따로 돌고, game/tests/settings/save/test_round_trip.gd:309 는 ready_in() 만 기다린다(반동은 안 기다림). 둘 다 click_helper.gd 의 Click.click 을 부르게 하거나, 기다림만 떼어 click_helper 에 static settle(tree, attack) 로 두고 부르게 하라"
+   ],
+   "good": []
+  },
+  "test": "hing_outside_the_island_is_ever_lit\n* test_it_follows_the_player\n* test_it_tells_when_new_ground_is_lit\n* test_what_is_lit_survives_being_stored_and_restored\n* test_stored_maps_do_not_leak_into_each_other\n* test_a_map_of_another_size_is_thrown_away\n11/11 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              92\nTests               878\nPassing Tests       878\nAsserts           28975\nTime              652.926s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "174cca2"
  }
 ]
