@@ -7301,5 +7301,96 @@
   },
   "test": "\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             140\nTests              1205\nPassing Tests      1205\nAsserts           35624\nTime              827.228s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "8bd5996"
+ },
+ {
+  "time": "2026-09-23 23:10:22",
+  "epoch": 1790172622,
+  "type": "pass",
+  "title": "통과 — G-129 단계 1 (Theme 한 곳에 모은다)",
+  "group": "G-129",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "UI 모양(색 · 여백 · 칸 크기 · 글꼴 크기 · 창 크기)을 Theme 리소스 ui/theme/naru_theme.tres 하나로 모으고 프로젝트 테마로 걸었다. 바뀐 곳만 돈 테스트(82개 파일, 806개) 모두 통과",
+   "approach": "문제: UI 에 Theme 이 하나도 없었다. 색은 HUD 스크립트 10곳의 const 와 .tscn 의 ColorRect에, 여백은 .tscn 마다 theme_override 로 흩어져 있었다(12 · 14 · 8 · 4 · 2). 칸 크기 56은 핫바와 가방에 따로 적혀 있었고, 기력 막대 폭 240은 stamina_bar.gd 의 WIDTH 와 stamina_bar.tscn 의 Fill 두 곳에 있었다. 해법: (1) ui/theme/naru_theme.tres 를 만들어 project.godot 의 gui/theme/custom 에 걸었다. 그래서 창 · 메뉴 · HUD 가 저절로 그 테마를 쓴다. (2) 여백 · 글자 · 바탕은 타입 변형(Column · Row · List · MenuColumn · MenuColumns · Dim · BarBack · LoadingBack · HudLabel · HudSmallLabel · AlertLabel)으로 .tscn 에서 건다. theme_override 와 color = Color( 줄은 ui 씬에서 모두 없앴다(character_preview 는 몸 색이라 뺐다). 덮개 · 막대 바탕 ColorRect 는 Panel+변형으로 바꿨다. (3) Control 에 걸 수 없는 값(칸 크기 · 칸 색 · 창 최소 크기 · 막대 크기 · 그리는 색)은 테마의 ItemSlot · Window · Palette 에 두고, UiTheme(ui/theme/ui_theme.gd)이 꺼내 준다. 기존 const 이름은 static var 로 남겨 테스트 · 호출부가 그대로 돈다. (4) 기력 막대는 WIDTH 를 없애고 체력 막대처럼 제 자리 폭(size.x)으로 잰다. (5) 덮개 색 · 막대 크기 값을 머리말 주석에 옮겨 적고 그 값이 씬과 같은지 지키던 옛 테스트 셋(bag · pause · station)은 고쳐 썼다. 이제 머리말은 테마의 어느 항목인지만 말하고 값은 다시 적지 않는지 본다. 값을 주석에 또 적으면 두 곳이 되기 때문이다. 확인: 고치기 전후를 bag · workbench · chest 로 찍어 PNG 를 열어 봤다. 모양은 같았고 바뀐 것은 가방 칸과 맨손 제작 사이 여백(12→8, 창마다 같은 Column 값으로 맞춤)뿐이다. 찍으면서 본 것 가운데 이 단계 기준 밖인 흠: 제작대 창이 화면 아래로 넘친다 · chest 자리에 앞 자리의 제작대 창이 남아 겹쳐 찍힌다(ui_shots 가 제작대를 먼저 치워 StationWindow._refresh 가 풀린 제작대로 can_start 를 부르는 SCRIPT ERROR — 고치기 전에도 났다) · 맨손 제작 줄이 핫바를 덮는다 · shot.sh 기본 해상도가 1600x900 이라 1280x720 이 아니다. 뒤 단계(재는 검사 · 찍는 폭)의 몫으로 남긴다. 테스트: tests/ui/theme 11개 통과. 끝내기 전에 바뀐 곳만 골라 돌렸다(changed_tests 82개 파일, 806개 통과). 전체는 돌리지 않았다.",
+   "why": "ui/theme/naru_theme.tres 의 값은 전부 임시다. 원래 흩어져 있던 값을 그대로 옮겼다(칸 56 · 글자 16 · 여백 2/4/8/14/24 · 색들). 디자인은 사람이 나중에 정한다(spec/12_ui/menu.md 미정); 창 안 줄 사이(Column)를 8로 통일했다. 가방만 12였는데 창마다 제각각이지 않게 맞췄다. 메뉴의 세로 칸 사이도 12 · 14 를 14 하나(MenuColumn)로 맞췄다",
+   "files": [
+    "game/ui/theme/naru_theme.tres",
+    "game/ui/theme/ui_theme.gd",
+    "game/project.godot",
+    "game/ui/hud/item_slot.gd",
+    "game/ui/hud/bag.gd",
+    "game/ui/hud/bag.tscn",
+    "game/ui/hud/hotbar.gd",
+    "game/ui/hud/hotbar.tscn",
+    "game/ui/hud/chest_window.gd",
+    "game/ui/hud/chest_window.tscn",
+    "game/ui/hud/station_window.gd",
+    "game/ui/hud/station_window.tscn",
+    "game/ui/hud/stamina_bar.gd",
+    "game/ui/hud/stamina_bar.tscn",
+    "game/ui/hud/health_bar.gd",
+    "game/ui/hud/health_bar.tscn",
+    "game/ui/hud/target_bars.gd",
+    "game/ui/hud/target_bars.tscn",
+    "game/ui/hud/need_gauge.gd",
+    "game/ui/hud/needs_gauges.tscn",
+    "game/ui/hud/map_window.gd",
+    "game/ui/hud/ammo_picker.gd",
+    "game/ui/hud/skill_check_ring.gd",
+    "game/ui/hud/chest_timer_label.tscn",
+    "game/ui/hud/loading_screen.tscn",
+    "game/ui/menu/pause_menu.gd",
+    "game/ui/menu/pause_menu.tscn",
+    "game/ui/menu/main_menu.tscn",
+    "game/ui/menu/character_select.tscn",
+    "game/ui/menu/character_create.tscn",
+    "game/ui/menu/world_select.tscn",
+    "game/ui/menu/world_create.tscn",
+    "game/ui/menu/world_settings_screen.tscn",
+    "game/ui/menu/settings_screen.tscn",
+    "game/tests/ui/theme/test_ui_theme.gd",
+    "game/tests/ui/hud/test_bag_temporary_note.gd",
+    "game/tests/ui/hud/test_station_window_temporary_note.gd",
+    "game/tests/ui/menu/test_pause_menu_dim_note.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "색 · 여백 · 칸 크기 · 글꼴이 **Theme 리소스 한 곳**에 모인다 (지금은 Theme 을 하나도 안 쓴다)",
+     "evidence": "game/ui/theme/naru_theme.tres 에 글꼴 크기(default 16 · HudSmallLabel · ItemSlot 글자) · 여백(Column/Row/List/MenuColumn/MenuColumns) · 칸(ItemSlot size/margin/색) · 색(Palette · Dim · BarBack)이 모였고 project.godot gui/theme/custom 으로 걸렸다. test_the_theme_is_the_project_theme 가 ProjectSettings · ThemeDB.get_project_theme() · UiTheme.THEME 셋이 같은 파일인지, test_colors_gaps_slot_size_and_font_live_in_the_theme 가 네 갈래 값이 있는지, test_no_ui_scene_writes_its_own_color_gap_or_font(ui/ 아래 .tscn 전부에 theme_override_ · color = Color( 없음) · test_no_hud_script_writes_a_color_value(ui/hud .gd 에 Color( 없음)가 흩어진 값이 남지 않았는지 본다. grep 으로도 ui/ .gd 의 Color( 는 character_preview(몸 색, 예외 사유 있음)뿐이다"
+    },
+    {
+     "ok": true,
+     "criterion": "같은 값이 코드와 `.tscn` 두 곳에 적혀 있던 것이 사라진다 (막대 폭이 그랬다) (테스트)",
+     "evidence": "stamina_bar.gd 의 WIDTH 와 stamina_bar.tscn Fill 의 offset_right=240 을 둘 다 없애고 제 자리 폭(size.x)에 견준다. test_the_stamina_bar_width_is_written_once 가 스크립트 상수 WIDTH 가 없고 씬 Fill 에 offset_right 가 없음을 PackedScene state 로 확인, test_the_stamina_bar_follows_its_own_width 가 폭 240·300 두 값에서 반 찬 막대가 폭의 반이고 fill_ratio 0.5 인지 본다(한 곳이 아니면 둘째 폭에서 어긋난다). 칸 56(핫바·가방) · 창 크기도 테마 한 곳(ItemSlot · Window)으로 옮겨졌고 test_window_scenes_do_not_write_sizes_the_theme_holds 가 bag/chest/station .tscn 에 custom_minimum_size 가 없음을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "창들이 그 Theme 을 쓴다 — 글자 크기 · 칸 크기가 창마다 제각각이지 않다 (테스트)",
+     "evidence": "test_every_window_uses_the_theme_slot_size(가방·핫바·상자·제작대 버퍼 칸이 테마 칸 크기), test_every_window_title_uses_the_theme_font_size(가방·상자·제작대 제목에 덮어쓴 크기가 없고 테마 기본 크기), test_every_window_box_uses_the_theme_gap(Godot 기본 4 와 다른 8 이 세 창에 걸렸는지), test_slot_colors_come_from_the_theme. 일부러 깨 봤다: hotbar.gd SLOT_SIZE 를 Vector2(60,60) 으로, chest_window.tscn Box 의 theme_type_variation=Column 줄을 지우자 두 테스트가 각각 실패(9/11) — 되돌렸고 git diff --stat 이 원래대로다"
+    },
+    {
+     "ok": true,
+     "criterion": "고치기 전후를 찍어 눈으로 확인한다 (bag · workbench · chest)",
+     "evidence": "/tmp/g129/before · /tmp/g129/after 에 bag · workbench · chest(+death 둘) PNG 가 22:48 · 22:53 에 찍혀 있다. after 셋을 열어 봤다 — 가방 칸 · 맨손 제작 · 제작대 · 상자 창 모두 테마 적용 뒤에도 모양이 유지된다. 보고서가 찍으며 본 흠(제작대 창 넘침 · chest 자리의 제작대 창 겹침 · 맨손 제작 줄이 핫바 덮음 · shot.sh 1600x900)을 적었고 실제 PNG 에서도 그대로 보인다 — 기준 밖, 아래 지적으로 넘긴다"
+    }
+   ],
+   "issues": [
+    "제작대 창이 화면 아래로 넘친다 — /tmp/g129/after/workbench.png 에서 레시피 목록이 화면 아래로 잘린다(돌격소총탄 줄이 반쯤 잘림). station_window 목록을 ScrollContainer 로 감싸거나 창 높이를 화면 안에 맞추고, 창 Rect 가 get_viewport_rect() 안에 드는지 단언하는 테스트를 이 묶음의 재는 검사 단계에 넣어라",
+    "맨손 제작 줄이 핫바를 덮는다 — /tmp/g129/after/bag.png 에서 「횃불」 버튼이 핫바 5·6번 칸 위에 겹친다. 가방 창(bag.tscn Center/Box)의 아래 끝이 핫바 위 끝보다 위인지 재는 테스트를 짜고 배치를 고쳐라",
+    "chest 찍기에 제작대 창이 남아 겹친다 — /tmp/g129/after/chest.png 에 앞 자리의 제작대 창이 그대로 깔린다. ui_shots 가 제작대를 먼저 치워 StationWindow._refresh 가 풀린 제작대로 can_start 를 부르는 SCRIPT ERROR 가 난다(보고서 기준, 고치기 전에도 났다). 자리를 바꿀 때 창을 먼저 닫거나 _refresh 에서 is_instance_valid 로 막고, 찍은 로그에 SCRIPT ERROR 가 없는지 보라",
+    "shot.sh 기본 해상도가 1280x720 이 아니다 — 찍힌 PNG 가 1600x900 이다. 화면은 1280×720 고정(spec/01_settings/display.md)이라 찍는 폭도 그에 맞춰라 (이 묶음 「찍는 폭」 단계의 몫)"
+   ],
+   "good": [
+    "창 안 줄 사이를 8 하나(Column)로, 메뉴 세로 칸 사이를 14 하나(MenuColumn)로 통일해 가방 여백이 12→8, 메뉴 12→14 로 바뀌었다 — 「제각각이지 않다」는 기준을 따르려 한 것이라 허용 범위이고 보고서 temporary 에 적혀 있다"
+   ]
+  },
+  "test": "_of_an_empty_or_missing_slot\n* test_a_bag_slot_moves_into_the_chest\n* test_putting_in_onto_the_same_item_stacks_it\n* test_putting_in_onto_another_item_swaps_the_two\n* test_nothing_goes_into_a_slot_the_chest_does_not_have\n* test_the_chest_tells_what_it_holds\n* test_every_box_is_the_same_kind_of_chest\n10/10 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              82\nTests               806\nPassing Tests       806\nAsserts           28810\nTime              422.288s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "6b6f807"
  }
 ]

@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 22:47:06",
- "updated_epoch": 1790171226,
+ "updated": "2026-09-23 23:10:22",
+ "updated_epoch": 1790172622,
  "ended": "2026-09-23 18:44:23",
  "progress": {
   "groups_total": 26,
-  "groups_done": 19,
+  "groups_done": 20,
   "groups_waiting": 0,
-  "steps_total": 91,
-  "steps_done": 69
+  "steps_total": 93,
+  "steps_done": 70
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-139",
- "step": "2",
- "step_title": "(앞 단계 QA) 찍기 도구에 디버그 print 가 남았다",
+ "group": "G-129",
+ "step": "1",
+ "step_title": "Theme 한 곳에 모은다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 22:45:51"
+ "phase_since": "2026-09-23 23:08:58"
 }
