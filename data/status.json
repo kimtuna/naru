@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-23 12:35:14",
- "updated_epoch": 1790134514,
+ "reason": "{\"done\": false, \"bundle\": \"G-136\", \"step\": 1, \"title\": \"무엇이 느린지 잰다\", \"last\": false}",
+ "updated": "2026-09-23 14:29:41",
+ "updated_epoch": 1790141381,
  "ended": "2026-09-22 23:56:40",
  "progress": {
-  "groups_total": 20,
-  "groups_done": 15,
+  "groups_total": 21,
+  "groups_done": 16,
   "groups_waiting": 0,
-  "steps_total": 78,
+  "steps_total": 80,
   "steps_done": 61
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-132",
- "step": "4",
- "step_title": "들고 가기와 케이지",
+ "group": "G-129",
+ "step": "1",
+ "step_title": "재는 검사 한 벌",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-23 12:33:35"
+ "phase": "구현",
+ "phase_since": "2026-09-23 12:35:17"
 }
