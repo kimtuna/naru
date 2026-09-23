@@ -6933,5 +6933,57 @@
   },
   "test": "/9 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/storage/test_chest_save.gd\n* test_the_chest_and_what_is_inside_are_still_there_after_leaving_and_returning\n* test_an_empty_chest_comes_back_empty\n* test_a_broken_chest_does_not_come_back\n* test_each_island_keeps_its_own_chests\n* test_restoring_twice_does_not_stack_chests\n5/5 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             103\nTests               970\nPassing Tests       970\nAsserts           26821\nTime              532.012s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "77928d9"
+ },
+ {
+  "time": "2026-09-23 19:45:27",
+  "epoch": 1790160327,
+  "type": "start",
+  "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-23 20:11:01",
+  "epoch": 1790161861,
+  "type": "pass",
+  "title": "통과 — G-137 단계 3 (다시 빠지지 않게)",
+  "group": "G-137",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "왕복 검사의 판정을 한 함수(_judge)로 모으고, 「안 담는다」 목록을 흔들어 보는 검사와 일부러 빠뜨린 새 상태가 걸리는 검사, 체력 0 저장본 검사를 더했다 — 바뀐 곳만 23파일 244개 통과",
+   "approach": "판정(목록에 없는 새는 것 · 낡은 줄 · 빈 까닭)을 _judge 한 곳으로 모아 본 검사와 새 검사가 같은 판정을 쓰게 했다. (1) 진짜 왕복에서 나온 차이를 그대로 두고 DONT_SAVE 의 줄을 하나씩 빼면 그 줄의 것만 빠뜨림으로 걸리고, 까닭을 비우면 no_reason 으로 걸린다. (2) 저장이 모르는 변수(level)를 가진 노드를 진짜 게임의 캐릭터 밑에 붙여 7 로 두고 저장 → 새로 들어와 같은 노드를 처음값으로 붙여 훑으면, 판정이 바로 Island/Player/UnsavedNewThing:level 하나를 빠뜨림으로 댄다 (본 검사 스냅숏과는 붙였다 떼며 따로 찍어 섞지 않았다). (3) 죽음: Health.take 가 0 을 만들면 같은 호출 안에서 died → Death 가 상자를 놓고 revive_at 으로 가득 채운다 — 저장이 0 을 볼 틈이 없음을 확인했다(죽은 그 프레임에 저장해도 저장본 체력은 가득). 체력 0 저장본(손으로 고친 것)을 불러오면 체력 1 로 살고, 조작이 잠기지 않고, 데스 상자는 새로 생기지 않는다 — 막을 것이 없어 그대로 두고 health.gd 에 까닭을 적었다. 섬 세울 때 나는 엔진 deprecated 알림이 검사 안에서 나면 실패로 잡혀서 섬은 before_all 에서만 세웠다. 돌린 것: TESTS=changed_tests.py 23파일 244개 통과 (전체는 안 돌렸다).",
+   "why": "",
+   "files": [
+    "game/tests/settings/save/test_round_trip.gd",
+    "game/tests/settings/save/test_dead_save.gd",
+    "game/combat/damage_death/health.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "일부러 안 담는 것은 **「안 담는다」 목록**에 까닭과 함께 적혀야 검사가 통과한다 (테스트)",
+     "evidence": "test_round_trip.gd test_not_saving_passes_only_when_listed_with_a_reason — 진짜 왕복의 차이(_leaks)를 두고 DONT_SAVE 의 줄을 하나씩 빼면 _judge 가 그 줄의 것만 fresh 로 대고, 까닭을 공백으로 비우면 no_reason 이 정확히 [그 키] 가 됨을 단언한다. 본 검사 test_nothing_leaks_but_what_we_chose_not_to_save 도 같은 _judge 를 쓰고 no_reason 까지 본다. _leaks 가 비지 않았음도 단언해 헛돌지 않는다"
+    },
+    {
+     "ok": true,
+     "criterion": "그 목록에 없는 새 상태가 안 담기면 **검사가 실패한다** — 일부러 하나 빠뜨려 확인한다 (테스트)",
+     "evidence": "test_a_new_state_left_out_of_the_save_fails_the_check — 저장이 모르는 var level 을 가진 노드를 진짜 게임의 Player 밑에 7 로 붙여 저장 → 새로 들어와 0 으로 붙여 SaveRoundTrip.snapshot 으로 훑는다. _judge 의 fresh 가 정확히 [\"Island/Player/UnsavedNewThing:level\"] 임을 assert_eq 로 본다 (전·후 값 7→0 도 확인). 판정이 깨지면 이 등식이 통과할 수 없다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 죽은 채 저장하면 체력 1로 살아난다 — … 죽은 상태 저장을 어떻게 다룰지 확인하고(죽음이 저장 전에 늘 치러지는지), 체력 0 저장본을 불러오는 테스트를 하나 두어라",
+     "evidence": "test_dead_save.gd — test_death_is_settled_before_any_save: take(max) 직후 같은 프레임에 이미 살아 있고 가득 · 조작 풀림 · 상자 1개 · 그 프레임 저장본의 health 가 max 임을 단언. test_a_zero_health_save_loads_alive_at_one: 저장본 body.health 를 0 으로 고쳐 진짜 메뉴 길로 들어오면 죽지 않고 체력 1 · 조작 풀림 · 상자 수 그대로 · 5프레임 뒤도 1. QA 가 health.gd 의 clampi(value,1,…) 를 0 으로 바꿔 돌리자 이 테스트가 3단언 실패했다(되돌림 확인). 결론은 health.gd set_left 주석에 적혔다"
+    }
+   ],
+   "issues": [
+    "죽은 채 저장 결론이 spec 에 없다 — 「죽음은 take 안에서 치러져 저장본 체력은 0 이 될 수 없고, 0 이 들어오면 1 로 산다」는 결론이 health.gd 주석과 test_dead_save.gd 머리말에만 있다. spec/01_settings/save.md 의 체력 줄(31줄 「체력을 그대로 담을지…」 근처)에 한 줄로 적어 두어라 (막는 것은 아니다)"
+   ],
+   "good": []
+  },
+  "test": "\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             136\nTests              1184\nPassing Tests      1184\nAsserts           34996\nTime              836.192s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "eec5d11"
  }
 ]
