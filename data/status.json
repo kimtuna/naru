@@ -1,14 +1,14 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-23 18:39:14",
- "updated_epoch": 1790156354,
+ "reason": "{\"done\": false, \"bundle\": \"G-136\", \"step\": 2, \"title\": \"한 번만 세운다\", \"last\": true}",
+ "updated": "2026-09-23 18:42:01",
+ "updated_epoch": 1790156521,
  "ended": "2026-09-22 23:56:40",
  "progress": {
-  "groups_total": 21,
+  "groups_total": 22,
   "groups_done": 16,
   "groups_waiting": 0,
-  "steps_total": 80,
+  "steps_total": 83,
   "steps_done": 62
  },
  "started": "2026-09-21 06:54:49",
