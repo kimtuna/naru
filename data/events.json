@@ -6585,5 +6585,77 @@
   },
   "test": "hing_outside_the_island_is_ever_lit\n* test_it_follows_the_player\n* test_it_tells_when_new_ground_is_lit\n* test_what_is_lit_survives_being_stored_and_restored\n* test_stored_maps_do_not_leak_into_each_other\n* test_a_map_of_another_size_is_thrown_away\n11/11 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              96\nTests               868\nPassing Tests       868\nAsserts           26131\nTime              537.568s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "de427a5"
+ },
+ {
+  "time": "2026-09-23 11:44:09",
+  "epoch": 1790131449,
+  "type": "pass",
+  "title": "통과 — G-132 단계 3 (재워서 잡는다)",
+  "group": "G-132",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "재워서 잡는다 — 체력 10% 아래에서만 마취 게이지가 오르고, 다 차면 포획(주검이 아닌 산 짐승), 투구꽃이 양을 넘기면 사살, 재우는 양은 동물마다(사슴 30 · 곰 60). 앞 단계 QA 둘(가방이 차면 탄이 사라짐 · 핫바 이름 넘침)도 고쳤다. 바뀐 곳 테스트 38파일 353개 통과 (전체는 돌리지 않았다)",
+   "approach": "마취 게이지는 담아만 두고(sedation) 오르지 않았고, 재우는 양이 Animal.SEDATE_NEED 하나뿐이었다. (1) 한 발이 채우는 양을 Tranq.DOSE(단 → 10 · 20 · 30)에, 재우는 양을 AnimalKinds.SEDATE_NEED(사슴 30 · 곰 60)에 두었다. animal.gd 의 상수는 지우고 sedation_need() 로 읽는다. (2) Animal.take_tranq: 늘 느려지고, 체력 10% 아래(sedatable)일 때만 게이지를 채운다. 다 차면 _capture 한다. 멈춰 서고, 소리 무리(LISTENERS)에서 빠지고, 포획 무리(CAPTIVES)에 들고, captured 신호를 낸다. 주검이 아니라서 도축 · 산출물이 없다. 게이지를 넘치게 채운 발이 3단(Tranq.LETHAL_TIER, 투구꽃)이면 체력을 다 깎아 주검이 된다. 딱 맞게 채우면 투구꽃도 잡힌다. 1 · 2단은 넘쳐도 잡힌다. (3) (앞 단계 QA) Magazine.switch_to: Inventory.add 는 '못 넣은 개수'를 돌려준다. 남은 몫이 있으면 넣은 몫을 도로 꺼내고 바꾸지 않는다(false). (4) (앞 단계 QA) ItemSlot: 이름 라벨에 clip_text 와 낱말 줄 바꿈(AUTOWRAP_WORD)을 두었다. 칠할 때마다 fit() 으로 글자 크기를 줄인다(최소 8px). 줄마다 칸 너비에 들고, 낱말 가운데서 끊기지 않고, 줄을 쌓아도 높이에 들 때까지다. 줄 나눔은 라벨과 같은 TextServer 로 잰다. 한글은 음절 사이에서도 끊겨서('만드라고/라') 처음 판은 낱말이 쪼개졌다. 줄 끝 빈칸까지 재지 않은 탓이었고, 줄 나눔을 직접 받아 끊긴 자리가 빈칸 · 붙임표인지 보게 고쳤다. 줄 높이도 라벨이 쓰는 대로(글꼴 높이 + 줄 간격) 재야 했다. 처음엔 2줄이 1px 넘쳐 1줄만 보였다. 확인: 게이지 · 포획 · 투구꽃 · 양은 진짜 투사체(tranq_tier)로 쏘았다. 10% 위 검사 옆에 같은 탄이 10% 아래에서는 오른다는 대조를 두었다. 포획 vs 사살은 두 사슴을 나란히 두고 무리 · 도축 · 산출물을 견주었다. 가방 검사는 30칸을 꽉 채우고(add 가 1을 못 넣는 것까지 단언) 진짜 R 꾹 · 숫자 · R 떼기로 바꾸며 탄 총수를 셌다. 빈 칸 하나가 있으면 바뀐다는 대조도 두었다. 이름 검사는 ko · en 의 ITEM_ 74개 전부를 진짜 핫바에 넣고 라벨의 실제 줄 수 · 보이는 줄 수까지 본다. harness/shot.sh --ui ammo 로 찍은 PNG 에서 '벨라도나/마취탄' · '만드라고라/마취탄'이 칸 안에서 낱말대로 두 줄로 들어간 것을 확인했다. TESTS=changed_tests.py 로 38파일 353개가 통과했다(전체는 돌리지 않았다). 남은 틈: 두 줄 이름은 칸 번호(왼쪽 위) · 개수(오른쪽 아래) 숫자와 조금 겹친다. 이것은 원래 한 줄 이름('3철광석')에도 있던 것이다. 포획한 짐승을 가방에 넣기 · 게이지가 떨어져 깨어나기는 기준 밖이라 하지 않았다. 말을 바꾸면 이미 칠한 칸의 글자 크기는 다음에 칸이 바뀔 때 다시 맞춰진다.",
+   "why": "Tranq.DOSE 2단 20 · 3단 30 — 윗단일수록 적은 발로 재운다는 것만 보이려 잡았다 (1단 10 은 spec 의 예); AnimalKinds.SEDATE_NEED 곰 60 · 적히지 않은 동물 30 — 동물 목록 미정. 동물마다 다르다는 것을 보이려 곰을 더했다 (부위 산출물은 비어 있다). 사슴 30 은 spec 의 예; ItemSlot.MIN_FONT_SIZE 8px — 영어 'Belladonna' 가 칸(48px)에 한 줄로 드는 가장 큰 크기에 맞췄다. 디자인은 사람이 나중에 정한다",
+   "files": [
+    "game/life/hunting/animal.gd",
+    "game/life/hunting/animal_kinds.gd",
+    "game/life/hunting/tranq.gd",
+    "game/combat/tools_as_weapons/magazine.gd",
+    "game/ui/hud/item_slot.gd",
+    "game/tests/life/hunting/test_sedation_capture.gd",
+    "game/tests/combat/tools_as_weapons/test_tranq_ammo.gd",
+    "game/tests/ui/hud/test_item_slot_fit.gd",
+    "game/tests/ui/hud/test_target_bars.gd",
+    "spec/04_life/hunting.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "체력 **10% 위**에서는 마취 게이지가 오르지 않는다 (테스트)",
+     "evidence": "test_sedation_capture.gd test_above_ten_percent_the_gauge_does_not_rise — 체력 가득 · 30% 아래 · 딱 10% 에서 세 단 탄을 진짜 투사체로 쏘고 sedation==0 · 포획/사살 없음을 단언. 대조 test_below_ten_percent_the_same_round_raises_the_gauge. animal.gd 의 sedatable() 막음을 없애 보니 이 테스트가 깨졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "게이지가 다 차면 **포획된다** — 사살과 결과가 다르다 (테스트)",
+     "evidence": "test_a_full_gauge_captures_and_that_differs_from_a_kill — 두 사슴을 나란히 두고 포획 쪽은 살아 있음 · CAPTIVES 무리 · 주검 아님 · 도축 {} , 사살 쪽은 CARCASSES · yields 있음을 견준다. test_a_captured_animal_stays_put 는 captured 신호 · 소리/걷기에 안 움직임을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "**투구꽃은 양을 넘기면 죽는다** — 포획하려다 사살이 된다 (테스트)",
+     "evidence": "test_aconite_over_the_need_kills_instead_of_capturing (10+30>30 → 주검), 대조로 딱 맞게 채우면 포획 · 만드라고라가 넘치면 포획. 죽이는 분기를 if false 로 바꾸니 테스트가 깨졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "동물마다 **재우는 데 드는 양이 다르다** (사슴 30 · 하급 마취탄 10 → 세 발) (테스트)",
+     "evidence": "test_a_deer_takes_three_low_tier_rounds — 두 발엔 아직, 세 발에 포획. test_the_amount_differs_by_animal — 사슴 30 · 곰 60, 같은 세 발에 곰은 안 잡히고 제 양만큼 쏴야 잡힌다. 곰 60 은 animal_kinds.gd · spec 에 임시로 적혔다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 탄을 바꿀 때 가방이 차면 탄이 사라진다 — …",
+     "evidence": "magazine.gd switch_to 가 bag.add 의 못 넣은 수를 보고 넣은 몫을 도로 빼고 false. test_tranq_ammo.gd test_switching_with_a_full_bag_loses_no_rounds 가 30칸을 꽉 채우고 진짜 R 꾹 · 숫자 · R 떼기로 바꾼 뒤 탄 총수를 단언, 대조 test_switching_still_works_when_the_bag_has_room. missed 검사를 없애 보니 '2777 → 2772' 로 깨졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 핫바 칸에서 긴 탄 이름이 넘친다 — …",
+     "evidence": "item_slot.gd 에 clip_text · AUTOWRAP_WORD · fit() 글자 줄임. test_item_slot_fit.gd 가 ko · en 의 ITEM_ 이름 전부를 진짜 핫바에 넣고 줄 너비 · 낱말 중간 끊김 · 보이는 줄 수 · 높이를 본다. fit() 호출을 빼 보니 '자동권/총' 등 여럿이 깨졌다(되돌림)"
+    }
+   ],
+   "issues": [
+    "두 줄 이름이 칸 번호 · 개수와 겹친다 — 구현 세션이 report 에 적은 남은 틈(막는 것은 아니다). ui/hud/item_slot.gd 의 Item 라벨 상자가 칸 전체라 두 줄 이름이 왼쪽 위 Number · 오른쪽 아래 Count 글자와 겹친다. 이름 라벨의 위아래 여백을 숫자 높이만큼 두거나 숫자를 이름 밖으로 빼고, test_item_slot_fit.gd 에 Item 라벨 글자 줄 영역이 Number · Count 의 글자 영역과 겹치지 않는지 보는 단언을 더하라",
+    "item_slot.gd fit() 에 안 쓰는 변수 — fit() 안의 `var font := label.get_theme_font(\"font\")` 가 쓰이지 않는다. 지워라"
+   ],
+   "good": [
+    "AnimalKinds.BEAR (곰) 종을 더했다 — 부위 산출물은 비었고 재우는 양 60(임시)만 있다. '동물마다 다르다'를 보이려 넣은 것이라 기준 범위 안이지만 동물 목록은 미정이다",
+    "Animal.CAPTIVES 무리 · captured 신호 — 포획 결과를 드러내는 데 쓰인다 (포획한 짐승을 가방에 넣기 · 깨어나기는 하지 않았다)"
+   ]
+  },
+  "test": "hing_outside_the_island_is_ever_lit\n* test_it_follows_the_player\n* test_it_tells_when_new_ground_is_lit\n* test_what_is_lit_survives_being_stored_and_restored\n* test_stored_maps_do_not_leak_into_each_other\n* test_a_map_of_another_size_is_thrown_away\n11/11 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              98\nTests               884\nPassing Tests       884\nAsserts           26534\nTime              547.729s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "bd74ad9"
  }
 ]
