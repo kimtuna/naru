@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 05:02:32",
- "updated_epoch": 1790193752,
+ "updated": "2026-09-24 05:27:52",
+ "updated_epoch": 1790195272,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 29,
   "groups_done": 23,
   "groups_waiting": 0,
   "steps_total": 115,
-  "steps_done": 82
+  "steps_done": 83
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-142",
- "step": "2",
- "step_title": "창을 닫을 때도 저장한다",
+ "step": "3",
+ "step_title": "자동 저장",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 05:00:42"
+ "phase_since": "2026-09-24 05:26:20"
 }
