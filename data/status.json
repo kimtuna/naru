@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 11:44:09",
- "updated_epoch": 1790131449,
+ "updated": "2026-09-23 12:35:14",
+ "updated_epoch": 1790134514,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 20,
   "groups_done": 15,
   "groups_waiting": 0,
-  "steps_total": 76,
-  "steps_done": 60
+  "steps_total": 78,
+  "steps_done": 61
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-132",
- "step": "3",
- "step_title": "재워서 잡는다",
+ "step": "4",
+ "step_title": "들고 가기와 케이지",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 11:37:09"
+ "phase_since": "2026-09-23 12:33:35"
 }
