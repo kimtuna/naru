@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 05:27:52",
- "updated_epoch": 1790195272,
+ "updated": "2026-09-24 05:50:59",
+ "updated_epoch": 1790196659,
  "ended": "2026-09-24 03:25:15",
  "progress": {
-  "groups_total": 29,
-  "groups_done": 23,
+  "groups_total": 31,
+  "groups_done": 24,
   "groups_waiting": 0,
-  "steps_total": 115,
-  "steps_done": 83
+  "steps_total": 118,
+  "steps_done": 84
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-142",
- "step": "3",
- "step_title": "자동 저장",
+ "group": "G-143",
+ "step": "1",
+ "step_title": "하나씩 만들어 찍는다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 05:26:20"
+ "phase_since": "2026-09-24 05:47:51"
 }
