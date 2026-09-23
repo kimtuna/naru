@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 10:22:37",
- "updated_epoch": 1790126557,
+ "updated": "2026-09-23 10:30:05",
+ "updated_epoch": 1790127005,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 20,
-  "groups_done": 14,
+  "groups_done": 15,
   "groups_waiting": 0,
   "steps_total": 76,
-  "steps_done": 57
+  "steps_done": 58
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-131",
- "step": "3",
- "step_title": "도축과 점수표",
+ "group": "G-132",
+ "step": "1",
+ "step_title": "약초 세 종",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 10:21:50"
+ "phase_since": "2026-09-23 10:29:02"
 }
