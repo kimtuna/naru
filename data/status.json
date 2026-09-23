@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 00:38:18",
- "updated_epoch": 1790177898,
+ "updated": "2026-09-24 01:20:41",
+ "updated_epoch": 1790180441,
  "ended": "2026-09-23 18:44:23",
  "progress": {
   "groups_total": 26,
   "groups_done": 21,
   "groups_waiting": 0,
-  "steps_total": 99,
-  "steps_done": 73
+  "steps_total": 103,
+  "steps_done": 74
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-901",
  "step": "1",
  "step_title": "걸린 것을 고친다",
- "attempt": "1",
- "phase": "기계 검사",
- "phase_since": "2026-09-24 00:38:18"
+ "attempt": "2",
+ "phase": "QA",
+ "phase_since": "2026-09-24 01:18:49"
 }
