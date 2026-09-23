@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 06:01:59",
- "updated_epoch": 1790197319,
+ "updated": "2026-09-24 06:23:34",
+ "updated_epoch": 1790198614,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 25,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 85
+  "steps_done": 86
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-144",
- "step": "1",
- "step_title": "장 수를 줄인다",
+ "step": "2",
+ "step_title": "계단도 지붕을 받친다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 05:58:59"
+ "phase_since": "2026-09-24 06:22:04"
 }
