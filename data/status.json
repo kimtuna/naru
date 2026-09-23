@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-23 21:02:58",
- "updated_epoch": 1790164978,
+ "updated": "2026-09-23 21:22:43",
+ "updated_epoch": 1790166163,
  "ended": "2026-09-23 18:44:23",
  "progress": {
   "groups_total": 26,
   "groups_done": 18,
   "groups_waiting": 0,
-  "steps_total": 89,
-  "steps_done": 66
+  "steps_total": 90,
+  "steps_done": 67
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-138",
- "step": "1",
- "step_title": "만들 수 있는 것이 다 들어간다",
+ "step": "2",
+ "step_title": "(앞 단계 QA) spec 의 개발용 상자 줄 두 곳이 낡았다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-23 21:01:03"
+ "phase_since": "2026-09-23 21:21:34"
 }

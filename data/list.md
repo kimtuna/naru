@@ -446,7 +446,7 @@
     일부러 새 레시피를 넣어 확인한다 (테스트)
   - 기준: 상자 창이 **화면을 넘지 않는다** — 칸이 많아지면 스크롤된다 (테스트).
     찍어서 눈으로도 확인한다 (`harness/shot.sh --ui <폴더> chest`)
-- [ ] 2. (앞 단계 QA) spec 의 개발용 상자 줄 두 곳이 낡았다
+- [x] 2. (앞 단계 QA) spec 의 개발용 상자 줄 두 곳이 낡았다
   - 기준: spec 의 개발용 상자 줄 두 곳이 낡았다 — spec/01_settings/world-settings.md 13줄 「모든 자원 · 도구가 든 상자」와 26줄(확인 기준) 「모든 자원 · 도구가 든 상자가 선다」가 16줄의 사람 결정(2026-09-23, 만들 수 있는 것 전부)과 어긋난다. 두 줄을 「만들 수 있는 것 전부가 든 상자」로 고쳐라. 17줄에도 약초 · 레시피 재료가 담긴다는 것을 더하면 코드와 맞는다 (사람 결정 줄 자체는 지우지 말 것)
   - 기준: (앞 단계 QA) 개발용 상자 창이 조작 안내 글을 가린다 — 칸이 많으면 창이 $Center 높이를 꽉 채워 화면 맨 위(y=0)까지 올라가, 왼쪽 위 HUD 안내 「… 클릭 다시 잡기」 끝부분을 덮는다 (harness/shot.sh --ui <폴더> chest 로 보인다). 화면을 넘지는 않아 기준은 통과. chest_window.gd _fit 의 room 에 위쪽 여백(예: 안내 줄 높이)을 빼 두거나 Center 에 위 여백을 주고, test_chest_window_scroll.gd 에 창 위끝이 0 보다 아래인지 보는 단언을 더해라
 
@@ -581,6 +581,8 @@
   - 기준: 상자에 넣은 짐승은 영영 안 깬다 — Captives._process 는 가방(player.inventory) 칸만 돌며 게이지를 깎는다. 그런데 world/storage/chest.gd 는 SlotMove.drop 으로 칸을 통째로(kind · sedation · cage 까지) 상자에 옮기므로, 잡은 짐승을 상자에 넣어 두면 게이지가 멈춰 케이지 없이도 영영 가둘 수 있다. 상자에 captive_ 칸을 못 넣게 하거나(Chest 넣기에서 Captives.is_captive 면 거절) 상자 칸도 깎게 하고, test_carry_cage.gd 에 '잡은 짐승을 상자에 넣고 시간이 가도 게이지가 멈추지 않는다(또는 넣을 수 없다)' 단언을 더하라
 - [ ] 8. 케이지 제작을 실제로 해 보는 테스트가 없다 (G-132 단계 4)
   - 기준: 케이지 제작을 실제로 해 보는 테스트가 없다 — test_three_cages_are_crafted 는 레시피가 있는지만 본다(막는 것은 아니다). 제작대 레시피 경로로 목재 · 철괴를 넣어 cage_small 이 가방에 들어오는지 한 번 보는 단언을 더하라
+- [ ] 9. 테스트의 안내 줄 아래끝 40 이 박힌 값이다 (G-138 단계 2)
+  - 기준: 테스트의 안내 줄 아래끝 40 이 박힌 값이다 — test_chest_window_scroll.gd 의 assert_gte(panel.position.y, 40.0) 와 chest_window.gd TOP_MARGIN 주석이 player.tscn HUD/Hint 의 offset_bottom(40)을 숫자로 베껴 두었다. 안내 줄이 옮겨지거나 두 줄이 되면 테스트는 통과한 채 다시 덮는다. player.tscn 을 불러 HUD/Hint 의 offset_bottom 을 읽어 비교하거나, 적어도 test_ 쪽에 그 값의 출처를 상수로 두고 Hint 의 offset_bottom 과 같은지 보는 단언을 더해라
 
 ## [ ] G-990 점검 — 한 바퀴 돌아보고 빠진 것을 찾는다
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 (사람 결정 2026-09-23)
