@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 05:50:59",
- "updated_epoch": 1790196659,
+ "updated": "2026-09-24 06:01:59",
+ "updated_epoch": 1790197319,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
-  "groups_done": 24,
+  "groups_done": 25,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 84
+  "steps_done": 85
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-143",
+ "group": "G-144",
  "step": "1",
- "step_title": "하나씩 만들어 찍는다",
+ "step_title": "장 수를 줄인다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 05:47:51"
+ "phase_since": "2026-09-24 05:58:59"
 }
