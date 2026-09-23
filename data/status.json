@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "{\"done\": false, \"bundle\": \"G-136\", \"step\": 1, \"title\": \"무엇이 느린지 잰다\", \"last\": false}",
- "updated": "2026-09-23 14:29:41",
- "updated_epoch": 1790141381,
+ "updated": "2026-09-23 17:28:14",
+ "updated_epoch": 1790152094,
  "ended": "2026-09-22 23:56:40",
  "progress": {
   "groups_total": 21,
@@ -12,10 +12,10 @@
   "steps_done": 61
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-129",
+ "group": "G-136",
  "step": "1",
- "step_title": "재는 검사 한 벌",
+ "step_title": "무엇이 느린지 잰다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-23 12:35:17"
+ "phase_since": "2026-09-23 14:29:44"
 }
