@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 01:20:41",
- "updated_epoch": 1790180441,
+ "updated": "2026-09-24 01:52:03",
+ "updated_epoch": 1790182323,
  "ended": "2026-09-23 18:44:23",
  "progress": {
   "groups_total": 26,
   "groups_done": 21,
   "groups_waiting": 0,
-  "steps_total": 103,
-  "steps_done": 74
+  "steps_total": 104,
+  "steps_done": 75
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-901",
- "step": "1",
- "step_title": "걸린 것을 고친다",
- "attempt": "2",
+ "step": "2",
+ "step_title": "(앞 단계 QA) 창 바탕이 비쳐 캐릭터가 보인다",
+ "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 01:18:49"
+ "phase_since": "2026-09-24 01:49:54"
 }
