@@ -6517,5 +6517,73 @@
   },
   "test": "_gives_it_back\n* test_the_right_click_eats_the_food_in_hand\n* test_the_right_click_that_ate_does_not_reach_what_is_behind\n* test_nothing_is_eaten_when_the_hand_is_not_holding_food\n* test_nothing_is_eaten_while_a_window_is_open\n* test_the_effect_and_the_time_come_from_the_data_file\n* test_every_food_in_the_file_has_an_effect_and_a_time\n* test_a_food_with_nothing_written_in_it_is_dropped\n15/15 passed.\n\n\nres://tests/life/gathering/test_gathering.gd\n* test_a_left_click_on_a_herb_opens_the_ring\n* test_the_needle_turns_around_the_ring\n* test_the_ring_puts_zero_degrees_at_the_top_and_turns_clockwise\n* test_the_ring_only_shows_while_the_skill_check_runs\n* test_a_click_inside_the_zone_succeeds\n* test_a_click_outside_the_zone_fails\n* test_the_zone_edges_decide_success\n* test_the_needle_starts_outside_the_zone\n* test_the_ring_opens_whatever_is_in_hand\n* test_the_gathering_no_longer_reads_a_tool_list\n* test_nothing_opens_when_the_crosshair_is_not_on_a_herb\n* test_trees_stones_and_ores_are_struck_not_skill_checked\n12/12 passed.\n\n\nres://tests/life/gathering/test_herb_kinds.gd\n* test_there_are_three_herbs_in_three_tiers\n* test_only_belladonna_can_be_farmed\n* test_belladonna_grows_in_a_field_and_the_others_do_not\n* test_only_the_upper_tiers_grow_wild\n* test_a_plant_knows_which_herb_it_is\n* test_every_herb_is_named_in_both_languages\n6/6 passed.\n\n\nres://tests/life/gathering/test_herbs.gd\n* test_twenty_herb_spots_is_the_number_we_chose\n* test_my_island_grows_twenty_herbs\n* test_herbs_only_grow_on_cliff_ledges\n* test_the_ledges_grow_the_second_and_third_tier\n* test_herbs_are_out_of_walking_reach\n* test_the_island_lets_you_dig_the_herbs\n6/6 passed.\n\n\nres://tests/player/movement_controls/test_player_notes.gd\n* test_the_climbing_note_sits_above_climbing\n* test_the_skill_check_ring_note_is_not_about_climbing\n* test_the_two_functions_still_return_what_their_notes_say\n* test_the_note_says_gathering_ties_itself_in\n* test_the_note_no_longer_blames_the_island\n* test_gathering_really_ties_itself_in_its_ready\n* test_the_island_does_not_tie_the_ring_in\n* test_gathering_still_says_why_the_island_must_not_do_it\n* test_the_check_catches_a_displaced_or_stale_note\n9/9 passed.\n\n\nres://tests/ui/hud/test_bag_hand_craft.gd\n* test_the_bag_has_a_made_by_hand_panel\n* test_only_the_three_hand_recipes_show_up_there\n* test_a_recipe_that_needs_a_station_does_not_show_up_there\n* test_a_hand_recipe_added_to_the_file_shows_up_in_the_bag\n* test_a_station_recipe_added_to_the_file_does_not_show_up_in_the_bag\n* test_from_empty_hands_to_the_first_axe\n6/6 passed.\n\n\nres://tests/world/day_night/test_day_in_world.gd\n* test_the_island_has_a_clock_of_its_own\n* test_the_wheat_grows_by_the_clock\n* test_the_felled_tree_comes_back_by_the_clock\n3/3 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              15\nTests               138\nPassing Tests       138\nAsserts            1540\nTime              78.252s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "5299982"
+ },
+ {
+  "time": "2026-09-23 11:07:48",
+  "epoch": 1790129268,
+  "type": "pass",
+  "title": "통과 — G-132 단계 2 (마취탄을 만든다)",
+  "group": "G-132",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "마취탄 세 종(벨라도나 · 만드라고라 · 투구꽃) — 탄약 조합식 + 약초로 만들고, 아무 총에나 들어가며, 피해 0에 걸음을 늦춘다. R 꾹 → 그 총에 맞는 탄만 뜨는 고르기(휠 · 숫자). 바뀐 곳 테스트 93파일 851개 통과 (전체는 돌리지 않았다)",
+   "approach": "총은 제 계통 탄 하나만 먹게 되어 있었고(Magazine.ammo_item), R 은 누르는 즉시 재장전뿐이었다. (1) 마취탄 세 종을 tools.json 의 tranq_kinds 에 두고 각각 제 약초를 적었다. 단은 약초의 단(Herbs.KINDS)을 그대로 쓴다. 계통 탄(ammo_kinds 네 종)과 따로 둔 것은 '아무 총에나 들어간다'여서 총마다 적을 까닭이 없어서다. ToolCatalog.loadable(총) = 제 탄 + 마취탄 셋. (2) 레시피는 권총탄 조합식(철괴 1 + 유황 1)에 제 약초 1 을 더해 10발, 제작대 5초. (3) 탄창에 '지금 든 탄(loaded)'을 두었다. switch_to 로 바꾸면 남은 탄 · 쥔 탄을 가방에 돌려놓고 새 탄으로 채운다. 가방에 없는 탄을 고르면 아무것도 바뀌지 않는다. (4) 쏠 때 든 탄이 마취탄이면 투사체에 tranq_tier 가 붙는다. 맞으면 Health 를 거치지 않고 Tranq.hit → Animal.take_tranq 로 간다. 체력은 그대로이고 걸음만 Tranq.SLOW 배로 SLOW_SECONDS 동안 준다(다리 부상과 곱한다). 마취 게이지를 채우는 일은 기준 밖이라 하지 않았다. (5) R 을 누르면 곧장 여느 재장전을 시작한다. PICK_HOLD 넘게 누르고 있으면 고르기가 뜬다. 떠 있는 동안 휠(새 액션 ammo_prev/ammo_next)과 숫자키는 Attack._input 이 먼저 받아 삼킨다. 그래서 핫바(_unhandled_input)가 바뀌지 않는다. R 을 떼면 고른 탄으로 바꿔 채운다. 목록은 HUD 의 AmmoPicker(남은 탄 표시 위)에 뜬다. 확인: 새 테스트는 진짜 캐릭터 · 진짜 제작대 · 진짜 R/숫자키/휠 이벤트 · 진짜 핫바를 쓴다. 피해 0 검사 옆에, 같은 자리에서 여느 탄을 쏘면 다친다는 대조 검사를 두었다. 처음에는 테스트가 동물을 쏜 뒤에 옮겨서 첫 광선이 옛 자리를 봤고 빗나갔다. 쏘기 전에 세우게 고쳤다. harness/shot.sh --ui 로 찍을 수 있게 ui_shots.gd 에 ammo 자리를 더했다. PNG 로 권총탄 + 마취탄 셋만 뜨고 고른 줄이 밝게 보이는 것을 확인했다(패널 아래 빈자리도 줄였다). TESTS=changed_tests.py 로 93파일 851개가 통과했다(전체는 돌리지 않았다). 남은 틈: 핫바 칸이 좁아 긴 이름('벨라도나 마취탄' 등)이 옆 칸으로 넘친다. ItemSlot 이 원래 그렇고('자동권총'도 넘친다) 이 단계에서는 손대지 않았다. 가방이 가득 차 있으면, 탄을 바꿀 때 돌려놓는 탄 가운데 들어가지 못한 것은 사라진다.",
+   "why": "Tranq.SLOW 0.5배 · SLOW_SECONDS 8초 (game/life/hunting/tranq.gd) — spec 에 늦추는 양 · 시간이 없다. 다리 부상(0.5)과 같은 값으로 잡았다; 마취탄 레시피: 철괴 1 + 유황 1 + 약초 1 → 10발 · 5초 (recipes.json) — '탄약 조합식 + 약초'만 사람 결정이라 권총탄 조합식을 빌렸다; Attack.PICK_HOLD 0.35초 — R 을 이만큼 누르면 탄 고르기가 뜬다. spec 미정; AmmoPicker 자리(화면 오른쪽 아래, 남은 탄 표시 위)와 글자 색 — HUD 배치 미정",
+   "files": [
+    "game/combat/tools_as_weapons/tools.json",
+    "game/combat/tools_as_weapons/tool_catalog.gd",
+    "game/combat/tools_as_weapons/magazine.gd",
+    "game/combat/tools_as_weapons/projectile.gd",
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/life/hunting/tranq.gd",
+    "game/life/hunting/animal.gd",
+    "game/craft/recipes/recipes.json",
+    "game/core/input/input_actions.gd",
+    "game/project.godot",
+    "game/ui/hud/ammo_picker.gd",
+    "game/ui/hud/ammo_picker.tscn",
+    "game/player/movement_controls/player.gd",
+    "game/player/movement_controls/player.tscn",
+    "game/core/debug/ui_shots.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/combat/tools_as_weapons/test_tranq_ammo.gd",
+    "spec/04_life/hunting.md",
+    "spec/08_combat/tools-as-weapons.md",
+    "spec/01_settings/input.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "**탄약 조합식 + 약초**로 마취탄 세 종을 만든다 (테스트)",
+     "evidence": "test_tranq_ammo.gd — test_three_kinds_of_tranq_round_one_per_herb_tier 가 세 종 · 약초 단 1·2·3 을 하나씩 맡는지 보고, test_each_tranq_round_is_an_ammo_recipe_plus_its_herb_made_at_a_station 이 레시피에서 제 약초 1 을 뺀 나머지가 탄약 조합식 하나와 같은지 · 남의 약초가 없는지 확인한 뒤 진짜 제작대에서 만들어 가방에 받고 약초가 쓰였는지 본다. test.log 868/868 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "마취탄은 **아무 총에나** 들어간다. 맞아도 **피해가 0**이고 **속도가 준다** (테스트)",
+     "evidence": "test_every_gun_takes_every_tranq_round 가 총 전부 × 마취탄 셋을 진짜 R 꾹·숫자키로 넣고 쏜 투사체의 tranq_tier 를 본다. test_a_tranq_round_does_no_damage_but_slows 가 진짜 총으로 동물을 맞혀 체력 · 부위 피해 0, speed_factor=Tranq.SLOW, move_speed 감소를 보고, test_an_ordinary_round_from_the_same_gun_still_hurts 가 같은 자리에서 여느 탄은 다친다는 대조를 둔다. 일부러 깨 봄: projectile.gd 의 마취탄 갈래를 끄자(if false) 체력 80≠100 · 느려짐 없음으로 실패했다 (되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "**R 을 꾹 누르면** 그 총에 맞는 탄만 뜨고 휠 · 숫자로 고른다 (테스트)",
+     "evidence": "test_holding_r_shows_only_the_rounds_that_fit_this_gun 이 총마다 뜬 목록이 [제 탄 + 마취탄 셋] 과 정확히 같고 남의 계통 탄이 없는지, 창이 뜨고 R 떼면 닫히는지 본다. test_the_wheel_moves_the_pick_and_release_loads_it (진짜 휠 이벤트) · test_numbers_pick_a_round_instead_of_a_hotbar_slot (진짜 숫자키 · 진짜 핫바, 떠 있을 땐 핫바가 안 바뀌고 닫히면 다시 핫바) · test_a_short_press_is_a_plain_reload_without_the_picker · test_picking_a_round_the_bag_lacks_changes_nothing 이 받친다"
+    }
+   ],
+   "issues": [
+    "탄을 바꿀 때 가방이 차면 탄이 사라진다 — Magazine.switch_to 가 남은 탄 · 쥔 탄을 bag.add 로 돌려놓는데, 가방이 가득 차 들어가지 못한 몫은 버려진다(구현 세션도 report 에 적었다). bag.add 가 돌려주는 넣은 수를 보고 못 넣은 몫이 있으면 바꾸지 않거나(false) 발밑에 떨어뜨리게 고치고, 가방을 꽉 채운 뒤 switch_to 해서 탄 총수가 줄지 않는지 단언하는 테스트를 test_tranq_ammo.gd 에 더하라",
+    "핫바 칸에서 긴 탄 이름이 넘친다 — '벨라도나 마취탄' 같은 이름이 ItemSlot 옆 칸으로 넘친다(report 가 적은 것, '자동권총'도 같다). ItemSlot 라벨에 clip_text 나 줄임/글자 크기 맞춤을 두고, 가장 긴 ITEM_ 이름이 칸 너비를 넘지 않는지 보는 테스트를 짜라"
+   ],
+   "good": [
+    "harness/shot.sh --ui 용 ui_shots.gd 에 ammo 자리를 더했다 (확인용 찍기 — 해가 없다)",
+    "spec/01_settings/input.md 의 「휠이 핫바와 부딪히는지 — 만들 때 확인한다」 줄을 취소선으로 풀었다 (사람 결정 줄이 아니라 확인 메모다)"
+   ]
+  },
+  "test": "hing_outside_the_island_is_ever_lit\n* test_it_follows_the_player\n* test_it_tells_when_new_ground_is_lit\n* test_what_is_lit_survives_being_stored_and_restored\n* test_stored_maps_do_not_leak_into_each_other\n* test_a_map_of_another_size_is_thrown_away\n11/11 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              96\nTests               868\nPassing Tests       868\nAsserts           26131\nTime              537.568s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "de427a5"
  }
 ]
