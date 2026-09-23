@@ -321,7 +321,7 @@
   - 기준: (앞 단계 QA) 사람 몸이 걸을 때만 돈다 — game/player/movement_controls/player.gd 에서 _physics_process 끝의 `_turn_body(delta)` 가 새 함수 _footsteps 본문 맨 끝으로 딸려 들어갔다(181행). _footsteps 는 땅에 없거나 0.5 m/s 보다 느리면 일찍 return 하므로, 점프 중 · 물가 · 벽 앞에서 막혀 멈췄을 때 · 방향을 튼 직후 멈췄을 때 몸이 보는 쪽으로 돌지 않는다 (HEAD 에서는 늘 돌았다). `_turn_body(delta)` 를 _footsteps 에서 빼 _physics_process 의 `_footsteps(delta)` 다음 줄로 되돌려라. 테스트: 공중(점프 직후)에서 _facing 을 바꾸고 몇 프레임 뒤 몸(_body.basis)이 그쪽으로 돌았는지 보는 단언을 더하라
   - 기준: (앞 단계 QA) 가려진 사람도 보는 것이 테스트에 안 걸린다 — animal.gd _sees 의 광선 검사를 `return true` 로 바꿔도 tests/life/hunting 21개가 다 통과했다(QA 가 깨 보고 되돌렸다). test_hostile_does_not_bite_what_it_cannot_see 는 SIGHT 밖 거리만 본다. SIGHT 안(예: 8m)이지만 사이에 벽(StaticBody3D 상자)을 세운 사람을 적대가 CHASE 하지 않고 bit 도 없는지 보는 테스트를 더하라
 
-## [ ] G-135 웅크리기 · 배고픔 · 목마름
+## [x] G-135 웅크리기 · 배고픔 · 목마름
 - spec: spec/02_player/hunger-thirst.md, spec/02_player/movement-controls.md, spec/12_ui/hud.md
 - 결정 (사람 결정 2026-09-23): **달리기 키를 없앤다.** 기본이 달리기 속도고, 배고픔 · 목마름이
   바닥이면 느려진다 — 누르고 있는 달리기 키는 새끼손가락이 아프다. **굶어 죽지는 않는다**
@@ -345,7 +345,7 @@
 - spec: spec/04_life/hunting.md
 - 결정 (사람 결정 2026-09-23): 배율은 머리 1.3 · 몸통 1.0 · 다리 0.5(임시).
   **그 부위에 준 피해가 그 부위 산출을 깎는다** — 그래서 다리만 쏘면 뿔 · 가죽이 온전하다
-- [ ] 1. 부위를 맞힌다
+- [x] 1. 부위를 맞힌다
   - 기준: 머리 · 몸통 · 다리가 따로 맞고, 부위마다 피해 배율이 다르다 (테스트)
   - 기준: **다리를 맞히면 느려진다** (테스트)
   - 기준: 배율은 데이터 한 곳에 있고 「임시」라고 적혀 있다
