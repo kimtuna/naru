@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "재개",
- "updated": "2026-09-25 04:30:03",
- "updated_epoch": 1790278203,
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-25 04:30:28",
+ "updated_epoch": 1790278228,
  "ended": "2026-09-25 01:35:21",
  "progress": {
   "groups_total": 38,
@@ -17,7 +17,7 @@
  "step_title": "chest 찍기에 제작대 창이 남아 겹친다 (G-129 단계 1)",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-25 01:35:09",
+ "phase_since": "2026-09-25 04:30:08",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-25 04:30:00"
