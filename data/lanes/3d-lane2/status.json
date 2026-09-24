@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 23:13:58",
- "updated_epoch": 1790259238,
+ "updated": "2026-09-24 23:14:06",
+ "updated_epoch": 1790259246,
  "ended": "2026-09-24 22:27:58",
  "progress": {
   "groups_total": 36,
@@ -15,7 +15,7 @@
  "group": "G-147",
  "step": "2",
  "step_title": "좌표를 넣으면 그 자리에 표가 뜬다",
- "attempt": "6",
+ "attempt": "7",
  "phase": "구현",
- "phase_since": "2026-09-24 23:13:58"
+ "phase_since": "2026-09-24 23:14:06"
 }
