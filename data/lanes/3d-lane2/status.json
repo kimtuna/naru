@@ -1,21 +1,21 @@
 {
- "state": "stopped",
- "reason": "G-147 단계 2 을 9 번 시도했으나 실패했다",
- "updated": "2026-09-24 23:14:32",
- "updated_epoch": 1790259272,
+ "state": "running",
+ "reason": "",
+ "updated": "2026-09-24 23:14:35",
+ "updated_epoch": 1790259275,
  "ended": "2026-09-24 23:14:32",
  "progress": {
   "groups_total": 36,
   "groups_done": 29,
-  "groups_waiting": 1,
+  "groups_waiting": 0,
   "steps_total": 133,
-  "steps_done": 100
+  "steps_done": 99
  },
  "started": "2026-09-24 21:26:58",
- "group": "G-147",
- "step": "2",
- "step_title": "좌표를 넣으면 그 자리에 표가 뜬다",
- "attempt": "9",
+ "group": "G-910",
+ "step": "1",
+ "step_title": "마우스 올린 자리의 좌표가 보인다",
+ "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 23:14:23"
+ "phase_since": "2026-09-24 23:14:35"
 }
