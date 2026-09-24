@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-24 13:43:03",
- "updated_epoch": 1790224983,
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-24 14:05:16",
+ "updated_epoch": 1790226316,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 35,
