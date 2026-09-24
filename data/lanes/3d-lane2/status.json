@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 05:18:28",
- "updated_epoch": 1790281108,
+ "updated": "2026-09-25 05:28:39",
+ "updated_epoch": 1790281719,
  "ended": "2026-09-25 01:35:21",
  "progress": {
   "groups_total": 38,
   "groups_done": 32,
   "groups_waiting": 0,
   "steps_total": 143,
-  "steps_done": 121
+  "steps_done": 122
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
  "step": "12",
  "step_title": "섬 사진 테스트가 얕다 (G-129 단계 3)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 05:18:28",
+ "phase": "QA",
+ "phase_since": "2026-09-25 05:26:29",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-25 04:30:00"
