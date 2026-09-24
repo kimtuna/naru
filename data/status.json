@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 23:04:08",
- "updated_epoch": 1790258648,
+ "updated": "2026-09-24 23:04:11",
+ "updated_epoch": 1790258651,
  "ended": "2026-09-24 20:00:56",
  "progress": {
   "groups_total": 35,
@@ -13,9 +13,9 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-145",
- "step": "5",
- "step_title": "등급 셋 — 나무 · 석재 · 철",
+ "step": "6",
+ "step_title": "휠로 올려도 옆에 붙는다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-24 23:02:56"
+ "phase": "구현",
+ "phase_since": "2026-09-24 23:04:11"
 }
