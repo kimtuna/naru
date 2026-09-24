@@ -1,57 +1,5 @@
 [
  {
-  "time": "2026-09-21 09:28:08",
-  "epoch": 1789950488,
-  "type": "fail",
-  "title": "QA 불합격 — G-105 단계 3 (시도 1)",
-  "group": "G-105",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "도구 4종(도끼·곡괭이·삽·총)을 데이터 파일에 두고, 핫바에서 고른 것을 캐릭터 손 자리에 보여 준다",
-   "approach": "기준 두 개를 따로 풀었다. (1) 도구를 데이터로: AppearanceOptions(외형 데이터 파일)과 같은 방식으로 ToolCatalog 가 tools.json 을 읽는다 — 코드는 도구 이름을 하나도 모른다. 「코드 수정 없이」를 말로만 두지 않으려고, 테스트가 game 폴더의 .gd·.tscn·.json 을 전부 훑어 도구 이름이 데이터 파일 밖에 박혀 있으면 떨어뜨린다. 또 진짜 파일에 도구 하나(hoe)를 더한 사본을 만들어 손에 그 모양 그대로 나오는지 본다. (2) 손에 든 것: 캐릭터 몸(Body) 아래에 손 자리(HeldItem)를 두고, 고른 핫바 칸의 아이템을 데이터에 적힌 크기·색의 회색 상자로 그린다. 몸에 달려 있어 걷고 도는 것을 따라간다. 문제는 핫바(HUD)와 캐릭터가 아직 만나지 않는다는 것이었다 — GameRoot 에는 캐릭터가 없고 섬과 함께 나중에 들어온다. 그래서 GameRoot 가 node_added 를 듣고 있다가 캐릭터가 들어오는 대로 같은 Inventory 를 쥐여 준다(들어오기 전에 고른 것도 그대로 들고 나온다). 처음엔 손 자리를 몸 옆 0.32m 에 뒀는데 캡슐 반지름이 0.35m 라 도구가 몸에 파묻혔다 — harness/shot.sh 로 찍어 보고 0.45m 로 밀어냈다(테스트로는 알 수 없는 것이라 눈으로 봤다). 전체 테스트 206개 통과 · guard 통과.",
-   "why": "tools.json 의 손에 드는 상자 크기·색 — 아트는 프로토타입 범위 밖이라(roadmap.md) 회색 상자로 뒀다. 도구마다 다르게만 해 두었다; 손 자리 = 몸 옆 0.45m · 높이 1.05m · 앞으로 0.12m (player.tscn 의 Body/Hand) — 캡슐 몸에 파묻히지 않는 자리로 눈으로 보고 정했다. 진짜 팔이 생기면 손뼈 자리로 바꾼다; 도구 데이터에 스탯이 없다 — 도구별 공격 스탯은 spec 에서 미정이고 이 단계 기준 밖이다; tools.json 에 없는 아이템(목재 등)은 기본 회색 상자로 손에 보인다 — 아이템 목록이 아직 없어서다",
-   "files": [
-    "game/combat/tools_as_weapons/tools.json",
-    "game/combat/tools_as_weapons/tool_catalog.gd",
-    "game/player/inventory_hotbar/held_item.gd",
-    "game/player/movement_controls/player.gd",
-    "game/player/movement_controls/player.tscn",
-    "game/core/game_root.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/combat/tools_as_weapons/test_tools.gd",
-    "game/tests/player/inventory_hotbar/test_held_item.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "도구는 데이터 파일에 있고, 하나 더 적으면 코드 수정 없이 나타난다 (테스트)",
-     "evidence": "tests/combat/tools_as_weapons/test_tools.gd. test_the_four_tools_are_in_the_data_file 이 도끼·곡괭이·삽·총이 tools.json 에 있는지 본다. test_a_tool_added_to_the_file_shows_up_without_touching_the_code 는 진짜 파일 사본에 hoe 를 더해 ToolCatalog 가 알아보고 HeldItem 이 파일에 적은 크기(0.22,0.95,0.04)·색(334455) 그대로 손에 그리는지 본다 — 코드는 한 줄도 안 건드린다. test_tool_names_are_not_written_in_the_code 가 껍데기가 아닌지 직접 확인했다: 같은 훑기를 따로 돌려 보니 res:// 아래 .gd·.tscn·.json 62개를 실제로 훑고(player.gd·player.tscn 포함), 정규식도 'axe' 를 제대로 잡는다. 지금 걸리는 곳은 데이터 파일 하나뿐이다. 즉 이름을 코드에 박으면 떨어진다. test_each_tool_has_a_korean_and_an_english_name 이 ITEM_axe 등 4개가 ko.po·en.po 둘 다에 있는지 보고, 칸에 뜨는 글자도 ItemSlot 이 ITEM_<이름> 번역 키로 넣는다."
-    },
-    {
-     "ok": false,
-     "criterion": "핫바에서 고른 것이 「손에 든 것」이 되고, 캐릭터 손 자리에 보인다",
-     "evidence": "동작 자체는 된다 — tests/player/inventory_hotbar/test_held_item.gd 가 진짜 게임 화면을 띄우고 진짜 숫자키를 넣어 game.held_item() 과 player.hand().shown_item() 이 같이 바뀌는지, 도구마다 데이터 파일의 제 모양으로 그려지는지, 빈 칸은 빈손인지, 나중에 들어온 캐릭터도 이미 고른 것을 들고 있는지, 걷고 도는 것을 따라가는지 본다. 7개 다 통과한다. 그런데 「보인다」를 지키는 테스트가 정작 막아야 할 경우를 안 막는다 — 아래 problems 1번."
-    }
-   ],
-   "issues": [
-    "기준 2의 「보인다」를 지키는 테스트가 헐겁다. test_held_item.gd 의 test_the_tool_sits_at_the_hand_not_at_the_feet 는 assert_between(side, 0.2, 0.7, \"몸 한가운데 파묻히지 않는다\") 로 본다. 그런데 몸 캡슐 반지름이 0.35m 다 (player.tscn 의 CapsuleShape3D·CapsuleMesh). 아래끝이 0.2 라서 도구가 몸 속에 파묻혀 있어도 이 테스트는 통과한다 — report.json 이 적은 「처음엔 0.32m 에 뒀다가 몸에 파묻혀서 0.45m 로 밀어냈다」 그 상태가 그대로 통과한다. 눈으로 찾은 버그를 테스트가 다시 못 잡는다. 고칠 것: 아래끝을 몸 반지름보다 크게 잡아라. 지금 손은 Body 아래 (0.45, 1.05, -0.12) 라 side = sqrt(0.45^2+0.12^2) ≈ 0.466 이니 0.35 를 넘는지 보면 된다. 숫자를 또 박지 말고 player.tscn 의 캡슐 반지름을 읽어서 (예: player.get_node(\"Collision\").shape.radius) 그것보다 큰지 보는 편이 낫다 — 몸 굵기가 바뀌어도 테스트가 따라온다.",
-    "임시로 정한 수치를 코드에 「임시」라고 적지 않았다 (prompt.md 22줄: 코드에 적고 report.json 의 temporary 에도 적는다). 손 자리 수치 (0.45, 1.05, -0.12) 는 report.json 에만 있고 코드에는 임시라는 말이 없다 — player.tscn 48줄의 Body/Hand transform 은 주석을 달 수 없으니, held_item.gd 의 맨 위 설명에 「손 자리 = 몸 옆 0.45m · 높이 1.05m · 앞 0.12m (player.tscn 의 Body/Hand). 임시 — 캡슐 몸에 파묻히지 않는 자리로 눈으로 보고 정했다. 진짜 팔이 생기면 손뼈 자리로 바꾼다」 를 적어라. tools.json 은 _temporary 로 잘 적어 두었으니 그쪽은 그대로 두면 된다."
-   ],
-   "good": [
-    "ToolCatalog 가 파일이 없거나 깨졌을 때 빈 목록을 주고 게임이 뜨게 한다 (test_a_broken_file_gives_an_empty_list_instead_of_crashing). 기준에 없지만 몇 줄이고 다음 단계를 앞당기지 않는다 — 그대로 두어도 된다.",
-    "HeldItem 이 tools.json 에 없는 아이템(목재 등)도 기본 회색 상자로 그린다. 기준에 없다. 아이템 목록이 아직 없어서 둔 자리라고 적혀 있고 다음 단계를 앞당기지 않는다.",
-    "GameRoot 가 get_tree().node_added 를 듣고 들어오는 캐릭터에 인벤토리를 쥐여 준다. 기준 2가 진짜 게임에서 되려면 필요한 것이라 덤이 아니다. 다만 트리 전체의 노드 추가를 다 듣는 자리라, 나중에 섬이 캐릭터를 붙이는 단계에서 섬이 직접 쥐여 주는 쪽으로 걷어낼 수 있는지 봐라."
-   ]
-  },
-  "test": "om_world_select_to_character_select\n* test_escape_goes_back_from_world_create_to_world_select\n* test_created_world_appears_in_the_list\n9/9 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/ui/menu/test_pause_menu.gd\n* test_escape_opens_the_pause_menu\n* test_escape_again_closes_it\n* test_resume_closes_it\n* test_the_pause_menu_has_the_five_items\n* test_world_settings_is_an_empty_slot_for_the_host_only\n* test_settings_opens_the_empty_settings_screen\n* test_going_to_the_main_menu_saves_first\n* test_going_to_the_main_menu_returns_to_the_main_screen\n* test_quitting_the_game_saves_first\n* test_the_open_window_covers_the_screen_and_swallows_clicks\n* test_a_click_does_not_reach_the_game_while_open\n* test_moving_does_not_reach_the_game_while_open\n* test_the_camera_does_not_turn_while_open\n* test_the_mouse_cursor_is_visible_while_open\n* test_the_world_keeps_running_while_open\n* test_the_player_still_falls_while_open\n16/16 passed.\n\n\nres://tests/ui/menu/test_world_create.gd\n* test_name_and_seed_are_saved\n* test_empty_name_is_refused\n* test_empty_seed_is_random\n* test_empty_seed_still_saves_the_world\n* test_the_same_words_give_the_same_seed\n* test_back_asks_to_go_back\n6/6 passed.\n\n\nres://tests/ui/menu/test_world_select.gd\n* test_saved_worlds_are_listed\n* test_nothing_saved_means_no_rows\n* test_new_world_button_asks_for_the_create_screen\n* test_choosing_a_world_tells_which_one\n* test_delete_asks_first\n* test_delete_no_keeps_the_world\n* test_delete_yes_removes_only_that_world\n* test_back_asks_to_go_back\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n24/24 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:67)\n         [1] _ready (res://world/terrain/test_island.gd:38)\n         [2] before_all (res://tests/world/terrain/test_island_walk.gd:12)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n9/9 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              24\nTests               206\nPassing Tests       206\nAsserts            6511\nTime              137.558s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-09-21 09:39:22",
   "epoch": 1789951162,
   "type": "pass",
@@ -8734,5 +8682,73 @@
    "decision": null
   },
   "test": "pots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= 36 Orphans\n==============================================\ntest_ui_shots.gd\n    - test_island_shot_builds_the_real_island\n        * [HandView:<Control#4265070325932>(hand_view.gd)] + 5\ntest_bag_temporary_note.gd\n    - test_the_header_says_the_dim_and_the_layer_are_temporary\n        * [HandView:<Control#12882402089434>(hand_view.gd)] + 5\n    - test_the_header_points_at_the_theme_the_scene_actually_uses\n        * [HandView:<Control#12883542940209>(hand_view.gd)] + 5\n        * [HandView:<Control#12883006090831>(hand_view.gd)] + 5\n    - test_the_header_quotes_the_layer_the_bag_actually_sits_on\n        * [HandView:<Control#12884281159552>(hand_view.gd)] + 5\n    - test_the_note_does_not_stick_to_the_slot_size\n        * [HandView:<Control#12884918670619>(hand_view.gd)] + 5\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/settings/save/test_world_data_keys_note.gd\n- test_the_islands_comment_names_every_stored_key\n    [Failed]:  주석에 animals 가 없다 — 저장되지 않는 것으로 읽힌다: ## **섬마다** 바뀐 것 — 섬 id → {gone(캔 자리), taken(캔 날), stations(지은 것),\n    ## buildings(지은 건축물), chests(놓은 상자), death_chests(죽은 자리의 상자), docks(지은 선착장),\n    ## fields(놓은 밭), crops(심긴 작물), drops(바닥에 떨어진 것), map(밝힌 지도)}\n    ## (world/frontier_islands/island_state.gd). 섬끼리 섞이지 않게 id 로 갈라 담는다.\n          at line 71\n\nTotals\n------\nScripts             164\nTests              1399\nPassing Tests      1398\nFailing Tests         1\nAsserts           65156/65157\nOrphans              36\nTime              1277.953s\n\n\n---- 1 failing tests ----\n\nWARNING: 36 RIDs of type \"CanvasItem\" were leaked.\n   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2735)\nWARNING: 179 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\nERROR: 9 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.\nERROR: 100 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.\nERROR: 1 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-24 18:39:49",
+  "epoch": 1790242789,
+  "type": "pass",
+  "title": "통과 — G-145 단계 1 (장 수를 버리고 이어 붙인 개수로 잰다)",
+  "group": "G-145",
+  "step": "1",
+  "attempt": "3",
+  "report": {
+   "problem": "장 수(ROOF_SPAN)를 버리고 받침에서 이어 붙인 개수로 잰다 (나무 3 · 석재 4 · 철 5, 기둥 자리는 0) + 턱 0.3m 걸어 오르기를 게임 규칙으로 — 바뀐 곳만: 110개 스크립트 · 1003개 테스트 모두 통과",
+   "approach": "이어 붙인 개수 계산 · 등급별 한도 · 기둥 0 · 연쇄 붕괴는 앞 회차(514c97b)에 들어갔고, 찍은 그림(.loop/out/roof_steps.png)에서 벽 한 장에서 뻗은 지붕이 세 장째까지 초록 · 네 장째부터 빨강인 것을 확인했다. 앞 회차가 떨어진 까닭은 두 가지였다. (1) 전체 테스트에서 test_world_data_keys_note 가 islands 주석에 animals 가 없다고 떨어졌다 — world_data.gd 주석에 animals(빈 짐승 집과 비운 날)를 적었다. (2) report.json 을 남기지 않았다. 턱 오르기: 캡슐의 둥근 발이 턱 모서리를 벽으로 닿아 못 오르던 것을 Player._step_up 으로 푼다 — 앞이 막히면 step_height(0.3m)만큼 들어 · STEP_REACH 이상 앞으로 밀어 · 내려 디뎌 보고, 셋 다 되면 그 자리로 옮긴다. 비탈은 기존 걷기에 맡기고 0.4m 는 벽으로 막힌다. test_from_empty_hands 는 과녁을 쏜 뒤 치우고(길을 막았다, pellet 연결도 끊는다) 조준 방향을 캐릭터 기준으로 잰다. 확인한 것: changed_tests.py 그물(110개 스크립트, 1003개 테스트) 전부 통과. 전체는 돌리지 않았다.",
+   "why": "등급별 이어 붙이는 개수 나무 3 · 석재 4 · 철 5 — 수용 기준에 임시로 적힌 값; Player.STEP_REACH 0.15m — 캡슐 반지름 0.35 로 0.3m 턱 모서리를 딛는 거리, 몸 크기가 바뀌면 다시 잰다",
+   "files": [
+    "game/player/movement_controls/player.gd",
+    "game/player/movement_controls/player_config.gd",
+    "game/settings/save/world_data.gd",
+    "game/tests/craft/test_from_empty_hands.gd",
+    "game/tests/player/movement_controls/test_step_up.gd",
+    "spec/02_player/movement-controls.md",
+    "spec/06_build/building.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "`ROOF_SPAN` 과 「받치는 장 수」가 **코드와 spec 어디에도 없다** (테스트)",
+     "evidence": "test_building_link_count.gd test_the_old_span_is_gone_from_code_and_spec 가 res:// 아래 .gd 와 spec/ 아래 .md 를 모두 훑고(100개 넘는지 · building.md 가 들었는지도 단언) 두 말이 없는지 본다. grep 으로 game/ · spec/ 를 직접 찾아도 테스트 파일 말고는 나오지 않았다"
+    },
+    {
+     "ok": true,
+     "criterion": "땅에 닿은 토대가 **0**, 거기 붙은 것이 1, 그 옆이 2 다 — **받침에서 이어 붙인 개수**다 (테스트)",
+     "evidence": "test_the_foundation_is_zero_what_sits_on_it_one_and_the_next_two — 토대 0 · 벽 1 · 계단 1 · 벽 위 지붕 1 · 옆 지붕 2 · plan_roof_at 이 미리 잰 값 3 · 가까운 길로 재는 것 · 위층 벽 3 을 link_count 로 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "**제 등급의 개수를 넘으면 놓이지 않는다** — 나무 3개 · 석재 4개 · 철 5개 (임시) (테스트)",
+     "evidence": "test_past_the_grade_count_nothing_is_placed — LINK_LIMIT 가 {wood 3, stone 4, iron 5} 인지 보고, 나무 지붕은 3장째까지 놓이고 4장째는 too_far · place_at 이 null, 석재는 4장째가 놓이고 5장째가 막히는지, 벽 · 계단도 같은 규칙으로 막히는지 본다. report 의 temporary 에 값이 임시라고 적혀 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "**기둥이 선 자리는 다시 0** 이 된다 — 거기서 다시 뻗을 수 있다 (테스트)",
+     "evidence": "test_a_pillar_makes_its_spot_zero_again — 기둥 0, 지붕 여섯 장이 [1,1,0,1,2,3] 이고 7장째는 too_far, 지붕 위 기둥도 0 · 그 위 지붕도 0 인지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "받침을 부숴 개수가 넘어가면 **무너진다** — 연쇄로 (테스트)",
+     "evidence": "test_breaking_a_support_collapses_what_goes_past_the_count_in_a_chain — 기둥을 헐면 판 3 은 벽 길로 3 이 되어 남고, 판 4·5·6 과 그 위층 기둥 · 지붕이 연쇄로 무너져 collapsed 신호에 들고, 남은 것은 모두 held_up 인지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "미리보기가 초록 · 빨강으로 갈린다. 찍어서 확인한다 — 벽 한 장에서 뻗어 나간 지붕이 세 장째까지 초록, 네 장째부터 빨강이다",
+     "evidence": ".loop/out/roof_steps.png 를 직접 봤다. 토대+벽에서 동쪽으로 뻗은 지붕이 1~3장째 초록, 4~6장째 빨강이다(색은 shots.gd _set_up_roof_reach 가 plan_roof_at 의 ok 로 정한다). 손에 든 진짜 미리보기의 OK/BAD 색은 test_without_support_a_held_roof_shows_the_other_color_and_is_not_placed 가 본다"
+    }
+   ],
+   "issues": [
+    "빈손 테스트에 TMPSTEP 디버그 줄이 남았다 — game/tests/craft/test_from_empty_hands.gd 에 gut.p(\"TMPSTEP …\") 가 25줄 남아 로그를 어지럽힌다(이번 회차에 TMPDBG 두 줄만 지웠다). 전부 지워라",
+    "0.3m 턱 테스트가 0.29m 로 잰다 — test_step_up.gd test_walks_up_a_0_3m_ledge 는 _walk_into_ledge(0.29) 를 쓴다. 규칙은 「0.3m 까지」라 경계값 0.3 자체가 오르는지 보지 않는다. 0.3 으로 올리고 안 되면 _step_up 의 들어 올리는 높이에 작은 여유를 더해 0.3 이 정확히 오르게 하라(0.4 가 막히는 단언은 그대로 둔다)"
+   ],
+   "good": [
+    "턱 0.3m 걸어 오르기(Player._step_up · PlayerConfig.step_height · test_step_up.gd) — 단계 1 기준 밖이지만 묶음 머리의 사람 결정(2026-09-24)이 「이것부터 하라」고 시킨 것이다. 받침을 꺼 보면 턱 테스트 3개가 떨어지므로 진짜 테스트다"
+   ]
+  },
+  "test": "_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= 36 Orphans\n==============================================\ntest_ui_shots.gd\n    - test_island_shot_builds_the_real_island\n        * [HandView:<Control#4264449568940>(hand_view.gd)] + 5\ntest_bag_temporary_note.gd\n    - test_the_header_says_the_dim_and_the_layer_are_temporary\n        * [HandView:<Control#12883391966489>(hand_view.gd)] + 5\n    - test_the_header_points_at_the_theme_the_scene_actually_uses\n        * [HandView:<Control#12883995925072>(hand_view.gd)] + 5\n        * [HandView:<Control#12884532816800>(hand_view.gd)] + 5\n    - test_the_header_quotes_the_layer_the_bag_actually_sits_on\n        * [HandView:<Control#12885270993069>(hand_view.gd)] + 5\n    - test_the_note_does_not_stick_to_the_slot_size\n        * [HandView:<Control#12885908527722>(hand_view.gd)] + 5\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             164\nTests              1399\nPassing Tests      1399\nAsserts           65159\nOrphans              36\nTime              1269.148s\n\n\n---- All tests passed! ----\n\nWARNING: 36 RIDs of type \"CanvasItem\" were leaked.\n   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2735)\nWARNING: 179 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\nERROR: 9 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.\nERROR: 100 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.\nERROR: 1 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d591dc3"
  }
 ]
