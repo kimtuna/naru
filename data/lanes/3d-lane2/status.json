@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 00:16:04",
- "updated_epoch": 1790262964,
+ "updated": "2026-09-25 00:28:41",
+ "updated_epoch": 1790263721,
  "ended": "2026-09-25 00:01:16",
  "progress": {
   "groups_total": 36,
-  "groups_done": 30,
+  "groups_done": 31,
   "groups_waiting": 0,
   "steps_total": 136,
-  "steps_done": 106
+  "steps_done": 108
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
  "step": "1",
  "step_title": "다쳐서 도망간 뒤 진정하지 않는다 (G-130 단계 3)",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-25 00:16:04",
+ "phase": "QA",
+ "phase_since": "2026-09-25 00:25:49",
  "lane": "3d-lane2",
  "model": "fable"
 }
