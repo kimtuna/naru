@@ -1,9 +1,9 @@
 {
  "state": "stopped",
- "reason": "g/G-910 에 3d-lane2 를 넣지 못했다 (충돌) — 사람이 풀어야 한다",
- "updated": "2026-09-25 00:01:14",
- "updated_epoch": 1790262074,
- "ended": "2026-09-25 00:01:14",
+ "reason": "하네스가 성하지 않다",
+ "updated": "2026-09-25 00:01:16",
+ "updated_epoch": 1790262076,
+ "ended": "2026-09-25 00:01:16",
  "progress": {
   "groups_total": 36,
   "groups_done": 30,
