@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 23:11:05",
- "updated_epoch": 1790259065,
+ "updated": "2026-09-24 23:11:16",
+ "updated_epoch": 1790259076,
  "ended": "2026-09-24 20:00:56",
  "progress": {
   "groups_total": 35,
@@ -15,7 +15,7 @@
  "group": "G-145",
  "step": "6",
  "step_title": "휠로 올려도 옆에 붙는다",
- "attempt": "7",
+ "attempt": "8",
  "phase": "구현",
- "phase_since": "2026-09-24 23:11:05"
+ "phase_since": "2026-09-24 23:11:16"
 }
