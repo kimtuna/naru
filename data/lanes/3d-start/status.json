@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "G-145 합쳤다",
- "updated": "2026-09-25 00:21:52",
- "updated_epoch": 1790263312,
+ "reason": "",
+ "updated": "2026-09-25 00:21:54",
+ "updated_epoch": 1790263314,
  "ended": "2026-09-24 23:54:08",
  "progress": {
   "groups_total": 36,
@@ -12,12 +12,12 @@
   "steps_done": 107
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-145",
- "step": "6",
- "step_title": "휠로 올려도 옆에 붙는다",
- "attempt": "2",
- "phase": "QA",
- "phase_since": "2026-09-25 00:20:01",
+ "group": "G-148",
+ "step": "1",
+ "step_title": "빈손에서 집까지 끊기지 않는다",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-25 00:21:54",
  "lane": "3d-start",
  "model": "opus"
 }
