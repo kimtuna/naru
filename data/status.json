@@ -1,0 +1,21 @@
+{
+ "state": "running",
+ "reason": "",
+ "updated": "2026-09-24 22:46:28",
+ "updated_epoch": 1790257588,
+ "ended": "2026-09-24 20:00:56",
+ "progress": {
+  "groups_total": 35,
+  "groups_done": 29,
+  "groups_waiting": 0,
+  "steps_total": 133,
+  "steps_done": 101
+ },
+ "started": "2026-09-21 06:54:49",
+ "group": "G-145",
+ "step": "4",
+ "step_title": "토대 4×4칸 · 밭 2×2칸",
+ "attempt": "1",
+ "phase": "QA",
+ "phase_since": "2026-09-24 22:44:55"
+}
