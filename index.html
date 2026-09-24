@@ -88,12 +88,6 @@ code { font-family: var(--mono); font-size: .9em; }
 .md h2, .md h3 { font-size: 14px; text-transform: none; letter-spacing: 0; color: var(--ink); margin: 14px 0 4px; }
 .md p, .md ul, .md ol { margin: 4px 0; }
 .empty { color: var(--muted); font-size: 14px; padding: 6px 2px; }
-.lanes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-.lane { flex: 1 1 260px; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
-  padding: 10px 14px; cursor: pointer; font: inherit; color: inherit; display: grid; gap: 4px; min-width: 0; }
-.lane.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
-.lane .name { font-family: var(--mono); font-size: 13px; font-weight: 500; }
-.lane .what { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
 button.theme { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 3px 9px; cursor: pointer; font: inherit; font-size: 12px; }
 @media (max-width: 560px) {
   details > .body { padding-left: 16px; }
@@ -109,7 +103,6 @@ button.theme { background: none; border: 1px solid var(--line); color: var(--mut
     <span class="sub"><span id="fetched"></span> <button class="theme" id="theme">테마</button></span>
   </div>
 
-  <div class="lanes" id="lanes"></div>
   <section class="panel status" id="status"><div class="empty">불러오는 중…</div></section>
 
   <h2>결정 대기 <span id="dcount"></span></h2>
@@ -249,16 +242,11 @@ function renderList(text, status) {
 }
 
 const TYPE = {
-  // 루프가 실제로 남기는 이름은 pass · fail · wait 다 (loop.sh 의 dash event).
-  // 옛 이름(step_*)만 알던 때는 통과가 하나도 안 세어졌다 (2026-09-24).
-  pass: ["t-ok", "통과"], fail: ["t-fail", "재시도"], wait: ["t-fail", "대기"],
   step_pass: ["t-ok", "통과"], step_fail: ["t-fail", "재시도"], group_done: ["t-ok", "묶음 완료"],
   parked: ["t-bad", "결정 대기"], limit: ["t-fail", "토큰 한도"], resume: ["t-info", "재개"],
   infra: ["t-bad", "실행 오류"], start: ["t-info", "시작"], stop: ["t-info", "종료"],
 };
 
-const isPass = (e) => e.type === "pass" || e.type === "step_pass";
-const isFail = (e) => e.type === "fail" || e.type === "step_fail";
 const sec = (label, v) => (v ? `<div class="sec"><h4>${label}</h4><p>${esc(v)}</p></div>` : "");
 const list = (label, arr) => (arr && arr.length ? `<div class="sec"><h4>${label}</h4><ul>${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>` : "");
 
@@ -292,8 +280,8 @@ function renderEvents(events) {
   const days = Object.keys(byDay);
   $("events").innerHTML = days.map((d, i) => {
     const es = byDay[d];
-    const pass = es.filter(isPass).length;
-    const fail = es.filter(isFail).length;
+    const pass = es.filter((e) => e.type === "step_pass").length;
+    const fail = es.filter((e) => e.type === "step_fail").length;
     return `<details ${i === 0 ? "open" : ""}><summary><span class="title"><b>${d}</b></span>
       <span class="count">통과 ${pass} · 재시도 ${fail} · 기록 ${es.length}</span></summary><div class="body">
       ${es.map((e) => {
@@ -310,7 +298,7 @@ function renderRuns(events) {
   for (const e of events) {
     if (e.type === "start") { cur = { start: e.time, end: null, reason: "" }; runs.push(cur); }
     else if (e.type === "stop" && cur) { cur.end = e.time; cur.reason = e.title.replace(/^루프 종료 — /, ""); cur = null; }
-    else if (cur) { cur.n = (cur.n || 0) + (isPass(e) ? 1 : 0); }
+    else if (cur) { cur.n = (cur.n || 0) + (e.type === "step_pass" ? 1 : 0); }
   }
   if (!runs.length) { $("runs").innerHTML = '<div class="empty">아직 없음</div>'; return; }
   const rows = runs.reverse().map((r) =>
@@ -321,42 +309,9 @@ function renderRuns(events) {
     <div class="body"><ul class="steps" style="display:block">${rows}</ul></div></details>`;
 }
 
-// 루프를 둘 이상 띄우면 차선(합칠 줄기)마다 제 칸에 올린다 — data/lanes/<줄기>/ (harness/dashboard.py).
-// 위에 차선을 나란히 보여 주고, 고른 차선의 자세한 기록을 아래에 그린다.
-let lane = null;
-try { lane = localStorage.getItem("naru-lane"); } catch (e) {}
-function laneWhat(s) {
-  if (!s) return "기록 없음";
-  if (s.group && s.state !== "done") return `${s.group} · ${s.step}/${s.step_total || "?"}단계 ${s.step_title || ""} · 시도 ${s.attempt || "?"}`;
-  return s.reason || "—";
-}
-function renderLanes(names, statuses) {
-  if (names.length < 2) { $("lanes").innerHTML = ""; return; }
-  $("lanes").innerHTML = names.map((n, i) => {
-    const s = statuses[i] || {};
-    const state = s.state || "stopped";
-    const stale = state === "running" && (Date.now() / 1000 - (s.updated_epoch || 0)) / 60 > 120;
-    return `<button class="lane ${n === lane ? "on" : ""}" data-lane="${esc(n)}">
-      <span class="name">${esc(n)} <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : (STATE[state] || esc(state))}</span></span>
-      <span class="what">${esc(laneWhat(s))} <span class="sub">· ${ago(s.updated_epoch)}</span></span></button>`;
-  }).join("");
-  $("lanes").querySelectorAll(".lane").forEach((b) => (b.onclick = () => {
-    lane = b.dataset.lane;
-    try { localStorage.setItem("naru-lane", lane); } catch (e) {}
-    load();
-  }));
-}
 async function load() {
-  const names = (await get("data/lanes.json", true)) || [];
-  let base = "data/";
-  if (names.length) {
-    if (!names.includes(lane)) lane = names[0];
-    base = `data/lanes/${lane}/`;
-    const statuses = await Promise.all(names.map((n) => get(`data/lanes/${n}/status.json`, true)));
-    renderLanes(names, statuses);
-  }
   const [s, ev, li, de] = await Promise.all([
-    get(base + "status.json", true), get(base + "events.json", true), get(base + "list.md"), get(base + "decisions.md"),
+    get("data/status.json", true), get("data/events.json", true), get("data/list.md"), get("data/decisions.md"),
   ]);
   const openState = [...document.querySelectorAll("details")].map((d) => d.open);
   renderStatus(s);

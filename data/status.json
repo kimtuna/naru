@@ -1,0 +1,21 @@
+{
+ "state": "running",
+ "reason": "",
+ "updated": "2026-09-24 23:04:08",
+ "updated_epoch": 1790258648,
+ "ended": "2026-09-24 20:00:56",
+ "progress": {
+  "groups_total": 35,
+  "groups_done": 29,
+  "groups_waiting": 0,
+  "steps_total": 133,
+  "steps_done": 102
+ },
+ "started": "2026-09-21 06:54:49",
+ "group": "G-145",
+ "step": "5",
+ "step_title": "등급 셋 — 나무 · 석재 · 철",
+ "attempt": "1",
+ "phase": "QA",
+ "phase_since": "2026-09-24 23:02:56"
+}
