@@ -769,7 +769,7 @@
   - 기준: 올린 것을 철거하면 **올리며 쓴 재료까지 전부** 돌아온다 (테스트)
   - 기준: (앞 단계 QA) 옛 테스트가 1m 칸을 밭 판으로 넘긴다 — tests/settings/save/test_round_trip.gd:330 과 tests/world/day_night/test_day_in_world.gd:40 이 Grid.world_to_cell(...) 로 구한 1m 칸을 farmland.till · crops.plant 에 그대로 넘긴다. 이제 그 인자는 2m 밭 판 좌표라 밭이 뜻한 자리의 두 배 먼 곳에 서고, 높이도 엉뚱한 자리(Grid.cell_to_world(cell))에서 잰다. 지금은 우연히 통과한다. Farmland.plate_of(pos) 로 판을 구하고 높이는 Farmland.center_of(plate) 자리에서 재도록 고쳐라
   - 기준: (앞 단계 QA) 시각 이름 검사의 'age' 가 엉뚱한 것을 잡는다 — test_blueprint.gd _time_marks 는 부분 문자열로 찾아서 damage · stage · storage · image 같은 변수가 BuildPiece · Buildings 에 생기면 시각이 아닌데도 깨진다. 이름을 '_' 로 쪼갠 낱말이 정확히 age · time · lock 등과 같은지로 보거나, placed_at · placed_time · lock_time 같은 정확한 이름 목록으로 바꿔라
-- [ ] 6. 휠로 올려도 옆에 붙는다
+- [x] 6. 휠로 올려도 옆에 붙는다
   - 「토대의 높이를 휠로 올렸을 경우 옆에 스냅이 안 붙는다」 — `plan_at` 이 이웃 윗면에
     휠 값(`_raise`)을 **또 더한다**. `_raise` 는 손에서 내려놓을 때만 0 이라 이어 붙일수록
     계단처럼 올라가고 곧 5m(`MAX_HEIGHT`)에 걸려 빨개진다
