@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 22:10:23",
- "updated_epoch": 1790255423,
+ "updated": "2026-09-24 22:10:26",
+ "updated_epoch": 1790255426,
  "ended": "2026-09-24 20:00:56",
  "progress": {
   "groups_total": 35,
@@ -13,9 +13,9 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-145",
- "step": "3",
- "step_title": "도면 하나로 짓는다",
+ "step": "4",
+ "step_title": "등급 셋 — 나무 · 석재 · 철",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-24 22:08:47"
+ "phase": "구현",
+ "phase_since": "2026-09-24 22:10:26"
 }
