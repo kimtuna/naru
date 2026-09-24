@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 00:04:23",
- "updated_epoch": 1790262263,
+ "updated": "2026-09-25 00:11:28",
+ "updated_epoch": 1790262688,
  "ended": "2026-09-25 00:01:16",
  "progress": {
   "groups_total": 36,
@@ -16,8 +16,8 @@
  "step": "1",
  "step_title": "다쳐서 도망간 뒤 진정하지 않는다 (G-130 단계 3)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 00:04:23",
+ "phase": "기계 검사",
+ "phase_since": "2026-09-25 00:11:28",
  "lane": "3d-lane2",
  "model": "fable"
 }
