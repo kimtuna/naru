@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 00:30:15",
- "updated_epoch": 1790263815,
+ "updated": "2026-09-25 00:55:19",
+ "updated_epoch": 1790265319,
  "ended": "2026-09-24 23:54:08",
  "progress": {
-  "groups_total": 37,
+  "groups_total": 38,
   "groups_done": 31,
   "groups_waiting": 0,
-  "steps_total": 137,
-  "steps_done": 108
+  "steps_total": 139,
+  "steps_done": 111
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-149",
  "step": "1",
  "step_title": "계단이 선 판에는 놓이지 않는다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 00:30:15",
+ "phase": "QA",
+ "phase_since": "2026-09-25 00:51:09",
  "lane": "3d-start",
  "model": "opus"
 }

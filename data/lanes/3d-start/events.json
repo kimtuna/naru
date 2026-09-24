@@ -1,67 +1,5 @@
 [
  {
-  "time": "2026-09-21 14:34:50",
-  "epoch": 1789968890,
-  "type": "pass",
-  "title": "통과 — G-109 단계 1 (섬 · 플레이어 · 하늘을 게임 씬에 붙인다)",
-  "group": "G-109",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "게임 씬(GameRoot)이 들어갈 때 섬을 세운다 — 월드를 고르면 섬 위 스폰 자리에 캐릭터가 서고 하늘이 뜬다",
-   "approach": "섬(world/terrain/test_island.tscn)은 이미 있었고 게임 씬만 비어 있었다 — GameRoot._ready 가 섬을 자식으로 세우게 했다. 섬이 제 안에서 캐릭터 · 하늘 · 자원 · 제작대 · 시계를 다 만들고, GameRoot 는 이미 node_added 로 그것들을 받아 잇고 있었으므로 섬을 붙이는 자리만 node_added 를 이은 뒤로 두면 핫바 인벤토리 · 월드 날짜 · 제작대 창이 저절로 이어졌다.\n\n문제는 테스트 시간이었다. 섬 하나 세우는 데 5초가 걸리는데, 게임 씬을 띄우는 테스트가 9개나 있어 그대로 두면 전체 검사가 몇 분 늘어난다. 게다가 Terrain3D 가 처음 설 때 엔진이 deprecated 경고를 한 번 뱉는데, 그것이 테스트 **안**에서 터지면 GUT 가 그 테스트를 실패로 친다. 그래서 GameRoot 에 island_scene(기본값 = 진짜 섬)을 두고 MenuRoot 가 그대로 물려주게 해서, 섬과 상관없는 화면 검사만 null 로 바꿔 끼우게 했다. 새 검사는 섬을 before_all 에서 한 번만 세운다(경고도 거기서 삼킨다). 전체 검사 326개 3분08초 → 334개 3분18초.\n\n「같은 섬인가」는 설계 값을 견주지 않고, 설정 창 → 메인 화면으로 **정말 나갔다가** 같은 월드로 다시 들어가서 Terrain3D 에 실제로 들어간 땅 높이 256곳 · 종류별 자원 수 · 캐릭터가 선 자리를 견준다.",
-   "why": "게임이 세우는 섬이 아직 world/terrain/test_island.tscn 이다 (G-104 때 지은 이름 그대로) — 내 섬 고정 맵 초안이 그 파일이라 그대로 썼다. 사람이 섬을 보고 다듬을 때 이름도 같이 정하면 된다; island_scene = null (섬 없이 들어가기)는 테스트만 쓰는 통로다 — 게임에서는 늘 섬이 선다",
-   "files": [
-    "game/core/game_root.gd",
-    "game/ui/menu/menu_root.gd",
-    "game/tests/world/terrain/test_island_in_game.gd",
-    "game/tests/ui/menu/test_enter_game.gd",
-    "game/tests/ui/menu/test_pause_menu.gd",
-    "game/tests/ui/hud/test_bag.gd",
-    "game/tests/ui/hud/test_hotbar.gd",
-    "game/tests/craft/stations/test_stations.gd",
-    "game/tests/life/farming/test_crops.gd",
-    "game/tests/life/farming/test_farmland.gd",
-    "game/tests/player/inventory_hotbar/test_held_item.gd",
-    "game/tests/world/day_night/test_game_clock.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "월드를 고르고 들어가면 섬 위에 캐릭터가 서 있다 — 회색 화면이 아니다",
-     "evidence": "tests/world/terrain/test_island_in_game.gd 가 메뉴 → 캐릭터 선택 → 월드 선택(「나루섬」) 의 진짜 길로 들어간다. test_entering_a_world_puts_an_island_under_the_character 가 게임 씬 안에 섬 · Terrain3D · 캐릭터 · 하늘이 있는지 본다. test_the_screen_shows_the_island_not_grey 는 화면을 그리는 카메라가 캐릭터의 것이고, 발밑 Terrain3D 높이가 설계 높이와 0.05 안에서 같고, 해가 light_energy>0 으로 비추는지 본다. 껍데기가 아닌 것을 직접 확인했다 — game_root.gd 의 _build_island 를 되돌려 섬을 안 세우게 바꿔 돌리니 8개 중 7개가 떨어졌다 (섬을 안 보는 핫바 검사 1개만 통과). 바꾼 파일은 md5 로 원래대로 돌려놓았다. 다만 픽셀을 읽지는 않는다 — 「회색이 아니다」는 카메라 · 땅 · 해 로 재는 대리 검사다. 사람이 한 번 눈으로 볼 값어치는 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "캐릭터가 땅을 딛고 서고 물에 빠지지 않는 자리에서 시작한다 (테스트)",
-     "evidence": "test_the_character_starts_standing_on_the_ground — 물리 30프레임 뒤 is_on_floor() 가 참이고, 선 자리가 blueprint.spawn 에서 1m 안이고, 키가 그 자리 땅 높이에서 0.3 안이다. test_the_character_does_not_start_in_the_water — shape.is_under_water(선 자리) 가 거짓(연못 · 개울 · 바다 모두), 땅 높이가 SEA_LEVEL 위, is_walkable_height 참, 캐릭터 y 가 바다 높이 위다. 자리를 설계 값이 아니라 캐릭터가 **실제로 선 global_position** 에서 읽는다"
-    },
-    {
-     "ok": true,
-     "criterion": "핫바 · 가방 · ESC 설정 창이 섬 위에서 그대로 동작한다 (앞 묶음이 깨지지 않았다)",
-     "evidence": "같은 파일의 세 검사가 섬이 선 게임 씬에서 진짜 키 이벤트(push_input)로 확인한다 — KEY_3 → 핫바가 보이고 3번 칸이 골라지고 손에 도끼가 들린다 · KEY_TAB → 가방이 열리고 캐릭터가 멈추고, 다시 누르면 닫히고 다시 움직인다 · KEY_ESCAPE → 설정 창 열고 닫기와 캐릭터 멈춤/재개. 앞 묶음 전체도 내가 직접 tools/test.sh 를 돌려 334개 모두 통과(191초, exit 0)했고 harness/guard.sh 도 통과(exit 0)했다"
-    },
-    {
-     "ok": true,
-     "criterion": "나갔다 같은 월드로 다시 들어오면 섬이 같다",
-     "evidence": "test_leaving_and_entering_the_same_world_gives_the_same_island 이 설계 값을 견주지 않는다 — 설정 창의 main_menu_requested 로 **정말 메인 화면까지 나갔다가**(나간 뒤 GameRoot 는 queue_free 된다) 같은 월드로 새 GameRoot·새 섬을 세워 들어간다. 그리고 Terrain3D.data.get_height 로 지도 전체 16×16=256곳의 **실제로 들어간 땅 높이**, 종류별 자원 그루 수, 캐릭터가 선 자리(0.2 안)를 견준다. 자원 자리가 bp.shape_seed 로 정해진 값이라 그루 수가 우연히 맞는 것이 아니다"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "GameRoot.island_scene · MenuRoot.island_scene — 섬을 바꿔 끼우는 통로. 기준에 없는 것이지만 테스트 시간 때문에 넣은 것이고(섬 하나 5초), 기본값이 진짜 섬이라 게임에서는 늘 섬이 선다. 기존 검사 9개에 island_scene = null 한 줄씩 들어간 것도 같은 까닭이다 — 그 검사들이 약해진 것이 아니라 섬 위 동작은 새 검사가 대신 본다",
-    "GameRoot.island() 접근자 — 새 검사가 섬을 집는 손잡이",
-    "코드가 세우는 섬 경로가 아직 res://world/terrain/test_island.tscn 이다. report.temporary 에 적혀 있으나 game_root.gd 의 ISLAND_PATH 주석에는 「임시」라는 말이 없다. 다음에 그 줄을 건드릴 때 한 마디 적어 두면 좋다 (막는 문제는 아니다)"
-   ]
-  },
-  "test": "/world/terrain/test_island.gd:86)\n         [1] _ready (res://world/terrain/test_island.gd:49)\n         [2] before_all (res://tests/world/day_night/test_day_in_world.gd:17)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [5] _run_test (res://addons/gut/gut.gd:650)\n         [6] test_delete_yes_removes_only_that_world (res://tests/ui/menu/test_world_select.gd:116)\n* test_the_island_has_a_clock_of_its_own\n* test_the_wheat_grows_by_the_clock\n* test_the_felled_tree_comes_back_by_the_clock\n3/3 passed.\n\n\nres://tests/world/day_night/test_game_clock.gd\n* test_a_full_day_comes_round_in_twenty_real_minutes\n* test_time_flows_on_its_own\n* test_the_sun_rises_and_sets_once_in_a_day\n* test_the_sky_follows_the_clock\n* test_the_days_are_counted_one_by_one\n* test_the_time_and_the_day_carry_over_a_save_and_a_load\n* test_a_brand_new_world_starts_on_the_first_morning\n7/7 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_tab_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n25/25 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n12/12 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              35\nTests               334\nPassing Tests       334\nAsserts            7304\nTime              190.024s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "b7d6dbb"
- },
- {
   "time": "2026-09-21 15:07:49",
   "epoch": 1789970869,
   "type": "pass",
@@ -8679,5 +8617,72 @@
   "epoch": 1790263815,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-25 00:55:19",
+  "epoch": 1790265319,
+  "type": "pass",
+  "title": "통과 — G-149 단계 1 (계단이 선 판에는 놓이지 않는다)",
+  "group": "G-149",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "계단이 선 판에는 토대 · 벽 · 문 · 지붕 · 계단 · 기둥 · 설치물(제작대 · 상자 · 밭)이 놓이지 않는다 — 휠로 올려도 · 옆 토대에 붙여도, 꼭대기 구멍까지. 바뀐 곳만 돌린 75개 파일 669개 테스트 통과",
+   "approach": "문제: 토대(plan_at)는 _taken 이 토대 · 설치물만 보고 계단을 안 봐서, 계단 판에 토대가 놓였다. 지붕 · 계단 · 기둥도 '같은 층'일 때만 막아 휠로 올리거나 다른 층에서 뻗으면 뚫렸고, 제작대 · 상자 · 밭은 계단을 전혀 몰랐다. 풀이: BuildPiece.stairs_in(node, 판, lo, hi) 한 곳을 두었다 — 그 판에 선 계단이 오르는 한 층(밑면 ~ 꼭대기, ±LEVEL_SLACK)에 lo~hi 가 닿으면 그 계단. 토대는 [가장 낮은 땅 ~ 윗면], 지붕은 [윗면-두께 ~ 윗면](꼭대기 구멍 포함), 계단은 [밑면 ~ 꼭대기]로 묻고, 벽 · 문은 계단의 머리 · 발치 변(계단이 뻗는 쪽과 수직인 변)만, 기둥은 모서리에 닿는 네 판으로 묻는다. 설치물은 Stations/Chests.aimed_spot · Farmland.can_till 이 같은 함수로 묻는다. 까닭은 모두 'taken' (앞 테스트와 같은 이름). 한 번 벽 · 문을 꼭대기 높이까지 막았더니 test_rooms 의 '구멍 둘레 난간 벽 · 계단 꼭대기 문'이 떨어졌다 — 위층 바닥에 선 변 · 모서리 것은 계단이 오르는 한 층 위라 막지 않도록(밑동을 2×LEVEL_SLACK 올려 묻는다) 고쳤다. 막는 것은 계단이 선 판 하나 — 옆 변 벽 · 옆 판 토대는 그대로 된다. 미리보기는 진짜 조준(A 위 · D 위 · E 위에 서서 계단 쪽을 겨눔) → refresh → BAD_COLOR 로 여섯 가지 확인. 횃불은 아직 놓는 길 자체가 없어(제작대 목록에 없다) 테스트에서 그것만 확인했다. 그림: harness/shot.sh 에 stairs_blocked 자리를 더해 찍었다 — 계단 비탈을 짚은 토대 판이 빨갛다(taken).",
+   "why": "",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/build/buildings.gd",
+    "game/craft/stations/stations.gd",
+    "game/world/storage/chests.gd",
+    "game/life/farming/farmland.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_stairs_plate.gd",
+    "spec/06_build/building.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "계단이 선 판에 토대 · 벽 · 문 · 지붕 · 계단 · 기둥 어느 것도 놓이지 않는다 — 휠로 높이를 올려도, 옆 토대에 붙여도 마찬가지다. 미리보기가 빨갛다 (테스트 — 여섯 가지 전부)",
+     "evidence": "test_building_stairs_plate.gd — test_no_foundation_on_the_stairs_plate_at_any_wheel_height 가 휠 -12~+12 칸 전부와 붙는 두 높이(D·E 땅 높이 attached · A 높이 attached)에서 taken·place_at null 을 본다. 벽·문(발치 변) · 지붕 · 계단(E 에서 옆으로, A 에서 같은 자리) · 기둥(계단 판 모서리)도 plan 과 place_at 으로 본다. 미리보기는 여섯 가지 모두 플레이어를 세워 진짜로 겨눈 뒤 refresh → preview_color == BAD_COLOR 로 확인한다. QA 가 stairs_in 이 늘 null 을 돌려주게 깨 보니 이 파일 10개 중 8개가 떨어졌다 (옆 변 · 난간 두 개만 남음 — 그 둘은 원래 통과해야 한다). test_rooms · test_building_roof_stairs · test_building_stairs_roof 도 함께 떨어졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "계단 위 공간(계단이 오르는 한 층 높이 안)에도 놓이지 않는다 — 계단 구멍을 막는 지붕 · 2층 바닥이 생기지 않는다 (spec 「계단이 선 제 판 위는 뚫린 채로 둔다」) (테스트)",
+     "evidence": "test_no_roof_over_the_stairs_even_when_a_side_wall_holds_it — 옆 벽이 받쳐서 지붕 자리가 뜨지만(no_floor 아님) taken 이고, 놓이지 않고, 미리보기가 빨갛다. 2층 바닥은 test_no_foundation… 의 A 높이(계단 꼭대기) attached 경우가 taken·place_at null 로 확인한다"
+    },
+    {
+     "ok": true,
+     "criterion": "계단 위에 설치물(제작대 · 상자 · 횃불 · 밭)도 놓이지 않는다 (테스트)",
+     "evidence": "test_no_station_chest_or_field_on_the_stairs_plate — 계단이 없을 때는 같은 조준에서 aimed_spot/can_till 이 자리를 주고(대조군), 계단을 놓은 뒤에는 Stations/Chests.aimed_spot null · Farmland.can_till false. 비탈을 곧장 짚은 밭도 false. 횃불은 놓는 길이 아직 없다 (game 코드에서 torch 는 recipes.json · 무게 · 번역에만 있고, 테스트가 stations.catalog 에 torch 가 없음을 단언한다). 거짓으로 통과한 것이 아니다"
+    },
+    {
+     "ok": true,
+     "criterion": "계단 옆 변에 벽을 세우거나 옆 판에 토대를 붙이는 것은 그대로 된다 — 막는 것은 계단이 선 판 하나다 (테스트)",
+     "evidence": "test_a_wall_on_the_stairs_side_edge_still_stands — E 서쪽 변(계단 옆 변) 벽 ok·놓임, E 다른 변 문, 서쪽 옆 판 (-1,1) 토대 놓임. before_each 에서 E(동쪽 옆 판) 토대도 놓인다. test_a_rail_or_door_on_the_upper_floor_around_the_hole_still_stands 는 꼭대기 문이 된다는 것을 확인한다. test_rooms(구멍 둘레 난간)도 전체 실행에서 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "`spec/06_build/building.md` 에 사람 결정 줄을 적는다 — 「계단이 선 판에는 아무것도 짓지 못한다 (사람 결정 2026-09-25)」",
+     "evidence": "building.md 26줄에 그 문장이 그대로 더해졌다. 지워진 사람 결정 줄은 없다 (diff 는 네 줄 추가뿐). 파일은 100줄"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 계단 위를 겨눈 토대 미리보기가 빨갛다",
+     "evidence": "shots.gd 에 stairs_blocked 뷰가 더해졌다. 구현 세션의 그림이 .loop/out 에 남지 않아 QA 가 harness/shot.sh /tmp/qa149 stairs_blocked 로 다시 찍었다: 로그 'STAIRS_BLOCKED 계단 비탈을 짚은 토대: 빨강 (taken)'. 그림에는 계단 비탈 판 위에 빨간 판이 떠 있다. 그림 속 판은 plan_at 결과로 따로 만든 메시이고, 진짜 미리보기 색은 테스트가 BAD_COLOR 로 확인한다"
+    }
+   ],
+   "issues": [
+    "횃불을 놓게 되면 계단 판도 막아야 한다 — 지금은 횃불을 놓는 길이 아예 없다 (stations.catalog 에 torch 가 없다). 그래서 이번 기준은 통과지만, 나중에 횃불을 놓는 길을 만들 때 BuildPiece.stairs_in(self, BuildPiece.plate_of(spot), spot.y, spot.y) 확인을 넣어야 한다. test_building_stairs_plate.gd 의 assert_false(stations.catalog.has(\"torch\")) 도 그때 '횃불 aimed_spot 이 null' 단언으로 바꿔라",
+    "stairs_blocked 그림이 남지 않았다 — 구현 세션이 찍었다고 한 stairs_blocked.png 가 .loop/out 에도 없고 다른 곳에서도 찾지 못했다. 앞으로 그림은 .loop/out/ 에 저장해 QA 가 볼 수 있게 하라 (harness/shot.sh .loop/out stairs_blocked)"
+   ],
+   "good": []
+  },
+  "test": "needs_gauges.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_placeable.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok    295s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           172\nTests            1479\nPassing Tests    1479\nFailing Tests       0\nPending             0\nAsserts         67630\nTime           296s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ab05292"
  }
 ]
