@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-09-21 08:50:29",
-  "epoch": 1789948229,
-  "type": "pass",
-  "title": "통과 — G-103 단계 5 (ESC 설정 창)",
-  "group": "G-103",
-  "step": "5",
-  "attempt": "1",
-  "report": {
-   "problem": "게임 중 ESC 로 여는 설정 창 — 계속하기 · 설정 · 월드 설정(서버장만) · 메인 화면으로 · 게임 종료. 창 뒤로 입력이 새지 않고 월드는 계속 돈다",
-   "approach": "세 가지가 문제였다. (1) ESC 를 누가 먼저 받나 — 캐릭터가 _unhandled_input 으로 ESC 를 집어 마우스를 풀고 있었다. 자식이 부모보다 먼저 받으므로 GameRoot 는 한 단계 앞인 _shortcut_input 에서 ESC 를 잡고 set_input_as_handled 로 끊었다. 캐릭터의 옛 처리는 설정 창이 없는 시험 섬에서 빠져나갈 길로 남겼다. (2) 창 뒤로 새는 입력 — 클릭은 창(mouse_filter STOP)이 삼키고, 카메라는 Pointer 의 커서 잡기를 풀면 이동량이 아예 쌓이지 않아 멈추며, 걷기는 씬 안 Player 의 controls_enabled 를 끈다. 일시정지(get_tree().paused)는 쓰지 않았다 — 세션 서버라 월드가 계속 돌아야 한다. (3) headless 에서는 Godot 의 GUI 마우스 판정이 돌지 않아(hovered 가 늘 null) 진짜 클릭을 밀어 넣어도 창이 삼키지 못했다. 그래서 클릭 검사를 둘로 나눴다 — 막는 장치(화면을 다 덮는가 · STOP 인가)를 보는 것과, 창이 떠 있을 때 클릭이 게임에 먹히지 않는 것(지금 좌클릭이 하는 일인 커서 다시 잡기가 일어나지 않는다)을 보는 것. 그 김에 캐릭터의 클릭-커서잡기에 controls_enabled 조건을 붙여 창 뒤에서 커서를 도로 뺏지 못하게 했다. 게임 종료는 진짜로 끄면 테스트가 통째로 죽으므로 quit_action(Callable) 을 두어 테스트가 갈아 끼우게 했다. 전체 168개 통과 · guard 통과.",
-   "why": "GameRoot.is_host = true — 멀티플레이 전이라 늘 자기가 서버장이다 (spec/01_settings/world-settings.md: 혼자 할 때는 자기가 서버장). 손님이 들어올 수 있게 되면 월드가 정한다; 월드 설정 단추는 disabled 인 빈 자리 — 항목(데스 페널티)은 월드 설정 단계에서 붙인다; 설정 창 뒤를 덮는 막 색 Color(0,0,0,0.55) — 디자인은 사람이 나중에 넣는다; 설정 창이 떠 있어도 숫자키 핫바 선택은 그대로 먹는다 — 수용 기준(이동·카메라·클릭)에 없어 손대지 않았다; GameRoot 가 씬 안의 Player 를 훑어 조작을 끈다 — 섬·플레이어가 GameRoot 에 붙는 단계에서 제 자리를 잡을 것이다",
-   "files": [
-    "game/ui/menu/pause_menu.gd",
-    "game/ui/menu/pause_menu.tscn",
-    "game/core/game_root.gd",
-    "game/core/game_root.tscn",
-    "game/player/movement_controls/player.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/ui/menu/test_pause_menu.gd",
-    "game/tests/ui/menu/test_menu_text.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "열린 창이 없을 때 ESC → 설정 창(계속하기 · 설정 · 월드 설정(서버장만, 빈 자리) · 메인 화면으로 · 게임 종료). 다시 ESC 또는 계속하기 → 닫힘",
-     "evidence": "test_pause_menu.gd 가 game_root.tscn 을 통째로 띄우고 진짜 KEY_ESCAPE 이벤트를 push_input 으로 넣는다 (흉내 함수가 아니라 InputMap 이 menu_exit 으로 옮긴다). test_escape_opens_the_pause_menu — 들어오면 닫혀 있다가 ESC 뒤 menu_open() 이 참이고 is_visible_in_tree() 도 참. test_escape_again_closes_it — 두 번째 ESC 로 닫힘. test_resume_closes_it — 계속하기 단추의 pressed 로 닫힘. test_the_pause_menu_has_the_five_items — 창 안 Button 글자를 모아 [MENU_RESUME, MENU_SETTINGS, MENU_WORLD_SETTINGS, MENU_TO_MAIN, MENU_QUIT_GAME] 과 순서까지 assert_eq (하나라도 빠지거나 더 있으면 떨어진다). test_world_settings_is_an_empty_slot_for_the_host_only — 서버장일 때 visible 이고 disabled(빈 자리), is_host=false 로 다시 들어가면 안 보인다."
-    },
-    {
-     "ok": true,
-     "criterion": "「메인 화면으로」 · 「게임 종료」는 캐릭터와 월드를 저장한 뒤 나간다",
-     "evidence": "test_going_to_the_main_menu_saves_first — 나가기 전에 인벤토리 0번을 {wood,3} 으로, 월드 시드를 777 로 바꿔 두고 단추를 누른 뒤 SaveStore 에서 **다시 읽어** 둘 다 들어 있는지 본다 (메모리의 그 객체가 아니라 디스크). test_quitting_the_game_saves_first — 인벤토리 1번을 {stone,5} 로 두고 게임 종료를 누르면 quit_action 이 1번 불리고 캐릭터·월드가 저장소에 남는다 (진짜 quit 는 테스트를 죽이므로 GameRoot.quit_action 을 갈아 끼웠다 — 끄는 방법만 바꾸고 저장 경로는 그대로다). test_going_to_the_main_menu_returns_to_the_main_screen — 게임이 있던 부모 자리에 MenuRoot 가 들어오고 current() 가 MainMenu 이며 GameRoot 는 사라진다."
-    },
-    {
-     "ok": true,
-     "criterion": "설정 창이 열려 있는 동안 이동 · 카메라 회전 · 클릭이 게임에 들어가지 않고 마우스 커서가 보인다. 게임은 일시정지되지 않는다 — 물리 · 처리가 계속 돈다 (테스트)",
-     "evidence": "여섯 개가 나눠 본다. 이동: test_moving_does_not_reach_the_game_while_open — 진짜 Player 를 넣고 창을 연 뒤 MOVE_RIGHT 를 0.4초 누르면 수평 이동이 0 (오차 0.05), 창을 닫고 같은 0.4초면 0.5m 넘게 간다 — 반대쪽도 확인하므로 「그냥 안 움직이는 테스트」가 아니다. 카메라: test_the_camera_does_not_turn_while_open — 창이 떠 있을 때 마우스를 200px 밀어도 camera_yaw() 가 그대로, 닫으면 바뀐다. 클릭: test_the_open_window_covers_the_screen_and_swallows_clicks 가 막는 장치(mouse_filter=STOP · 창 rect == 뷰포트 rect · 보임)를 보고, test_a_click_does_not_reach_the_game_while_open 이 실제 좌클릭을 넣어 지금 좌클릭의 유일한 효과인 커서 재잡기가 창이 떠 있으면 안 일어나고 닫으면 일어남을 본다. 커서: test_the_mouse_cursor_is_visible_while_open — 게임 중엔 잡혀 있고, 창을 열면 풀리고, 닫으면 다시 잡힌다. 안 멈춤: test_the_world_keeps_running_while_open — 게임 안에 박자 세는 노드를 넣어 창이 뜬 뒤에도 physics_ticks · process_ticks 가 늘고 get_tree().paused 가 거짓. test_the_player_still_falls_while_open — 바닥 없는 높이 30m 에 두면 창이 떠 있어도 y 가 내려간다. 코드도 get_tree().paused 를 아예 건드리지 않는다."
-    }
-   ],
-   "issues": [
-    "(기준은 통과했다 — 다음 단계에서 터질 것들이다) Player._ready() 가 조건 없이 Pointer.set_captured(true) 를 한다. 설정 창이 떠 있는 동안 플레이어가 씬에 들어오면 커서를 도로 뺏는다. 지금은 GameRoot 안에 플레이어가 없어 드러나지 않지만, 섬·플레이어를 GameRoot 에 붙이는 단계에서 「창이 떴는데 커서가 사라진다」로 나온다. 붙일 때 GameRoot 가 창 상태를 보고 커서를 정하게 하고, 그 경우를 보는 테스트를 같이 짜라.",
-    "GameRoot.set_menu_open(false) 이 씬 안 모든 Player 의 controls_enabled 를 무조건 true 로 되돌린다. debug_tools.gd:65 도 같은 값을 쓰므로, 디버그 비행 카메라를 켠 채 ESC 를 열었다 닫으면 꺼 뒀던 조작이 되살아난다. 지금은 디버그 도구가 시험 섬에만 있어 부딪히지 않는다 — 두 곳이 한 씬에 모이는 단계에서 「누가 껐나」를 세는 방식(이유별 잠금)으로 바꾸고 테스트를 붙여라.",
-    "클릭 차단은 창이 실제로 삼키는 것을 확인하지 못했다. headless 에는 커서가 없어 Godot GUI 판정이 안 돌기 때문에, 지금 테스트는 「좌클릭의 유일한 효과인 커서 재잡기가 안 일어난다」로 대신 본다. G-105 에서 좌클릭이 평타가 되면 이 확인이 비어 버린다 — 평타를 넣을 때 「창이 떠 있으면 평타가 안 나간다」를 직접 보는 테스트를 같이 짜라.",
-    "막 색 Color(0,0,0,0.55) 가 pause_menu.tscn 안에 있어 「임시」 표시를 달 수 없다. report.json 에만 적혀 있어 다음 사람이 보기 어렵다 — pause_menu.gd 머리말에 「막 색은 임시, 디자인은 사람이 나중에」 한 줄을 남겨라."
-   ],
-   "good": [
-    "「설정」 항목이 기존 ui/menu/settings_screen.tscn 을 창 안에 띄우고 접는다 (test_settings_opens_the_empty_settings_screen). 기준은 항목이 있을 것만 요구했다 — 작은 덤이지만 spec/12_ui/menu.md 의 「설정 화면 항목 미정」을 넘지 않고 빈 화면을 재활용했으므로 앞선 단계를 먹지는 않았다.",
-    "GameRoot 에 left_to_main_menu · quit_requested 신호와 quit_action 갈아끼우기 자리를 뒀다. 기준에 없지만 「저장한 뒤 나간다」를 진짜로 확인하려면 필요한 자리다.",
-    "GameRoot._players() 가 씬을 훑어 조작을 끈다 — 임시라고 적혀 있고, 섬·플레이어가 붙는 단계에서 제자리를 잡을 것이다."
-   ]
-  },
-  "test": "om_world_select_to_character_select\n* test_escape_goes_back_from_world_create_to_world_select\n* test_created_world_appears_in_the_list\n9/9 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/ui/menu/test_pause_menu.gd\n* test_escape_opens_the_pause_menu\n* test_escape_again_closes_it\n* test_resume_closes_it\n* test_the_pause_menu_has_the_five_items\n* test_world_settings_is_an_empty_slot_for_the_host_only\n* test_settings_opens_the_empty_settings_screen\n* test_going_to_the_main_menu_saves_first\n* test_going_to_the_main_menu_returns_to_the_main_screen\n* test_quitting_the_game_saves_first\n* test_the_open_window_covers_the_screen_and_swallows_clicks\n* test_a_click_does_not_reach_the_game_while_open\n* test_moving_does_not_reach_the_game_while_open\n* test_the_camera_does_not_turn_while_open\n* test_the_mouse_cursor_is_visible_while_open\n* test_the_world_keeps_running_while_open\n* test_the_player_still_falls_while_open\n16/16 passed.\n\n\nres://tests/ui/menu/test_world_create.gd\n* test_name_and_seed_are_saved\n* test_empty_name_is_refused\n* test_empty_seed_is_random\n* test_empty_seed_still_saves_the_world\n* test_the_same_words_give_the_same_seed\n* test_back_asks_to_go_back\n6/6 passed.\n\n\nres://tests/ui/menu/test_world_select.gd\n* test_saved_worlds_are_listed\n* test_nothing_saved_means_no_rows\n* test_new_world_button_asks_for_the_create_screen\n* test_choosing_a_world_tells_which_one\n* test_delete_asks_first\n* test_delete_no_keeps_the_world\n* test_delete_yes_removes_only_that_world\n* test_back_asks_to_go_back\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n24/24 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:67)\n         [1] _ready (res://world/terrain/test_island.gd:38)\n         [2] before_all (res://tests/world/terrain/test_island_walk.gd:12)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n9/9 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              21\nTests               168\nPassing Tests       168\nAsserts            6310\nTime              134.386s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "09a16d3"
- },
- {
   "time": "2026-09-21 09:08:07",
   "epoch": 1789949287,
   "type": "pass",
@@ -8803,5 +8744,30 @@
    "decision": null
   },
   "test": "egs — 10 hits · no yield\"]\n9/9 passed.\n\n\nres://tests/life/hunting/test_carry_cage.gd\n* test_right_click_puts_the_captured_animal_in_the_bag\n* test_a_live_animal_is_not_picked_up\n* test_each_captive_keeps_its_own_slot\n* test_a_full_bag_leaves_the_animal_on_the_ground\n* test_on_the_ground_the_gauge_falls_and_the_animal_wakes_and_flees\n    --- Awaiting 0.5 seconds  ---\n* test_in_the_bag_the_gauge_falls_and_the_animal_escapes\n    --- Awaiting 0.5 seconds  ---\n* test_how_long_it_sleeps_differs_by_animal\n    --- Awaiting 1.0 seconds  ---\n* test_three_cages_are_crafted\n* test_a_caged_animal_wakes_but_does_not_escape\n* test_an_animal_does_not_fit_a_cage_smaller_than_itself\n* test_the_smallest_cage_that_fits_is_used\n11/11 passed.\n\n\nres://tests/life/hunting/test_part_yields.gd\n* test_deer_parts_yield_what_the_data_says\n* test_an_unhurt_deer_yields_everything_in_the_data\n* test_yields_are_read_from_the_data_not_the_animal\n* test_a_head_shot_cuts_only_the_head_yield\n    머리 한 발 — 머리 피해 { &\"head\": 26 } · 산출 { \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 } → { \"antler\": 1, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 }\n* test_a_body_shot_cuts_only_the_body_yield\n* test_more_damage_to_a_part_leaves_less_of_it\n    몸통에 맞을수록 남는 몫: [1.0, 0.8, 0.6, 0.4]\n* test_part_damage_is_what_actually_came_off\n* test_killing_by_legs_only_keeps_head_and_body_whole\n    다리만 10 발로 잡았다 — 산출 { \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 }\n* test_killing_by_body_shots_ruins_the_body_but_not_the_head\n9/9 passed.\n\n\nres://tests/life/hunting/test_sedation_capture.gd\n* test_above_ten_percent_the_gauge_does_not_rise\n* test_below_ten_percent_the_same_round_raises_the_gauge\n* test_a_full_gauge_captures_and_that_differs_from_a_kill\n* test_a_captured_animal_stays_put\n    --- Awaiting 30 physics frames  ---\n* test_aconite_over_the_need_kills_instead_of_capturing\n* test_aconite_exactly_filling_the_gauge_still_captures\n* test_lower_tiers_over_the_need_still_capture\n* test_a_deer_takes_three_low_tier_rounds\n* test_the_amount_differs_by_animal\n* test_sedation_values_live_in_one_place_marked_temporary\n10/10 passed.\n\n\n\n\n==============================================\n= 6 Orphans\n==============================================\ntest_ui_shots.gd\n    - test_island_shot_builds_the_real_island\n        * [HandView:<Control#2429122798687>(hand_view.gd)] + 5\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/craft/test_from_empty_hands.gd\n- test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    [Failed]:  집 지을 빈 땅 옆까지 걸어왔다\n          at line 884\n    [Failed]:  wood_foundation 를 놓을 자리가 미리 보인다 ((-10.5, 0.0, -10.5) 를 짚었다): { &\"at\": (28.5, 4.2, -1.5), &\"depth\": 4.49999976158142, &\"cells\": [(27, -3), (27, -2), (27, -1), (28, -3), (28, -2), (28, -1), (29, -3), (29, -2), (29, -1)], &\"attached\": false, &\"ok\": false, &\"why\": \"steep\" }\n          at line -1\n    [Failed]:  Expected [<null>] to be anything but NULL:  토대를 놓았다\n          at line 887\n\nTotals\n------\nScripts              23\nTests               163\nPassing Tests       162\nFailing Tests         1\nAsserts           3986/3989\nOrphans               6\nTime              409.648s\n\n\n---- 1 failing tests ----\n\nWARNING: 6 RIDs of type \"CanvasItem\" were leaked.\n   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2735)\nWARNING: 96 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\nERROR: 3 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.\nERROR: 70 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.\nERROR: 1 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-24 16:35:37",
+  "epoch": 1790235337,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "ROOF_SPAN(장 수)을 버리고 받침에서 이어 붙인 개수(토대 0 · 붙은 것 1 · 그 옆 2, 기둥은 다시 0)로 재고, 나무 3 · 석재 4 · 철 5 를 넘으면 안 놓이고 넘어가면 연쇄로 무너진다. 바뀐 곳만: 23개 스크립트 163개 중 162개 통과 — 떨어진 1개(test_from_empty_hands)는 HEAD 코드에서도 똑같이 떨어진다",
+   "approach": "앞 회차가 짠 코드가 거의 다 되어 있었고, 기계 검사를 떨어뜨린 것은 test_from_empty_hands 하나였다. build_piece.gd · buildings.gd · shots.gd 를 HEAD 판으로 잠깐 되돌려 그 테스트만 돌려 보니 똑같은 자리에서 똑같이 떨어졌다. 그래서 이 단계의 변경 때문이 아니다 — 65fb024(G-903.4 도중, 「건축은 G-145 뒤로 옮긴다」)가 아직 끝나지 않은 건축 부분을 TMPDBG 줄과 함께 커밋해 둔 것이다. 원인은 두 겹이다: ① 7. 에서 세운 과녁 상자(2×4×2m, -X 로 6m)가 제작대 앞에서 집 자리로 곧게 가는 길을 막는다 ② 과녁을 비켜 가게 고쳐 보면 토대는 놓이지만, 캐릭터가 0.2m 높이 토대 위로 걸어 오르지 못한다(캡슐 반지름 0.35 에 비해 턱이 높아 45° 를 넘는 벽으로 친다). 그 뒤 벽 · 방 · 저장 단언이 줄줄이 떨어진다. ②는 건축 크기 · 걸어 오르는 턱의 문제라 이 단계의 몫이 아니어서, 테스트에 손댄 것은 되돌렸다. 이 단계 기준: build 폴더 전체(14개 스크립트 100개) 통과. roof_reach 를 찍어 봤더니 벽 한 장에서 뻗은 지붕이 1 · 2 · 3장째는 초록, 4장째부터는 빨강이다(ROOF_REACH 줄로도 1·2·3 초록, 4 빨강(4), 5 · 6 빨강(-1))",
+   "why": "BuildPiece.LINK_LIMIT 나무 3 · 석재 4 · 철 5 — spec 에도 「임시, 지어 보고 정한다」로 적혀 있다",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/build/buildings.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_link_count.gd",
+    "game/tests/build/test_building_collapse.gd",
+    "game/tests/build/test_building_stairs_note.gd",
+    "game/tests/build/test_building_stairs_roof.gd",
+    "game/tests/build/test_rooms.gd",
+    "game/tests/build/test_building_roof_support.gd (지움 — 장 수 규칙 테스트)"
+   ],
+   "decision": {
+    "question": "test_from_empty_hands.gd 의 건축 부분(G-903.4 를 하다가 커밋했고, G-145 뒤로 미뤄 둔 것)이 HEAD 에서도 떨어진다. 그래서 G-145 의 어느 단계를 해도 기계 검사가 떨어진다. 과녁이 길을 막는 것은 테스트만 고치면 되지만, 캐릭터가 0.2m 토대 위로 걸어 오르지 못하는 것은 게임 규칙 문제다. 어느 쪽으로 할지 정해 달라: (가) 턱을 오르는 높이를 정해 준다(예: 0.3m까지는 걸어서 오른다) (나) 토대를 땅 높이에 맞춘다 (다) G-903.4 를 다시 할 때까지 그 부분을 테스트에서 빼 둔다"
+   }
+  }
  }
 ]
