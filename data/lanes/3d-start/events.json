@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-21 23:03:16",
-  "epoch": 1789999396,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-21 23:36:38",
   "epoch": 1790001398,
   "type": "pass",
@@ -8407,5 +8401,14 @@
   },
   "test": "--- 바뀐 곳만: 46 개 ---\ntest.sh: 파일 46 개를 6 개씩 한꺼번에 돌린다\nok     36s  res://tests/world/frontier_islands/test_voyage.gd\nok     37s  res://tests/settings/save/test_round_trip.gd\nok     45s  res://tests/world/terrain/test_island_resources.gd\nok     52s  res://tests/life/hunting/test_animal_walk.gd\nok     30s  res://tests/life/hunting/test_animal_sound.gd\nok     34s  res://tests/world/terrain/test_island_in_game.gd\nok     32s  res://tests/settings/save/test_dead_save.gd\nok     31s  res://tests/life/hunting/test_island_animals.gd\nok     17s  res://tests/world/terrain/test_island_shape_marks_note.gd\nok     14s  res://tests/life/hunting/test_butchery.gd\nok     27s  res://tests/world/terrain/test_island_walk.gd\nok     15s  res://tests/core/debug/test_dev_box.gd\nok     13s  res://tests/life/hunting/test_carry_cage.gd\nok     13s  res://tests/build/test_building_roof_stairs.gd\nok     12s  res://tests/life/hunting/test_leg_slow.gd\nok     11s  res://tests/life/farming/test_farmland.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     11s  res://tests/world/day_night/test_day_light.gd\nok     10s  res://tests/core/debug/test_dev_box_open.gd\nok      8s  res://tests/world/day_night/test_day_in_world.gd\nok      9s  res://tests/life/gathering/test_herbs.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      7s  res://tests/life/gathering/test_gathering.gd\nok      6s  res://tests/world/frontier_islands/test_dock_building.gd\nok      6s  res://tests/world/storage/test_chest_break.gd\nok      4s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      4s  res://tests/ui/menu/test_pause_menu.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok    153s  res://tests/world/terrain/test_island_shape.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            46\nTests             422\nPassing Tests     422\nFailing Tests       0\nPending             0\nAsserts         10554\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "d853ce7"
+ },
+ {
+  "time": "2026-09-25 07:07:28",
+  "epoch": 1790287648,
+  "type": "wait",
+  "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
+  "group": "G-146",
+  "step": "2",
+  "attempt": "1"
  }
 ]
