@@ -1,9 +1,9 @@
 {
  "state": "stopped",
- "reason": "하네스가 고장났다고 한다: harness/shot.sh 가 상대 경로의 저장 폴더를 절대 경로로 바꾸지 않는다 — `harness/shot.sh .loop/out …` 로 부르면 그림이 game/.loop/out/ 에 저장되어 QA 가 찾지 못한다 (G-149.1 에서 stairs_blocked.png 가 사라진 까닭). OUT=\"$(cd \"$OUT\" && pwd)\" 처럼 절대 경로로 바꾸면 된다. 이번 회차는 옮겨서 해결했다.",
- "updated": "2026-09-25 00:56:34",
- "updated_epoch": 1790265394,
- "ended": "2026-09-25 00:56:34",
+ "reason": "하네스가 성하지 않다",
+ "updated": "2026-09-25 00:56:36",
+ "updated_epoch": 1790265396,
+ "ended": "2026-09-25 00:56:36",
  "progress": {
   "groups_total": 38,
   "groups_done": 31,
