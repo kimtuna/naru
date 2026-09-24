@@ -1,0 +1,21 @@
+{
+ "state": "running",
+ "reason": "",
+ "updated": "2026-09-24 23:13:16",
+ "updated_epoch": 1790259196,
+ "ended": "2026-09-24 22:27:58",
+ "progress": {
+  "groups_total": 36,
+  "groups_done": 29,
+  "groups_waiting": 0,
+  "steps_total": 133,
+  "steps_done": 100
+ },
+ "started": "2026-09-24 21:26:58",
+ "group": "G-147",
+ "step": "2",
+ "step_title": "좌표를 넣으면 그 자리에 표가 뜬다",
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-24 23:13:16"
+}
