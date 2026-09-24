@@ -905,7 +905,7 @@
   - 기준: chest 찍기에 제작대 창이 남아 겹친다 — /tmp/g129/after/chest.png 에 앞 자리의 제작대 창이 그대로 깔린다. ui_shots 가 제작대를 먼저 치워 StationWindow._refresh 가 풀린 제작대로 can_start 를 부르는 SCRIPT ERROR 가 난다(보고서 기준, 고치기 전에도 났다). 자리를 바꿀 때 창을 먼저 닫거나 _refresh 에서 is_instance_valid 로 막고, 찍은 로그에 SCRIPT ERROR 가 없는지 보라
 - [x] 9. 조준점 겹침은 창이 뜨면 해가 없을 수 있다 (G-129 단계 2)
   - 기준: 조준점 겹침은 창이 뜨면 해가 없을 수 있다 — UIMEASURE 목록 4곳 중 3곳이 Crosshair/H 를 가린다는 줄이다. 창이 열리면 조준점을 숨기는지(게임 쪽) 아니면 재는 검사가 Crosshair 를 가려도 되는 쪽으로 빼야 하는지 G-901 에서 정하고, 어느 쪽이든 목록이 진짜 흠만 뱉게 하라
-- [ ] 10. 제작대 목록 휠 스크롤이 확인되지 않았다 (G-129 단계 2)
+- [x] 10. 제작대 목록 휠 스크롤이 확인되지 않았다 (G-129 단계 2)
   - 기준: 제작대 목록 휠 스크롤이 확인되지 않았다 — 구현 세션이 headless push_input 휠로 스크롤을 못 움직였다고 적었다. Scroll 이 PASS 라 휠을 받는지, scroll_vertical 을 직접 바꿔 아래 줄이 보이는 자리로 오는지 단언하는 테스트를 test_station_window.gd 에 넣어라
 - [ ] 11. ui_shots 의 _reset 이 제작대 창을 못 닫는다 (G-129 단계 2)
   - 기준: ui_shots 의 _reset 이 제작대 창을 못 닫는다 — stations.open(null) 은 무시되어 chest 사진에 앞 제련로 창이 남고 can_start SCRIPT ERROR 가 난다(구현 세션 보고). stations.close() 로 바꾸고 찍는 폭 단계에서 chest.png 를 열어 확인하라
@@ -934,6 +934,8 @@
   - 기준: 전체 합계에서 테스트 하나가 통과도 실패도 아니다 — test.log 합친 결과가 Tests 1440 · Passing 1439 · Failing 0 · Pending 0 이다. GUT 의 risky(단언 없는) 테스트가 하나 있는 것으로 보이는데 tools/test.sh 가 임시 폴더를 지워 어느 파일인지 남지 않는다. test.sh 의 합치는 awk 에 Risky 줄도 더하고, Tests 와 Passing+Failing+Pending 이 안 맞으면 그 파일 이름을 맨 뒤에 찍게 하라
 - [ ] 12. 줄 · 버퍼 칸 누르기에는 지킴이가 없다 (G-910 단계 8)
   - 기준: 줄 · 버퍼 칸 누르기에는 지킴이가 없다 — station_window.gd 의 _press 와 _collect 는 _station == null 만 보고 _drop_freed() 를 안 부른다. 제작대가 풀린 그 프레임 안(_process 의 _refresh 가 돌기 전)에 줄이나 버퍼 칸이 눌리면 풀린 객체로 start_craft · collect 를 불러 같은 SCRIPT ERROR 가 난다. _press · _collect 첫머리에 _drop_freed() 를 넣고, test_station_window.gd 의 test_a_station_freed_while_the_window_is_open_is_not_asked_anything 에서 station.free() 직후 wait_process_frames 없이 row(AXE).pressed.emit() · buffer_slot(0).pressed.emit() 을 먼저 한 번 더 눌러 조용한지 단언하라 (지금은 station_kind() 가 먼저 불려 null 이 된 뒤에만 누른다)
+- [ ] 11. station_window.gd 머리말의 줄 수가 낡았다 (G-910 단계 10)
+  - 기준: station_window.gd 머리말의 줄 수가 낡았다 — 25행 「제작대 레시피가 스물 몇 줄이라 화면 아래로 넘쳤다」인데 recipes.json 의 가공대 레시피는 44줄이다(이번 테스트 주석은 「마흔 몇 줄」로 맞다). 「마흔 몇 줄」로 고쳐라 (막는 것은 아니다)
 
 ## [ ] G-911 G-910 에서 뺀 것 — G-145 뒤에 한다
 - 차선: 3d-lane2 (사람 결정 2026-09-25 — Fable 이 G-910 다음에 하고 멈춘다)
