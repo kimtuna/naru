@@ -1,67 +1,5 @@
 [
  {
-  "time": "2026-09-21 22:51:02",
-  "epoch": 1789998662,
-  "type": "pass",
-  "title": "통과 — G-113 단계 2 (화산 섬 — 유황이 나는 섬)",
-  "group": "G-113",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "유황 개척 섬을 가운데 화산 하나(꼭대기 분화구 · 둘레 절벽)로 빚고, 고정 맵 · 광물 · 다시 가기를 시험으로 묶었다",
-   "approach": "앞 회차의 구현은 워킹트리에 그대로 남아 있었고, 막힌 것은 QA 가 qa.json 을 남기지 못한 것뿐이었다 (QA 로그: 전체 테스트가 끝나기를 기다리다 끊겼다). 그래서 이번에는 만든 것을 처음부터 다시 검사했다 — 개척 섬 테스트 23개 · 전체 486개 · guard 모두 통과, 화산 섬을 harness/shot.sh 로 찍어 가운데 분화구가 실제로 파여 있는 것까지 눈으로 확인했다.\n\n지형 쪽에서 풀어야 했던 것 셋: (1) 분화구 깊이를 뿔 끝에서 재면 비탈이 이미 내려간 만큼 파는 셈이라 아무리 깊이 파도 테두리가 바닥보다 낮아진다 — 테두리 높이(rim_level)에서 재도록 했다. (2) 침식 뒤 꼭대기를 평평하게 자르는 마무리가 분화구 테두리를 함께 깎았다 — crater_radius 가 있는 섬은 자르지 않는다 (꼭대기의 평평한 자리는 분화구 바닥이다). (3) 절벽 띠는 산의 몫을 단으로 끊는데, 분화구는 그 몫이 아래로 내려간 자리라 파 놓은 분화구가 계단으로 잘렸다 — 분화구 안에는 띠를 세우지 않게 했다.\n\n이번 회차에 고친 것은 하나다. 「다시 가면 캔 자리가 그대로다」 시험이 메모리에 들고 있던 섬 상태로 되돌리고 있어, 저장이 망가져도 통과할 수 있었다. 배를 타기 전에 방금 저장한 월드를 저장본에서 다시 읽어 갈아 끼우도록 바꿨다 — 이제 되돌리는 것이 정말 저장본이다.",
-   "why": "분화구 크기 · 깊이 — crater_radius 55m · crater_depth 34m · crater_rim 9m · crater_floor 0.3 (섬 모양은 사람이 같이 만든다, 사람 결정 2026-09-21. 테두리가 8m 절벽으로 서고 바닥이 서 있을 만큼 평평한 가장 작은 값에서 잡았다); 화산 몸통 — mountain_height 170m · mountain_radius 200m · mountain_profile 1.0(곧은 원뿔) · ridge_strength 0.35 (내 섬 산 240m/430m 보다 작고 가파르게 — 「내 섬과 다른 모양」이 눈에 들어오게); 화산 둘레 절벽 — cliff_step 32m · cliff_coverage 0.9 · path_angle_deg 20° (한 갈래만 걸어 오르게 트고 나머지를 벽으로 세운 값); 화산 섬에 연못 · 개울이 없다 — 분화구에 연못을 두면 물가 자락 깎기가 분화구 벽을 허물고, 들판이 좁아 연못이 바다로 미끄러진다. spec 의 「미정」에 적어 두었다",
-   "files": [
-    "game/world/terrain/island_blueprint.gd",
-    "game/world/terrain/island_landform.gd",
-    "game/world/terrain/island_mountain.gd",
-    "game/world/frontier_islands/sulfur_island_blueprint.tres",
-    "game/core/debug/shots.gd",
-    "game/tests/world/frontier_islands/test_volcano.gd",
-    "game/tests/world/frontier_islands/test_voyage.gd",
-    "spec/03_world/frontier-islands.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "개척 섬은 고정 맵이다. 자원 배치만 월드 시드를 쓴다 (테스트)",
-     "evidence": "test_volcano.gd test_the_frontier_island_is_a_fixed_map — 유황 섬을 시드 4242 · 777777 로 두 번 구워 (use_cache=false, 저장본을 안 쓴다) heights · colors_data · ponds · rivers · herb_spots · 식생 전부가 같음을 본다. test_only_the_resources_follow_the_world_seed 는 두 시드의 자원 자리를 맞대어 같은 자리·같은 종류로 남은 것이 열에 하나가 안 되는 것을 (총 300개 넘는 표본에서) 본다. test_the_resources_do_not_come_from_the_shape_seed 는 shape_seed 로 깔아 본 배치와 다름을 확인 — 쓰는 것이 월드 시드다."
-    },
-    {
-     "ok": true,
-     "criterion": "가운데에 화산이 하나 있다 — 꼭대기에 분화구, 둘레에 절벽. 내 섬과 다른 모양이다",
-     "evidence": "산 하나: test_one_mountain_stands_in_the_middle_of_the_island — 가장 높은 점이 섬 한가운데 mountain_radius 안에 있고, 자락 밖 최고 높이가 60m 미만(두 번째 봉우리 없음). 분화구: test_the_summit_has_a_crater — 36 방향으로 나가 가장 낮은 테두리까지 재어 20m 넘게 우묵하고, 바닥이 반지름 12m 안에서 8m 안쪽으로 평평함. 둘레 절벽: test_cliffs_ring_the_volcano — 360 방향에서 45°보다 가파른 구간이 이어진 벽면을 재어 열에 여섯 넘는 방향에 8m 이상 벽면이 서는 것을 본다 (8m 이상 = spec/03_world/terrain.md 의 절벽 정의, IslandRelief 의 걸을 수 있는 한계와 같은 잣대). 내 섬과 다른 모양: test_my_islands_mountain_has_no_crater — 같은 자(_bowl_depth)를 두 섬에 대어 내 섬은 0.0m, 화산은 34.7m. 일부러 깨 보았다: crater_depth 34→0 으로 놓으면 3개가 떨어지고, mountain_radius 200→500 · cliff_coverage 0 (완만한 민둥 원뿔) 으로 놓으면 절벽 시험이 191/360 으로 떨어진다 — 껍데기가 아니다. 본 뒤 .tres 는 되돌렸다 (diff 로 확인)."
-    },
-    {
-     "ok": true,
-     "criterion": "유황은 이 섬에만, 철은 내 섬에만 난다 (테스트)",
-     "evidence": "test_sulfur_grows_here_and_iron_does_not · test_iron_grows_on_my_island_and_sulfur_does_not — 실제로 구운 두 섬의 resources 에서 광물 그루 수를 세어 한쪽은 0 임을 본다. test_the_list_gives_each_ore_to_one_island_only 은 islands.json 목록 전체를 돌며 ores 에 sulfur 는 sulfur 섬에만 · iron 은 home 에만 적혀 있음을 본다 (섬이 늘어도 지켜진다). 일부러 깨 보았다: 유황 섬 ores 에 iron 을 더하면 2개가 떨어진다. 되돌렸다."
-    },
-    {
-     "ok": true,
-     "criterion": "다시 가면 캔 자리가 그대로다",
-     "evidence": "test_voyage.gd test_going_back_to_the_frontier_island_finds_it_as_i_left_it — 메뉴에서 들어간 진짜 게임 씬에서 개척 섬에 갔다 돌아와 저장한 뒤, 배를 타기 전에 _store.load_world 로 디스크에서 다시 읽은 world 를 갈아 끼우고 (SaveStore.load_world → _read + WorldData.from_dict, 메모리 객체가 아니라 JSON 에서 새로 빚는다) 다시 건너간다. GameRoot.sail_to 는 섬 노드를 free 하고 다시 세운 뒤 world.islands 로 _restore_island 하므로, 저장이 망가지면 gone_marks 가 비어 떨어진다. 캔 자리(gone_marks · is_gone)뿐 아니라 regrowth.taken_days 까지 같은지 보아 재생 날을 잃지 않는 것도 확인한다."
-    }
-   ],
-   "issues": [
-    "(막는 것 아님 · 다음에 손볼 때 같이) spec/03_world/terrain.md 에 낡은 줄이 둘 있다. (1) 「화산 · 설산은 내 섬에 두지 않는다 — 뜨거운 섬 · 차가운 섬은 개척 섬, 화산 · 설산은 원정 섬」 — 이번 사람 결정(2026-09-21, 유황 개척 섬 = 화산 섬)과 어긋난다. 「화산은 원정 섬」이 아니라 「내 섬에는 두지 않는다」로 고치고 개척 섬 화산을 적어라. (2) 「봉우리 꼭대기는 평평하다 (사람 결정 2026-09-19)」 — 화산은 예외다 (crater_radius 가 있으면 summit_flat 자르기를 건너뛴다, island_landform.gd build()). 예외를 그 줄에 적어라. 사람이 정한 줄이므로 지우지 말고 덧붙여라.",
-    "(막는 것 아님) test_cliffs_ring_the_volcano 는 절벽 띠 설정에 둔하다 — cliff_coverage 를 0.9→0 으로 놓아 절벽 띠를 통째로 꺼도 11개가 그대로 통과했다 (335/360). 가파른 원뿔 비탈만으로도 45°+ 8m 벽면이 서기 때문이라 기준(둘레에 절벽) 자체는 지켜지지만, cliff_step · cliff_coverage 가 사라져도 아무도 못 알아챈다. 화산 모양을 다시 만질 때 「걸어 오를 수 없는 벽면이 단으로 끊겨 있다」를 보는 잣대(예: walk_reach 로 산비탈 대부분이 스폰에서 닿지 않는다)를 하나 더하면 좋다.",
-    "(막는 것 아님) 임시 표시가 분화구 값에만 붙어 있다. island_blueprint.gd 의 crater_* 에는 「임시」가 적혀 있지만 화산 몸통(mountain_height 170 · mountain_radius 200 · mountain_profile 1.0 · ridge_strength 0.35)과 둘레 절벽(cliff_step 32 · cliff_coverage 0.9 · path_angle_deg 20)은 어디에도 임시라고 적혀 있지 않다. spec/03_world/frontier-islands.md 의 「분화구 크기 · 깊이는 임시」를 「설계 값은 모두 임시 — 사람이 같이 다듬는다」로 넓혀라."
-   ],
-   "good": [
-    "화산 섬에서 연못 · 개울을 뺐다 (sulfur_island_blueprint.tres: ponds · river_sources 를 빈 배열로). 기준에 없던 것이고, 물은 terrain.md 의 「연못마다 개울이 이어진다」에 걸리는 주제다. spec/03_world/frontier-islands.md 미정에 까닭과 함께 적어 두었으니 사람이 보고 정하면 된다.",
-    "core/debug/shots.gd 에 island=<섬 id> 인자와 crater · crater_top 찍을 자리를 더했다 (개발용 도구 — 사람 화면을 건드리지 않고, guard 통과). 기준에 없지만 화산을 눈으로 확인하는 데 쓴 것이다.",
-    "island_blueprint.gd 에 mountain_profile 을 새로 두었다 (내 섬은 기본값 1.35 로 그대로). 화산을 곧은 원뿔로 만들기 위한 것이라 기준 안쪽으로 본다."
-   ]
-  },
-  "test": "rontier_island_does_not_carry_my_islands_marks\n* test_sailing_back_finds_my_island_as_i_left_it\n* test_each_island_is_saved_on_its_own\n* test_going_back_to_the_frontier_island_finds_it_as_i_left_it\n7/7 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_tab_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              53\nTests               486\nPassing Tests       486\nAsserts            8387\nTime              402.829s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "1f75373"
- },
- {
   "time": "2026-09-21 23:03:16",
   "epoch": 1789999396,
   "type": "start",
@@ -8419,5 +8357,55 @@
   },
   "test": "_note.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      0s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    420s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           172\nTests            1479\nPassing Tests    1479\nFailing Tests       0\nPending             0\nAsserts         68026\nTime           420s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "b60e444"
+ },
+ {
+  "time": "2026-09-25 07:07:16",
+  "epoch": 1790287636,
+  "type": "pass",
+  "title": "통과 — G-146 단계 1 (밤이 가장 어둡다)",
+  "group": "G-146",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "밤이 가장 어둡다 — 땅에 닿는 빛을 해의 높이 하나로 정하는 DayLight 를 섬에 세웠다 (달빛 · 밤 주변광 보정 끔). 바뀐 곳만: 46개 파일 422개 테스트 통과",
+   "approach": "찍어서 재 보니 사람이 짚은 그대로였다 — 18:30 땅은 새까맣고 22:00 은 달빛이 들판에 그림자까지 드리웠다. 까닭은 Sky3D 둘: (1) 달빛(DirectionalLight)이 해가 진 뒤에만 켜진다 (2) night_ambient_boost 가 해가 지는 순간 하늘 몫을 1.0→0.7 로 낮춰 평평한 주변광을 더 비춘다. 노을 무렵(해가 막 진 때)에는 햇빛도 꺼지고 둘 다 아직 약해 땅을 비출 것이 없었다. 풀이: world/day_night/day_light.gd — 달빛과 밤 보정을 끄고(달은 하늘에 그대로 뜬다), 하늘 몫을 0.7 로 고정하고, 평평한 주변광의 밝기를 해의 높이(sky.sun 방향의 y)만 따르는 곡선(fill_for, 해가 높을수록 커짐)으로 매 프레임 준다. 해의 높이는 정오→자정 줄곧 내려가고 자정→정오 줄곧 오르므로 순서가 저절로 낮→노을→밤(가장 어둡다)→새벽→낮이 된다. Sky3D 가 고른 색(노을빛 · 밤 푸른빛)은 그대로 두고 밝기만 맞춘다. 테스트는 섬을 세워 30분마다 48번 땅에 닿는 빛(햇빛+달빛+평평한 주변광, 하늘 복사광은 headless 로 알 수 없어 뺐다 — 해가 낮을수록 줄기만 한다)을 재어 순서 · 한밤 최소 · 노을/새벽 ≥ 밤의 최대 · 달빛 0 을 본다. DayLight 를 꺼 놓고 돌리면 18개가 떨어지며 옛 뒤집힘(18:30=0.055 < 20:30=0.240)이 숫자로 나오는 것을 확인했다. 눈으로: harness/shot.sh 에 time_1_day · time_2_dusk · time_3_night · time_4_dawn 자리와 넷을 2×2 로 붙인 time_all.png 를 더했다 (.loop/out/day_light/). 땅 밝기 낮 0.645 · 노을 0.021 · 밤 0.000 · 새벽 0.011 — 밤이 가장 어둡고 한밤에도 풀 윤곽만 희미하다. 낮 모습은 예전과 거의 같다(화면 0.670→0.693). 저장: 새 상태가 아니다 — 시계 시각에서 매 프레임 다시 계산한다.",
+   "why": "DayLight.DAY_FILL 1.3 · NIGHT_FILL 0.45 — 평평한 주변광 밝기. spec 에 낮·노을·밤·새벽 밝기 값이 미정이라 찍어 보고 골랐다 (노을 땅이 보이고 한밤은 윤곽만); DayLight.NIGHT_BELOW -0.45 · DAY_ABOVE 0.0 — 해의 높이가 이 사이에서 밤↔낮으로 옮겨 간다 (해가 지평선 밑 약 27° 보다 깊으면 한밤); DayLight.SKY_SHARE 0.7 — 주변광 가운데 하늘 몫, 낮밤 한 값 (Sky3D 가 처음 만들 때 쓰는 값)",
+   "files": [
+    "game/world/day_night/day_light.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/world/day_night/test_day_light.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "밝기가 **낮 → 노을 → 밤 → 새벽 → 낮** 으로 이어지고 **밤이 가장 어둡다** (테스트)",
+     "evidence": "test_day_light.gd 가 실제 섬(TestIsland)을 세우고 시계를 30분씩 48번 옮겨 DayLight.ground_light 를 잰다. test_brightness_runs_day_dusk_night_dawn_day 는 12시>18.5시>0시, 5.5시>0시, 12시>5.5시 와 함께 정오→자정 단조 감소 · 자정→정오 단조 증가를 본다. test_the_night_is_the_darkest 는 0시가 하루 최소인지 본다. 일부러 깨 봤다 — NIGHT_FILL 0.45→1.3 · 달빛 끄기 제거로 돌리면 이 둘을 포함해 20개가 떨어졌다(되돌림 확인). GameRoot 도 같은 test_island.tscn 을 써서 실제 게임에도 DayLight 가 선다"
+    },
+    {
+     "ok": true,
+     "criterion": "노을 · 새벽이 밤보다 어둡지 않다 (테스트)",
+     "evidence": "test_dusk_and_dawn_are_not_darker_than_the_night 가 노을 17.5~19시 · 새벽 5~6.5시 각각이 밤 21~3시 가운데 가장 밝은 값 이상인지 본다. 위 깨 보기에서 8개 단언이 떨어져 실제로 지킨다. test_the_moon_does_not_light_the_ground 가 뒤집힘의 까닭(달빛)을 따로 잡는다"
+    },
+    {
+     "ok": true,
+     "criterion": "하루를 네 때로 나눠 찍어 나란히 본다 — 눈으로도 밤이 가장 어둡다",
+     "evidence": "shots.gd 에 time_1_day · time_2_dusk · time_3_night · time_4_dawn 자리와 2×2 로 붙인 time_all.png 가 생겼다. .loop/out/day_light/time_all.png 를 직접 봤다 — 낮이 가장 밝고, 노을 · 새벽은 붉은 하늘에 땅 윤곽 · 캐릭터가 보이며, 밤(0시)은 땅이 거의 검고 가장 어둡다"
+    }
+   ],
+   "issues": [
+    "SKY_SHARE 에 「임시」 표시가 없다 — game/world/day_night/day_light.gd 의 const SKY_SHARE := 0.7 주석에 **임시** 가 빠졌다. report.json 의 temporary 에는 올라 있다. DAY_FILL · NIGHT_BELOW 처럼 주석에 **임시** 를 붙여라",
+    "테스트의 땅 빛에 하늘 복사광이 빠졌다 — DayLight.ground_light 는 햇빛+달빛+평평한 주변광만 더하고 주변광의 70%(하늘 몫)는 뺀다. 지금은 사진으로 순서가 맞음을 확인했지만, Sky3D 가 밤하늘을 밝게 바꾸면 테스트는 못 잡는다. shots.gd 가 이미 재는 땅 밝기(_brightness(shot, GROUND))로 time_* 네 장의 순서를 단언하는 가벼운 검사를 더하거나, ground_light 주석에 이 빈틈을 적어 두어라"
+   ],
+   "good": [
+    "shots.gd 의 SHOT 줄에 화면 · 땅 평균 밝기 숫자를 찍는 것을 더했다 (모든 자리에 걸린다) — 기준 3을 돕는 것이라 해롭지 않다"
+   ]
+  },
+  "test": "--- 바뀐 곳만: 46 개 ---\ntest.sh: 파일 46 개를 6 개씩 한꺼번에 돌린다\nok     36s  res://tests/world/frontier_islands/test_voyage.gd\nok     37s  res://tests/settings/save/test_round_trip.gd\nok     45s  res://tests/world/terrain/test_island_resources.gd\nok     52s  res://tests/life/hunting/test_animal_walk.gd\nok     30s  res://tests/life/hunting/test_animal_sound.gd\nok     34s  res://tests/world/terrain/test_island_in_game.gd\nok     32s  res://tests/settings/save/test_dead_save.gd\nok     31s  res://tests/life/hunting/test_island_animals.gd\nok     17s  res://tests/world/terrain/test_island_shape_marks_note.gd\nok     14s  res://tests/life/hunting/test_butchery.gd\nok     27s  res://tests/world/terrain/test_island_walk.gd\nok     15s  res://tests/core/debug/test_dev_box.gd\nok     13s  res://tests/life/hunting/test_carry_cage.gd\nok     13s  res://tests/build/test_building_roof_stairs.gd\nok     12s  res://tests/life/hunting/test_leg_slow.gd\nok     11s  res://tests/life/farming/test_farmland.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     11s  res://tests/world/day_night/test_day_light.gd\nok     10s  res://tests/core/debug/test_dev_box_open.gd\nok      8s  res://tests/world/day_night/test_day_in_world.gd\nok      9s  res://tests/life/gathering/test_herbs.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      7s  res://tests/life/gathering/test_gathering.gd\nok      6s  res://tests/world/frontier_islands/test_dock_building.gd\nok      6s  res://tests/world/storage/test_chest_break.gd\nok      4s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      4s  res://tests/ui/menu/test_pause_menu.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok    153s  res://tests/world/terrain/test_island_shape.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            46\nTests             422\nPassing Tests     422\nFailing Tests       0\nPending             0\nAsserts         10554\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d853ce7"
  }
 ]

@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 06:38:51",
- "updated_epoch": 1790285931,
+ "updated": "2026-09-25 07:07:16",
+ "updated_epoch": 1790287636,
  "ended": "2026-09-25 01:35:20",
  "progress": {
   "groups_total": 38,
   "groups_done": 33,
   "groups_waiting": 0,
-  "steps_total": 148,
-  "steps_done": 130
+  "steps_total": 151,
+  "steps_done": 133
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-146",
  "step": "1",
  "step_title": "밤이 가장 어둡다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 06:38:51",
+ "phase": "QA",
+ "phase_since": "2026-09-25 07:06:09",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-25 04:30:00"
