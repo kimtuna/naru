@@ -1,15 +1,15 @@
 {
  "state": "running",
- "reason": "목록을 읽는다",
- "updated": "2026-09-24 18:40:50",
- "updated_epoch": 1790242850,
+ "reason": "",
+ "updated": "2026-09-24 18:40:52",
+ "updated_epoch": 1790242852,
  "ended": "2026-09-24 14:58:09",
  "progress": {
   "groups_total": 35,
   "groups_done": 29,
   "groups_waiting": 0,
   "steps_total": 132,
-  "steps_done": 97
+  "steps_done": 98
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-145",
@@ -17,5 +17,5 @@
  "step_title": "붙을 자리를 정한다 (소켓)",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 18:39:52"
+ "phase_since": "2026-09-24 18:40:52"
 }
