@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-24 13:10:33",
- "updated_epoch": 1790223033,
+ "reason": "{\"done\": false, \"bundle\": \"G-903\", \"step\": 1, \"title\": \"총과 탄까지 이어진다\", \"last\": false}",
+ "updated": "2026-09-24 13:34:48",
+ "updated_epoch": 1790224488,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 28,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 97
+  "steps_done": 94
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-903",
- "step": "3",
- "step_title": "사냥과 포획까지 이어진다",
- "attempt": "3",
- "phase": "QA",
- "phase_since": "2026-09-24 13:09:19"
+ "step": "4",
+ "step_title": "건축과 저장까지 이어진다",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-24 13:10:35"
 }
