@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "{\"done\": false, \"bundle\": \"G-903\", \"step\": 1, \"title\": \"총과 탄까지 이어진다\", \"last\": false}",
- "updated": "2026-09-24 13:34:48",
- "updated_epoch": 1790224488,
+ "updated": "2026-09-24 13:43:00",
+ "updated_epoch": 1790224980,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
@@ -14,8 +14,8 @@
  "started": "2026-09-21 06:54:49",
  "group": "G-903",
  "step": "4",
- "step_title": "건축과 저장까지 이어진다",
+ "step_title": "저장까지 이어진다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 13:10:35"
+ "phase_since": "2026-09-24 13:34:50"
 }
