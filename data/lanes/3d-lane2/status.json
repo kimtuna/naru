@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "목록을 읽는다",
- "updated": "2026-09-24 22:34:32",
- "updated_epoch": 1790256872,
+ "reason": "",
+ "updated": "2026-09-24 22:34:38",
+ "updated_epoch": 1790256878,
  "ended": "2026-09-24 22:27:58",
  "progress": {
   "groups_total": 36,
@@ -12,10 +12,10 @@
   "steps_done": 97
  },
  "started": "2026-09-24 21:26:58",
- "group": "G-147",
- "step": "2",
- "step_title": "좌표를 넣으면 그 자리에 표가 뜬다",
+ "group": "G-910",
+ "step": "1",
+ "step_title": "다쳐서 도망간 뒤 진정하지 않는다 (G-130 단계 3)",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 22:16:14"
+ "phase_since": "2026-09-24 22:34:38"
 }
