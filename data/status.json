@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "목록을 읽는다",
- "updated": "2026-09-24 22:16:12",
- "updated_epoch": 1790255772,
+ "reason": "",
+ "updated": "2026-09-24 22:16:15",
+ "updated_epoch": 1790255775,
  "ended": "2026-09-24 20:00:56",
  "progress": {
   "groups_total": 35,
   "groups_done": 29,
   "groups_waiting": 0,
   "steps_total": 132,
-  "steps_done": 97
+  "steps_done": 100
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-145",
  "step": "4",
- "step_title": "등급 셋 — 나무 · 석재 · 철",
+ "step_title": "토대 4×4칸 · 밭 2×2칸",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 22:10:26"
+ "phase_since": "2026-09-24 22:16:15"
 }
