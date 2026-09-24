@@ -8669,5 +8669,67 @@
   },
   "test": "loses_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/storage/test_chest_save.gd\n* test_the_chest_and_what_is_inside_are_still_there_after_leaving_and_returning\n* test_an_empty_chest_comes_back_empty\n* test_a_broken_chest_does_not_come_back\n* test_each_island_keeps_its_own_chests\n* test_restoring_twice_does_not_stack_chests\n5/5 passed.\n\n\nres://tests/world/storage/test_chest_shift_click.gd\n* test_shift_clicking_a_bag_slot_sends_the_whole_stack_into_the_chest\n* test_it_stacks_onto_the_same_item_in_the_chest_first\n* test_a_full_chest_takes_only_what_fits_from_the_bag\n* test_shift_clicking_a_chest_slot_brings_the_whole_stack_into_the_bag\n* test_when_the_bag_is_short_of_room_only_what_fits_comes_over\n* test_with_the_chest_closed_shift_click_does_nothing\n* test_with_only_the_bag_open_shift_click_does_nothing\n* test_a_hidden_chest_slot_sends_nothing\n* test_a_plain_click_without_shift_moves_nothing\n9/9 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/storage/test_reach_temporary_notes.gd\n* test_the_chest_reach_is_marked_temporary\n* test_the_station_reach_is_marked_temporary\n* test_both_notes_still_tell_the_truth_about_being_the_same_value\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             105\nTests               960\nPassing Tests       960\nAsserts           51975\nTime              613.242s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "0956997"
+ },
+ {
+  "time": "2026-09-24 09:48:30",
+  "epoch": 1790210910,
+  "type": "pass",
+  "title": "통과 — G-902 단계 2 (우클릭 — 반만 집고, 한 개씩 놓는다)",
+  "group": "G-902",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "우클릭으로 칸의 반을 집고(홀수면 많은 쪽), 집은 채 우클릭하면 한 개씩 놓인다 — 가방 칸 · 상자 칸이 손 하나를 같이 쓰고, 창 바깥 우클릭은 그대로 창을 닫는다. spec 에 Shift+클릭 규칙을 적었다",
+   "approach": "지금까지 칸 옮기기는 Godot 끌어 놓기뿐이라 「집어 든 채」라는 상태가 없었다. 끌기는 좌클릭으로만 시작되고 headless 로 시험할 수도 없어서, 끌기 대신 **손(SlotHand)** 하나를 새로 두었다 — GameRoot 가 만들어 가방 칸과 상자 칸에 같이 쥐여 주므로 상자에서 집은 것을 가방 칸에 놓을 수 있다. 칸(SlotDrop._gui_input)이 우클릭을 받아 손이 비었으면 반을 집고(SlotMove.half — 홀수면 많은 쪽), 들고 있으면 한 개를 놓는다(SlotMove.one — 빈 칸이나 같은 것이 든 덜 찬 칸에만). 집은 채 좌클릭하면 끌어 놓기와 같은 규칙(SlotMove.drop)으로 다 놓인다 — 이게 없으면 나머지를 하나씩만 내려놓을 수 있다. 칸이 우클릭을 accept_event 로 끝내므로 창을 닫는 Death._unhandled_input 까지 흘러가지 않는다. 창 바탕은 전처럼 클릭을 흘리니 칸 바깥 우클릭은 여전히 창을 닫는다. 창이 닫히거나 저장(save · autosave)할 때 손에 든 것은 집어 온 상자 먼저, 그다음 가방으로 돌아간다 — 그래서 저장본에 담지 않고, 그 까닭을 save.md 에 적었다(저장 순간에는 늘 비어 있어 왕복 검사의 DONT_SAVE 에는 넣을 수 없다). QA 지적대로 Shift+클릭 규칙을 storage.md 의 「넣고 뺀다」 줄 아래 한 단락으로 적었고, 우클릭 규칙은 inventory-hotbar.md 에 적었다. headless 에서는 진짜 클릭이 칸에 닿지 않는다 — 다시 확인해 보니 hover 되는 Control 이 없다. 그래서 칸 위 우클릭이 창을 닫지 않는 것은 viewport.is_input_handled() 로 보았다: 앞선 입력의 표시를 쓰이지 않는 키로 지운 뒤, 칸이 우클릭을 받으면 참이 되는지 본다. 검사: 새 파일 13개 통과. changed_tests 그물(129개 스크립트 · 1135개 테스트)도 모두 통과했다. 전체는 돌리지 않았다. 남은 흠: 손에 든 것이 커서에 붙어 보이지 않는다(칸 개수가 줄어드는 것만 보인다) — 다음 단계나 QA 의 몫이다.",
+   "why": "",
+   "files": [
+    "game/player/inventory_hotbar/slot_move.gd",
+    "game/player/inventory_hotbar/slot_hand.gd",
+    "game/ui/hud/slot_drop.gd",
+    "game/ui/hud/bag.gd",
+    "game/ui/hud/chest_window.gd",
+    "game/world/storage/chest.gd",
+    "game/core/game_root.gd",
+    "game/tests/world/storage/test_chest_right_click.gd",
+    "spec/06_build/storage.md",
+    "spec/02_player/inventory-hotbar.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "칸을 우클릭하면 **반만** 집힌다 (홀수면 많은 쪽을 집는다) (테스트)",
+     "evidence": "test_chest_right_click.gd 의 test_right_clicking_a_bag_slot_picks_up_half(10→5/5) · test_an_odd_stack_gives_the_bigger_half_to_the_hand(7→손 4, 칸 3, 창 글자 3) · test_a_single_item_is_picked_up_whole. QA 가 SlotMove.half 를 적은 쪽을 집게 바꿔 보니 3개 테스트가 깨졌다 (되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "집은 것을 칸에 우클릭하면 **한 개씩** 놓인다 (테스트)",
+     "evidence": "test_right_clicking_while_holding_puts_down_one_at_a_time 이 가방 빈 칸 1→2, 상자 빈 칸 1, 같은 것 칸 4→5, 총량 8 보존을 본다. 다른 것 칸 · 꽉 찬 칸에 안 놓이는 것도 따로 테스트가 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "창 바깥 우클릭은 지금처럼 창을 닫는다 — 규칙이 부딪히지 않는다 (테스트)",
+     "evidence": "test_a_right_click_outside_the_slots_still_closes_the_window 가 진짜 입력(root.push_input)으로 구석을 우클릭해 상자 창 · 가방이 닫히는 것을 본다. test_a_right_click_on_a_slot_is_kept_from_the_close 는 칸 우클릭이 입력을 끝내는지(is_input_handled) 본다 — QA 가 우클릭 분기의 accept_event 를 지우니 이 테스트가 깨졌다 (되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) spec 에 Shift+클릭이 안 적혔다 — storage.md 의 상자 칸 옮기기 줄 옆에 한 단락으로 적어라 (사람 결정 줄은 건드리지 말 것)",
+     "evidence": "spec/06_build/storage.md 의 「넣고 뺀다」 줄 아래에 통째로 건너감 · 같은 것 칸부터 · 들어간 만큼만 · 창이 닫혀 있으면 없음 · 잡은 짐승은 빈 칸 하나로만이 다 적혔다. git diff 에 spec 의 지운 줄이 없다"
+    }
+   ],
+   "issues": [
+    "낡은 테스트 경로 주석 — game/player/inventory_hotbar/slot_hand.gd 의 머리 주석이 tests/player/inventory_hotbar/test_slot_hand.gd 를 가리키는데 그 파일은 없다. 실제 테스트인 tests/world/storage/test_chest_right_click.gd 로 고쳐라",
+    "집어 든 것이 화면에 안 보인다 — 우클릭으로 집으면 칸 개수만 줄고 든 것(아이콘 · 개수)이 어디에도 보이지 않아, 사람은 무엇을 몇 개 들었는지 모른다. 든 것을 보여 주는 Control(mouse_filter IGNORE)을 창에 붙여라 — 커서 위치가 필요하면 LOOP.md 2절대로 Pointer 를 거쳐야 한다(커서를 직접 읽지 말 것). 들면 보이고 다 놓으면 숨는지 테스트로 확인하라"
+   ],
+   "good": [
+    "집은 채 좌클릭하면 다 놓는 동작(SlotDrop.place_all)과 창이 닫히거나 저장할 때 손에 든 것을 되돌리는 동작(SlotHand.put_back) — 기준에는 없지만 반만 집기가 물건을 잃지 않게 하는 데 필요하고, 둘 다 테스트와 spec 줄이 있다"
+   ]
+  },
+  "test": "* test_each_island_keeps_its_own_chests\n* test_restoring_twice_does_not_stack_chests\n5/5 passed.\n\n\nres://tests/world/storage/test_chest_shift_click.gd\n* test_shift_clicking_a_bag_slot_sends_the_whole_stack_into_the_chest\n* test_it_stacks_onto_the_same_item_in_the_chest_first\n* test_a_full_chest_takes_only_what_fits_from_the_bag\n* test_shift_clicking_a_chest_slot_brings_the_whole_stack_into_the_bag\n* test_when_the_bag_is_short_of_room_only_what_fits_comes_over\n* test_with_the_chest_closed_shift_click_does_nothing\n* test_with_only_the_bag_open_shift_click_does_nothing\n* test_a_hidden_chest_slot_sends_nothing\n* test_a_plain_click_without_shift_moves_nothing\n9/9 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/storage/test_reach_temporary_notes.gd\n* test_the_chest_reach_is_marked_temporary\n* test_the_station_reach_is_marked_temporary\n* test_both_notes_still_tell_the_truth_about_being_the_same_value\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             129\nTests              1135\nPassing Tests      1135\nAsserts           55011\nTime              698.238s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "c2e27d8"
  }
 ]

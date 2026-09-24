@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 09:16:55",
- "updated_epoch": 1790209015,
+ "updated": "2026-09-24 09:48:30",
+ "updated_epoch": 1790210910,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 27,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 91
+  "steps_done": 92
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-902",
- "step": "1",
- "step_title": "Shift + 클릭 — 통째로 건너간다",
+ "step": "2",
+ "step_title": "우클릭 — 반만 집고, 한 개씩 놓는다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 09:15:46"
+ "phase_since": "2026-09-24 09:47:14"
 }
