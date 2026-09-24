@@ -1,54 +1,5 @@
 [
  {
-  "time": "2026-09-21 08:22:46",
-  "epoch": 1789946566,
-  "type": "pass",
-  "title": "통과 — G-103 단계 4 (핫바)",
-  "group": "G-103",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "핫바 10칸을 화면 아래에 상시 표시하고, 숫자키로 고른 칸의 아이템이 손에 든 것이 된다 — 칸 내용은 캐릭터 인벤토리에 저장된다",
-   "approach": "문제는 「핫바 내용이 캐릭터 인벤토리에 속한다」를 어떻게 표현하느냐였다. CharacterData.inventory 는 이미 Array 이고 앞 단계 테스트들이 그 배열에 직접 append 한다 — 새 자료 구조로 갈아끼우면 그 테스트들이 깨지고, 따로 들고 있다가 저장할 때 베끼면 두 곳이 어긋난다. 그래서 Inventory 를 그 배열을 복사하지 않고 그대로 들고 쓰는 창구(Inventory.of)로 만들었다. 칸에 넣으면 캐릭터 배열에 그대로 들어가고, 저장은 원래 하던 대로만 하면 된다. 뒤쪽 빈 칸은 배열에 남기지 않아 빈손 캐릭터의 저장본은 [] 그대로다 (앞 단계의 「새 캐릭터는 빈손」 테스트가 그대로 통과한다).\n핫바는 GameRoot 의 CanvasLayer 아래에 붙여 3D 위에 항상 그려지게 했고, 모든 칸을 MOUSE_FILTER_IGNORE 로 뒀다 — 좌클릭은 평타라 핫바가 클릭을 삼키면 안 된다.\n테스트가 정말 기준을 보는지 두 번 일부러 깨 봤다: (1) 어떤 숫자키를 눌러도 1번 칸을 고르게 바꾸니 숫자키 테스트가 전부 떨어졌다, (2) 저장할 때 인벤토리를 비우게 바꾸니 저장 유지 테스트가 떨어졌다. 숫자키는 액션 이름을 흉내 내지 않고 진짜 InputEventKey(물리 키코드)를 넣어 InputMap 까지 이어지는지 본다.\n전체 152개 통과 · guard 통과. 그림은 확인하지 못했다 — harness/shot.sh 는 섬만 찍고(shots.gd 의 _views), 거기에 HUD 자리를 더하는 것은 이 단계 기준 밖이라 손대지 않았다. 대신 핫바가 화면 아래 끝에 붙어 있는지를 뷰포트 좌표로 검사한다.",
-   "why": "핫바 10칸 · 가방 30칸(핫바 포함) — spec/02_player/inventory-hotbar.md 의 임시 수치를 Inventory.HOTBAR_SLOTS · SLOTS 로 옮겼다. 한 칸 최대 99개는 아직 쓰는 곳이 없어 넣지 않았다; 칸 크기 56x56 · 칸 사이 4 · 화면 아래 여백 24 (픽셀), 칸 바탕색과 고른 칸 표시색 — 보기 좋은지는 사람이 정한다 (Hotbar.SLOT_SIZE · SLOT_COLOR · SELECTED_COLOR, hotbar.tscn); 아이템 이름은 번역 키 ITEM_<아이템id> 로 찍는다. 아직 아이템이 하나도 없어(빈손으로 시작) po 에 넣을 키가 없다 — 아이템을 만드는 단계에서 키가 따라 들어온다",
-   "files": [
-    "game/player/inventory_hotbar/inventory.gd",
-    "game/ui/hud/hotbar.gd",
-    "game/ui/hud/hotbar.tscn",
-    "game/core/game_root.gd",
-    "game/core/game_root.tscn",
-    "game/settings/save/character_data.gd",
-    "game/tests/player/inventory_hotbar/test_inventory.gd",
-    "game/tests/ui/hud/test_hotbar.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "화면 아래에 핫바가 항상 보인다. 숫자키 N → N번 슬롯이 선택되고 그 아이템이 「손에 든 것」이 된다",
-     "evidence": "보이기 — tests/ui/hud/test_hotbar.gd 가 game_root.tscn 을 그대로 띄우고 본다. test_hotbar_is_on_screen_at_the_bottom 은 핫바의 global_rect 를 뷰포트 아래 절반 안(position.y > 높이/2) · 아래 끝(end.y ≈ 뷰포트 높이)에서 확인한다 — 내가 직접 hotbar.tscn 의 앵커를 화면 위로 뒤집어 돌려 보니 14개 중 이 테스트 하나만 떨어졌다(껍데기가 아니다). test_hotbar_is_drawn_over_the_world 가 CanvasLayer 아래인지(3D 위에 그려짐), test_ten_slots_are_visible_even_with_empty_hands 가 빈손일 때도 10칸이 다 보이고 칸에 크기가 있는지, test_hotbar_stays_visible_after_choosing 이 칸을 고른 뒤에도 보이는지 본다. 숫자키 — test_number_key_selects_that_slot_and_holds_its_item 이 액션 이름을 흉내 내지 않고 진짜 InputEventKey(physical_keycode)를 root 에 push 해서 1~9 열 칸을 한 번에 돌며 selected() == i 와 held_item() == 그 칸의 내용 둘 다 본다. test_zero_key_is_the_tenth_slot 이 0 → 10번 칸, test_number_keys_are_bound_to_the_matching_slot 이 InputMap 의 hotbar_N 이 실제로 그 키에 묶여 있는지, test_choosing_an_empty_slot_empties_the_hands 가 빈 칸을 고르면 빈손({})이 되는지, test_the_chosen_slot_is_marked_and_the_others_are_not 이 고른 칸 하나만 Highlight 가 보이는지 본다. 다만 사람 눈으로 본 그림(PNG) 확인은 없다 — 뷰포트 좌표와 노드 상태로만 봤다"
-    },
-    {
-     "ok": true,
-     "criterion": "핫바 내용은 캐릭터 인벤토리에 속하고 저장했다 불러와도 유지된다",
-     "evidence": "속한다 — Inventory.of() 가 CharacterData.inventory 배열을 복사하지 않고 그대로 들고 쓴다. test_hotbar_contents_belong_to_the_character_inventory 가 핫바 3번 칸에 넣은 것이 game.character.inventory[2] 에 그대로 있는지 보고, tests/player/inventory_hotbar/test_inventory.gd 의 test_slots_are_the_character_inventory_itself 가 양방향(칸→배열, 배열→칸) 둘 다 본다. 유지 — test_hotbar_contents_survive_save_and_load 가 1번 · 7번 칸에 넣고 game.save() 로 저장한 뒤 SaveStore.load_character() 로 파일에서 다시 읽고, 원래 게임 노드를 queue_free 한 다음 새 GameRoot 로 다시 들어가서 (1) 칸 내용, (2) 화면에 찍힌 글자, (3) 7 키를 눌러 손에 든 것까지 확인한다 — 메모리 안에서만 도는 게 아니라 디스크를 한 번 왕복한다. test_the_world_save_does_not_carry_the_hotbar 가 월드 저장본에 inventory 가 없는지 보아 캐릭터 쪽에 붙어 있음을 굳힌다. test_empty_inventory_stays_empty_in_the_save 가 빈손 캐릭터의 저장본이 [] 그대로임을 확인해 앞 단계의 「새 캐릭터는 빈손」이 안 깨졌다"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "Inventory.SLOTS = 30 (가방 칸 수)와 「30칸 밖 번호에는 넣지 못한다」 — 이 단계 기준은 핫바 10칸뿐이다. 「칸이 정해져 있고 칸이 모자라면 넣지 못한다」는 G-105 단계 2(인벤토리)의 기준이다. spec/02_player/inventory-hotbar.md 의 임시 수치를 그대로 옮긴 것이고 쌓기·가방 화면은 안 만들었으니 크지는 않다",
-    "칸의 개수 표시(Count 라벨, 2개 이상일 때만 찍는다) — 「같은 것은 겹쳐 쌓인다」도 G-105 단계 2 다. 지금은 보여 주기만 하고 쌓는 규칙은 없다",
-    "Inventory 의 changed · selection_changed 시그널 — 기준에 없지만 핫바가 다시 그리려면 필요하다",
-    "test_the_world_save_does_not_carry_the_hotbar 는 G-102 에서 이미 본 것(인벤토리는 캐릭터에 붙는다)을 다시 본다. 코드가 아니라 테스트라 순서를 흐트러뜨리지는 않는다"
-   ]
-  },
-  "test": "test_the_menu_is_gone_after_entering\n* test_inventory_follows_the_character_into_another_world\n* test_the_other_world_did_not_get_the_items\n5/5 passed.\n\n\nres://tests/ui/menu/test_main_menu.gd\n* test_game_starts_at_the_main_menu\n* test_main_menu_has_start_settings_quit\n* test_start_opens_character_select\n* test_settings_is_empty_with_only_back\n* test_settings_back_returns_to_main_menu\n* test_quit_button_asks_to_quit\n6/6 passed.\n\n\nres://tests/ui/menu/test_menu_navigation.gd\n* test_escape_goes_back_from_character_select\n* test_escape_goes_back_one_screen_at_a_time\n* test_escape_on_the_main_menu_stays\n* test_only_one_screen_is_visible_at_a_time\n* test_created_character_appears_in_the_slots\n* test_saved_slot_opens_world_select\n* test_escape_goes_back_from_world_select_to_character_select\n* test_escape_goes_back_from_world_create_to_world_select\n* test_created_world_appears_in_the_list\n9/9 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/ui/menu/test_world_create.gd\n* test_name_and_seed_are_saved\n* test_empty_name_is_refused\n* test_empty_seed_is_random\n* test_empty_seed_still_saves_the_world\n* test_the_same_words_give_the_same_seed\n* test_back_asks_to_go_back\n6/6 passed.\n\n\nres://tests/ui/menu/test_world_select.gd\n* test_saved_worlds_are_listed\n* test_nothing_saved_means_no_rows\n* test_new_world_button_asks_for_the_create_screen\n* test_choosing_a_world_tells_which_one\n* test_delete_asks_first\n* test_delete_no_keeps_the_world\n* test_delete_yes_removes_only_that_world\n* test_back_asks_to_go_back\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n24/24 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:67)\n         [1] _ready (res://world/terrain/test_island.gd:38)\n         [2] before_all (res://tests/world/terrain/test_island_walk.gd:12)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n9/9 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              20\nTests               152\nPassing Tests       152\nAsserts            6246\nTime              127.727s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "3b715ac"
- },
- {
   "time": "2026-09-21 08:50:29",
   "epoch": 1789948229,
   "type": "pass",
@@ -8825,5 +8776,32 @@
   "epoch": 1790226409,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-24 14:30:52",
+  "epoch": 1790227852,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-145 단계 1 (시도 1)",
+  "group": "G-145",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "ROOF_SPAN(받치는 범위)을 없애고 받침에서 이어 붙인 개수로 잰다 — 토대 0 · 붙은 것 1 · 옆 2, 나무 3 · 석재 4 · 철 5 (임시)를 넘으면 안 놓이고, 받침을 부숴 넘어가면 연쇄로 무너진다. 기둥 자리는 다시 0",
+   "approach": "뿌리는 BuildPiece.ROOF_SPAN — 받치는 것이 둘레 판을 뿌렸다. 이것을 지우고 Buildings._link_counts 하나로 잰다: 토대 0, 벽·문·계단 = 딛는 바닥 개수 + 1, 기둥 = 제 판에 바닥이 있으면 0, 지붕 = 바로 아래 받치는 것(roof_plates: 기둥 제 판 · 벽 변 양쪽 · 계단 앞 판)의 개수를 잇거나 옆 지붕 + 1. 두 길이면 작은 쪽. 제 등급 개수(BuildPiece.LINK_LIMIT)를 넘으면 받쳐지지 않은 것으로 친다. 작아지기만 하게 되풀이해 줄이므로 끝난다. 받침 판정(collapse · held_up)과 미리보기 · 놓기(plan_roof_at · plan_edge_at · plan_stairs_at)가 같은 _link_of 를 써서 어긋날 길이 없다 — 넘으면 why=\"too_far\", 미리보기 빨강. 바닥 없는 판의 지붕 높이는 이제 옆 지붕에서도 잡는다(_support_level). 옛 규칙에 기댄 검사(「벽에서 두 장 밖은 안 받친다」 · 5×5 에 지붕을 다 놓아 보기 · 대조 지붕이 옆 판)는 새 규칙에 맞게 고쳤다. test_building_stairs_note 는 spec 계단 줄에서 「(3×3칸)」이 빠진 것(앞 커밋)에 맞췄다. 찍은 그림(shot.sh roof_reach): 벽 한 장에서 동쪽으로 뻗은 나무 지붕이 1·2·3장째 초록, 4장째부터 빨강 — 로그 「1장째 초록(1) · 2장째 초록(2) · 3장째 초록(3) · 4장째 빨강(4) …」. 채점 그물(changed_tests, 23개 파일 · 163개): 162 통과, 1 실패 — test_from_empty_hands 의 22번(「집 지을 빈 땅 옆까지 걸어왔다」 · 토대 자리 steep). 걷기와 토대(plan_at)는 이번에 손대지 않았고, 그 테스트의 건축 부분은 65fb024 「건축은 G-145 뒤로 옮긴다」로 미뤄 둔 것이다 (G-903 단계 4). 저장: 개수는 놓인 것에서 늘 다시 나오는 값이라 새로 담을 상태가 없다. 철 건축물은 아직 없다 — 한도표에만 있다(등급 단계의 몫).",
+   "why": "BuildPiece.LINK_LIMIT 나무 3 · 석재 4 · 철 5 — spec 수치 줄에 「임시, 지어 보고 정한다」",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/build/buildings.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_link_count.gd",
+    "game/tests/build/test_building_roof_support.gd (지움 — 장 수 검사, 새 파일로 옮김)",
+    "game/tests/build/test_building_collapse.gd",
+    "game/tests/build/test_building_stairs_roof.gd",
+    "game/tests/build/test_building_stairs_note.gd",
+    "game/tests/build/test_rooms.gd"
+   ],
+   "decision": null
+  },
+  "test": "egs — 10 hits · no yield\"]\n9/9 passed.\n\n\nres://tests/life/hunting/test_carry_cage.gd\n* test_right_click_puts_the_captured_animal_in_the_bag\n* test_a_live_animal_is_not_picked_up\n* test_each_captive_keeps_its_own_slot\n* test_a_full_bag_leaves_the_animal_on_the_ground\n* test_on_the_ground_the_gauge_falls_and_the_animal_wakes_and_flees\n    --- Awaiting 0.5 seconds  ---\n* test_in_the_bag_the_gauge_falls_and_the_animal_escapes\n    --- Awaiting 0.5 seconds  ---\n* test_how_long_it_sleeps_differs_by_animal\n    --- Awaiting 1.0 seconds  ---\n* test_three_cages_are_crafted\n* test_a_caged_animal_wakes_but_does_not_escape\n* test_an_animal_does_not_fit_a_cage_smaller_than_itself\n* test_the_smallest_cage_that_fits_is_used\n11/11 passed.\n\n\nres://tests/life/hunting/test_part_yields.gd\n* test_deer_parts_yield_what_the_data_says\n* test_an_unhurt_deer_yields_everything_in_the_data\n* test_yields_are_read_from_the_data_not_the_animal\n* test_a_head_shot_cuts_only_the_head_yield\n    머리 한 발 — 머리 피해 { &\"head\": 26 } · 산출 { \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 } → { \"antler\": 1, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 }\n* test_a_body_shot_cuts_only_the_body_yield\n* test_more_damage_to_a_part_leaves_less_of_it\n    몸통에 맞을수록 남는 몫: [1.0, 0.8, 0.6, 0.4]\n* test_part_damage_is_what_actually_came_off\n* test_killing_by_legs_only_keeps_head_and_body_whole\n    다리만 10 발로 잡았다 — 산출 { \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 }\n* test_killing_by_body_shots_ruins_the_body_but_not_the_head\n9/9 passed.\n\n\nres://tests/life/hunting/test_sedation_capture.gd\n* test_above_ten_percent_the_gauge_does_not_rise\n* test_below_ten_percent_the_same_round_raises_the_gauge\n* test_a_full_gauge_captures_and_that_differs_from_a_kill\n* test_a_captured_animal_stays_put\n    --- Awaiting 30 physics frames  ---\n* test_aconite_over_the_need_kills_instead_of_capturing\n* test_aconite_exactly_filling_the_gauge_still_captures\n* test_lower_tiers_over_the_need_still_capture\n* test_a_deer_takes_three_low_tier_rounds\n* test_the_amount_differs_by_animal\n* test_sedation_values_live_in_one_place_marked_temporary\n10/10 passed.\n\n\n\n\n==============================================\n= 6 Orphans\n==============================================\ntest_ui_shots.gd\n    - test_island_shot_builds_the_real_island\n        * [HandView:<Control#2429122798687>(hand_view.gd)] + 5\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/craft/test_from_empty_hands.gd\n- test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    [Failed]:  집 지을 빈 땅 옆까지 걸어왔다\n          at line 884\n    [Failed]:  wood_foundation 를 놓을 자리가 미리 보인다 ((-10.5, 0.0, -10.5) 를 짚었다): { &\"at\": (28.5, 4.2, -1.5), &\"depth\": 4.49999976158142, &\"cells\": [(27, -3), (27, -2), (27, -1), (28, -3), (28, -2), (28, -1), (29, -3), (29, -2), (29, -1)], &\"attached\": false, &\"ok\": false, &\"why\": \"steep\" }\n          at line -1\n    [Failed]:  Expected [<null>] to be anything but NULL:  토대를 놓았다\n          at line 887\n\nTotals\n------\nScripts              23\nTests               163\nPassing Tests       162\nFailing Tests         1\nAsserts           3986/3989\nOrphans               6\nTime              409.648s\n\n\n---- 1 failing tests ----\n\nWARNING: 6 RIDs of type \"CanvasItem\" were leaked.\n   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2735)\nWARNING: 96 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\nERROR: 3 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.\nERROR: 70 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.\nERROR: 1 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]

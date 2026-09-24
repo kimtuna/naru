@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 14:06:50",
- "updated_epoch": 1790226410,
+ "updated": "2026-09-24 14:23:53",
+ "updated_epoch": 1790227433,
  "ended": "2026-09-24 14:05:20",
  "progress": {
   "groups_total": 35,
@@ -16,6 +16,6 @@
  "step": "1",
  "step_title": "장 수를 버리고 이어 붙인 개수로 잰다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-24 14:06:50"
+ "phase": "기계 검사",
+ "phase_since": "2026-09-24 14:23:53"
 }
