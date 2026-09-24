@@ -1,71 +1,5 @@
 [
  {
-  "time": "2026-09-22 00:12:06",
-  "epoch": 1790003526,
-  "type": "fail",
-  "title": "QA 불합격 — G-114 단계 2 (시도 1)",
-  "group": "G-114",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "하루를 40분(낮 20분·밤 20분)으로 옮기고 값을 한 곳에 모았다. 월드 생성에 「개발용」을 붙여 켠 월드에만 스폰 옆에 모든 자원·도구가 든 상자가 선다",
-   "approach": "하루 길이: GameClock.MINUTES_PER_DAY 를 40.0 으로 올리고, 낮·밤을 그 값에서 나오게 했다 (DAY_MINUTES = 절반, NIGHT_MINUTES = 나머지). 낮/밤 경계는 Sky3D 가 적도(위도 0)에 서서 해를 6시·18시에 올리고 내리는 것으로 이미 반씩 갈려 있어, 값 하나만 옮기면 낮 20분·밤 20분이 된다. 「값은 한 곳에」는 주석으로 다짐하면 다음에 또 새므로 검사로 박았다 — test_day_length.gd 가 res:// 아래 .gd 를 전부 글로 훑어 minutes_per_day 자리에 숫자를 직접 적은 줄을 찾는다 (0 은 「시계를 멈춘다」는 뜻이라 봐준다, 대소문자 안 가림). buffs.gd 에 20.0 상수를 일부러 넣어 보고 실제로 걸리는 것까지 확인했다. 낡아 있던 줄(spec/README.md · roadmap.md · buffs.gd 주석 · 섬 주석)도 같이 고쳤다. 개발용 상자: 값은 WorldData.dev 로 월드에 붙고, 새 월드 화면의 체크 상자에서만 정해진다 (게임 도중에 바꾸는 길은 두지 않았다 — spec 이 「만들 때 정하고 도중에 바꾸지 않는다」라 한다). 「흔적도 없다」를 지키려고 to_dict() 는 켠 월드에만 dev 를 적는다 — 끈 월드의 저장 파일에는 dev 라는 세 글자가 바이트로도 없다(검사가 파일을 바이트로 훑어 확인한다. 켠 월드에서는 있는 것까지 봐서 그 눈이 실제로 뜨여 있는지도 확인했다). 상자는 섬이 세운다 — GameRoot 가 시드·섬 id 를 넣어 주는 그 자리에서 dev 도 같이 넣고, 끈 월드에서는 _build_dev_box 가 첫 줄에서 그대로 돌아간다. 저장하지 않으므로 섬 저장본도 깨끗하다. 담는 것은 데이터가 정한다 — 도구는 tools.json 전부(+등반 장비 둘), 자원은 Harvest.DROPS 의 산출물 전부라, 도구를 한 줄 더 적으면 상자에도 그냥 들어간다(검사가 가짜 도구를 한 줄 넣어 확인한다). 섬을 세우는 데 5초씩 들어 켠 월드·끈 월드 각각 한 번씩만 세웠다. 전체 513개 통과(401초), guard 통과.",
-   "why": "상자에 담는 개수 — 자원은 한 칸 가득(99, Inventory.STACK_MAX) · 도구는 1개. 한 칸 99개 자체가 임시 값이다 (spec/02_player/inventory-hotbar.md 수치 미정); 상자가 스폰에서 떨어진 거리 2m · 크기 0.9×0.7×0.9m · 노란색 — 밟고 서지 않고 손이 닿을 만한 자리로 잡았다. 아트는 프로토타입 범위 밖이다; 상자에 「자원」으로 담는 것은 캐서 나오는 원자재 넷(목재·돌·철광석·유황광석)이다 — 밀 씨앗 같은 농사 산출물은 자원이 아니라 보고 뺐다",
-   "files": [
-    "game/world/day_night/game_clock.gd",
-    "game/world/terrain/test_island.gd",
-    "game/core/debug/dev_box.gd",
-    "game/core/game_root.gd",
-    "game/settings/save/world_data.gd",
-    "game/settings/world_settings/world_settings.gd",
-    "game/ui/menu/world_create.gd",
-    "game/ui/menu/world_create.tscn",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/life/food/buffs.gd",
-    "spec/01_settings/world-settings.md",
-    "spec/00_core/roadmap.md",
-    "spec/README.md",
-    "game/tests/world/day_night/test_day_length.gd",
-    "game/tests/world/day_night/test_game_clock.gd",
-    "game/tests/world/day_night/test_day_in_world.gd",
-    "game/tests/core/debug/test_dev_box.gd",
-    "game/tests/ui/menu/test_world_create.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "하루가 40분이다 — 낮 20분 · 밤 20분 (사람 결정 2026-09-21). 값은 한 곳에 있다 (테스트)",
-     "evidence": "tests/world/day_night/test_game_clock.gd 의 test_a_full_day_comes_round_in_forty_real_minutes 가 20분에 12시간·40분에 하루가 넘어가는 것을 보고, test_the_sun_rises_and_sets_once_in_a_day 는 진짜 Sky3D 를 세워 한 바퀴를 240번에 나눠 보며 낮·밤 길이를 실측한다 (낮 20.0분·밤 20.0분, 오차 0.5분). test_day_length.gd 는 res:// 아래 .gd 를 전부 글로 훑어 하루 길이를 GameClock 밖에 또 적은 줄을 잡고, 40/20/20 과 '낮+밤=하루' 를 확인한다. 껍데기가 아닌 것을 직접 확인했다 — buffs.gd 에 'var minutes_per_day := 20.0' 을 일부러 넣고 TEST_DIR=res://tests/world/day_night 로 돌리니 'res://life/food/buffs.gd:83' 을 짚으며 떨어졌고, 그 줄은 되돌렸다 (game/life/food/buffs.gd 는 지금 주석 20분→40분 한 줄만 바뀐 상태다). 낡은 줄도 남지 않았다 — spec/03_world/day-night.md · spec/README.md · spec/00_core/roadmap.md · buffs.gd · test_island.gd 주석이 모두 40분이고, '하루 20분' 은 spec/ 과 game/ 어디에도 없다."
-    },
-    {
-     "ok": false,
-     "criterion": "월드를 만들 때 「개발용」을 켜면 스폰 옆에 모든 자원 · 도구가 든 상자가 생긴다",
-     "evidence": "'스폰 옆에 생긴다' 까지는 됐다 — tests/ui/menu/test_world_create.gd 의 test_checking_dev_makes_a_dev_world 가 체크 상자→WorldData.dev 를 보고, tests/core/debug/test_dev_box.gd 의 test_the_box_stands_beside_the_spawn_when_it_is_on 이 진짜 GameRoot 로 들어가 섬에 선 상자가 하나이고 스폰에서 3m 안인 것을 본다. 그런데 '자원 · 도구가 든' 은 게임 안에서 아무 뜻이 없다. DevBox._items 를 읽는 코드가 dev_box.gd 와 제 검사 말고는 하나도 없고(game/ 전체 grep 결과 test_island.gd 가 세우기만 한다), 상자를 여는 길이 없다 — 상자를 여는 유일한 길인 death.gd:94 의 aimed_chest() 는 레이캐스트 결과를 'as DeathChest' 로 받아서 DevBox 는 걸러진다. test_the_box_holds_every_resource_and_every_tool 은 box.count_of() 로 상자가 제 안에 들고 있는 배열만 되물어 볼 뿐, 사람이 그 안의 목재 하나라도 손에 넣을 수 있는지는 어느 검사도 보지 않는다. 담긴 것도 모자라다 — Harvest.DROPS 에서 나오는 원자재 넷(wood · stone · iron_ore · sulfur_ore)뿐이라 wheat_seed 가 빠져 있다."
-    },
-    {
-     "ok": true,
-     "criterion": "끈 월드에는 그 상자도 그 흔적도 없다 (테스트) — 나중에 깨끗이 지울 수 있게",
-     "evidence": "tests/core/debug/test_dev_box.gd 의 test_a_world_with_it_off_has_no_box_at_all 이 끈 월드로 진짜 게임에 들어가 섬 트리를 통째로 훑어 DevBox 가 한 개도 없음을 보고(island.dev_box 가 null · 트리 훑기도 빈 배열), test_a_world_with_it_off_leaves_no_trace_in_the_save 는 저장 파일을 바이트로 훑어 'dev' 라는 세 글자가 없는 것까지 본다. 늘 참인 검사가 아니다 — 바로 옆 test_a_world_with_it_on_keeps_it_over_a_save_and_a_load 가 같은 바이트 훑기로 켠 월드에서는 '있다' 를 확인해, 그 눈이 실제로 뜨여 있음을 스스로 증명한다. to_dict() 가 dev 가 참일 때만 항목을 적고(world_data.gd:49), from_dict 는 없으면 꺼진 것으로 읽어(test_an_old_save_without_the_setting_is_off) 옛 저장본도 안전하다."
-    }
-   ],
-   "issues": [
-    "기준 2 — 개발용 상자를 열 수 없다. DevBox 는 StaticBody3D 에 _items 배열을 들고만 있고, 그 배열을 읽는 코드가 게임 안에 없다. 상자를 여는 유일한 길인 combat/damage_death/death.gd:94 aimed_chest() 는 'as DeathChest' 로 받으므로 DevBox 를 조준해도 null 이다. 결과적으로 사람은 상자 앞에 서서 아무것도 꺼낼 수 없고, '빈손으로 시작하는데 도끼도 제작대도 만들 방법이 없다' 는 G-114 의 목적이 그대로 남는다. 고칠 것: 조준하고 오른쪽 클릭하면 열려 안의 칸을 가방으로 옮길 수 있게 하라 — DeathChest 의 열기 경로를 상자 공통으로 넓히든(aimed_chest 가 DeathChest 와 DevBox 를 함께 받게), DevBox 가 그 경로를 그대로 쓰게 하든 둘 중 하나다. 검사도 함께 짜라: 켠 월드에서 상자를 조준해 열고, 목재를 가방으로 꺼내 Inventory 에 실제로 들어간 것을 보는 검사 — 지금처럼 box.count_of() 만 되묻지 말고 '사람의 가방에 들어왔나' 를 봐야 한다.",
-    "기준 2 — 상자에 '모든 자원' 이 들어 있지 않다. core/debug/dev_box.gd:52 resource_items() 가 Harvest.DROPS 의 산출물만 담아 wood · stone · iron_ore · sulfur_ore 넷뿐이고, 게임에 있는 wheat_seed 가 빠져 있다 (i18n 에 ITEM_wheat_seed 가 있다). 씨앗이 없으면 개발용 월드로 농사를 확인할 수 없다 — 상자의 쓸모가 제작·건축까지로 잘린다. 고칠 것: 씨앗을 포함시키고, test_dev_box.gd 에 '밀 씨앗이 들어 있다' 를 보는 단언을 더하라. 구현 세션 보고서는 '밀 씨앗 같은 농사 산출물은 자원이 아니라 보고 뺐다' 고 적었는데, 기준은 '모든 자원' 이므로 빼려면 그 판단을 spec 이나 list.md 에 적어 사람이 볼 수 있게 남겨야 한다."
-   ],
-   "good": [
-    "settings/world_settings/world_settings.gd 에 dev() 읽기 전용 게터를 더했다 — 기준에 없지만 GameRoot 가 월드의 값을 섬까지 나르는 데 쓰는 배선이고, 바꾸는 길은 두지 않았다 (spec 의 '만들 때 정하고 도중에 바꾸지 않는다' 와 맞다)",
-    "DevBox.GROUP (&\"dev_boxes\") 무리 — 기준에 없다. '나중에 깨끗이 지울 수 있게' 를 위한 준비다. 지금은 검사만 쓴다",
-    "test_island.gd 에 beside_spawn() 을 새로 냈다 — 지금은 개발용 상자만 쓴다"
-   ]
-  },
-  "test": "rontier_island_does_not_carry_my_islands_marks\n* test_sailing_back_finds_my_island_as_i_left_it\n* test_each_island_is_saved_on_its_own\n* test_going_back_to_the_frontier_island_finds_it_as_i_left_it\n7/7 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_tab_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              57\nTests               513\nPassing Tests       513\nAsserts            8591\nTime              400.245s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-09-22 00:41:09",
   "epoch": 1790005269,
   "type": "pass",
@@ -8355,6 +8289,15 @@
  {
   "time": "2026-09-25 07:37:42",
   "epoch": 1790289462,
+  "type": "wait",
+  "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
+  "group": "G-146",
+  "step": "2",
+  "attempt": "1"
+ },
+ {
+  "time": "2026-09-25 08:07:55",
+  "epoch": 1790291275,
   "type": "wait",
   "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
   "group": "G-146",
