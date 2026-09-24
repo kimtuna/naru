@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "G-147 합쳤다",
- "updated": "2026-09-25 00:01:11",
- "updated_epoch": 1790262071,
- "ended": "2026-09-24 23:17:22",
+ "state": "stopped",
+ "reason": "g/G-910 에 3d-lane2 를 넣지 못했다 (충돌) — 사람이 풀어야 한다",
+ "updated": "2026-09-25 00:01:14",
+ "updated_epoch": 1790262074,
+ "ended": "2026-09-25 00:01:14",
  "progress": {
   "groups_total": 36,
   "groups_done": 30,

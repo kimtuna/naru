@@ -183,7 +183,6 @@ function renderStatus(s) {
     <dl class="kv">
       <dt>마지막 갱신</dt><dd>${esc(s.updated)} <span class="sub">(${ago(s.updated_epoch)})</span></dd>
       <dt>지금 작업</dt><dd>${cur}</dd>
-      ${s.model ? `<dt>AI</dt><dd><b>${esc(modelName(s.model))}</b>${s.lane ? ` · 차선 ${esc(s.lane)}` : ""}</dd>` : ""}
       ${state === "running" && s.phase ? `<dt>단계</dt><dd>${esc(s.phase)} — ${esc(s.phase_since)} 부터</dd>` : ""}
       ${s.resume_at ? `<dt>재개 예정</dt><dd>${esc(s.resume_at)}</dd>` : ""}
       <dt>이번 실행</dt><dd>${esc(s.started)} 시작${s.ended && state !== "running" ? ` · ${esc(s.ended)} 종료` : ""}</dd>
@@ -239,13 +238,11 @@ function renderList(text, status) {
   const TAG = { "x": ["t-ok", "완료"], ">": ["t-bad", "결정 대기"], " ": ["t-info", "할 일"] };
   // 「진행 중」은 **차선이 지금 하고 있는 묶음**이다 — 차선이 둘이면 둘. 차선 기록이 없으면 첫 할 일.
   const working = new Set(RUNNING.map((x) => x.group).filter(Boolean));
-  const who = {};
-  for (const x of RUNNING) if (x.group) who[x.group] = `${modelName(x.model)} · ${x.lane || ""}`;
   const firstTodo = working.size ? null : groups.find((g) => g.state === " ");
   $("list").innerHTML = groups.map((g) => {
     const done = g.steps.filter((s) => s.done).length;
     const isCur = working.has(g.id) || (firstTodo && g.id === firstTodo.id);
-    const [cls, label] = isCur ? ["t-fail", who[g.id] ? `진행 중 — ${who[g.id]}` : "진행 중"] : TAG[g.state];
+    const [cls, label] = isCur ? ["t-fail", "진행 중"] : TAG[g.state];
     return `<details ${isCur ? "open" : ""}><summary><span class="tag ${cls}">${label}</span>
       <span class="title">${esc(g.id)} ${esc(g.title)}</span><span class="count">${g.steps.length ? `${done}/${g.steps.length}` : (g.state === "x" ? "끝남" : "—")}</span></summary>
       <div class="body">${g.steps.length ? "" : `<div class="empty">${esc(g.note || "단계 기록이 archive 로 옮겨졌다")}</div>`}<ul class="steps">${g.steps.map((s) => `<li><span>${s.done ? "✅" : "⬜"}</span><span>${esc(s.title)}
@@ -330,12 +327,6 @@ function renderRuns(events) {
 // 위에 차선을 나란히 보여 주고, 고른 차선의 자세한 기록을 아래에 그린다.
 let lane = null;
 try { lane = localStorage.getItem("naru-lane"); } catch (e) {}
-function modelName(m) {
-  const k = String(m || "").toLowerCase();
-  const NAMES = { opus: "Opus", fable: "Fable", sonnet: "Sonnet", haiku: "Haiku" };
-  for (const [key, name] of Object.entries(NAMES)) if (k.includes(key)) return name;
-  return m || "?";
-}
 function laneWhat(s) {
   if (!s) return "기록 없음";
   if (s.group && s.state !== "done") return `${s.group} · ${s.step}/${s.step_total || "?"}단계 ${s.step_title || ""} · 시도 ${s.attempt || "?"}`;
@@ -348,7 +339,7 @@ function renderLanes(names, statuses) {
     const state = s.state || "stopped";
     const stale = state === "running" && (Date.now() / 1000 - (s.updated_epoch || 0)) / 60 > 120;
     return `<button class="lane ${n === lane ? "on" : ""}" data-lane="${esc(n)}">
-      <span class="name">${esc(n)} <span class="tag t-info">${esc(modelName(s.model))}</span> <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : (STATE[state] || esc(state))}</span></span>
+      <span class="name">${esc(n)} <span class="badge b-${stale ? "stale" : esc(state)}">${stale ? STATE.stale : (STATE[state] || esc(state))}</span></span>
       <span class="what">${esc(laneWhat(s))} <span class="sub">· ${ago(s.updated_epoch)}</span></span></button>`;
   }).join("");
   $("lanes").querySelectorAll(".lane").forEach((b) => (b.onclick = () => {
