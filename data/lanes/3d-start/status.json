@@ -1,14 +1,14 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 23:44:10",
- "updated_epoch": 1790261050,
+ "updated": "2026-09-24 23:51:48",
+ "updated_epoch": 1790261508,
  "ended": "2026-09-24 23:20:42",
  "progress": {
   "groups_total": 36,
   "groups_done": 29,
   "groups_waiting": 0,
-  "steps_total": 133,
+  "steps_total": 135,
   "steps_done": 105
  },
  "started": "2026-09-21 06:54:49",
@@ -17,5 +17,7 @@
  "step_title": "휠로 올려도 옆에 붙는다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 23:44:10"
+ "phase_since": "2026-09-24 23:44:10",
+ "lane": "3d-start",
+ "model": "opus"
 }
