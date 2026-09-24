@@ -826,9 +826,11 @@
 - [x] 3. (앞 단계 QA) 배 건너기 순서가 테스트에 복사돼 있다
   - 기준: 배 건너기 순서가 테스트에 복사돼 있다 — test_from_empty_hands.gd 의 _on_boarded · _on_key_inserted · _island_open 이 core/game_root.gd 의 sail_to · insert_key · island_open 을 손으로 베낀 것이라, GameRoot 쪽이 바뀌면(예: 로딩 · 캐릭터 몸 상태 넘기기 차례) 한 바퀴 테스트는 모른 채 통과한다. 지금은 같은 차례임을 확인했다(막는 것은 아니다). 베낀 함수 머리 주석에 'GameRoot.sail_to 를 바꾸면 여기도 맞춘다'를 적거나, IslandState · PlayerState 담기/되돌리기를 GameRoot 와 테스트가 함께 부르는 정적 함수 하나로 모아라
   - 기준: (앞 단계 QA) 개척 섬 캔 자리 단언이 빈 값끼리도 통과한다 — test_from_empty_hands.gd 25단계의 assert_eq(sulfur_now.get("gone"), sulfur_left.get("gone")) 는 둘 다 비어 있어도 참이다. 그 앞에 assert_eq((sulfur_left.get("gone", PackedStringArray()) as PackedStringArray).size(), SULFUR_LINE.size(), "개척 섬에서 캔 다섯 자리가 담겼다") 를 넣어라
-- [ ] 4. (앞 단계 QA) GameRoot.island_open · insert_key 머리에 베낌 표시가 없다
+- [x] 4. (앞 단계 QA) GameRoot.island_open · insert_key 머리에 베낌 표시가 없다
   - 기준: GameRoot.island_open · insert_key 머리에 베낌 표시가 없다 — sail_to 머리(game_root.gd 287줄)에만 '한 바퀴 테스트가 베껴 쓴다'가 있고 island_open(226줄) · insert_key(240줄) 머리에는 없다. 고치는 쪽에서 보이도록 두 함수 머리에도 'tests/craft/test_from_empty_hands.gd 의 _island_open / _on_key_inserted 가 베껴 쓴다 — 바꾸면 거기도 맞춘다' 한 줄씩 적어라 (막는 것은 아니다)
   - 기준: (앞 단계 QA) 한 바퀴 테스트가 옆 차선과 겹쳐 돌면 흔들린다 — report 에 따르면 naru-lane2 가 godot 6개를 돌리는 동안 test_from_empty_hands.gd 가 10단계(밭 놓기) · 5단계(걷기)에서 떨어졌고 혼자 돌리면 통과했다. 걷기 · 조준을 프레임 수가 아니라 도착 여부(거리 조건 + 넉넉한 상한)로 기다리게 바꾸거나, 떨어진 단계에서 무엇이 모자랐는지 단언 메시지에 위치 · 남은 거리를 찍어 원인을 가려라
+- [ ] 5. (앞 단계 QA) _put_down 은 조준이 맞기 전에 놓을 수 있다
+  - 기준: _put_down 은 조준이 맞기 전에 놓을 수 있다 — test_from_empty_hands.gd 의 _put_down(700줄 근처)은 _look 뒤 곧바로 _right_click 하고 stations.aimed_station() 을 한 번만 읽는다. 조준 대기(_until_aims_ground 로 땅을 짚을 때까지 기다린 뒤 우클릭)를 넣고 assert_not_null 메시지에 _where() 를 붙여라 — 이번 기준(5 · 10단계)은 풀렸지만 같은 흔들림이 제련로 · 연구대 놓기에서 날 수 있다
 
 ## [ ] G-146 플레이하고 짚은 것 — 밤 · 횃불 · 오버레이 · 탄 고르기
 - 차선: 3d-start (대화 세션이 나눴다 2026-09-24 — 3d-start 는 건축 쪽, 3d-lane2 는 겹치지 않는 것)

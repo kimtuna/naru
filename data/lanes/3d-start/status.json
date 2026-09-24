@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 05:58:32",
- "updated_epoch": 1790283512,
+ "updated": "2026-09-25 06:23:10",
+ "updated_epoch": 1790284990,
  "ended": "2026-09-25 01:35:20",
  "progress": {
   "groups_total": 38,
   "groups_done": 32,
   "groups_waiting": 0,
-  "steps_total": 145,
-  "steps_done": 126
+  "steps_total": 146,
+  "steps_done": 127
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-148",
  "step": "4",
  "step_title": "(앞 단계 QA) GameRoot.island_open · insert_key 머리에 베낌 표시가 없다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 05:58:32",
+ "phase": "QA",
+ "phase_since": "2026-09-25 06:22:13",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-25 04:30:00"
