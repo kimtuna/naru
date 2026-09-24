@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "G-149 합쳤다",
- "updated": "2026-09-25 01:29:02",
- "updated_epoch": 1790267342,
+ "reason": "",
+ "updated": "2026-09-25 01:29:04",
+ "updated_epoch": 1790267344,
  "ended": "2026-09-25 00:56:36",
  "progress": {
   "groups_total": 38,
@@ -12,12 +12,12 @@
   "steps_done": 115
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-149",
- "step": "2",
- "step_title": "(앞 단계 QA) 횃불을 놓게 되면 계단 판도 막아야 한다",
+ "group": "G-148",
+ "step": "1",
+ "step_title": "빈손에서 집까지 끊기지 않는다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-25 01:28:21",
+ "phase": "구현",
+ "phase_since": "2026-09-25 01:29:04",
  "lane": "3d-start",
  "model": "opus"
 }
