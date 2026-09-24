@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "목록을 읽는다",
- "updated": "2026-09-24 23:44:06",
- "updated_epoch": 1790261046,
+ "reason": "",
+ "updated": "2026-09-24 23:44:10",
+ "updated_epoch": 1790261050,
  "ended": "2026-09-24 23:20:42",
  "progress": {
   "groups_total": 36,
@@ -12,10 +12,10 @@
   "steps_done": 105
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-148",
- "step": "1",
- "step_title": "마우스 올린 자리의 좌표가 보인다",
- "attempt": "9",
+ "group": "G-145",
+ "step": "6",
+ "step_title": "휠로 올려도 옆에 붙는다",
+ "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 23:20:30"
+ "phase_since": "2026-09-24 23:44:10"
 }
