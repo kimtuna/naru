@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 05:18:26",
- "updated_epoch": 1790281106,
+ "updated": "2026-09-25 05:18:28",
+ "updated_epoch": 1790281108,
  "ended": "2026-09-25 01:35:21",
  "progress": {
   "groups_total": 38,
@@ -13,11 +13,11 @@
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
- "step": "11",
- "step_title": "ui_shots 의 _reset 이 제작대 창을 못 닫는다 (G-129 단계 2)",
+ "step": "12",
+ "step_title": "섬 사진 테스트가 얕다 (G-129 단계 3)",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-25 05:17:19",
+ "phase": "구현",
+ "phase_since": "2026-09-25 05:18:28",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-25 04:30:00"
