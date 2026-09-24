@@ -1,15 +1,15 @@
 {
- "state": "running",
- "reason": "",
- "updated": "2026-09-25 07:04:40",
- "updated_epoch": 1790287480,
- "ended": "2026-09-25 01:35:21",
+ "state": "waiting",
+ "reason": "토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
+ "updated": "2026-09-25 07:07:16",
+ "updated_epoch": 1790287636,
+ "ended": "2026-09-25 07:07:16",
  "progress": {
   "groups_total": 38,
   "groups_done": 33,
   "groups_waiting": 0,
   "steps_total": 151,
-  "steps_done": 132
+  "steps_done": 133
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
