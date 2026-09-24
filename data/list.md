@@ -829,7 +829,7 @@
 - [x] 4. (앞 단계 QA) GameRoot.island_open · insert_key 머리에 베낌 표시가 없다
   - 기준: GameRoot.island_open · insert_key 머리에 베낌 표시가 없다 — sail_to 머리(game_root.gd 287줄)에만 '한 바퀴 테스트가 베껴 쓴다'가 있고 island_open(226줄) · insert_key(240줄) 머리에는 없다. 고치는 쪽에서 보이도록 두 함수 머리에도 'tests/craft/test_from_empty_hands.gd 의 _island_open / _on_key_inserted 가 베껴 쓴다 — 바꾸면 거기도 맞춘다' 한 줄씩 적어라 (막는 것은 아니다)
   - 기준: (앞 단계 QA) 한 바퀴 테스트가 옆 차선과 겹쳐 돌면 흔들린다 — report 에 따르면 naru-lane2 가 godot 6개를 돌리는 동안 test_from_empty_hands.gd 가 10단계(밭 놓기) · 5단계(걷기)에서 떨어졌고 혼자 돌리면 통과했다. 걷기 · 조준을 프레임 수가 아니라 도착 여부(거리 조건 + 넉넉한 상한)로 기다리게 바꾸거나, 떨어진 단계에서 무엇이 모자랐는지 단언 메시지에 위치 · 남은 거리를 찍어 원인을 가려라
-- [ ] 5. (앞 단계 QA) _put_down 은 조준이 맞기 전에 놓을 수 있다
+- [x] 5. (앞 단계 QA) _put_down 은 조준이 맞기 전에 놓을 수 있다
   - 기준: _put_down 은 조준이 맞기 전에 놓을 수 있다 — test_from_empty_hands.gd 의 _put_down(700줄 근처)은 _look 뒤 곧바로 _right_click 하고 stations.aimed_station() 을 한 번만 읽는다. 조준 대기(_until_aims_ground 로 땅을 짚을 때까지 기다린 뒤 우클릭)를 넣고 assert_not_null 메시지에 _where() 를 붙여라 — 이번 기준(5 · 10단계)은 풀렸지만 같은 흔들림이 제련로 · 연구대 놓기에서 날 수 있다
 
 ## [ ] G-146 플레이하고 짚은 것 — 밤 · 횃불 · 오버레이 · 탄 고르기

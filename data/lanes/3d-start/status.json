@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 06:23:12",
- "updated_epoch": 1790284992,
+ "updated": "2026-09-25 06:38:46",
+ "updated_epoch": 1790285926,
  "ended": "2026-09-25 01:35:20",
  "progress": {
   "groups_total": 38,
   "groups_done": 32,
   "groups_waiting": 0,
-  "steps_total": 147,
-  "steps_done": 128
+  "steps_total": 148,
+  "steps_done": 130
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-148",
  "step": "5",
  "step_title": "(앞 단계 QA) _put_down 은 조준이 맞기 전에 놓을 수 있다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 06:23:12",
+ "phase": "QA",
+ "phase_since": "2026-09-25 06:38:15",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-25 04:30:00"
