@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 05:40:14",
- "updated_epoch": 1790282414,
+ "updated": "2026-09-25 05:54:38",
+ "updated_epoch": 1790283278,
  "ended": "2026-09-25 01:35:21",
  "progress": {
   "groups_total": 38,
   "groups_done": 32,
   "groups_waiting": 0,
   "steps_total": 144,
-  "steps_done": 124
+  "steps_done": 125
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
  "step": "14",
  "step_title": "테스트가 GameRoot 의 밑줄 함수를 직접 부른다 (G-901 단계 1)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 05:40:14",
+ "phase": "QA",
+ "phase_since": "2026-09-25 05:53:13",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-25 04:30:00"
