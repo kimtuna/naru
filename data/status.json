@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 10:34:44",
- "updated_epoch": 1790213684,
+ "updated": "2026-09-24 11:10:30",
+ "updated_epoch": 1790215830,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 27,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 93
+  "steps_done": 94
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-902",
- "step": "3",
- "step_title": "창 밖에 놓으면 버린다",
+ "step": "4",
+ "step_title": "모으기 · 정렬 · 빠른 채우기",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 10:33:09"
+ "phase_since": "2026-09-24 11:06:51"
 }
