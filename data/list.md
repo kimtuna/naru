@@ -895,7 +895,7 @@
   - 기준: 총을 들면 단추의 「(우클릭)」이 틀린다 — 막는 문제는 아니다. HUNT_BUTCHER 가 「도축 (우클릭)」/「Butcher (Right-click)」인데, 총을 들었을 때 우클릭은 조준이다(사람 결정 2026-09-22, test_right_click_with_a_gun_aims_and_the_button_still_butchers). ButcherPanel._refresh 에서 손에 총이 있으면 「(우클릭)」이 없는 키(예: HUNT_BUTCHER_PLAIN, ko·en 둘 다)를 쓰든지 안내 글자를 없애라. 총을 든 채 패널을 띄웠을 때 단추 글자에 우클릭 안내가 없는지 보는 단언을 test_butchery.gd 에 더하라
 - [x] 4. 도축하지 않은 주검이 영원히 남는다 (G-131 단계 3)
   - 기준: 도축하지 않은 주검이 영원히 남는다 — 막는 문제는 아니다. Animal._on_died 가 queue_free 를 하지 않으니 도축하지 않은 사슴(그리고 적대 동물)은 CARCASSES 무리에 쌓이고, Butchery._nearest 는 매 프레임 그 무리를 다 돈다. spec/04_life/hunting.md 「미정」에 「주검이 사라지는 시간」 한 줄을 적어 두고, 임시 값(예: 하루)과 그것을 확인하는 테스트를 넣어라
-- [ ] 5. 상자에 넣은 짐승은 영영 안 깬다 (G-132 단계 4)
+- [x] 5. 상자에 넣은 짐승은 영영 안 깬다 (G-132 단계 4)
   - 기준: 상자에 넣은 짐승은 영영 안 깬다 — Captives._process 는 가방(player.inventory) 칸만 돌며 게이지를 깎는다. 그런데 world/storage/chest.gd 는 SlotMove.drop 으로 칸을 통째로(kind · sedation · cage 까지) 상자에 옮기므로, 잡은 짐승을 상자에 넣어 두면 게이지가 멈춰 케이지 없이도 영영 가둘 수 있다. 상자에 captive_ 칸을 못 넣게 하거나(Chest 넣기에서 Captives.is_captive 면 거절) 상자 칸도 깎게 하고, test_carry_cage.gd 에 '잡은 짐승을 상자에 넣고 시간이 가도 게이지가 멈추지 않는다(또는 넣을 수 없다)' 단언을 더하라
 - [ ] 6. 케이지 제작을 실제로 해 보는 테스트가 없다 (G-132 단계 4)
   - 기준: 케이지 제작을 실제로 해 보는 테스트가 없다 — test_three_cages_are_crafted 는 레시피가 있는지만 본다(막는 것은 아니다). 제작대 레시피 경로로 목재 · 철괴를 넣어 cage_small 이 가방에 들어오는지 한 번 보는 단언을 더하라
@@ -928,6 +928,10 @@
   - 기준: `grapple.gd` 의 「임시」 표시를 지운다 — 사람이 정한 값이다. `spec/04_life/climbing.md` 수치 절의 「탄창은 grapple.gd」 줄도 「4발 (사람 결정)」으로 맞춘다
 - [ ] 14. test.log 합계 한 줄이 어긋난다 (G-910 단계 3)
   - 기준: test.log 합계 한 줄이 어긋난다 — 전체 결과가 Tests 1430 · Passing 1429 · Failing 0 · Pending 0 이라 하나가 어느 쪽에도 안 든다. 단언 없는(GUT 의 risky) 테스트가 하나 있을 것이다. 이번 단계와 무관하다 (test_butchery 는 10개 다 통과·단언 110). test.sh 가 남기는 파일별 로그에서 'risky' 를 찾아 그 테스트에 진짜 단언을 넣어라
+- [ ] 13. 죽음 상자 안에서는 풀린 짐승의 게이지가 멈춘다 (G-910 단계 5)
+  - 기준: 죽음 상자 안에서는 풀린 짐승의 게이지가 멈춘다 — combat/damage_death/death_chest.gd:43 은 가방을 _items 에 통째로 옮기므로 accepts 를 거치지 않는다. 30분 뒤 상자가 사라지니 「영영」은 아니지만(사람 결정 2026-09-16), 열어 두면 상자 시간도 멈추므로 그동안 게이지가 얼어 있다. spec/04_life/hunting.md 「미정」에 「죽었을 때 풀린 짐승 — 죽음 상자에 얼린 채 두나, 그 자리에 놓아 도망가게 하나」 한 줄을 적고, 지금 행동(얼린 채 죽음 상자에 간다)을 test_death_chest.gd 에 단언 하나로 못 박아라
+- [ ] 14. 전체 합계에서 테스트 하나가 통과도 실패도 아니다 (G-910 단계 5)
+  - 기준: 전체 합계에서 테스트 하나가 통과도 실패도 아니다 — test.log 합친 결과가 Tests 1440 · Passing 1439 · Failing 0 · Pending 0 이다. GUT 의 risky(단언 없는) 테스트가 하나 있는 것으로 보이는데 tools/test.sh 가 임시 폴더를 지워 어느 파일인지 남지 않는다. test.sh 의 합치는 awk 에 Risky 줄도 더하고, Tests 와 Passing+Failing+Pending 이 안 맞으면 그 파일 이름을 맨 뒤에 찍게 하라
 
 ## [ ] G-911 G-910 에서 뺀 것 — G-145 뒤에 한다
 - 차선: 3d-lane2 (사람 결정 2026-09-25 — Fable 이 G-910 다음에 하고 멈춘다)
