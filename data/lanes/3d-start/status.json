@@ -1,8 +1,8 @@
 {
- "state": "stopped",
- "reason": "G-148 단계 1 을 9 번 시도했으나 실패했다",
- "updated": "2026-09-24 23:13:36",
- "updated_epoch": 1790259216,
+ "state": "running",
+ "reason": "",
+ "updated": "2026-09-24 23:13:38",
+ "updated_epoch": 1790259218,
  "ended": "2026-09-24 23:13:36",
  "progress": {
   "groups_total": 36,
@@ -14,8 +14,8 @@
  "started": "2026-09-21 06:54:49",
  "group": "G-148",
  "step": "1",
- "step_title": "장 수를 버리고 걸음 수로 잰다",
- "attempt": "9",
+ "step_title": "빈손에서 집까지 끊기지 않는다",
+ "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 23:13:26"
+ "phase_since": "2026-09-24 23:13:38"
 }
