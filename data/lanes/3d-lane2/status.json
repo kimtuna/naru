@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 06:34:03",
- "updated_epoch": 1790285643,
+ "updated": "2026-09-25 06:54:37",
+ "updated_epoch": 1790286877,
  "ended": "2026-09-25 01:35:21",
  "progress": {
   "groups_total": 38,
-  "groups_done": 32,
+  "groups_done": 33,
   "groups_waiting": 0,
-  "steps_total": 148,
-  "steps_done": 129
+  "steps_total": 151,
+  "steps_done": 131
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
  "step": "14",
  "step_title": "test.log 합계 한 줄이 어긋난다 (G-910 단계 3)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 06:34:03",
+ "phase": "QA",
+ "phase_since": "2026-09-25 06:51:24",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-25 04:30:00"

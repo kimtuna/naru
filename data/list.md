@@ -934,7 +934,7 @@
     테스트가 탄창을 상대값으로만 견줘 못 잡았다
   - 기준: 갈고리총에 **4발**이 들어간다 — 숫자 4 를 단언하는 테스트가 있다 (테스트)
   - 기준: `grapple.gd` 의 「임시」 표시를 지운다 — 사람이 정한 값이다. `spec/04_life/climbing.md` 수치 절의 「탄창은 grapple.gd」 줄도 「4발 (사람 결정)」으로 맞춘다
-- [ ] 14. test.log 합계 한 줄이 어긋난다 (G-910 단계 3)
+- [x] 14. test.log 합계 한 줄이 어긋난다 (G-910 단계 3)
   - 기준: test.log 합계 한 줄이 어긋난다 — 전체 결과가 Tests 1430 · Passing 1429 · Failing 0 · Pending 0 이라 하나가 어느 쪽에도 안 든다. 단언 없는(GUT 의 risky) 테스트가 하나 있을 것이다. 이번 단계와 무관하다 (test_butchery 는 10개 다 통과·단언 110). test.sh 가 남기는 파일별 로그에서 'risky' 를 찾아 그 테스트에 진짜 단언을 넣어라
 - [ ] 13. 죽음 상자 안에서는 풀린 짐승의 게이지가 멈춘다 (G-910 단계 5)
   - 기준: 죽음 상자 안에서는 풀린 짐승의 게이지가 멈춘다 — combat/damage_death/death_chest.gd:43 은 가방을 _items 에 통째로 옮기므로 accepts 를 거치지 않는다. 30분 뒤 상자가 사라지니 「영영」은 아니지만(사람 결정 2026-09-16), 열어 두면 상자 시간도 멈추므로 그동안 게이지가 얼어 있다. spec/04_life/hunting.md 「미정」에 「죽었을 때 풀린 짐승 — 죽음 상자에 얼린 채 두나, 그 자리에 놓아 도망가게 하나」 한 줄을 적고, 지금 행동(얼린 채 죽음 상자에 간다)을 test_death_chest.gd 에 단언 하나로 못 박아라
@@ -948,6 +948,12 @@
   - 기준: test_from_empty_hands 가 회차마다 흔들린다 — 앞 회차 전체 돌림에서 tests/craft/test_from_empty_hands.gd 가 「wood_foundation 놓을 자리가 water」로 떨어졌다가(줄 905) 이번 회차 전체 돌림에서는 같은 코드로 통과했다. 시드 0 으로 결정적이어야 할 섬 모양이 6개 godot 동시 실행 때 달라지는지, 아니면 토대 자리 짚기가 물리 프레임 타이밍에 걸리는지 원인을 찾아 고정해라 (건축 쪽이라 차선 1 몫이면 G-911 로). 재현: 전체를 두세 번 돌려 그 줄의 why 값을 모아 본다
 - [ ] 7. 탄창 주석이 spec 에 없는 말을 한다 (G-910 단계 16)
   - 기준: 탄창 주석이 spec 에 없는 말을 한다 — game/life/climbing/grapple.gd:29 「등급이 생기면 등급표가 덮는다」는 spec/04_life/climbing.md 에 없다. 등급마다 다른 것은 **최대 거리**(사람 결정 2026-09-17)뿐이고 탄창은 4발로 정해졌다. 그 문장을 지워라 (test_the_magazine_is_not_marked_temporary 는 「임시」·「사람 결정」만 보니 지워도 통과한다)
+- [ ] 7. test.sh 합계의 Pending 이 늘 0 으로 찍힌다 (G-910 단계 14)
+  - 기준: test.sh 합계의 Pending 이 늘 0 으로 찍힌다 — tools/test.sh 끝의 awk 가 '^Pending +[0-9]' 를 찾는데 GUT(addons/gut/summary.gd:64) 는 그 줄을 'Risky/Pending N' 으로 찍고 0 이면 아예 안 찍는다. 그래서 pending·risky 가 있어도 합계에 안 보이고 Tests 와 Passing 만 어긋나 보인다 — 이번 기준의 「하나가 어느 쪽에도 안 든다」가 바로 그것이었다. awk 패턴을 '^(Risky\/)?Pending +[0-9]' 로 바꾸고 $NF 를 더하라. 테스트: pending() 하나만 있는 임시 테스트 파일로 test.sh 를 돌려 합계의 Pending 이 1 로 찍히는지 보는 셸 테스트(tests/ 아래 GD 로 어렵다면 harness/ 의 python 테스트)를 짜라
+- [ ] 8. test.sh 가 파일별 로그를 남기지 않는다 (G-910 단계 14)
+  - 기준: test.sh 가 파일별 로그를 남기지 않는다 — 기준이 「test.sh 가 남기는 파일별 로그에서 risky 를 찾아라」고 했지만 tools/test.sh 는 mktemp 폴더에 두고 trap 으로 지운다. 구현 세션이 찾을 수 없어 파일마다 godot 을 따로 띄워 되짚었다. 떨어졌을 때만이 아니라 늘 .loop/out/test_files/ 같은 곳에 파일별 로그를 복사해 두거나(하네스 쪽이면 [결정] 아님 — 세션이 tools/test.sh 를 고칠 수 있다), 아니면 위 awk 고침으로 합계에 Risky/Pending 이 보이게 해서 로그 없이도 찾게 하라
+- [ ] 9. 지키는 테스트 머리말이 실제 검사보다 세게 말한다 (G-910 단계 14)
+  - 기준: 지키는 테스트 머리말이 실제 검사보다 세게 말한다 — test_from_empty_hands_asserts_to_the_end.gd 머리말·단언문은 「중간에 return 으로 빠져 뒤가 비지 않는다」고 하지만 검사는 글자 줄 수만 센다. '# 25.' 바로 아래에 `return` 을 넣어도 통과했다(일부러 깨 봄). 몸통에 들여쓴 `return` 줄이 없는지도 같이 단언하거나(_body_of 결과에서 strip_edges()=='return' 줄 0개), 머리말을 「25번 아래에 단언 글줄이 있다」로 낮춰 적어라
 
 ## [ ] G-911 G-910 에서 뺀 것 — G-145 뒤에 한다
 - 차선: 3d-lane2 (사람 결정 2026-09-25 — Fable 이 G-910 다음에 하고 멈춘다)
