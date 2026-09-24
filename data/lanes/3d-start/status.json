@@ -1,15 +1,15 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-25 00:21:54",
- "updated_epoch": 1790263314,
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-25 00:30:12",
+ "updated_epoch": 1790263812,
  "ended": "2026-09-24 23:54:08",
  "progress": {
-  "groups_total": 36,
+  "groups_total": 37,
   "groups_done": 31,
   "groups_waiting": 0,
-  "steps_total": 136,
-  "steps_done": 107
+  "steps_total": 137,
+  "steps_done": 108
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-148",
