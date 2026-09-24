@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 23:16:53",
- "updated_epoch": 1790259413,
+ "updated": "2026-09-24 23:17:02",
+ "updated_epoch": 1790259422,
  "ended": "2026-09-24 23:15:57",
  "progress": {
   "groups_total": 36,
@@ -15,7 +15,7 @@
  "group": "G-910",
  "step": "1",
  "step_title": "다쳐서 도망간 뒤 진정하지 않는다 (G-130 단계 3)",
- "attempt": "7",
+ "attempt": "8",
  "phase": "구현",
- "phase_since": "2026-09-24 23:16:53"
+ "phase_since": "2026-09-24 23:17:02"
 }
