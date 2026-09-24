@@ -923,7 +923,7 @@
   - 기준: 녹이는 곳 창 바닥이 넓게 비어 있다 — report 가 남긴 것: 레시피가 둘뿐인데 창이 크게 잡혀 아래가 빈다. 창 높이를 레시피 수에 맞춰 줄이고(제작대 창이 핫바 위에 머무는 규칙은 지킨다) smelter 사진으로 확인한다
 - [x] 14. 테스트가 GameRoot 의 밑줄 함수를 직접 부른다 (G-901 단계 1)
   - 기준: 테스트가 GameRoot 의 밑줄 함수를 직접 부른다 — test_window_layout.gd 의 _open · _close_all 과 core/debug/ui_shots.gd 가 game._on_chest_open_changed(...) 를 부른다. 시그널 받는 쪽 함수라 이름이 바뀌면 조용히 깨진다. GameRoot 에 open_chest_window(chest)(null 이면 닫기) 같은 드러난 함수를 두고 셋 다 그것을 부르게 한다
-- [ ] 15. 낡은 Godot 함수 경고의 출처를 적어 둔다 — `instance_reset_physics_interpolation()` 은 deprecated 다
+- [x] 15. 낡은 Godot 함수 경고의 출처를 적어 둔다 — `instance_reset_physics_interpolation()` 은 deprecated 다
   - 확인함 (2026-09-24 대화 세션): **우리 GDScript 는 이 함수를 부르지 않는다.** `game/addons/terrain_3d/bin/` 의
     Terrain3D 1.0.2 바이너리 안에서 부른다 — `_build_terrain` 이 Terrain3D 를 만들 때 경고가 뜨는 까닭이다
   - 기준: `game/` 에서 애드온을 뺀 곳에 이 함수가 없다는 것을 검사로 지킨다 (테스트 — 소스를 읽어 본다)
@@ -944,6 +944,8 @@
   - 기준: 줄 · 버퍼 칸 누르기에는 지킴이가 없다 — station_window.gd 의 _press 와 _collect 는 _station == null 만 보고 _drop_freed() 를 안 부른다. 제작대가 풀린 그 프레임 안(_process 의 _refresh 가 돌기 전)에 줄이나 버퍼 칸이 눌리면 풀린 객체로 start_craft · collect 를 불러 같은 SCRIPT ERROR 가 난다. _press · _collect 첫머리에 _drop_freed() 를 넣고, test_station_window.gd 의 test_a_station_freed_while_the_window_is_open_is_not_asked_anything 에서 station.free() 직후 wait_process_frames 없이 row(AXE).pressed.emit() · buffer_slot(0).pressed.emit() 을 먼저 한 번 더 눌러 조용한지 단언하라 (지금은 station_kind() 가 먼저 불려 null 이 된 뒤에만 누른다)
 - [ ] 11. station_window.gd 머리말의 줄 수가 낡았다 (G-910 단계 10)
   - 기준: station_window.gd 머리말의 줄 수가 낡았다 — 25행 「제작대 레시피가 스물 몇 줄이라 화면 아래로 넘쳤다」인데 recipes.json 의 가공대 레시피는 44줄이다(이번 테스트 주석은 「마흔 몇 줄」로 맞다). 「마흔 몇 줄」로 고쳐라 (막는 것은 아니다)
+- [ ] 7. test_from_empty_hands 가 회차마다 흔들린다 (G-910 단계 15)
+  - 기준: test_from_empty_hands 가 회차마다 흔들린다 — 앞 회차 전체 돌림에서 tests/craft/test_from_empty_hands.gd 가 「wood_foundation 놓을 자리가 water」로 떨어졌다가(줄 905) 이번 회차 전체 돌림에서는 같은 코드로 통과했다. 시드 0 으로 결정적이어야 할 섬 모양이 6개 godot 동시 실행 때 달라지는지, 아니면 토대 자리 짚기가 물리 프레임 타이밍에 걸리는지 원인을 찾아 고정해라 (건축 쪽이라 차선 1 몫이면 G-911 로). 재현: 전체를 두세 번 돌려 그 줄의 why 값을 모아 본다
 
 ## [ ] G-911 G-910 에서 뺀 것 — G-145 뒤에 한다
 - 차선: 3d-lane2 (사람 결정 2026-09-25 — Fable 이 G-910 다음에 하고 멈춘다)
