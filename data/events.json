@@ -8861,5 +8861,44 @@
   },
   "test": "k_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= 36 Orphans\n==============================================\ntest_ui_shots.gd\n    - test_island_shot_builds_the_real_island\n        * [HandView:<Control#4191049248816>(hand_view.gd)] + 5\ntest_bag_temporary_note.gd\n    - test_the_header_says_the_dim_and_the_layer_are_temporary\n        * [HandView:<Control#11130072232314>(hand_view.gd)] + 5\n    - test_the_header_points_at_the_theme_the_scene_actually_uses\n        * [HandView:<Control#11130676188476>(hand_view.gd)] + 5\n        * [HandView:<Control#11131213059714>(hand_view.gd)] + 5\n    - test_the_header_quotes_the_layer_the_bag_actually_sits_on\n        * [HandView:<Control#11131951279239>(hand_view.gd)] + 5\n    - test_the_note_does_not_stick_to_the_slot_size\n        * [HandView:<Control#11132588813445>(hand_view.gd)] + 5\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             161\nTests              1384\nPassing Tests      1384\nAsserts           63066\nOrphans              36\nTime              956.732s\n\n\n---- All tests passed! ----\n\nWARNING: 36 RIDs of type \"CanvasItem\" were leaked.\n   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2735)\nWARNING: 179 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\nERROR: 9 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.\nERROR: 100 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.\nERROR: 1 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "2988d28"
+ },
+ {
+  "time": "2026-09-24 11:20:03",
+  "epoch": 1790216403,
+  "type": "pass",
+  "title": "통과 — G-903 단계 1 (총과 탄까지 이어진다)",
+  "group": "G-903",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "빈손 한 바퀴 테스트를 철괴 → 리볼버 · 권총탄 → 과녁 사격 → R 재장전 → 탄이 없으면 안 채워짐까지 이었다 (중간에 넣어 준 아이템 없음)",
+   "approach": "게임 코드는 고치지 않았다 — 길은 이미 이어져 있었고, 끝까지 실제로 치는 테스트만 없었다. 권총탄은 철괴 1 + 유황 1 이라 유황이 필요하다. 그래서 캐는 줄 끝에 철광석 넷(철괴 다섯 몫: 리볼버 4 · 탄 1)과 유황 하나를 더 놓았다. 목재는 소나무 일곱에서 28개가 나오는데 제작대 20 · 도끼 3 · 곡괭이 3 · 리볼버 2 로 딱 맞는다. 제련로에서 철괴 다섯 · 유황 하나를 뽑고, 제작대에서 리볼버 · 권총탄 10발을 만든다. 테스트에 섬에 붙는 것과 같은 Attack 노드를 붙이고 체력 달린 과녁 상자를 세운 뒤 진짜 좌클릭으로 쏜다. 공짜로 차 있는 첫 탄창 6발을 비운 다음 진짜 R 키로 6발 · 4발을 넣어(한 발씩 장전) 만든 탄 10발을 다 쏘고, 발마다 과녁에 맞아 피해가 들어가는지 본다. 가방이 빈 뒤에는 R 을 눌러도 재장전이 걸리지 않고, 시간이 지나도 탄창이 0 이며, 좌클릭해도 나가지 않는다. 한계: 유황은 원래 개척 섬에서 난다. 섬을 건너는 길(연구대 → 해금 아이템 → 선착장 → 배)은 이 테스트가 치지 않는다 — 지형을 걷어 낸 평평한 줄에 놓았다(철광석을 그렇게 두는 것과 같은 방식). 그 연결은 따로 칠 몫으로 남는다.",
+   "why": "",
+   "files": [
+    "game/tests/craft/test_from_empty_hands.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "철괴에서 **총 · 탄약**을 만들어 실제로 쏜다 — 중간에 아이템을 넣어 주지 않는다 (테스트)",
+     "evidence": "test_from_empty_hands.gd 의 test_from_empty_hands_to_a_fired_gun_without_being_handed_anything: 제련로에서 철괴 5 · 유황 1을 뽑고, 제작대에서 revolver 1 · pistol_ammo(레시피 count 만큼)를 _craft_at 으로 만든다. 철괴 · 유황이 0이 되고 가방 탄이 만든 수와 같은지 단언한다. 진짜 좌클릭(Click.click)으로 과녁(Health 붙은 StaticBody)을 쏘고, 발마다 Projectile.hit 로 과녁 피해(_hits)가 느는지, 나간 발 수가 처음 탄창 + 만든 탄 수와 같은지 본다. 파일에 bag.add · set_slot 이 없다(grep). 주운 것이 캔 것과 똑같은지 맞춰 보는 단언도 그대로 있다. test.log: 1/1 통과 · 211 asserts · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "R 로 재장전하고, 탄이 없으면 안 채워진다 (테스트)",
+     "evidence": "같은 테스트의 8·9단계: 진짜 R(InputActions.RELOAD 액션을 push_input)을 누르면 is_reloading 이 켜지고, 탄창에 min(크기, 가방 탄)발이 들어가며 가방에서 그만큼 빠지는지 본다. 가방이 빈 뒤 R 을 누르면 is_reloading 이 꺼진 채이고, 시간이 지나도 left()==0 이며, 좌클릭해도 발 수가 늘지 않는다. 일부러 깨 봤다: magazine.gd begin_reload 의 한 발씩 장전에서 『가방에 탄이 없으면 false』 줄을 지우고 돌리니 『탄이 없으니 R 을 눌러도 재장전이 걸리지 않는다』에서 실패했다. 본 뒤 되돌렸다(git diff 깨끗)"
+    }
+   ],
+   "issues": [
+    "유황을 캐러 섬을 건너는 길은 치지 않는다 — 유황은 개척 섬에서 난다(roadmap 「자원」). 그런데 test_from_empty_hands.gd 는 유황 광석을 내 섬의 평평한 줄에 놓아 캤다. 연구대 → 해금 아이템 → 선착장 → 배로 건너가는 길은 이 한 바퀴 테스트가 치지 않는다. 이번 기준 밖이니 G-903 단계 4 「한 바퀴가 한 번도 끊기지 않는다」나 G-900 에서, 개척 섬으로 건너가 유황을 캐는 데까지 실제로 치는 테스트를 이어 붙여라"
+   ],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 1 개 ---\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/craft/test_from_empty_hands.gd\n* test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    --- Awaiting 1.0 seconds  ---\n1/1 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               1\nTests                 1\nPassing Tests         1\nAsserts             211\nTime              54.802s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "818bd6e"
  }
 ]

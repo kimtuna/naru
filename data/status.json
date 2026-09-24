@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 11:10:30",
- "updated_epoch": 1790215830,
+ "updated": "2026-09-24 11:20:03",
+ "updated_epoch": 1790216403,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
-  "groups_done": 27,
+  "groups_done": 28,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 94
+  "steps_done": 95
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-902",
- "step": "4",
- "step_title": "모으기 · 정렬 · 빠른 채우기",
+ "group": "G-903",
+ "step": "1",
+ "step_title": "총과 탄까지 이어진다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 11:06:51"
+ "phase_since": "2026-09-24 11:17:59"
 }
