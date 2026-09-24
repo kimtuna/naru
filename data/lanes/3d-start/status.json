@@ -1,21 +1,21 @@
 {
- "state": "stopped",
- "reason": "G-146 단계 1 을 9 번 시도했으나 실패했다",
- "updated": "2026-09-24 23:16:17",
- "updated_epoch": 1790259377,
+ "state": "running",
+ "reason": "",
+ "updated": "2026-09-24 23:16:20",
+ "updated_epoch": 1790259380,
  "ended": "2026-09-24 23:16:17",
  "progress": {
   "groups_total": 36,
   "groups_done": 29,
-  "groups_waiting": 1,
+  "groups_waiting": 2,
   "steps_total": 133,
   "steps_done": 99
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-146",
+ "group": "G-148",
  "step": "1",
- "step_title": "장 수를 버리고 걸음 수로 잰다",
- "attempt": "9",
+ "step_title": "밤이 가장 어둡다",
+ "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 23:16:08"
+ "phase_since": "2026-09-24 23:16:20"
 }
