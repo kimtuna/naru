@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 23:19:28",
- "updated_epoch": 1790259568,
+ "updated": "2026-09-24 23:19:39",
+ "updated_epoch": 1790259579,
  "ended": "2026-09-24 23:19:14",
  "progress": {
   "groups_total": 36,
@@ -15,7 +15,7 @@
  "group": "G-148",
  "step": "1",
  "step_title": "마우스 올린 자리의 좌표가 보인다",
- "attempt": "2",
+ "attempt": "3",
  "phase": "구현",
- "phase_since": "2026-09-24 23:19:28"
+ "phase_since": "2026-09-24 23:19:39"
 }
