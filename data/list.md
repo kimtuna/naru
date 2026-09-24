@@ -799,7 +799,7 @@
   - 기준: 횃불을 놓게 되면 계단 판도 막아야 한다 — 지금은 횃불을 놓는 길이 아예 없다 (stations.catalog 에 torch 가 없다). 그래서 이번 기준은 통과지만, 나중에 횃불을 놓는 길을 만들 때 BuildPiece.stairs_in(self, BuildPiece.plate_of(spot), spot.y, spot.y) 확인을 넣어야 한다. test_building_stairs_plate.gd 의 assert_false(stations.catalog.has("torch")) 도 그때 '횃불 aimed_spot 이 null' 단언으로 바꿔라
   - 기준: (앞 단계 QA) stairs_blocked 그림이 남지 않았다 — 구현 세션이 찍었다고 한 stairs_blocked.png 가 .loop/out 에도 없고 다른 곳에서도 찾지 못했다. 앞으로 그림은 .loop/out/ 에 저장해 QA 가 볼 수 있게 하라 (harness/shot.sh .loop/out stairs_blocked)
 
-## [ ] G-148 한 바퀴 마무리 — 새 건축으로 집까지
+## [x] G-148 한 바퀴 마무리 — 새 건축으로 집까지
 - 차선: 3d-start (대화 세션이 나눴다 2026-09-24 — 3d-start 는 건축 쪽, 3d-lane2 는 겹치지 않는 것)
 - spec: spec/00_core/roadmap.md, spec/06_build/building.md
 - **자가 피드백**: 깨끗해질 때까지 단계를 계속 붙인다
