@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 05:29:37",
- "updated_epoch": 1790281777,
+ "updated": "2026-09-25 05:58:29",
+ "updated_epoch": 1790283509,
  "ended": "2026-09-25 01:35:20",
  "progress": {
   "groups_total": 38,
   "groups_done": 32,
   "groups_waiting": 0,
-  "steps_total": 144,
-  "steps_done": 123
+  "steps_total": 145,
+  "steps_done": 126
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-148",
  "step": "3",
  "step_title": "(앞 단계 QA) 배 건너기 순서가 테스트에 복사돼 있다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 05:29:37",
+ "phase": "QA",
+ "phase_since": "2026-09-25 05:57:50",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-25 04:30:00"
