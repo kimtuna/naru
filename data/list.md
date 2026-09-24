@@ -914,7 +914,7 @@
   - 기준: ui_shots 의 _reset 이 제작대 창을 못 닫는다 — stations.open(null) 은 무시되어 chest 사진에 앞 제련로 창이 남고 can_start SCRIPT ERROR 가 난다(구현 세션 보고). stations.close() 로 바꾸고 찍는 폭 단계에서 chest.png 를 열어 확인하라
 - [x] 12. 섬 사진 테스트가 얕다 (G-129 단계 3)
   - 기준: 섬 사진 테스트가 얕다 — test_island_shot_builds_the_real_island 는 island_scene 이 null 이 아닌지만 본다. 세운 뒤 game.island()(세운 섬)가 있고 HUD(hotbar)가 보이는지까지 단언하거나, 이름대로 '섬을 세운다'를 확인하게 고쳐라
-- [ ] 13. 녹이는 곳 창 바닥이 넓게 비어 있다 (G-901 단계 1)
+- [x] 13. 녹이는 곳 창 바닥이 넓게 비어 있다 (G-901 단계 1)
   - 기준: 녹이는 곳 창 바닥이 넓게 비어 있다 — report 가 남긴 것: 레시피가 둘뿐인데 창이 크게 잡혀 아래가 빈다. 창 높이를 레시피 수에 맞춰 줄이고(제작대 창이 핫바 위에 머무는 규칙은 지킨다) smelter 사진으로 확인한다
 - [ ] 14. 테스트가 GameRoot 의 밑줄 함수를 직접 부른다 (G-901 단계 1)
   - 기준: 테스트가 GameRoot 의 밑줄 함수를 직접 부른다 — test_window_layout.gd 의 _open · _close_all 과 core/debug/ui_shots.gd 가 game._on_chest_open_changed(...) 를 부른다. 시그널 받는 쪽 함수라 이름이 바뀌면 조용히 깨진다. GameRoot 에 open_chest_window(chest)(null 이면 닫기) 같은 드러난 함수를 두고 셋 다 그것을 부르게 한다

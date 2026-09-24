@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 05:28:42",
- "updated_epoch": 1790281722,
+ "updated": "2026-09-25 05:40:12",
+ "updated_epoch": 1790282412,
  "ended": "2026-09-25 01:35:21",
  "progress": {
   "groups_total": 38,
   "groups_done": 32,
   "groups_waiting": 0,
-  "steps_total": 143,
-  "steps_done": 122
+  "steps_total": 144,
+  "steps_done": 124
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
  "step": "13",
  "step_title": "녹이는 곳 창 바닥이 넓게 비어 있다 (G-901 단계 1)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 05:28:42",
+ "phase": "QA",
+ "phase_since": "2026-09-25 05:38:06",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-25 04:30:00"
