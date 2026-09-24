@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 09:48:30",
- "updated_epoch": 1790210910,
+ "updated": "2026-09-24 10:34:44",
+ "updated_epoch": 1790213684,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 27,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 92
+  "steps_done": 93
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-902",
- "step": "2",
- "step_title": "우클릭 — 반만 집고, 한 개씩 놓는다",
+ "step": "3",
+ "step_title": "창 밖에 놓으면 버린다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 09:47:14"
+ "phase_since": "2026-09-24 10:33:09"
 }
