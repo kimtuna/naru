@@ -1,21 +1,21 @@
 {
  "state": "running",
- "reason": "{\"done\": false, \"bundle\": \"G-903\", \"step\": 1, \"title\": \"총과 탄까지 이어진다\", \"last\": false}",
- "updated": "2026-09-24 13:43:00",
- "updated_epoch": 1790224980,
+ "reason": "",
+ "updated": "2026-09-24 13:43:03",
+ "updated_epoch": 1790224983,
  "ended": "2026-09-24 03:25:15",
  "progress": {
-  "groups_total": 31,
-  "groups_done": 28,
+  "groups_total": 35,
+  "groups_done": 29,
   "groups_waiting": 0,
-  "steps_total": 118,
-  "steps_done": 94
+  "steps_total": 132,
+  "steps_done": 97
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-903",
- "step": "4",
- "step_title": "저장까지 이어진다",
+ "group": "G-145",
+ "step": "1",
+ "step_title": "장 수를 버리고 걸음 수로 잰다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 13:34:50"
+ "phase_since": "2026-09-24 13:43:03"
 }
