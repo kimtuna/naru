@@ -166,5 +166,70 @@
   "epoch": 1790261057,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-25 00:01:04",
+  "epoch": 1790262064,
+  "type": "pass",
+  "title": "통과 — G-147 단계 2 (좌표를 넣으면 그 자리에 표가 뜬다)",
+  "group": "G-147",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "G-147.2 는 이미 다 만들어져 있어 코드는 손대지 않았다 — 지도 HUD 폴더 25파일 211개, 이어서 전체 165파일 1425개(실패 0) · guard 통과를 앞에서 확인했다",
+   "approach": "current.md 의 결정 줄대로 「기준은 다 만족했으니 전체 검사만 다시 돌면 된다」는 회차였다. 워킹트리에서 바뀐 것은 루프 장부 current.md 뿐이라 changed_tests.py 가 빈 목록을 냈고, 규칙대로 전체를 돌렸다. 앞서 전체 검사를 막던 한 바퀴 테스트의 건축 꼬리는 82d19fa 에서 G-148 까지 빼 두어(HOUSE_UNTIL_G148) 이번엔 전체가 268초에 실패 0 으로 끝났다. 수용 기준 여덟 줄은 map_window.gd(좌표 칸 · 핀 · 닫을 때 비우기 · 지도 밖·숫자 아님은 빨갛게 · revealed_rects 의 intersection 자르기)와 test_map_pin.gd · test_map_window.gd 가 이미 덮고 있고, 번역 키 HUD_MAP_FIELD_X/Y 는 ko.po · en.po 둘 다에 있다. 「찍어서 확인」은 사람 결정대로 아이콘이 나온 뒤 따로 한다. 새로 만든 것은 없다.",
+   "why": "",
+   "files": [],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "지도 위쪽에 X · Y 칸이 있다. 넣으면 그 자리에 표가 뜬다 (테스트)",
+     "evidence": "tests/ui/hud/test_map_pin.gd — test_the_fields_sit_above_the_map (칸 줄 아래끝 ≤ map_rect 위끝, 왼쪽 정렬, 보이고 editable) · test_typing_coordinates_puts_a_pin_there (진짜 InputEventKey 로 160/-120 을 넣고 has_pin · pin_world · pin_position == point_of · 지도 안) · test_the_pin_agrees_with_the_hover_readout (표 위에 커서를 두면 같은 좌표가 읽힌다) · test_the_pin_is_really_painted (_draw 가 실제로 돈다). 새로 찍은 /tmp/qa_shots_map/map_ko.png 에도 지도 위에 X · Y 칸이 보인다"
+    },
+    {
+     "ok": true,
+     "criterion": "칸을 지우면 표도 사라진다 — 잠깐 보는 것이라 남지 않는다 (테스트)",
+     "evidence": "test_map_pin.gd — test_erasing_a_field_removes_the_pin (백스페이스 키 이벤트로 Y 를 지우면 has_pin 거짓, 다시 넣으면 참, X 를 지워도 거짓) · test_one_field_alone_shows_nothing"
+    },
+    {
+     "ok": true,
+     "criterion": "지도를 닫으면 표도 사라진다. 저장본에 담지 않는다 (테스트)",
+     "evidence": "test_map_pin.gd — test_closing_the_map_clears_the_pin_and_the_fields (set_map_open(false) 뒤 has_pin 거짓 · 칸 둘 다 빈 글자 · 다시 열어도 없다) · test_the_pin_is_not_in_the_save (표를 띄운 채 game.save() → 캐릭터 · 월드 저장본 어디에도 173 · -211 · 'pin' 이 없다). 일부러 clear_fields() 를 빼고 돌리니 이 두 테스트가 6개 단언으로 떨어졌다 — 껍데기가 아니다. spec/01_settings/save.md 「안 담는다」 목록에 까닭이 적혀 있고 왕복 검사(test_round_trip)도 전체에서 통과했다"
+    },
+    {
+     "ok": true,
+     "criterion": "지도 밖 좌표를 넣으면 표가 뜨지 않는다 — 빨갛게든 비어서든 알려 준다 (테스트)",
+     "evidence": "test_map_pin.gd — test_coordinates_outside_the_island_show_no_pin_and_turn_red (999 → has_pin 거짓, X 칸 font_color == 테마 danger, Y 는 멀쩡, -257(한 발 밖) 도 빨갛다, 지우면 되돌아온다) · test_the_island_edge_is_still_inside (±256 은 안) · test_a_map_without_a_memory_accepts_no_pin. 일부러 _axis_inside 의 범위 검사를 빼고 돌리니 5개 단언으로 떨어졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "숫자가 아닌 것을 넣어도 터지지 않는다 (테스트)",
+     "evidence": "test_map_pin.gd — test_non_numeric_input_does_not_crash (abc · e · - · --5 · 12.5.3 · 십이 · 0x10 · 1,000 을 키 이벤트로 넣어 표 없음 · 빨갛게 표시, 숫자로 고치면 되살아난다) · test_parse_field_reads_numbers_only · test_decimals_and_spaces_are_read"
+    },
+    {
+     "ok": true,
+     "criterion": "칸 이름은 번역 키다 (ko · en 둘 다)",
+     "evidence": "game/i18n/ko.po · en.po 둘 다에 HUD_MAP_FIELD_X · HUD_MAP_FIELD_Y 가 있다 (465~472줄). test_the_field_names_are_translation_keys_in_both_languages 가 두 말 모두 빈 번역이 아님과 이름표 text 가 키 그대로임을 단언한다. 새로 찍은 en 그림에도 X · Y 칸이 뜬다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 표가 어디에 떴는지 눈으로 보인다 아이콘이 나온 뒤에 따로 한다 (사람 결정 2026-09-24)",
+     "evidence": "사람 결정대로 이번 단계에서는 하지 않는다. 표 자체는 test_the_pin_is_really_painted 가 그리는 일이 도는 것까지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 밝힌 칸이 지도 네모 밖으로 삐져나온다 — map_window.gd _draw 에서 밝힌 칸 Rect 를 map_rect() 로 잘라 그리고, test_map_window.gd 에 「섬 가장자리 칸을 밝혀도 그린 칸이 map_rect 를 넘지 않는다」 단언을 더하라",
+     "evidence": "game/ui/hud/map_window.gd revealed_rects() 가 Rect2.intersection(r) 으로 자르고 has_area() 로 거른다. test_map_window.gd::test_lit_cells_at_the_island_edge_never_leave_the_map_rect 가 세 모서리 칸을 밝힌 뒤 모든 네모의 네 변이 map_rect 안임 · 가장자리 칸이 테두리까지 닿음 · 좁힌 네모로도 안에 있음을 단언한다. 다만 intersection 을 빼도 이 테스트는 그대로 통과한다 — 그리기가 step = r.size/n 이라 원래 수학적으로 넘지 않기 때문이다. 앞 QA 가 본 「삐져나옴」을 픽셀로 재 보니 옛 그림(.loop/shots/map/map_ko.png, 1600×900)에서도 밝힌 칸은 테두리(y=773~774 · x=1123~1124)에 딱 닿을 뿐 그 밖(y≥775 · x≥1125)은 배경색(35,35,35)이다. 새로 찍은 그림(1280×720)도 같다 — 테두리 y=618~619 · x=898~899 밖은 배경색. 가장자리 칸이 테두리에 붙어 보여 삐져나온 것처럼 읽힌 것이고, 지금 코드와 테스트는 기준 문장 그대로를 만족한다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok    267s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           165\nTests            1425\nPassing Tests    1424\nFailing Tests       0\nPending             0\nAsserts         65135\nTime           267s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "a43a8ee"
  }
 ]

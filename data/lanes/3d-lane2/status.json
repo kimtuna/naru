@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 23:51:50",
- "updated_epoch": 1790261510,
+ "updated": "2026-09-25 00:01:04",
+ "updated_epoch": 1790262064,
  "ended": "2026-09-24 23:17:22",
  "progress": {
   "groups_total": 36,
   "groups_done": 29,
   "groups_waiting": 0,
   "steps_total": 135,
-  "steps_done": 105
+  "steps_done": 106
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-147",
  "step": "2",
  "step_title": "좌표를 넣으면 그 자리에 표가 뜬다",
  "attempt": "1",
- "phase": "기계 검사",
- "phase_since": "2026-09-24 23:50:48",
+ "phase": "QA",
+ "phase_since": "2026-09-24 23:55:18",
  "lane": "3d-lane2",
  "model": "fable"
 }
