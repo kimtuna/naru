@@ -899,7 +899,7 @@
   - 기준: 상자에 넣은 짐승은 영영 안 깬다 — Captives._process 는 가방(player.inventory) 칸만 돌며 게이지를 깎는다. 그런데 world/storage/chest.gd 는 SlotMove.drop 으로 칸을 통째로(kind · sedation · cage 까지) 상자에 옮기므로, 잡은 짐승을 상자에 넣어 두면 게이지가 멈춰 케이지 없이도 영영 가둘 수 있다. 상자에 captive_ 칸을 못 넣게 하거나(Chest 넣기에서 Captives.is_captive 면 거절) 상자 칸도 깎게 하고, test_carry_cage.gd 에 '잡은 짐승을 상자에 넣고 시간이 가도 게이지가 멈추지 않는다(또는 넣을 수 없다)' 단언을 더하라
 - [x] 6. 케이지 제작을 실제로 해 보는 테스트가 없다 (G-132 단계 4)
   - 기준: 케이지 제작을 실제로 해 보는 테스트가 없다 — test_three_cages_are_crafted 는 레시피가 있는지만 본다(막는 것은 아니다). 제작대 레시피 경로로 목재 · 철괴를 넣어 cage_small 이 가방에 들어오는지 한 번 보는 단언을 더하라
-- [ ] 7. 테스트의 안내 줄 아래끝 40 이 박힌 값이다 (G-138 단계 2)
+- [x] 7. 테스트의 안내 줄 아래끝 40 이 박힌 값이다 (G-138 단계 2)
   - 기준: 테스트의 안내 줄 아래끝 40 이 박힌 값이다 — test_chest_window_scroll.gd 의 assert_gte(panel.position.y, 40.0) 와 chest_window.gd TOP_MARGIN 주석이 player.tscn HUD/Hint 의 offset_bottom(40)을 숫자로 베껴 두었다. 안내 줄이 옮겨지거나 두 줄이 되면 테스트는 통과한 채 다시 덮는다. player.tscn 을 불러 HUD/Hint 의 offset_bottom 을 읽어 비교하거나, 적어도 test_ 쪽에 그 값의 출처를 상수로 두고 Hint 의 offset_bottom 과 같은지 보는 단언을 더해라
 - [ ] 8. chest 찍기에 제작대 창이 남아 겹친다 (G-129 단계 1)
   - 기준: chest 찍기에 제작대 창이 남아 겹친다 — /tmp/g129/after/chest.png 에 앞 자리의 제작대 창이 그대로 깔린다. ui_shots 가 제작대를 먼저 치워 StationWindow._refresh 가 풀린 제작대로 can_start 를 부르는 SCRIPT ERROR 가 난다(보고서 기준, 고치기 전에도 났다). 자리를 바꿀 때 창을 먼저 닫거나 _refresh 에서 is_instance_valid 로 막고, 찍은 로그에 SCRIPT ERROR 가 없는지 보라

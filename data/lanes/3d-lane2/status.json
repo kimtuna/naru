@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 01:26:34",
- "updated_epoch": 1790267194,
+ "updated": "2026-09-25 01:35:07",
+ "updated_epoch": 1790267707,
  "ended": "2026-09-25 00:01:16",
  "progress": {
   "groups_total": 38,
-  "groups_done": 31,
+  "groups_done": 32,
   "groups_waiting": 0,
   "steps_total": 141,
-  "steps_done": 114
+  "steps_done": 116
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
  "step": "7",
  "step_title": "테스트의 안내 줄 아래끝 40 이 박힌 값이다 (G-138 단계 2)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 01:26:34",
+ "phase": "QA",
+ "phase_since": "2026-09-25 01:33:03",
  "lane": "3d-lane2",
  "model": "fable"
 }
