@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 11:20:03",
- "updated_epoch": 1790216403,
+ "updated": "2026-09-24 11:40:35",
+ "updated_epoch": 1790217635,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 28,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 95
+  "steps_done": 96
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-903",
- "step": "1",
- "step_title": "총과 탄까지 이어진다",
+ "step": "2",
+ "step_title": "밭과 음식까지 이어진다",
  "attempt": "1",
  "phase": "QA",
- "phase_since": "2026-09-24 11:17:59"
+ "phase_since": "2026-09-24 11:37:50"
 }

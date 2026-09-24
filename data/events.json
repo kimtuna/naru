@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-21 05:51:49",
-  "epoch": 1789930309,
-  "type": "start",
-  "title": "루프 시작 — G-102 단계 1"
- },
- {
   "time": "2026-09-21 06:07:36",
   "epoch": 1789931256,
   "type": "fail",
@@ -8900,5 +8894,52 @@
   },
   "test": "--- 바뀐 곳만: 1 개 ---\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/craft/test_from_empty_hands.gd\n* test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    --- Awaiting 1.0 seconds  ---\n1/1 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               1\nTests                 1\nPassing Tests         1\nAsserts             211\nTime              54.802s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "818bd6e"
+ },
+ {
+  "time": "2026-09-24 11:40:35",
+  "epoch": 1790217635,
+  "type": "pass",
+  "title": "통과 — G-903 단계 2 (밭과 음식까지 이어진다)",
+  "group": "G-903",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "빈손 한 바퀴 테스트를 밭과 음식까지 이었다 — 돌→흙, 석회→비료→밭 놓기, 씨앗 심고 물 주고 사흘 뒤 거둬 빵을 굽고 먹어 배고픔이 찬다 (아이템을 넣어 주지 않는다). 바뀐 곳만 돌린 28개 파일 266개 테스트 통과",
+   "approach": "끊긴 곳이 하나 있었다: **밀 씨앗을 얻을 길이 게임 안에 없었다**. 레시피에도 드롭에도 없어서 씨앗은 개발용 상자에만 있었다. spec/04_life/farming.md 의 임시 규칙(「씨앗은 제작대에서 나무로 만든다」)대로 recipes.json 에 wheat_seed(목재 1 → 2알, 제작대)를 한 줄 넣고, _temporary 에 임시라고 적었다. 테스트 쪽은 줄을 늘렸다: 요리대 · 물뿌리개 · 씨앗 몫으로 나무 넷(도끼로 벤다), 돌 둘, 철광석 둘, 석회 하나(유황과 같은 식으로 평평한 줄에 둔다). 섬처럼 Farmland · Crops · GameClock(day_changed → crops.next_day) · Food(맨 뒤에 붙인다)를 붙이고, 빈 땅으로 걸어가 밭을 들고 우클릭으로 놓은 뒤 씨앗을 심고, 물뿌리개로 날마다 물을 주면서 시계를 하루씩 넘긴다(배고픔도 같은 초만큼 흐른다 → 바닥). 도끼를 든 채 우클릭으로 거둔 밀 3단을 요리대에서 빵으로 굽고, 먹으면 배고픔이 foods.json 의 hunger 만큼 찬다. 두 군데서 막혔고 둘 다 테스트 쪽 문제였다. (1) 가방이 차서 나중에 만든 씨앗 · 물뿌리개가 핫바 밖 칸에 들어가 손에 들 수 없었다 → _hold 가 핫바 밖에 있으면 Inventory.move 로 핫바 끝 칸으로 옮긴다(사람이 가방 창에서 끌어다 놓는 것과 같은 동작이고, 넣어 주는 것이 아니다). (2) 옆(-X)을 보고 놓은 요리대는 칸 가운데에 서서 두께 0.8m 쪽이 조준선에서 6cm 비껴 서는 바람에 조준점에 안 걸렸다 → 제련로처럼 앞(-Z)을 보고 놓는다. (앞 단계 QA) 기준은 적힌 대로 이번 단계 몫이 아니라서, 개척 섬으로 건너가 유황 · 석회를 캐는 길은 G-903 단계 4 · G-900 에 남겼고 파일 머리 주석에도 적어 두었다. 이번에 석회도 유황처럼 내 섬의 줄에서 캔다(spec 상 석회도 개척 섬에서만 난다) — 단계 4 에서 두 광석을 함께 건너가 캐는 길로 바꾸면 된다.",
+   "why": "밀 씨앗 레시피 wheat_seed: 목재 1 → 2알, 제작대 5초 — 씨앗을 어디서 얻나가 spec 에서 미정이다 (farming.md 미정, 임시 규칙은 「제작대에서 나무로」). recipes.json 의 _temporary 에 적었다",
+   "files": [
+    "game/craft/recipes/recipes.json",
+    "game/tests/craft/test_from_empty_hands.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "돌을 캐 **흙**을 얻고, 석회로 **비료**를 만들어 **밭**을 놓는다 (테스트)",
+     "evidence": "test_from_empty_hands.gd 단계 4에서 곡괭이로 돌·석회를 캐 soil≥4 · lime≥2 를 확인한다 (harvest.gd 의 rock also={soil=2} 에서 나온다). 그다음 제작대에서 fertilizer → farm_plot 을 만들고 lime·fertilizer 가 0 이 된 것을 본다. 단계 10에서 빈 땅으로 걸어가 우클릭해 farmland.is_tilled(cell) 과 가방에서 밭이 빠진 것을 확인한다. 줍기 집계(_picked == Harvest.yields 합)로 넣어 준 아이템이 없다는 것도 확인한다"
+    },
+    {
+     "ok": true,
+     "criterion": "심고 · 물 주고 · 수확해 **먹는다** — 배고픔이 찬다 (테스트)",
+     "evidence": "단계 11~15: 우클릭으로 심고 kind_at==wheat 와 씨앗 수를 본다. 날마다 우클릭으로 물을 준 뒤 is_watered 를 보고 clock.advance 로 하루를 넘겨 stage 가 오르는지 본다. is_grown 이 되면 거두고 밀 3단이 들어온 것을 본다. 요리대에서 빵을 굽고 우클릭으로 먹어 hunger 가 before+fill 이 되고 is_hungry 가 false 인 것을 확인한다. 일부러 깨 봤다: food.gd 에서 eat 부르는 줄을 pass 로 바꾸니 '먹으니 배고픔이 찼다' · '배고픔이 바닥에서 올라왔다' 두 단언이 실패했다. 본 뒤 되돌렸다. test.log 에서 28개 파일 266개가 통과했고 guard 도 통과했다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 유황을 캐러 섬을 건너는 길은 치지 않는다 — 유황은 개척 섬에서 난다(roadmap 「자원」). 그런데 test_from_empty_hands.gd 는 유황 광석을 내 섬의 평평한 줄에 놓아 캤다. 연구대 → 해금 아이템 → 선착장 → 배로 건너가는 길은 이 한 바퀴 테스트가 치지 않는다. 이번 기준 밖이니 G-903 단계 4 「한 바퀴가 한 번도 끊기지 않는다」나 G-900 에서, 개척 섬으로 건너가 유황을 캐는 데까지 실제로 치는 테스트를 이어 붙여라",
+     "evidence": "기준 문장이 이 일을 단계 4 · G-900 의 몫으로 적었다. 구현 세션은 파일 머리 주석에 'G-903 단계 4 · G-900 의 몫'이라고 남겼고, 석회도 같은 처지라는 것을 덧붙였다. 이번 단계에서 할 일은 없다. 넘기는 것을 잊지 않도록 problems 에 적어 둔다"
+    }
+   ],
+   "issues": [
+    "섬 건너 유황·석회 캐는 길을 단계 4에서 쳐라 — test_from_empty_hands.gd 는 개척 섬에서만 나는 유황과 석회를 둘 다 내 섬의 평평한 줄(LINE 의 \"sulfur\", \"lime\")에 놓고 캔다. G-903 단계 4에서는 연구대 → sulfur_dock_key → 선착장 → 배로 개척 섬에 건너가 유황과 석회를 캐는 데까지 실제로 치고, LINE 에서 두 줄을 빼라"
+   ],
+   "good": [
+    "recipes.json 에 wheat_seed(목재 1 → 2알, 제작대) 레시피를 더했다. 씨앗을 얻을 길이 게임에 없어서 넣었고, spec/04_life/farming.md 의 임시 규칙(제작대에서 나무로)을 따랐다. _temporary 에도 적었다. 한 바퀴가 이어지게 하는 데 꼭 필요했던 것이라 덤이 아니라 끊긴 곳을 메운 것으로 본다"
+   ]
+  },
+  "test": "es_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n* test_the_pillars_stand_at_the_shore_corners_and_leave_the_landing_spot_clear\n* test_the_plank_has_no_body_so_the_one_who_lands_walks_out\n* test_hitting_the_shore_pillar_breaks_the_dock_and_gives_it_back\n* test_a_broken_dock_does_not_stay_in_standing\n* test_landing_without_a_dock_falls_back_to_the_spawn\n* test_the_other_pillar_can_be_aimed_at_too\n* test_a_dock_fixed_in_the_map_cannot_be_broken\n15/15 passed.\n\n\nres://tests/world/frontier_islands/test_island_key.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:156)\n         [1] _ready (res://world/terrain/test_island.gd:90)\n         [2] _build_island (res://core/game_root.gd:186)\n         [3] _ready (res://core/game_root.gd:133)\n         [4] _stand_opened_world_on (res://tests/world/frontier_islands/test_island_key.gd:287)\n         [5] before_all (res://tests/world/frontier_islands/test_island_key.gd:29)\n         [6] _call_before_all (res://addons/gut/gut.gd:684)\n         [7] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_every_island_that_starts_broken_has_an_unlock_item\n* test_the_unlock_item_is_made_only_at_the_research_bench\n* test_no_other_station_and_no_bare_hand_makes_the_unlock_item\n* test_the_research_bench_offers_the_unlock_item\n* test_the_key_is_not_made_of_what_only_the_locked_island_has\n* test_the_unlock_item_is_named_in_both_languages\n* test_inserting_the_key_at_the_dock_opens_the_island\n* test_after_the_key_the_boat_goes_to_that_island\n* test_nothing_opens_without_the_key_in_hand\n* test_the_key_is_not_spent_on_an_island_that_is_already_open\n* test_an_island_opened_with_the_key_stays_open_after_saving_and_loading\n* test_the_dock_of_an_opened_island_has_its_plank\n12/12 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              28\nTests               266\nPassing Tests       266\nAsserts           24577\nTime              165.797s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "0cfa1d1"
  }
 ]
