@@ -1,15 +1,15 @@
 {
- "state": "done",
- "reason": "list.md 의 할 일을 모두 처리했다",
- "updated": "2026-09-24 23:17:22",
- "updated_epoch": 1790259442,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-24 23:44:07",
+ "updated_epoch": 1790261047,
  "ended": "2026-09-24 23:17:22",
  "progress": {
   "groups_total": 36,
   "groups_done": 29,
-  "groups_waiting": 2,
+  "groups_waiting": 0,
   "steps_total": 133,
-  "steps_done": 99
+  "steps_done": 105
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
