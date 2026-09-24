@@ -1,62 +1,5 @@
 [
  {
-  "time": "2026-09-21 18:18:04",
-  "epoch": 1789982284,
-  "type": "pass",
-  "title": "통과 — G-111 단계 2 (앵커 · 갈고리총)",
-  "group": "G-111",
-  "step": "2",
-  "attempt": "2",
-  "report": {
-   "problem": "앵커(소모품 · 매달리면 기력 회복)와 갈고리총(최대 거리 · 탄창 · 줄 끊기)을 붙이고 테스트로 받쳤다",
-   "approach": "앞 회차가 만들어 둔 코드가 워킹트리에 그대로 있었고, 피드백은 「QA 가 qa.json 을 남기지 않았다」 하나뿐이었다 — 구현이 틀렸다는 말이 아니다. 앞 회차 QA 로그를 보니 전체 스위트(약 295초)가 도는 도중에 세션이 끊겼다. 그래서 이번에는 만들기보다 **받치기**에 시간을 썼다.\n\n1) 기준별로 테스트가 정말 그 기준을 확인하나를 **돌연변이로** 확인했다. 코드를 일부러 망가뜨려 해당 테스트가 실제로 빨개지는지 본 것이다 — (가) 최대 거리 곱하기 5 → 최대 거리 테스트 2개 실패, (나) 앵커를 안 보고 늘 회복 → 「앵커가 없으면 안 찬다」·「그 앵커라야 찬다」 2개 실패, (다) 탄을 안 빼기 → 탄창 테스트 2개 실패, (라) 가방에서 안 빼기 → 소모품 테스트 4개 실패. 망가뜨린 것은 전부 되돌렸다.\n\n2) 그 과정에서 구멍을 하나 찾았다. 「최대 거리보다 **멀리 겨누면** 최대 거리에 걸린다」가 직접 확인되지 않았다 — 기존 테스트는 걸릴 것이 없는 허공에 쏘는 경우였다. 벽에서 20m 떨어져 최대 거리 8m 로 벽을 겨누는 테스트(test_aiming_past_the_maximum_range_stops_at_it)를 더했다. 8m 만 날아가 허공에 매달리고 벽(z = -2)까지 끌려가지 않는 것을 본다. 위 (가) 돌연변이로 이 테스트가 실제로 실패하는 것도 확인했다.\n\n3) 전체 448개 통과(295초) · guard 통과.\n\n앵커 회복은 「가만히 있을 때만」이다 — 움직이면 기력은 줄어든다(spec 「움직일 때만 준다」 임시 규칙과 맞춘다). 벽을 잡은 상태와 갈고리줄에 매달린 상태 둘 다에서 회복이 돈다.",
-   "why": "Anchor.HOLD_RANGE 1.2m — 「그 앵커에 매달려 있다」로 보는 거리. 팔 길이쯤으로 뒀다 (spec 미정); Anchor.LENGTH 0.35m · THICKNESS 0.08m — 벽에서 튀어나온 막대 모양. 아트 자리를 채운 값이다; Grapple.max_range 14m · magazine 3발 — 등급표가 미정이라 상수가 아니라 변수로 뒀다 (사람 결정 2026-09-17: 최대 거리는 등급마다 다르다); Climbing.FLY_SPEED 18m/s — 줄에 끌려가는 속력. 걷기보다 훨씬 빠르게; Climbing.HANG_GAP 0.7m — 걸린 면에서 떨어져 매달리는 거리. 몸 반지름(0.35m)보다 커야 벽에 파묻히지 않는다; Climbing.ARRIVE 0.4m · FLY_TIME_SLACK 2.0 — 도착 판정과 날아가는 시간 상한. 도중에 걸려도 영영 날지 않게; 탄창을 ClimbGear 가 들고 있다 — 아이템 하나하나가 제 상태를 들고 다니는 길이 아직 없다 (spec/02_player/inventory-hotbar.md: 한 칸은 이름과 개수뿐)",
-   "files": [
-    "game/life/climbing/anchor.gd",
-    "game/life/climbing/grapple.gd",
-    "game/life/climbing/climb_gear.gd",
-    "game/life/climbing/climbing.gd",
-    "game/player/movement_controls/player.gd",
-    "game/world/terrain/test_island.gd",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/life/climbing/test_anchor.gd",
-    "game/tests/life/climbing/test_grapple.gd",
-    "spec/04_life/climbing.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "앵커는 소모품이다. 박은 앵커에 매달려 있으면 기력이 회복된다 (테스트)",
-     "evidence": "소모품 — test_anchor.gd/test_driving_an_anchor_spends_one_from_the_bag 이 가방 2개에서 박을 때마다 1 → 0 으로 주는 것을 보고, 0 이 되면 drive_anchor() 가 null 이며 박힌 앵커가 2개뿐인 것까지 본다. 껍데기가 아니다: climb_gear.gd:53 이 bag.take() 가 실제로 빼냈을 때만 박는다. test_you_cannot_drive_an_anchor_on_the_ground 는 못 박았을 때 가방이 안 주는 것을 본다. 회복 — test_hanging_on_an_anchor_recovers_stamina 가 벽에 붙어 앵커를 박고 기력을 2.0 쓴 뒤 0.5초 가만히 있으면 값이 오르는 것을 본다. 반대쪽 대조가 둘 붙어 있어 껍데기일 수 없다: test_without_an_anchor_hanging_recovers_nothing (앵커 없이 0.5초, 0.001 안에서 그대로) · test_an_anchor_left_far_below_does_not_help (앵커에서 HOLD_RANGE 밖으로 올라간 뒤 그대로). 둘 다 「안 오른다」를 단언하므로 climbing.gd:247 의 Anchor.nearest 검사를 지우면 바로 빨개진다."
-    },
-    {
-     "ok": true,
-     "criterion": "갈고리총은 최대 거리까지만 날아가고 도착하면 매달린다. 탄창이 비면 쏘지 않는다 (테스트)",
-     "evidence": "최대 거리 — test_grapple.gd/test_the_rope_stops_at_the_maximum_range (걸릴 것이 없는 허공, 10m 로 9~11m) 와 test_aiming_past_the_maximum_range_stops_at_it (벽에서 20m 떨어져 벽을 겨누고 최대 거리 8m, 7~9m 만 날아가고 벽 z=-2 까지 끌려가지 않는다) 가 위아래를 다 막는다. QA 가 직접 돌연변이로 확인했다: shoot_hook 안에서 max_range 를 5배로 부풀리자 이 두 개가 정확히 빨개졌다 (29 중 2 실패). 되돌린 뒤 448/448 다시 통과. 도착하면 매달린다 — 같은 테스트가 is_hanging() 과 함께 0.5초 뒤에도 y 가 0.1 안에서 그대로인 것(안 떨어진다)을 본다. test_a_short_shot_hooks_where_it_hits 는 짧게 쏘면 최대 거리가 아니라 걸린 벽에 매달리는 것을 본다. 탄창 — test_an_empty_magazine_does_not_shoot 이 탄창 1발로 쏘고 left()==0 을 본 뒤, 줄을 끊고 다시 쏘면 false 이며 날지도 매달리지도 않는 것을 본다. 손에 갈고리총은 그대로 들려 있으므로 달라진 것은 탄뿐이다."
-    },
-    {
-     "ok": true,
-     "criterion": "줄을 끊으면 땅에 닿을 때까지 떨어진다",
-     "evidence": "test_grapple.gd/test_cutting_the_rope_drops_you_to_the_ground 이 허공 4m 넘게 매달린 뒤 Space 로 has_hold() 가 false 가 되고 그 자리에서 y 가 줄기 시작하는 것을 보고, 2초 뒤 is_on_floor() 이며 y 가 0 에서 0.5 안인 것 — 중간에 멈추지 않고 땅까지 간다 — 을 본다. 「끊었다」만 보고 끝내지 않고 착지까지 본다."
-    }
-   ],
-   "issues": [],
-   "good": [
-    "앵커 막대 메시 (anchor.gd/_stick — 회색 BoxMesh). 기준에 없지만 안 보이면 박았는지 알 수 없다. LENGTH · THICKNESS 는 「임시 · 아트 자리」라고 적혀 있다",
-    "듣는 곳이 없는 것 셋 — ClimbGear.anchor_driven · ClimbGear.grapple_shot 시그널과 Climbing.hook_point(). hook_point() 는 테스트만 부르고 나머지 둘은 아무도 안 듣는다",
-    "Grapple.reload() 는 테스트만 부른다 — 게임 안에서 탄창을 채울 길이 없어 3발 쓰면 끝이다. spec/04_life/climbing.md 미정에 「탄창을 어디서 채우나」로 적어 뒀으므로 미리 정한 것은 아니다",
-    "기준 밖에 남은 구멍 하나 (이번 기준이 아니라 통과를 막지 않는다): 갈고리줄에 매달려 있는 동안 기력 막대가 안 보인다. StaminaBar._refresh 가 is_climbing() 만 보는데 줄에 매달리면 _normal 이 ZERO 라서다. 그 상태에서 앵커로 기력이 차는데 사람은 그것을 못 본다 (spec/12_ui/hud.md 「절벽에서 기력이 나타난다」)"
-   ]
-  },
-  "test": "rises_and_sets_once_in_a_day\n* test_the_sky_follows_the_clock\n* test_the_days_are_counted_one_by_one\n* test_the_time_and_the_day_carry_over_a_save_and_a_load\n* test_a_brand_new_world_starts_on_the_first_morning\n7/7 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_tab_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n25/25 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_herb_spot_markers_on_every_ledge\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n14/14 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              48\nTests               448\nPassing Tests       448\nAsserts            7748\nTime              294.973s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "393031b"
- },
- {
   "time": "2026-09-21 18:52:46",
   "epoch": 1789984366,
   "type": "fail",
@@ -8487,5 +8430,57 @@
   "epoch": 1790278230,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-25 05:02:35",
+  "epoch": 1790280155,
+  "type": "pass",
+  "title": "통과 — G-148 단계 1 (빈손에서 집까지 끊기지 않는다)",
+  "group": "G-148",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "한 바퀴 테스트가 도면으로 집(토대·벽 넷·지붕)을 짓고 지붕을 석재로 올려 방을 만들고, 저장·불러오기 뒤 등급까지 그대로인지, 손으로 헐어 재료가 전부 돌아오고 그것만으로 다시 짓는지까지 친다 — test.log: 바뀐 곳만 1개 파일(test_from_empty_hands.gd) 1 테스트 통과, 968 asserts",
+   "approach": "HOUSE_UNTIL_G148 표시는 이 브랜치(3d-start 줄기)에 들어온 적이 없었다 — 3d-lane2 에만 있었고, 여기 꼬리(22~25)는 G-145 뒤 이미 도면으로 도는 채였다(처음 돌려 보니 통과, 296초). grep 으로 게임·spec 어디에도 없음을 확인했다. 모자랐던 것은 두 기준: (1) 등급까지 저장되나 — 꼬리에 나무만 있어 등급을 묻지 않았다. 줄에 돌 둘을 더 캐게 해(석재 블록 넷 = 돌 8) 제작대에서 석재 블록을 만들고, 방 안에서 지붕을 겨눠 G 로 석재로 올린 뒤 저장 → 불러온 지붕이 stone_roof · 들어간 재료 {판자 4, 석재 블록 4} · 석재의 이을 개수로 선다를 본다. (2) 철거 → 다시 짓기 — 불러온 집을 위에서부터(지붕 → 벽 넷 → 토대) 진짜 좌클릭으로 헐어, 무너져 떨어진 것 없이 판자 24 · 석재 블록 4 가 전부 가방으로 돌아오고, 그 재료만으로 같은 자리에 같은 길(_build_house 한 함수 — 처음 짓기와 공유)로 다시 지어 방이 생기고 지붕이 다시 석재로 오른다. 막힌 곳: 카메라가 35° 위로 들리지 않아(pitch_max_deg) 방 한가운데에서는 지붕을 겨누면 앞 벽 꼭대기에 걸렸다 — 뒷벽 쪽으로 1m 물러서서 32° 로 올려다보게 해 풀었다(게임 쪽이 아니라 테스트의 서는 자리 문제). 재료를 캐서 도면으로 짓는 길은 한 번도 끊기지 않았다.",
+   "why": "",
+   "files": [
+    "game/tests/craft/test_from_empty_hands.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "`HOUSE_UNTIL_G148` pending 이 **없다** — 집 짓기 꼬리가 다시 돈다 (테스트)",
+     "evidence": "grep 으로 game/ · spec/ 어디에도 HOUSE_UNTIL_G148 이 없다 (plan/ 의 묶음 설명 줄뿐). test.log: test_from_empty_hands.gd 1 테스트 통과 · Pending 0 · 968 asserts — 꼬리 22~27 이 실제로 돌았다"
+    },
+    {
+     "ok": true,
+     "criterion": "한 바퀴 테스트가 **도면으로** 토대 · 벽 · 지붕을 세워 **방**이 생기는 데까지 친다 (테스트)",
+     "evidence": "_build_house: HOUSE 레시피가 없음을 단언(recipes.of(piece).is_empty()) 하고 hands.make(Blueprint.ITEM) 로 도면을 만든 뒤 _build_at 로 토대·벽 넷·지붕을 놓는다. buildings.rooms().size()==1 · 그 토대 판이 방 · 캐릭터가 방 안(Rooms.id_at) 을 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "재료를 캐서 도면으로 짓는 길이 **한 번도 끊기지 않는다** — 막히면 그 자리를 report 에 적는다",
+     "evidence": "LINE 에 돌 둘을 더해 캔 돌로 석재 블록 넷을 제작대에서 만들고(돌 몫 단언), 캔 목재로 판자 24 를 켜 짓는다 — 건네받는 재료 없이 한 테스트에서 끝까지 통과. report 는 끊긴 곳이 없고 카메라 pitch 35° 상한 때문에 지붕 겨누는 자리를 옮긴 것(테스트 쪽 서는 자리)만 적었다"
+    },
+    {
+     "ok": true,
+     "criterion": "지은 것이 **저장하고 새로 불러와도 그대로**다 — 등급까지 (테스트)",
+     "evidence": "방 안에서 G(BUILD_UPGRADE) 로 지붕을 stone_roof 로 올리고 석재 블록이 가방에서 빠짐을 단언한 뒤 _save_and_reload. 불러온 뒤 buildings.standing()==built(spent 포함), 지붕 placed_item()==stone_roof, refund()=={plank 4, stone_block 4}, link_limit==LINK_LIMIT[stone] 을 단언한다. Buildings.restore 가 item·spent 를 다시 세우는 길을 거친다"
+    },
+    {
+     "ok": true,
+     "criterion": "철거하면 들어간 재료가 전부 돌아오고, 그것으로 다시 지을 수 있다 (테스트)",
+     "evidence": "_tear_down 이 지붕→벽 넷→토대를 진짜 좌클릭(Placeable.HITS 대)으로 헐고, 철거 전 가방에 판자·석재 블록 0 → 뒤에 owed({plank 24, stone_block 4}) 그대로, 떨어진 DroppedItem 0 을 단언한다. 그 뒤 같은 _build_house 로 다시 지어 방이 생기고 지붕이 다시 석재로 오르는지(내부 단언 + again 비지 않음)를 본다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 1 개 ---\ntest.sh: 파일 1 개를 6 개씩 한꺼번에 돌린다\nok    311s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             1\nTests               1\nPassing Tests       1\nFailing Tests       0\nPending             0\nAsserts           968\nTime           311s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "6b668cd"
  }
 ]
