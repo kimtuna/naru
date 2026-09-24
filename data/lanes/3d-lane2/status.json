@@ -1,14 +1,14 @@
 {
- "state": "stopped",
- "reason": "하네스가 성하지 않다",
- "updated": "2026-09-25 00:01:16",
- "updated_epoch": 1790262076,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-25 00:04:21",
+ "updated_epoch": 1790262261,
  "ended": "2026-09-25 00:01:16",
  "progress": {
   "groups_total": 36,
   "groups_done": 30,
   "groups_waiting": 0,
-  "steps_total": 135,
+  "steps_total": 136,
   "steps_done": 106
  },
  "started": "2026-09-24 21:26:58",
