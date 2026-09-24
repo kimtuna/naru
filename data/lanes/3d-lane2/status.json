@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "",
- "updated": "2026-09-25 01:35:09",
- "updated_epoch": 1790267709,
- "ended": "2026-09-25 00:01:16",
+ "state": "waiting",
+ "reason": "토큰 한도에 걸렸다 — 04:30 에 풀린다",
+ "updated": "2026-09-25 01:35:21",
+ "updated_epoch": 1790267721,
+ "ended": "2026-09-25 01:35:21",
  "progress": {
   "groups_total": 38,
   "groups_done": 32,
@@ -19,5 +19,6 @@
  "phase": "구현",
  "phase_since": "2026-09-25 01:35:09",
  "lane": "3d-lane2",
- "model": "fable"
+ "model": "fable",
+ "resume_at": "2026-09-25 04:30:00"
 }
