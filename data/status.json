@@ -1,15 +1,15 @@
 {
- "state": "stopped",
- "reason": "하네스가 성하지 않다",
- "updated": "2026-09-24 20:00:56",
- "updated_epoch": 1790247656,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-24 20:02:20",
+ "updated_epoch": 1790247740,
  "ended": "2026-09-24 20:00:56",
  "progress": {
   "groups_total": 35,
   "groups_done": 29,
   "groups_waiting": 0,
   "steps_total": 132,
-  "steps_done": 98
+  "steps_done": 97
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-145",
