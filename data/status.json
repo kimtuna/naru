@@ -1,9 +1,9 @@
 {
  "state": "stopped",
- "reason": "g/G-145 에 3d-start 를 넣지 못했다 (충돌) — 사람이 풀어야 한다",
- "updated": "2026-09-24 14:05:18",
- "updated_epoch": 1790226318,
- "ended": "2026-09-24 14:05:18",
+ "reason": "하네스가 성하지 않다",
+ "updated": "2026-09-24 14:05:20",
+ "updated_epoch": 1790226320,
+ "ended": "2026-09-24 14:05:20",
  "progress": {
   "groups_total": 35,
   "groups_done": 29,
