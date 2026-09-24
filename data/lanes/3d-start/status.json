@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 23:17:46",
- "updated_epoch": 1790259466,
+ "updated": "2026-09-24 23:17:56",
+ "updated_epoch": 1790259476,
  "ended": "2026-09-24 23:17:43",
  "progress": {
   "groups_total": 36,
@@ -15,7 +15,7 @@
  "group": "G-147",
  "step": "1",
  "step_title": "장 수를 버리고 걸음 수로 잰다",
- "attempt": "1",
+ "attempt": "2",
  "phase": "구현",
- "phase_since": "2026-09-24 23:17:46"
+ "phase_since": "2026-09-24 23:17:56"
 }
