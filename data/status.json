@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 20:46:49",
- "updated_epoch": 1790250409,
+ "updated": "2026-09-24 20:46:58",
+ "updated_epoch": 1790250418,
  "ended": "2026-09-24 20:00:56",
  "progress": {
   "groups_total": 35,
@@ -13,9 +13,9 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-145",
- "step": "2",
- "step_title": "붙을 자리를 정한다 (소켓)",
+ "step": "3",
+ "step_title": "도면 하나로 짓는다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-24 20:43:43"
+ "phase": "구현",
+ "phase_since": "2026-09-24 20:46:58"
 }
