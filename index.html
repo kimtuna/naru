@@ -236,10 +236,12 @@ function renderList(text, status) {
   const groups = parseList(text);
   if (!groups.length) { $("list").innerHTML = '<div class="empty">목록이 비어 있다</div>'; return; }
   const TAG = { "x": ["t-ok", "완료"], ">": ["t-bad", "결정 대기"], " ": ["t-info", "할 일"] };
-  const firstTodo = groups.find((g) => g.state === " ");
+  // 「진행 중」은 **차선이 지금 하고 있는 묶음**이다 — 차선이 둘이면 둘. 차선 기록이 없으면 첫 할 일.
+  const working = new Set(RUNNING.map((x) => x.group).filter(Boolean));
+  const firstTodo = working.size ? null : groups.find((g) => g.state === " ");
   $("list").innerHTML = groups.map((g) => {
     const done = g.steps.filter((s) => s.done).length;
-    const isCur = firstTodo && g.id === firstTodo.id;
+    const isCur = working.has(g.id) || (firstTodo && g.id === firstTodo.id);
     const [cls, label] = isCur ? ["t-fail", "진행 중"] : TAG[g.state];
     return `<details ${isCur ? "open" : ""}><summary><span class="tag ${cls}">${label}</span>
       <span class="title">${esc(g.id)} ${esc(g.title)}</span><span class="count">${g.steps.length ? `${done}/${g.steps.length}` : (g.state === "x" ? "끝남" : "—")}</span></summary>
@@ -346,17 +348,21 @@ function renderLanes(names, statuses) {
     load();
   }));
 }
+let RUNNING = [];
 async function load() {
   const names = (await get("data/lanes.json", true)) || [];
   let base = "data/";
+  RUNNING = [];
   if (names.length) {
     if (!names.includes(lane)) lane = names[0];
     base = `data/lanes/${lane}/`;
     const statuses = await Promise.all(names.map((n) => get(`data/lanes/${n}/status.json`, true)));
+    RUNNING = statuses.filter((x) => x && x.state === "running");
     renderLanes(names, statuses);
   }
+  // 상태 · 기록은 고른 차선의 것, **목록 · 결정은 하나**다 (harness/plan.py) — 차선을 바꿔도 같다
   const [s, ev, li, de] = await Promise.all([
-    get(base + "status.json", true), get(base + "events.json", true), get(base + "list.md"), get(base + "decisions.md"),
+    get(base + "status.json", true), get(base + "events.json", true), get("data/list.md"), get("data/decisions.md"),
   ]);
   const openState = [...document.querySelectorAll("details")].map((d) => d.open);
   renderStatus(s);
