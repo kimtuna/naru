@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "목록을 읽는다",
- "updated": "2026-09-25 04:30:28",
- "updated_epoch": 1790278228,
+ "reason": "",
+ "updated": "2026-09-25 04:30:31",
+ "updated_epoch": 1790278231,
  "ended": "2026-09-25 01:35:20",
  "progress": {
   "groups_total": 38,
@@ -17,7 +17,7 @@
  "step_title": "빈손에서 집까지 끊기지 않는다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-25 04:30:04",
+ "phase_since": "2026-09-25 04:30:31",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-25 04:30:00"
