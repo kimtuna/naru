@@ -1,47 +1,5 @@
 [
  {
-  "time": "2026-09-21 06:07:36",
-  "epoch": 1789931256,
-  "type": "fail",
-  "title": "QA 불합격 — G-102 단계 1 (시도 1)",
-  "group": "G-102",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "저장 뼈대 — 캐릭터와 월드를 따로 저장·불러오기·목록·삭제",
-   "approach": "save_store.gd · character_data.gd · world_data.gd + 테스트 11개. 전체 66/66 통과",
-   "files": [
-    "game/settings/save/save_store.gd",
-    "game/settings/save/character_data.gd",
-    "game/settings/save/world_data.gd",
-    "game/tests/settings/save/test_save_store.gd"
-   ]
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "저장하고 불러오면 값이 같다",
-     "evidence": "test_character_round_trip · test_world_round_trip"
-    },
-    {
-     "ok": false,
-     "criterion": "캐릭터 슬롯은 3개다. 3개가 찬 상태에서 거부된다",
-     "evidence": "슬롯 테스트가 전부 상수를 써서, 상수를 3→5 로 고쳐 돌리니 11개가 그대로 통과했다"
-    },
-    {
-     "ok": true,
-     "criterion": "user:// 아래 저장 · 테스트는 임시 경로",
-     "evidence": "test_default_root_is_under_user"
-    }
-   ],
-   "issues": [
-    "사람이 2026-09-16 에 정한 '슬롯 3개'를 지켜 주는 테스트가 없다. 숫자 3을 못 박는 단언을 넣어라"
-   ]
-  }
- },
- {
   "time": "2026-09-21 06:22:10",
   "epoch": 1789932130,
   "type": "pass",
@@ -8941,5 +8899,53 @@
   },
   "test": "es_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n* test_the_pillars_stand_at_the_shore_corners_and_leave_the_landing_spot_clear\n* test_the_plank_has_no_body_so_the_one_who_lands_walks_out\n* test_hitting_the_shore_pillar_breaks_the_dock_and_gives_it_back\n* test_a_broken_dock_does_not_stay_in_standing\n* test_landing_without_a_dock_falls_back_to_the_spawn\n* test_the_other_pillar_can_be_aimed_at_too\n* test_a_dock_fixed_in_the_map_cannot_be_broken\n15/15 passed.\n\n\nres://tests/world/frontier_islands/test_island_key.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:156)\n         [1] _ready (res://world/terrain/test_island.gd:90)\n         [2] _build_island (res://core/game_root.gd:186)\n         [3] _ready (res://core/game_root.gd:133)\n         [4] _stand_opened_world_on (res://tests/world/frontier_islands/test_island_key.gd:287)\n         [5] before_all (res://tests/world/frontier_islands/test_island_key.gd:29)\n         [6] _call_before_all (res://addons/gut/gut.gd:684)\n         [7] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_every_island_that_starts_broken_has_an_unlock_item\n* test_the_unlock_item_is_made_only_at_the_research_bench\n* test_no_other_station_and_no_bare_hand_makes_the_unlock_item\n* test_the_research_bench_offers_the_unlock_item\n* test_the_key_is_not_made_of_what_only_the_locked_island_has\n* test_the_unlock_item_is_named_in_both_languages\n* test_inserting_the_key_at_the_dock_opens_the_island\n* test_after_the_key_the_boat_goes_to_that_island\n* test_nothing_opens_without_the_key_in_hand\n* test_the_key_is_not_spent_on_an_island_that_is_already_open\n* test_an_island_opened_with_the_key_stays_open_after_saving_and_loading\n* test_the_dock_of_an_opened_island_has_its_plank\n12/12 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              28\nTests               266\nPassing Tests       266\nAsserts           24577\nTime              165.797s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "0cfa1d1"
+ },
+ {
+  "time": "2026-09-24 11:59:18",
+  "epoch": 1790218758,
+  "type": "fail",
+  "title": "QA 불합격 — G-903 단계 3 (시도 1)",
+  "group": "G-903",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "빈손 한 바퀴 테스트를 사냥 · 포획까지 이었다 — 밭에 벨라도나를 길러 마취탄을 만들고, 사슴을 다리만 쏴 잡아 도축(산출 온전), 다른 사슴을 10% 아래로 몰아 마취탄 세 발로 재워 잡는다. 바뀐 곳 그물 29개 파일 · 267개 테스트 통과",
+   "approach": "길이 한 군데 끊겨 있었다: 벨라도나는 작물표(Crops.CROPS)에 있고 씨앗 이름(belladonna_seed)도 번역 · 무게까지 있었지만 **씨앗을 만드는 레시피가 없어** 게임 안에서 마취탄을 만들 길이 없었다 (턱의 약초 캐기는 아직 판정까지만 한다). spec/04_life/farming.md 의 임시 규칙(씨앗은 제작대에서 나무로)대로 밀 씨앗과 같은 레시피를 넣고, 작물마다 씨앗 레시피가 있는지 지키는 테스트를 새로 짰다. 한 바퀴 테스트는 LINE 에 철광석 셋 · 유황 셋을 더 두고(철괴 셋 · 유황 셋 = 권총탄 두 번 · 마취탄 한 번), 빵을 먹은 뒤 같은 밭에 벨라도나를 사흘 길러 거두고, 제련로 · 제작대로 돌아가 탄을 만들고, 사슴(before_each 에서 -X 쪽에 둘)을 소리 듣는 무리에서 찾아가 리볼버로 다리만 쏜다 — 8발에 쓰러지고 점수표 다리 8발 · 도축 산출은 머리 · 몸통 몫 그대로. 두 번째 사슴은 다리 7발로 체력 9/100(10% 아래)까지 몰고, R 을 꾹 눌러 숫자키로 마취탄을 골라 바꿔 넣고, 3발(사슴 30 ÷ 하급 10)에 포획 — 체력은 그대로, 주검이 아니고 도축 단추도 뜨지 않는다. 가방에 넣어 주는 줄은 여전히 없다. 테스트 땅에는 내비메시가 없어 사슴이 제자리에 선다 — 달아나기는 test_animal_sound.gd 몫이라고 파일 머리에 적었다. (앞 단계 QA) 기준은 「단계 4에서 섬을 건너 유황 · 석회를 캐고 LINE 의 두 줄을 빼라」는 단계 4 몫의 지시라 이번에는 건드리지 않았다 — 이번에 더한 유황 셋도 같은 줄에 있으니 단계 4에서 같이 옮겨야 한다.",
+   "why": "벨라도나 씨앗 레시피(목재 1 → 2알, 제작대 5초) — 밀 씨앗과 같은 임시 규칙 · 개수다. 씨앗을 어디서 얻나가 미정이다 (spec/04_life/farming.md 미정). recipes.json 의 _temporary 에 적었다",
+   "files": [
+    "game/craft/recipes/recipes.json",
+    "game/tests/craft/test_from_empty_hands.gd",
+    "game/tests/life/farming/test_seed_sources.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": false,
+     "criterion": "동물을 찾아 **부위를 맞혀** 잡고 **도축**한다 (테스트)",
+     "evidence": "test_from_empty_hands.gd 20·18·19단계는 다리만 맞혀(part_hits 다리 = 쏜 발 수, 머리·몸통 0) 잡고 Butchery 우클릭으로 도축해 산출이 온전한지까지 제대로 단언한다. 그런데 사슴은 테스트의 before_each 가 Animal.spawn 으로 직접 세운다(DEER_AT). 게임 코드에는 Animal.spawn/Animal.new 를 부르는 곳이 하나도 없다(core/ · world/ 전체 grep — 부르는 곳은 tests/ 뿐). test_island.gd 는 Butchery · Captives 는 붙이지만 짐승은 한 마리도 두지 않는다. 즉 실제 게임에서는 「동물을 찾을」 길이 없다. 이 묶음은 바로 이런 끊긴 길(제작 창이 게임에서 열 길이 없던 것)을 잡으려는 것이라, 테스트가 사슴을 넣어 주고 도는 것은 통과가 아니다"
+    },
+    {
+     "ok": false,
+     "criterion": "약초로 **마취탄**을 만들어 체력 10% 아래에서 **재워 잡는다** (테스트)",
+     "evidence": "벨라도나 씨앗 레시피를 더해 밭에서 길러 마취탄을 만들고(가방에 넣어 주는 줄 없음), 다리로 9/100 까지 몰아 R 꾹 눌러 마취탄으로 바꿔 3발에 포획, 체력 그대로 · 주검 아님 · 도축 단추 없음까지 단언하는 부분은 좋다. 그러나 재워 잡는 대상 역시 테스트가 세운 사슴이다 — 게임 안에는 사슴이 없어 이 길도 기준 1과 같은 자리에서 끊긴다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 섬 건너 유황·석회 캐는 길을 단계 4에서 쳐라 — test_from_empty_hands.gd 는 개척 섬에서만 나는 유황과 석회를 둘 다 내 섬의 평평한 줄(LINE 의 \"sulfur\", \"lime\")에 놓고 캔다. G-903 단계 4에서는 연구대 → sulfur_dock_key → 선착장 → 배로 개척 섬에 건너가 유황과 석회를 캐는 데까지 실제로 치고, LINE 에서 두 줄을 빼라",
+     "evidence": "단계 4 에서 하라는 지시라 이번 단계에서 할 일은 없다. 구현 세션도 그렇게 보고 손대지 않았고, 이번에 더한 유황 셋도 같은 줄에 있다고 report 에 적었다. 다만 list.md 의 단계 4 기준에는 이 줄이 옮겨져 있지 않다 — problems 에 적는다"
+    }
+   ],
+   "issues": [
+    "게임 안에 짐승이 한 마리도 나지 않는다 — Animal.spawn 을 부르는 곳이 tests/ 뿐이다. world/terrain/test_island.gd(또는 섬 생성)에 짐승을 두는 길을 만들어라: spec/04_life/hunting.md 9행 「동물이 사는 자리(집) 둘레만 내비메시로 굽는다」 · 23행 「동물도 자원처럼 다시 난다」를 따라, 섬 설계도(island_blueprint)에 사슴 집 자리 몇 곳(개수 임시, spec 수치 줄에 「임시」로)을 두고 섬이 설 때 Animal.spawn 으로 세우고 AnimalNav 로 그 둘레를 굽는다. 저장에 담는 것이 기본이니(spec/01_settings/save.md) 살아 있는 짐승 · 잡힌 짐승 상태를 저장본에 담거나 「안 담는다」 목록에 까닭을 적어라. 테스트: ① 섬(game_root 로 연 세계)이 서면 Sound.LISTENERS 무리에 kind=DEER 인 Animal 이 하나 이상 있고 모두 뭍 위(물 아래 아님)에 있다 ② test_from_empty_hands.gd 의 before_each 에서 Animal.spawn 을 빼고, 평평한 땅이라 섬 생성을 못 쓴다면 섬이 짐승을 세우는 바로 그 함수(예: IslandAnimals.populate)를 이 땅에 불러 거기서 나온 사슴을 _nearest_deer 로 찾게 하라 — 테스트가 스스로 Animal.spawn 을 부르면 안 된다",
+    "단계 4 기준에 섬 건너기 지시가 없다 — 단계 3 의 (앞 단계 QA) 기준은 「단계 4에서 연구대 → sulfur_dock_key → 선착장 → 배로 개척 섬에 건너가 유황과 석회를 캐고 LINE 에서 sulfur · lime 줄을 빼라」인데 list.md 단계 4 기준에는 이 줄이 없다. 이제 LINE 의 유황은 넷이다(권총탄 3 · 마취탄 1). 단계 4 의 기준으로 옮겨 붙여라"
+   ],
+   "good": [
+    "game/tests/life/farming/test_seed_sources.gd — 작물표의 모든 작물에 씨앗 레시피가 있는지 보는 테스트. 벨라도나 씨앗 레시피(끊긴 길을 이으려고 넣은 것, 임시 표시 있음)를 지키는 것이라 덤이어도 받아들일 만하다"
+   ]
+  },
+  "test": "es_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n* test_the_pillars_stand_at_the_shore_corners_and_leave_the_landing_spot_clear\n* test_the_plank_has_no_body_so_the_one_who_lands_walks_out\n* test_hitting_the_shore_pillar_breaks_the_dock_and_gives_it_back\n* test_a_broken_dock_does_not_stay_in_standing\n* test_landing_without_a_dock_falls_back_to_the_spawn\n* test_the_other_pillar_can_be_aimed_at_too\n* test_a_dock_fixed_in_the_map_cannot_be_broken\n15/15 passed.\n\n\nres://tests/world/frontier_islands/test_island_key.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:156)\n         [1] _ready (res://world/terrain/test_island.gd:90)\n         [2] _build_island (res://core/game_root.gd:186)\n         [3] _ready (res://core/game_root.gd:133)\n         [4] _stand_opened_world_on (res://tests/world/frontier_islands/test_island_key.gd:287)\n         [5] before_all (res://tests/world/frontier_islands/test_island_key.gd:29)\n         [6] _call_before_all (res://addons/gut/gut.gd:684)\n         [7] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_every_island_that_starts_broken_has_an_unlock_item\n* test_the_unlock_item_is_made_only_at_the_research_bench\n* test_no_other_station_and_no_bare_hand_makes_the_unlock_item\n* test_the_research_bench_offers_the_unlock_item\n* test_the_key_is_not_made_of_what_only_the_locked_island_has\n* test_the_unlock_item_is_named_in_both_languages\n* test_inserting_the_key_at_the_dock_opens_the_island\n* test_after_the_key_the_boat_goes_to_that_island\n* test_nothing_opens_without_the_key_in_hand\n* test_the_key_is_not_spent_on_an_island_that_is_already_open\n* test_an_island_opened_with_the_key_stays_open_after_saving_and_loading\n* test_the_dock_of_an_opened_island_has_its_plank\n12/12 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              29\nTests               267\nPassing Tests       267\nAsserts           24766\nTime              249.693s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
