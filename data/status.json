@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 20:46:58",
- "updated_epoch": 1790250418,
+ "updated": "2026-09-24 22:10:23",
+ "updated_epoch": 1790255423,
  "ended": "2026-09-24 20:00:56",
  "progress": {
   "groups_total": 35,
   "groups_done": 29,
   "groups_waiting": 0,
   "steps_total": 132,
-  "steps_done": 99
+  "steps_done": 100
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-145",
  "step": "3",
  "step_title": "도면 하나로 짓는다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-24 20:46:58"
+ "phase": "QA",
+ "phase_since": "2026-09-24 22:08:47"
 }
