@@ -894,9 +894,12 @@
   - 기준: 녹이는 곳 창 바닥이 넓게 비어 있다 — report 가 남긴 것: 레시피가 둘뿐인데 창이 크게 잡혀 아래가 빈다. 창 높이를 레시피 수에 맞춰 줄이고(제작대 창이 핫바 위에 머무는 규칙은 지킨다) smelter 사진으로 확인한다
 - [ ] 14. 테스트가 GameRoot 의 밑줄 함수를 직접 부른다 (G-901 단계 1)
   - 기준: 테스트가 GameRoot 의 밑줄 함수를 직접 부른다 — test_window_layout.gd 의 _open · _close_all 과 core/debug/ui_shots.gd 가 game._on_chest_open_changed(...) 를 부른다. 시그널 받는 쪽 함수라 이름이 바뀌면 조용히 깨진다. GameRoot 에 open_chest_window(chest)(null 이면 닫기) 같은 드러난 함수를 두고 셋 다 그것을 부르게 한다
-- [ ] 15. 낡은 Godot 함수를 걷어낸다 — `instance_reset_physics_interpolation()` 은 deprecated 다
-  (`world/terrain/test_island.gd:159`, `_build_terrain`). 찍을 때마다 경고가 뜬다 —
-  지금은 돌아가지만 다음 Godot 에서 사라진다. 지금 쓰는 길로 바꾼다 (2026-09-24)
+- [ ] 15. 낡은 Godot 함수 경고의 출처를 적어 둔다 — `instance_reset_physics_interpolation()` 은 deprecated 다
+  - 확인함 (2026-09-24 대화 세션): **우리 GDScript 는 이 함수를 부르지 않는다.** `game/addons/terrain_3d/bin/` 의
+    Terrain3D 1.0.2 바이너리 안에서 부른다 — `_build_terrain` 이 Terrain3D 를 만들 때 경고가 뜨는 까닭이다
+  - 기준: `game/` 에서 애드온을 뺀 곳에 이 함수가 없다는 것을 검사로 지킨다 (테스트 — 소스를 읽어 본다)
+  - 기준: `THIRD_PARTY.md` 의 Terrain3D 줄에 「1.0.2 는 deprecated 함수를 불러 경고가 뜬다 — 새 판으로 올릴 때 사라진다」를 적는다
+  - 애드온을 새 판으로 올리는 것은 이 단계가 아니다 (사람이 정한다)
 
 ## [ ] G-911 G-910 에서 뺀 것 — G-145 뒤에 한다
 - 차선: 3d-start (대화 세션이 나눴다 2026-09-24 — 3d-start 는 건축 쪽, 3d-lane2 는 겹치지 않는 것)
