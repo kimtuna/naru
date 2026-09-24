@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 00:37:05",
- "updated_epoch": 1790264225,
+ "updated": "2026-09-25 00:47:52",
+ "updated_epoch": 1790264872,
  "ended": "2026-09-25 00:01:16",
  "progress": {
   "groups_total": 38,
   "groups_done": 31,
   "groups_waiting": 0,
-  "steps_total": 137,
-  "steps_done": 109
+  "steps_total": 138,
+  "steps_done": 110
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-910",
  "step": "3",
  "step_title": "총을 들면 단추의 「(우클릭)」이 틀린다 (G-131 단계 3)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-25 00:37:05",
+ "phase": "QA",
+ "phase_since": "2026-09-25 00:45:58",
  "lane": "3d-lane2",
  "model": "fable"
 }
