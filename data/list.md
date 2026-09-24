@@ -925,7 +925,9 @@
   - 기준: spec 에 「3×3」이 토대 크기로 남은 곳이 없다 (grep)
 - [ ] 7. 테스트가 임시 폴더를 안 지운다 (2026-09-24 대화 세션 점검)
   - $TMPDIR 에 naru_locked_* 155 · naru_key_* 154 · naru_island_animals_* 22 개가 쌓였다 — 돌 때마다 는다
-  - 기준: `test_locked_island.gd` · `test_island_key.gd` · `test_island_animals.gd` 가 만든 임시 폴더를 after_each(또는 after_all)에서 지운다 (테스트)
+  - 까닭 (확인함): 지우는 코드는 있는데 `_erase` 가 **파일만 지우고 하위 폴더(worlds/)를 못 지운다** — 그래서
+    마지막 `remove_absolute(폴더)` 도 실패해 통째로 남는다 (test_locked_island.gd:261 · test_island_key.gd:302)
+  - 기준: 임시 폴더를 **하위 폴더까지** 지운다 — 한 곳에 재귀로 지우는 함수를 두고 테스트들이 그것을 쓴다 (테스트: 지운 뒤 폴더가 없다)
   - 기준: 테스트 폴더 전체에서 `OS.get_temp_dir()` 아래 만든 것을 안 지우는 곳이 없다 — 찾아서 같이 고친다
 - [ ] 8. 섬 저장본(island_cache)이 옛 판을 안 지운다 (2026-09-24 대화 세션 점검)
   - user://island_cache 에 24 개 · 379MB. 굽는 코드가 바뀔 때마다 새 이름으로 하나씩 는다 (VERSION · SOURCES 해시)
