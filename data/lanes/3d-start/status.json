@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 00:55:19",
- "updated_epoch": 1790265319,
+ "updated": "2026-09-25 00:55:21",
+ "updated_epoch": 1790265321,
  "ended": "2026-09-24 23:54:08",
  "progress": {
   "groups_total": 38,
@@ -13,11 +13,11 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-149",
- "step": "1",
- "step_title": "계단이 선 판에는 놓이지 않는다",
+ "step": "2",
+ "step_title": "(앞 단계 QA) 횃불을 놓게 되면 계단 판도 막아야 한다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-25 00:51:09",
+ "phase": "구현",
+ "phase_since": "2026-09-25 00:55:21",
  "lane": "3d-start",
  "model": "opus"
 }
