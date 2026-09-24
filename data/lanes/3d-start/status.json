@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "재개",
- "updated": "2026-09-24 23:55:47",
- "updated_epoch": 1790261747,
+ "reason": "",
+ "updated": "2026-09-24 23:55:50",
+ "updated_epoch": 1790261750,
  "ended": "2026-09-24 23:54:08",
  "progress": {
   "groups_total": 36,
@@ -17,7 +17,7 @@
  "step_title": "휠로 올려도 옆에 붙는다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-24 23:44:10",
+ "phase_since": "2026-09-24 23:55:50",
  "lane": "3d-start",
  "model": "opus"
 }
