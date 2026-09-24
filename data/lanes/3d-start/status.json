@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-25 07:07:16",
- "updated_epoch": 1790287636,
+ "updated": "2026-09-25 07:07:18",
+ "updated_epoch": 1790287638,
  "ended": "2026-09-25 01:35:20",
  "progress": {
   "groups_total": 38,
@@ -13,11 +13,11 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-146",
- "step": "1",
- "step_title": "밤이 가장 어둡다",
+ "step": "2",
+ "step_title": "횃불이 제 둘레를 밝힌다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-25 07:06:09",
+ "phase": "구현",
+ "phase_since": "2026-09-25 07:07:18",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-25 04:30:00"
