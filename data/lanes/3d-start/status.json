@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "목록을 읽는다",
- "updated": "2026-09-25 00:30:12",
- "updated_epoch": 1790263812,
+ "reason": "",
+ "updated": "2026-09-25 00:30:15",
+ "updated_epoch": 1790263815,
  "ended": "2026-09-24 23:54:08",
  "progress": {
   "groups_total": 37,
@@ -12,12 +12,12 @@
   "steps_done": 108
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-148",
+ "group": "G-149",
  "step": "1",
- "step_title": "빈손에서 집까지 끊기지 않는다",
+ "step_title": "계단이 선 판에는 놓이지 않는다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-25 00:21:54",
+ "phase_since": "2026-09-25 00:30:15",
  "lane": "3d-start",
  "model": "opus"
 }
