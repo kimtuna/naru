@@ -1,9 +1,9 @@
 {
  "state": "stopped",
- "reason": "g/G-910 로 옮기지 못했다 — 지금 자리는 g/G-148. ",
- "updated": "2026-09-24 23:20:39",
- "updated_epoch": 1790259639,
- "ended": "2026-09-24 23:20:39",
+ "reason": "하네스가 성하지 않다",
+ "updated": "2026-09-24 23:20:42",
+ "updated_epoch": 1790259642,
+ "ended": "2026-09-24 23:20:42",
  "progress": {
   "groups_total": 36,
   "groups_done": 29,
