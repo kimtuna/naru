@@ -1,21 +1,21 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-24 12:21:54",
- "updated_epoch": 1790220114,
+ "updated": "2026-09-24 13:10:33",
+ "updated_epoch": 1790223033,
  "ended": "2026-09-24 03:25:15",
  "progress": {
   "groups_total": 31,
   "groups_done": 28,
   "groups_waiting": 0,
   "steps_total": 118,
-  "steps_done": 96
+  "steps_done": 97
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-903",
  "step": "3",
  "step_title": "사냥과 포획까지 이어진다",
- "attempt": "2",
- "phase": "기계 검사",
- "phase_since": "2026-09-24 12:21:54"
+ "attempt": "3",
+ "phase": "QA",
+ "phase_since": "2026-09-24 13:09:19"
 }
