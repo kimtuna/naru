@@ -1,9 +1,9 @@
 {
  "state": "stopped",
- "reason": "g/G-148 로 옮기지 못했다 — 지금 자리는 g/G-145.  M current.md  M decisions.md  M game/build/build_piece.gd ",
- "updated": "2026-09-24 14:58:07",
- "updated_epoch": 1790229487,
- "ended": "2026-09-24 14:58:07",
+ "reason": "하네스가 성하지 않다",
+ "updated": "2026-09-24 14:58:09",
+ "updated_epoch": 1790229489,
+ "ended": "2026-09-24 14:58:09",
  "progress": {
   "groups_total": 35,
   "groups_done": 29,
