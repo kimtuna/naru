@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 08:08:38",
- "updated_epoch": 1790377718,
+ "updated": "2026-09-26 08:08:41",
+ "updated_epoch": 1790377721,
  "ended": "2026-09-26 07:11:34",
  "progress": {
   "groups_total": 42,
@@ -13,11 +13,11 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-146",
- "step": "3",
- "step_title": "횃불이 제 둘레를 밝힌다",
+ "step": "4",
+ "step_title": "R 꾹 — 없는 탄은 안 보인다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-26 08:07:21",
+ "phase": "구현",
+ "phase_since": "2026-09-26 08:08:41",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00"
