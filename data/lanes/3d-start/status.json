@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 07:30:17",
- "updated_epoch": 1790375417,
+ "updated": "2026-09-26 07:37:25",
+ "updated_epoch": 1790375845,
  "ended": "2026-09-26 07:11:34",
  "progress": {
   "groups_total": 42,
@@ -15,9 +15,9 @@
  "group": "G-146",
  "step": "2",
  "step_title": "노을부터 새벽까지 내내 어둡다 — 한밤이 밝지 않다",
- "attempt": "1",
- "phase": "기계 검사",
- "phase_since": "2026-09-26 07:30:17",
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-26 07:37:25",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00"
