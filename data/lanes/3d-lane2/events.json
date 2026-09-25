@@ -1127,5 +1127,55 @@
   "epoch": 1790374514,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-26 07:42:11",
+  "epoch": 1790376131,
+  "type": "pass",
+  "title": "통과 — G-150 단계 1 (토대를 부수면 그 위 설치물도 무너진다)",
+  "group": "G-150",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "토대(와 그 위 지붕)를 부수면 밭과 그 작물까지 설치물 전부가 무너져 바닥에 떨어진다 — 놓이는 것 전부를 한 곳(Buildings.everything_placed)에서 훑고, 테스트는 프로젝트 클래스 목록에서 placed_item() 을 가진 것을 모두 끌어와 표에 빠진 것이 없는지 센다",
+   "approach": "문제: 밭(FieldPatch)은 놓인 것들의 무리(Placeable.GROUP)에 일부러 안 든다 — 겹쳐 놓기 · 방 판정이 그 무리를 훑는데 밭은 땅처럼 밟는 것이라서. 그런데 무너짐(Buildings.collapse · held_up)도 그 무리만 훑어서 토대를 부숴도 밭이 공중에 남았다. 제작대 계열 · 상자는 이미 그 무리에 들어 잘 무너졌다 (test_building_collapse.gd). 푼 것: Buildings.everything_placed() 하나가 Placeable.GROUP + FieldPatch.GROUP 을 합쳐 주고, collapse · held_up · link_count · _link_for 가 전부 그것만 쓴다. 밭이 무너지면 그 위 작물은 FieldPatch.contents() → Farmland.spill → Crops.spill 로 (덜 자랐으면 씨앗, 다 자랐으면 수확물을) 떼어 내 상자 내용물과 같은 길로 바닥에 쏟는다 — 그냥 두면 밭이 맨땅으로 돌아갈 때 작물이 뽑혀 씨앗이 가방으로 갔다 (무너진 것은 바닥에, spec). 테스트는 「놓이는 것 전부」가 헛말이 안 되게 ProjectSettings 의 class_name 목록에서 placed_item() 을 선언한 클래스를 전부 찾아 표(제작대 다섯 · 상자 · 밭)나 「토대 위에 안 서는 것」(선착장 · 건축물 자체)에 다 있는지 센다 — 횃불 같은 것이 놓이게 되면 표에 넣기 전엔 통과 못 한다. 고친 것을 잠깐 되돌려 보니 밭 관련 단언 15개가 떨어졌다 (테스트가 정말 문다). 찍기: shots.gd 에 collapse_before · collapse_after 자리를 더했다 — .loop/out/shots/collapse/ 두 장. 부순 뒤 남은 것 0 · 공중에 아무것도 없다. 새 상태는 없다 — 무너진 밭 · 작물은 standing() 에서 그대로 빠져 저장에 안 남는다. 바뀐 곳 그물 49파일 406개 통과 (7분, test_from_empty_hands 가 421초).",
+   "why": "",
+   "files": [
+    "game/build/buildings.gd",
+    "game/build/placeable.gd",
+    "game/life/farming/field_patch.gd",
+    "game/life/farming/farmland.gd",
+    "game/life/farming/crops.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_collapse_takes_everything_placed.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "토대(와 그 위 지붕 · 2층 바닥)를 부수면 그 위에 놓인 모든 설치물(밭 · 제작대 계열 전부 · 상자 · 횃불 · 앞으로 생길 것)이 같이 무너져 바닥에 떨어진다 — 놓이는 것 전부에서 끌어와 검사한다. 하나라도 떠 있으면 실패 (테스트)",
+     "evidence": "tests/build/test_collapse_takes_everything_placed.gd — test_the_table_covers_every_class_that_can_be_placed 가 ProjectSettings 의 class_name 전부에서 placed_item() 을 선언한 클래스를 찾아 표(COVERED_CLASSES: CraftingStation · StorageChest · FieldPatch) 또는 NOT_ON_FLOORS(Dock · BuildPiece, 까닭 붙음)에 다 있는지 세고, 제작대는 stations.json 의 종류 전부가 _placers 에 있는지 센다. Placeable.GROUP 에 add_to_group 하는 곳은 CraftingStation · StorageChest · Dock · BuildPiece 뿐이고 전부 placed_item() 이 있어 빠진 것이 없다 (횃불은 아직 놓이는 클래스가 없다 — 생기면 표에 넣기 전엔 이 테스트가 막는다). test_everything_on_a_foundation_falls_when_the_foundation_breaks · test_everything_on_a_roof_falls_to_the_ground_when_the_foundation_breaks · test_everything_on_a_roof_falls_when_the_wall_holding_it_breaks 가 각각 토대 위 · 지붕 위(토대 부술 때 · 벽 헐 때)를 보며 _standing 이 false 인지, 그 자리 밑 바닥(땅 0 · 남은 토대 윗면)에 떨어졌는지, _expect_nothing_floating(held_up + 발밑 레이캐스트)으로 떠 있는 것이 없는지 본다. 대조로 test_what_stands_on_bare_ground_next_to_the_foundation_stays 가 맨땅 것은 그대로임을 본다. 손으로 지붕을 직접 부수는 길도 hit_piece → collapse(piece) 로 같은 연쇄를 탄다. 일부러 everything_placed 에서 FieldPatch.GROUP 을 빼고 이 파일만 돌리니 4 테스트 · 단언 15개가 떨어졌다 (되돌렸고 git diff 가 원래와 같다)"
+    },
+    {
+     "ok": true,
+     "criterion": "밭에 심긴 작물도 같이 사라지거나 떨어진다 — 떠 있는 작물이 없다 (테스트)",
+     "evidence": "test_crops_on_a_collapsing_field_fall_to_the_ground_and_none_is_left_floating — 토대 위 밭 둘(갓 심은 밀 · 다 자란 밀)과 맨땅 밭 하나를 두고 토대를 부순 뒤: 토대 위 두 칸이 is_tilled · is_planted 모두 false, 작물 노드가 is_instance_valid false, planted_cells 가 맨땅 칸 하나뿐, 남은 작물은 제 밭 위에 딱 붙어 선다(높이 단언), 바닥 드롭이 정확히 {farm_plot 2, wheat_seed 1, wheat 수확량} 이고 DroppedItem.LIFT 높이에 있으며 가방에는 0 개. 일부러 깨 보니 이 테스트의 단언 8개가 떨어졌다. 코드는 FieldPatch.contents → Farmland.spill → Crops.spill 로 vanish 직전에 작물을 떼어 내 Placeable.fall 이 바닥에 쏟는다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 토대를 부순 뒤 공중에 남은 것이 없다",
+     "evidence": ".loop/out/shots/collapse/collapse_before.png · collapse_after.png (2026-09-26 07:24). before 에는 토대 위(제작대 · 상자 · 작물 심긴 밭)와 벽 위 지붕 위(제작대 · 상자 · 밭)가 서 있고, after 에는 건축물 · 설치물 · 밭이 하나도 없이 떨어진 덩어리들만 땅에 있다. shots.gd 의 _set_up_collapse 가 everything_placed().size() 와 남은 밭 · 작물 수를 찍는다 (0 이어야 한다)"
+    }
+   ],
+   "issues": [
+    "spec 무너짐 줄에 밭이 빠져 있다 — spec/06_build/building.md 60줄 「그 위에 놓인 설치물(제작대 · 상자 · 횃불)까지 연쇄로 내려앉는다」에 밭(과 그 작물이 바닥에 쏟아진다)을 한 단어 더해라. 코드(Buildings.everything_placed)와 테스트는 밭까지 무너뜨리는데 spec 문장만 옛것이다"
+   ],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 49 개 ---\ntest.sh: 파일 49 개를 6 개씩 한꺼번에 돌린다\nok     16s  res://tests/core/debug/test_dev_box.gd\nok     17s  res://tests/build/test_building_sockets.gd\nok     27s  res://tests/world/terrain/test_island_walk.gd\nok     15s  res://tests/craft/stations/test_stations.gd\nok     14s  res://tests/build/test_building_walls.gd\nok     34s  res://tests/world/frontier_islands/test_voyage.gd\nok     40s  res://tests/settings/save/test_round_trip.gd\nok     13s  res://tests/life/hunting/test_butchery.gd\nok     13s  res://tests/build/test_building_roof_stairs.gd\nok     13s  res://tests/life/hunting/test_carry_cage.gd\nok     11s  res://tests/player/pickup/test_pickup.gd\nok     10s  res://tests/life/farming/test_crops.gd\nok     11s  res://tests/life/farming/test_farmland.gd\nok      8s  res://tests/build/test_building_pillar.gd\nok      8s  res://tests/build/test_building_stairs_plate.gd\nok      9s  res://tests/life/hunting/test_sedation_capture.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      8s  res://tests/world/day_night/test_day_in_world.gd\nok      9s  res://tests/core/debug/test_dev_box_open.gd\nok      7s  res://tests/world/storage/test_chest_break.gd\nok      8s  res://tests/world/storage/test_chest_place.gd\nok      3s  res://tests/build/test_building_grades.gd\nok      5s  res://tests/build/test_building_preview.gd\nok      6s  res://tests/build/test_blueprint.gd\nok      5s  res://tests/build/test_building_stairs_roof.gd\nok      7s  res://tests/world/frontier_islands/test_dock_building.gd\nok      2s  res://tests/build/test_building_collapse.gd\nok      4s  res://tests/build/test_foundation_wheel_attach.gd\nok      3s  res://tests/build/test_building_downgrade.gd\nok      2s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/build/test_rooms.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/life/food/test_food.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            49\nTests             406\nPassing Tests     406\nFailing Tests       0\nPending             0\nAsserts          7040\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "2e56be8"
  }
 ]
