@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 07:42:11",
- "updated_epoch": 1790376131,
+ "updated": "2026-09-26 07:42:14",
+ "updated_epoch": 1790376134,
  "ended": "2026-09-26 07:11:37",
  "progress": {
   "groups_total": 42,
@@ -13,11 +13,11 @@
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-150",
- "step": "1",
- "step_title": "토대를 부수면 그 위 설치물도 무너진다",
+ "step": "2",
+ "step_title": "계단은 토대에만 붙고, 토대 위에도 놓인다 — Tab 으로 스냅을 바꾼다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-26 07:39:46",
+ "phase": "구현",
+ "phase_since": "2026-09-26 07:42:14",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-26 07:00:00"
