@@ -1,14 +1,14 @@
 {
- "state": "running",
- "reason": "",
- "updated": "2026-09-26 07:00:05",
- "updated_epoch": 1790373605,
- "ended": "2026-09-25 19:23:13",
+ "state": "stopped",
+ "reason": "사람이 멈췄다 (09-26 07:0x) — 목록 정리 중",
+ "updated": "2026-09-26 07:11:34",
+ "updated_epoch": 1790374294,
+ "ended": "2026-09-26 07:11:34",
  "progress": {
-  "groups_total": 38,
+  "groups_total": 41,
   "groups_done": 33,
   "groups_waiting": 0,
-  "steps_total": 151,
+  "steps_total": 160,
   "steps_done": 133
  },
  "started": "2026-09-21 06:54:49",
