@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "재개",
- "updated": "2026-09-25 16:51:56",
- "updated_epoch": 1790322716,
+ "reason": "",
+ "updated": "2026-09-25 16:51:58",
+ "updated_epoch": 1790322718,
  "ended": "2026-09-25 16:21:54",
  "progress": {
   "groups_total": 38,
@@ -17,7 +17,7 @@
  "step_title": "횃불이 제 둘레를 밝힌다",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-25 16:21:45",
+ "phase_since": "2026-09-25 16:51:58",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-25 04:30:00"
