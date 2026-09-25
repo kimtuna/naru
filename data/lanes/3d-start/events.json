@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-22 03:53:23",
-  "epoch": 1790016803,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-22 04:09:05",
   "epoch": 1790017745,
   "type": "start",
@@ -7990,5 +7984,63 @@
    "decision": null
   },
   "test": "_islands/test_islands.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nFAIL  417s  res://tests/craft/test_from_empty_hands.gd\n\n================ 떨어진 파일: res://tests/craft/test_from_empty_hands.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/craft/test_from_empty_hands.gd\n* test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    한 바퀴 1. 맨손으로 나무 일곱 · 돌 둘을 캐고 밟아 줍는다 (1초)\n    한 바퀴 2. 가방에서 제작대를 만든다 (13초)\n    한 바퀴 3. 제작대에서 도끼와 곡괭이를 만든다 (13초)\n    한 바퀴 4. 곡괭이를 들고 돌 · 철광석을, 도끼를 들고 남은 나무를 (13초)\n    한 바퀴 4. 23번째까지 캤다 (32초)\n    한 바퀴 4. 38번째까지 캤다 (55초)\n    한 바퀴 4. 53번째까지 캤다 (77초)\n    한 바퀴 5. 제작대로 돌아와 제련로를 세우고 철괴 열넷을 뽑는다 (96초)\n    한 바퀴 5-1. 제작대에서 연구대 · 선착장을 만든다 (153초)\n    한 바퀴 5-2. 연구대를 놓고 열쇠를 만든다 (153초)\n    한 바퀴 5-3. 물가에 선착장을 놓는다 (166초)\n    한 바퀴 5-4. 열쇠로 개척 섬을 열고 배로 건너간다 (169초)\n    한 바퀴 5-5. 개척 섬에서 유황 넷 · 석회 하나를 캔다 (169초)\n    한 바퀴 5-6. 배로 내 섬에 돌아온다 (186초)\n    한 바퀴 6. 제작대로 돌아서서 철괴로 리볼버 · 권총탄을 만든다 (G-903.1) (214초)\n    한 바퀴 7. 리볼버를 들고 과녁을 실제로 쏜다 (214초)\n    한 바퀴 8. R 로 재장전 (218초)\n    한 바퀴 9. 탄이 없으면 R 을 눌러도 채워지지 않는다 (228초)\n    --- Awaiting 1.0 seconds  ---\n    한 바퀴 10. 빈 땅으로 걸어가 밭을 놓는다 (229초)\n    한 바퀴 11. 씨앗을 들고 우클릭으로 심는다 (236초)\n    한 바퀴 12. 물뿌리개를 들고 날마다 물을 주며 사흘을 보낸다 (236초)\n    한 바퀴 13. 씨앗도 물뿌리개도 아닌 것을 들고 우클릭으로 거둔다 (236초)\n    한 바퀴 14. 요리대를 놓고 밀로 빵을 굽는다 (236초)\n    한 바퀴 15. 빵을 들고 우클릭으로 먹는다 (236초)\n    한 바퀴 16. 빈 밭에 벨라도나를 심어 사흘 물 주고 거둔다 (236초)\n    한 바퀴 17. 제작대로 돌아와 제련로에서 철괴 셋 · 유황 셋을 더 뽑고 (236초)\n    한 바퀴 18. 사슴을 찾아가 **다리만** 쏴 잡는다 (252초)\n    한 바퀴 19. 주검에 다가가 우클릭으로 도축한다 (302초)\n    한 바퀴 20. 다른 사슴을 찾아 다리로 체력 10% 아래까지 몰고 (303초)\n    한 바퀴 21. 제작대로 돌아와 목재를 판자로 켜고 (327초)\n    한 바퀴 22. 빈 땅으로 걸어가 토대를 놓는다 (378초)\n    한 바퀴 23. 토대 위로 걸어 올라가 한가운데에 서서 (407초)\n    한 바퀴 24. 머리 위에 지붕을 얹는다 (410초)\n    한 바퀴 25. 방 안에 선 채 저장한다 (411초)\n    한 바퀴 26. 집을 손으로 철거한다 (412초)\n    한 바퀴 27. 돌아온 재료로 다시 짓는다 (416초)\n    한 바퀴 22. 빈 땅으로 걸어가 토대를 놓는다 (416초)\n    [Failed]:  wood_foundation 를 놓을 자리가 미리 보인다 ((-10.5, 0.0, -10.5) 를 짚었다): { &\"at\": (-10.0, 0.2, -10.0), &\"depth\": 0.5, &\"cells\": [(-12, -12), (-12, -11), (-12, -10), (-12, -9), (-11, -12), (-11, -11), (-11, -10), (-11, -9), (-10, -12), (-10, -11), (-10, -10), (-10, -9), (-9, -12), (-9, -11), (-9, -10), (-9, -9)], &\"attached\": false, &\"ok\": false, &\"why\": \"water\" }\n      at line -1\n    [Failed]:  Expected [<null>] to be anything but NULL:  토대를 놓았다\n      at line -1\n    [Failed]:  돌려받은 재료만으로 집을 다시 지었다\n      at line 1280\n0/1 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/craft/test_from_empty_hands.gd\n- test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    [Failed]:  wood_foundation 를 놓을 자리가 미리 보인다 ((-10.5, 0.0, -10.5) 를 짚었다): { &\"at\": (-10.0, 0.2, -10.0), &\"depth\": 0.5, &\"cells\": [(-12, -12), (-12, -11), (-12, -10), (-12, -9), (-11, -12), (-11, -11), (-11, -10), (-11, -9), (-10, -12), (-10, -11), (-10, -10), (-10, -9), (-9, -12), (-9, -11), (-9, -10), (-9, -9)], &\"attached\": false, &\"ok\": false, &\"why\": \"water\" }\n          at line -1\n    [Failed]:  Expected [<null>] to be anything but NULL:  토대를 놓았다\n          at line -1\n    [Failed]:  돌려받은 재료만으로 집을 다시 지었다\n          at line 1280\n\nTotals\n------\nScripts               1\nTests                 1\nPassing Tests      none\nFailing Tests         1\nAsserts           1147/1150\nTime              416.037s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           118\nTests            1082\nPassing Tests    1081\nFailing Tests       1\nPending             0\nAsserts         65053\nTime           417s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/craft/test_from_empty_hands.gd\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-26 07:58:08",
+  "epoch": 1790377088,
+  "type": "pass",
+  "title": "통과 — G-146 단계 2 (노을부터 새벽까지 내내 어둡다 — 한밤이 밝지 않다)",
+  "group": "G-146",
+  "step": "2",
+  "attempt": "2",
+  "report": {
+   "problem": "밤은 내내 어둡다 — 해가 진 뒤(19·20·22·0·3·5시) 어느 시각도 노을(18시)보다 밝지 않고, 광원 없이도 가까운 땅 윤곽은 보인다. 바뀐 곳만: 84개 파일 · 719개 테스트 통과",
+   "approach": "밝기: 평평한 주변광을 해의 높이로 줄이되 해가 지평선 밑 약 17°(NIGHT_BELOW -0.3)부터는 새벽까지 한 값(NIGHT_FILL 1.1)으로 두어, 한밤이 노을보다 밝아지지도 새까매지지도 않게 했다. 찍은 땅 밝기: 낮 0.648 · 18시 0.043 · 20시 0.008 · 22시 0.008 · 3시 0.007 · 5시 0.013 — shots.gd 의 TIME_ORDER 가 「맞다」, time_all.png(3×2)로 눈으로도 봤다(윤곽은 보인다). 앞 시도의 기계 검사가 떨어진 것은 밝기와 무관했다: test_from_empty_hands 의 평평한 땅 윗면이 바다 높이(0)와 똑같아서, 다시 짓는 토대의 땅 광선이 -0.000001 쯤에 맞으면 Buildings 기본 물음(y < 0)이 멀쩡한 땅을 「water」로 쳤다. 그 땅에 섬처럼 물음을 넣어 줬다 — 물가(SHORE_Z) 너머만 물이다. spec 두 문서의 줄은 「밤은 내내 어둡다 (사람 결정 2026-09-26)」로 바꿨다.",
+   "why": "DayLight.NIGHT_FILL 1.1 — 찍어서 골랐다: 0.45·0.8 은 한밤 땅이 새까맸다(0.000·0.002), 1.1 은 윤곽이 보인다(0.007); DayLight.NIGHT_BELOW -0.3 — 해가 약 17° 밑부터 한밤 밝기 그대로; test_day_light.gd NIGHT_LEAST 0.3 (ground_light 문턱) · shots.gd NIGHT_GROUND_LEAST 0.004 (그림 땅 밝기 문턱) — 찍어서 맞췄다",
+   "files": [
+    "game/world/day_night/day_light.gd",
+    "game/tests/world/day_night/test_day_light.gd",
+    "game/core/debug/shots.gd",
+    "game/world/terrain/test_island.gd",
+    "game/tests/craft/test_from_empty_hands.gd",
+    "spec/03_world/lighting.md",
+    "spec/03_world/day-night.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "해가 진 뒤부터 뜨기 전까지 **어느 시각에도** 한밤이 노을보다 밝지 않다 — 18 · 19 · 20 · 22 · 0 · 3 · 5시를 재서 견준다 (테스트)",
+     "evidence": "test_day_light.gd test_no_hour_after_sunset_is_brighter_than_dusk 가 19·20·22·0·3·5시를 18시와 견주고, 18.5시~5시를 30분마다 한 번 더 본다. 일부러 깨 봤다: NIGHT_FILL 1.1→2.0 으로 놓자 모든 시각에서 떨어졌다. 되돌렸다(cmp 로 확인). test.log(바뀐 곳 118개 파일)도 모두 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "밤 밝기가 광원 없이 「못 나갈 만큼」은 아니다 — 가까운 땅의 윤곽은 보인다 (day-night.md) (테스트: 최소 밝기 문턱)",
+     "evidence": "test_the_night_is_dark_but_not_pitch_black 가 해가 진 뒤 시각마다 ground_light >= NIGHT_LEAST(0.3, 임시 표시 있음)를 단언한다. 일부러 깨 봤다: NIGHT_FILL 을 옛 값 0.45 로 놓자 여섯 시각 모두 문턱 밑이라 떨어졌다. 그림 쪽도 shots.gd 의 NIGHT_GROUND_LEAST(0.004, 임시)로 견준다"
+    },
+    {
+     "ok": true,
+     "criterion": "spec/03_world/lighting.md · day-night.md 의 「밤이 가장 어둡다」 줄을 「밤은 내내 어둡다 (사람 결정 2026-09-26)」로 바꾼다",
+     "evidence": "lighting.md 의 줄을 바꾸고 2026-09-24 의 옛 결정을 바꿨다고 밝혔다. 미정 줄도 고쳤다. day-night.md 에는 그 줄이 없어서 같은 문장을 새로 넣었다. spec · game 어디에도 「가장 어둡」이 남아 있지 않다. 두 파일 다 27 · 22줄이다"
+    },
+    {
+     "ok": true,
+     "criterion": "하루를 18 · 20 · 22 · 3 · 5시로 찍어 나란히 본다 — 눈으로도 밤 내내 어둡다",
+     "evidence": "SHOT_TIMES 를 12·18·20·22·3·5시로 바꾸고 _side_by_side 를 3×2 로 늘렸다. .loop/out/day_light/time_all.png(07:39)를 직접 열어 봤다. 20·22·3시는 고르게 어둡고 풀과 산의 윤곽이 보인다. 5시는 동이 트며 조금 붉지만 18시 노을보다 어둡다. 20시가 밝아지는 일은 없다"
+    }
+   ],
+   "issues": [
+    "옛 시각 상수가 테스트에 남았다 — test_day_light.gd 에 DUSK_AT 18.5 · DAWN_AT 5.5 가 새 SUNSET_AT 18.0 과 같이 있다. 앞 테스트(test_brightness_runs_…)가 아직 쓰고 있어서 틀린 것은 아니다. 다만 「노을」이 두 시각이라 읽기가 헷갈린다. 주석에 둘이 무엇이 다른지 한 줄 적거나 하나로 합쳐라",
+    "Buildings 기본 물 판정이 땅 높이 0 에서 흔들린다 — test_from_empty_hands 는 is_water 를 넣어서 피했다. 그러나 Buildings 의 기본 물음(y < 0)은 윗면이 정확히 0 인 땅에서 광선 오차(-0.000001)로 「water」를 낸다. 기본 판정에 작은 여유(예: y < -0.01)를 두거나, is_water 를 반드시 넣게 하는 편이 낫다. 넣고 나면 평평한 땅(y=0)에서 토대가 water 로 거부되지 않는지 단언하는 테스트를 붙여라"
+   ],
+   "good": [
+    "test_from_empty_hands.gd 에 is_water 를 넣었다 — 앞 시도의 기계 검사가 떨어진 것을 고쳤다. 밝기와는 상관이 없지만 통과하려면 필요했다"
+   ]
+  },
+  "test": "est_food.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      3s  res://tests/ui/layout/test_window_layout.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/hud/test_map_window.gd\nok      1s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      0s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok    420s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           118\nTests            1082\nPassing Tests    1082\nFailing Tests       0\nPending             0\nAsserts         65110\nTime           420s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "8a17c03"
  }
 ]
