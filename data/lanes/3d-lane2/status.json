@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "재개",
- "updated": "2026-09-25 09:07:57",
- "updated_epoch": 1790294877,
+ "reason": "",
+ "updated": "2026-09-25 09:07:59",
+ "updated_epoch": 1790294879,
  "ended": "2026-09-25 08:37:55",
  "progress": {
   "groups_total": 38,
@@ -17,7 +17,7 @@
  "step_title": "전체 합계에서 테스트 하나가 통과도 실패도 아니다 (G-910 단계 5)",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-25 08:37:47",
+ "phase_since": "2026-09-25 09:07:59",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-25 04:30:00"
