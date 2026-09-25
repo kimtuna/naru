@@ -1,59 +1,5 @@
 [
  {
-  "time": "2026-09-22 02:15:51",
-  "epoch": 1790010951,
-  "type": "pass",
-  "title": "통과 — G-115 단계 2 (체력 · 시계)",
-  "group": "G-115",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "체력 막대와 날짜·시각 표시를 HUD 에 얹었다 — 체력은 늘 보이고 다치면 줄고, 시계는 나갔다 들어와도 이어진다",
-   "approach": "알맹이는 이미 있었다 — 체력(Health)도, 하루 40분을 세고 저장본에서 이어 가는 시계(GameClock)도. 없던 것은 그 둘이 화면에 뜨는 자리였다. 그래서 새로 짠 것은 표시 둘이고, 세는 쪽은 건드리지 않았다.\n\n체력 막대(HealthBar)는 절벽에서만 나오는 기력 막대와 같은 꼴이되 숨지 않는다 — 캐릭터 화면(player.tscn 의 HUD)에 넣고 Player._ready 에서 제 체력을 들여다보게 이었다. 체력은 캐릭터의 것이라 캐릭터와 같은 자리에 두는 것이 맞다. 다치면 changed 를 받아 줄고, 0 이면 빈 막대가 남고, 다시 살아나면 도로 찬다.\n\n시계 표시(ClockLabel)는 월드의 것이라 GameRoot 의 HUD 에 두었다. 시계는 섬이 데려오므로 GameRoot 가 이미 받아 쓰던 _on_node_added 자리에서 이름표에도 그 시계를 쥐여 준다 — 그래서 저장본에서 이어 간 그 날짜·시각이 그대로 뜨고, 배를 타고 섬이 갈려도 새 시계로 갈아 낀다. 글자는 번역 키(HUD_CLOCK)로 ko·en 둘 다 넣었다. 「며칠 몇 시」를 적는 차례가 말마다 달라 통째로 한 줄의 꼴(%d일 %02d:%02d / Day %d %02d:%02d)로 두었다.\n\n막힌 곳: static 함수에서는 tr() 을 쓸 self 가 없어 TranslationServer.translate 로 옮겼다. 테스트에서 「날짜가 적혀 있다」를 확인할 때 처음엔 3일 14:30 을 썼는데 시각 안의 3 과 구별되지 않아, 시각에 없는 날짜(6일·5일)로 바꿔 날짜와 시각이 섞이지 않게 했다.\n\n검사: 새 테스트 13개 통과. 마지막에 전체 562개(63파일) 전부 통과, guard 통과.",
-   "why": "체력 막대 색(빨강 0.85,0.25,0.25) · 폭 240px — spec/08_combat/damage-death.md 의 체력 수치와 spec/12_ui/hud.md 의 자리가 둘 다 미정이라 사람이 보고 정한다; 체력 막대는 화면 왼쪽 아래(핫바 위), 시계는 오른쪽 위 — HUD 를 화면 어디에 두는지가 미정이다 (spec/12_ui/hud.md 미정). 왼쪽 위는 조작 안내와 FPS 가 쓰고 있어 비켜 두었다; 시계 꼴 「%d일 14:30」 — 초는 적지 않고 분은 내림이다. 어떻게 보일지는 사람이 보고 정한다",
-   "files": [
-    "game/ui/hud/health_bar.gd",
-    "game/ui/hud/health_bar.tscn",
-    "game/ui/hud/clock_label.gd",
-    "game/ui/hud/clock_label.tscn",
-    "game/player/movement_controls/player.gd",
-    "game/player/movement_controls/player.tscn",
-    "game/core/game_root.gd",
-    "game/core/game_root.tscn",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/ui/hud/test_health_bar.gd",
-    "game/tests/ui/hud/test_clock_label.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "체력이 항상 보이고, 다치면 줄고, 0 이면 죽는다 (테스트)",
-     "evidence": "tests/ui/hud/test_health_bar.gd 8개가 진짜 캐릭터(player.tscn)를 세우고 본다. 「늘 보인다」는 is_visible_in_tree + CanvasLayer 밑인가 + 네 모서리가 화면 안인가로 보고(49~69줄), 「다치면 준다」는 take(1/4) 두 번에 0.75→0.5 를 재고(81~89줄) 12m 에서 진짜로 떨어뜨려 피해 주는 쪽까지 이어졌는지 본다(92~103줄). 「0 이면 죽는다」는 막대가 비는 것과 player.is_dead() 를 같이 본다(107~112줄). 껍데기가 아닌지 확인함 — player.gd 의 _health_bar.watch(_health) 한 줄을 지우고 돌리니 8개 중 4개가 깨졌다 (되돌림)."
-    },
-    {
-     "ok": true,
-     "criterion": "지금 몇 시 며칠인지 보인다. 나갔다 들어와도 이어진다",
-     "evidence": "tests/ui/hud/test_clock_label.gd 5개. 게임 화면(game_root.tscn)을 띄워 이름표가 CanvasLayer 밑에 화면 안에 떠 있는지 보고(79~91줄), set_clock(6, 14.5) → 글자에 \"6\" 과 \"14:30\" 이 있는지, 12일 07:00 로 바꾸면 지난 시각이 남지 않는지 본다(94~107줄). 「이어진다」는 4.5일을 흘려 5일 21:00 을 만들고 game.save() → free → 다시 들어와 글자가 똑같은지 본다(142~163줄). 껍데기가 아닌지 확인함 — game_root.gd 의 _clock.set_clock(world.day, world.time_of_day) 를 지우니 그 테스트가 \"1일 09:00\" 으로 깨졌다 (되돌림). 글자는 번역 키 HUD_CLOCK 이고 ko·en 둘 다에 %d · %02d:%02d 자리가 있는지 po 를 읽어 확인한다(127~137줄)."
-    }
-   ],
-   "issues": [
-    "막대 폭이 두 곳에 적혀 있다 — health_bar.gd 의 WIDTH(240) 와 health_bar.tscn 의 자리 폭(offset_left 16 · offset_right 256 = 240) 이 같아야 하는데, 어긋나도 아무도 안 잡는다. tscn 의 offset_right 를 256→416 으로 놓아(자리 폭 400) 돌려 보니 8개가 다 통과했다 — 체력이 가득 차도 막대는 자리의 60% 만 차는데 fill_ratio() 는 그대로 1.0 이다. WIDTH 를 지우고 _fill.offset_right = size.x * ratio 처럼 제 자리 폭에서 가져오게 하거나(resized 도 받아), 막대가 자리를 꽉 채우는지 보는 테스트를 하나 넣어라. (막는 것은 아니다 — 지금 두 값은 맞다)",
-    "쓰는 곳이 없는 clock() 접근자 — game_root.gd:226 에 func clock() -> GameClock 을 새로 냈는데 게임에도 테스트에도 부르는 곳이 한 곳도 없다 (clock_label() 은 테스트가 쓴다). 다음 단계에서 쓸 자리가 확실치 않으면 지워라."
-   ],
-   "good": [
-    "game_root.gd:226 clock() — 기준에 없고 아직 아무도 안 쓰는 접근자",
-    "test_the_health_bar_does_not_eat_clicks · test_the_bar_fills_again_when_the_player_starts_over — 기준 밖이지만 핫바가 이미 지키던 줄(좌클릭 평타)과 죽은 뒤 되살아남을 따라간 것이라 어긋난 것은 아니다"
-   ]
-  },
-  "test": "_world.gd\n* test_the_island_has_a_clock_of_its_own\n* test_the_wheat_grows_by_the_clock\n* test_the_felled_tree_comes_back_by_the_clock\n3/3 passed.\n\n\nres://tests/world/day_night/test_game_clock.gd\n* test_a_full_day_comes_round_in_forty_real_minutes\n* test_time_flows_on_its_own\n* test_the_sun_rises_and_sets_once_in_a_day\n* test_the_sky_follows_the_clock\n* test_the_days_are_counted_one_by_one\n* test_the_time_and_the_day_carry_over_a_save_and_a_load\n* test_a_brand_new_world_starts_on_the_first_morning\n7/7 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n8/8 passed.\n\n\nres://tests/world/frontier_islands/test_voyage.gd\n* test_my_island_has_no_dock_until_i_build_one\n* test_building_the_dock_at_the_water_opens_the_sea\n* test_boarding_at_the_dock_lands_me_on_the_frontier_island\n* test_my_bag_crosses_with_me\n* test_the_frontier_island_does_not_carry_my_islands_marks\n* test_sailing_back_finds_my_island_as_i_left_it\n* test_each_island_is_saved_on_its_own\n* test_going_back_to_the_frontier_island_finds_it_as_i_left_it\n8/8 passed.\n\n\nres://tests/world/resources_regrowth/test_regrowth.gd\n* test_what_was_felled_comes_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest.gd\n* test_a_slot_moves_into_the_bag\n* test_an_empty_slot_moves_nothing\n* test_what_the_bag_cannot_hold_stays_in_the_chest\n* test_a_chest_with_no_bag_gives_nothing\n* test_the_chest_tells_what_it_holds\n* test_both_boxes_are_the_same_kind_of_chest\n6/6 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              46\nTests               424\nPassing Tests       424\nAsserts            2500\nTime              225.393s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "6f25aff"
- },
- {
   "time": "2026-09-22 02:19:53",
   "epoch": 1790011193,
   "type": "start",
@@ -8107,6 +8053,15 @@
  {
   "time": "2026-09-25 17:22:21",
   "epoch": 1790324541,
+  "type": "wait",
+  "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
+  "group": "G-146",
+  "step": "2",
+  "attempt": "1"
+ },
+ {
+  "time": "2026-09-25 17:52:33",
+  "epoch": 1790326353,
   "type": "wait",
   "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
   "group": "G-146",
