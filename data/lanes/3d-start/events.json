@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-09-22 04:46:36",
-  "epoch": 1790019996,
-  "type": "pass",
-  "title": "통과 — G-117 단계 1 (도구 4종과 등반 장비 3종을 다 만든다)",
-  "group": "G-117",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "곡괭이 · 삽 · 물뿌리개 · 총과 스파이크 · 앵커 · 갈고리총에 제작대 레시피를 달아, tools.json 의 모든 도구를 만들 수 있게 했다",
-   "approach": "도구 5종 가운데 도끼에만 레시피가 있었고, 등반 장비 셋(스파이크 · 앵커 · 갈고리총)은 아예 만들 길이 없어 가질 수가 없었다. 레시피 체계는 이미 데이터 한 파일(recipes.json)이 다 하고 있어서 코드를 고칠 일은 없었다 — recipes.json 에 일곱 줄을 더했다 (pickaxe · shovel · watering_can · gun · spikes · anchor · grapple_gun, 전부 workbench · 임시 5초). 재료는 기준대로 나무 · 돌 · 철광석만 썼다. 곡괭이만은 wood+stone 으로 두었다 — 곡괭이가 있어야 철광석을 캐므로 철이 들면 서로 물린다. 앵커는 소모품이라 한 번에 4개가 나온다. 스파이크는 아이템 이름은 있었지만(Climbing.SPIKES) 번역 줄이 없어 ko.po · en.po 에 ITEM_spikes 를 더했다.\n\n테스트(test_tool_recipes.gd)는 이름을 세는 대신 **나오는 것(output)으로** 레시피를 찾아, tools.json 을 읽어 도구마다 만들 길이 있는지 본다. 이 검사가 빈 검사가 아니라는 것까지 확인한다 — 진짜 도구 파일에 레시피 없는 한 줄(hoe)을 더한 사본을 만들어, 그 도구가 실제로 걸리는지 본다. 도구 4종과 등반 장비 3종은 제작대를 세워 재료를 넣고 타이머를 끝까지 돌려 가방에 받는 데까지 해 본다.\n\n지나가는 길에 치울 것 네 건도 같이 했다: pause_menu.gd 머리말에 막 색이 임시라는 줄, input.md 키 표의 M 줄, frontier-islands.md:18 의 겹친 말, test_voyage.gd 의 「두 섬 크기가 다르다」에 기댄 assert_ne 두 줄(섬 갈림은 같은 시험의 gone · stations · 지도 비교가 이미 본다는 주석을 남기고 뺐다).\n\n전체 594개 테스트가 다 통과한다 (414초).",
-   "why": "새 레시피 7종의 재료 개수 — 곡괭이 wood3+stone3 · 삽 wood3+stone2 · 물뿌리개 wood2+iron_ore3 · 총 wood2+iron_ore5 · 스파이크 wood1+iron_ore3 · 앵커 wood2+iron_ore2(4개) · 갈고리총 wood4+iron_ore6. 전체 아이템 · 레시피 목록이 미정이라(spec/05_craft/recipes.md 미정) 도끼(wood3+stone2)를 기준으로 「뒤에 오는 것일수록 더 든다」만 지켜 채웠다. recipes.json 의 _temporary 에 적혀 있다; 새 레시피 7종의 제작 시간 5초 — 아이템 목록이 정해질 때까지 전부 임시 5초다 (spec/05_craft/crafting-stations.md 수치, 사람 결정 2026-09-16); 새 레시피 7종의 제작대는 전부 workbench(가공대) — 제작대 계통 수 · 단계 수가 미정이라(F-16) 도끼와 같은 자리에 두었다. 단계가 정해지면 금속 도구는 위 단계로 옮겨야 한다",
-   "files": [
-    "game/craft/recipes/recipes.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/craft/recipes/test_tool_recipes.gd",
-    "game/ui/menu/pause_menu.gd",
-    "game/tests/world/frontier_islands/test_voyage.gd",
-    "spec/01_settings/input.md",
-    "spec/03_world/frontier-islands.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "곡괭이 · 삽 · 물뿌리개 · 총에 레시피가 있고, 도끼처럼 제작대에서 만들어진다 (테스트)",
-     "evidence": "test_tool_recipes.gd :: test_the_four_missing_tools_are_made_at_a_station_like_the_axe 가 넷마다 레시피를 **나오는 것(output)으로** 찾아, station 이 HAND 가 아닌 것 · 그 제작대가 stations 카탈로그에 있는 것을 보고, 실제로 제작대를 세워 재료를 넣고 타이머를 끝까지 돌려 가방에 count 만큼 들어오는 데까지 확인한다. 껍데기가 아닌 것을 직접 확인했다 — recipes.json 에서 곡괭이 줄을 지우니 2개가 떨어졌고, 총의 station 을 workbench→hand 로 바꾸니 이 테스트가 떨어졌다. 본 뒤 되돌렸다 (git diff 가 원래대로 7줄 추가)."
-    },
-    {
-     "ok": true,
-     "criterion": "스파이크 · 앵커 · 갈고리총에도 레시피가 있다 (테스트)",
-     "evidence": "test_the_three_pieces_of_climbing_gear_can_be_crafted 가 Climbing.SPIKES · Anchor.ITEM · Grapple.ITEM 을 코드의 상수에서 가져와(각각 \"spikes\" · \"anchor\" · \"grapple_gun\" — 상수 정의를 직접 확인했다) 레시피 없는 것이 없는지 보고, 셋 다 제작대에서 끝까지 만들어 가방에 받는다. 앵커는 count 4 로 받는 것까지 본다. 앵커 레시피를 지워 보니 이 테스트가 떨어졌다 — 되돌렸다."
-    },
-    {
-     "ok": true,
-     "criterion": "`tools.json` 의 모든 도구가 만들 수 있다 — 한 줄 더 적었는데 레시피가 없으면 떨어진다 (테스트)",
-     "evidence": "test_every_tool_in_the_data_file_can_be_crafted 가 ToolCatalog 를 진짜 파일에서 읽어 도구마다 레시피가 있는지 본다. 이 검사가 빈 검사가 아닌 것을 테스트 스스로 증명한다 — test_a_tool_added_to_the_file_without_a_recipe_is_caught 가 진짜 tools.json 사본에 레시피 없는 한 줄(hoe)을 더해, 같은 함수가 그 한 줄을 정확히 집어내는지 본다(assert_eq(missing, [\"hoe\"])). 이름을 세는 대신 output 으로 찾아, 레시피 이름을 무엇이라 붙이든 통한다."
-    },
-    {
-     "ok": true,
-     "criterion": "재료는 앞 단계에서 이미 얻을 수 있는 것만 쓴다 (나무 · 돌 · 철광석). 값은 임시라고 적는다",
-     "evidence": "test_the_new_recipes_only_use_materials_you_can_already_get 가 도구 + 등반 장비의 모든 레시피 재료가 wood · stone · iron_ore 안에 드는지 보고, 재료가 0개인 공짜 레시피도 막는다(assert_gt(inputs.size(), 0)). 삽 재료를 stone→gold 로 바꾸니 떨어졌다 — 되돌렸다. 물림도 풀려 있다: 곡괭이만 wood+stone 이라 맨 처음 만들 수 있고, 내 섬 설계 값이 ores=[\"iron\"](island_blueprint.gd:152 기본값)이고 harvest.gd:27 이 iron→iron_ore 를 주므로 곡괭이로 철광석이 실제로 나온다 — 나머지 여섯은 배를 타지 않아도 만들어진다. 임시 표시는 recipes.json 의 _temporary 에 「seconds 는 전부 임시 5초 · 재료 개수 · 나오는 개수도 임시」로 적혀 있다."
-    }
-   ],
-   "issues": [
-    "등반 장비에는 빠뜨림을 잡는 그물이 없다 — 도구는 tools.json 을 읽어 「한 줄 더 적었는데 레시피가 없으면 떨어진다」가 걸리지만, 등반 장비는 test_tool_recipes.gd:15 의 CLIMB_GEAR 상수에 셋이 손으로 박혀 있다. 네 번째 장비가 생기면 레시피를 빠뜨려도 아무것도 안 걸린다 — 이번 단계를 만든 바로 그 병이다. 등반 장비에는 tools.json 같은 데이터 파일이 아예 없고 anchor.gd · grapple.gd · climbing.gd 의 const 로만 있어서, 고치려면 장비 목록을 한 곳(데이터 파일이든 climb_gear.gd 의 한 배열이든)에 모으고 테스트가 그것을 읽게 해야 한다. 일이 작지 않다.",
-    "[정리] 제작대가 전부 workbench 인 것이 임시인데 데이터 파일에 안 적혀 있다 — 새 레시피 일곱이 모두 station=workbench 다. 제작대 계통 수 · 단계 수가 미정이라(F-16) 도끼 자리에 같이 둔 것이고, 단계가 정해지면 금속 도구는 위 단계로 옮겨야 한다. 이 말이 report.json 에만 있어 다음 사람이 recipes.json 만 보면 확정된 값으로 읽는다. recipes.json 의 _temporary 에 「제작대는 전부 임시로 workbench 다 — 제작대 단계가 정해지면 금속 도구는 위 단계로 옮긴다 (F-16)」 한 줄을 더해라."
-   ],
-   "good": [
-    "ko.po · en.po 에 ITEM_spikes 번역 줄을 더했다 — 아이템 이름은 Climbing.SPIKES 로 있었는데 번역 줄만 빠져 있었다. 만들 수 있게 된 물건이 가방에서 이름 없이 보이는 것을 막는 것이라 기준을 벗어난 것으로 보지 않는다. 나머지 여섯(ITEM_pickaxe · shovel · watering_can · gun · anchor · grapple_gun)은 한국어 · 영어 둘 다 이미 있었다."
-   ]
-  },
-  "test": "_back_when_its_days_have_passed\n* test_time_alone_brings_nothing_back_that_was_not_felled\n* test_a_tree_comes_back_before_stone_and_stone_before_ore\n* test_what_the_harvest_fells_is_what_the_regrowth_counts\n* test_the_one_that_came_back_is_what_the_seed_first_made\n* test_nothing_comes_back_around_something_a_person_built\n* test_a_structure_far_enough_away_does_not_hold_it_back\n* test_nothing_comes_back_in_the_cell_the_player_is_standing_in\n* test_the_player_in_the_next_cell_over_does_not_hold_it_back\n9/9 passed.\n\n\nres://tests/world/storage/test_chest.gd\n* test_a_slot_moves_into_the_bag\n* test_an_empty_slot_moves_nothing\n* test_what_the_bag_cannot_hold_stays_in_the_chest\n* test_a_chest_with_no_bag_gives_nothing\n* test_the_chest_tells_what_it_holds\n* test_both_boxes_are_the_same_kind_of_chest\n6/6 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              66\nTests               594\nPassing Tests       594\nAsserts            9138\nTime              414.452s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "721b97d"
- },
- {
   "time": "2026-09-22 05:13:40",
   "epoch": 1790021620,
   "type": "pass",
@@ -8171,5 +8112,36 @@
   },
   "test": "t_right_click.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/core/test_guard.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           174\nTests            1496\nPassing Tests    1496\nFailing Tests       0\nPending             0\nAsserts         69286\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "fd482e7"
+ },
+ {
+  "time": "2026-09-26 08:49:58",
+  "epoch": 1790380198,
+  "type": "stop",
+  "title": "루프 끝 — 이 차선(3d-start) 몫을 다 했다. 다른 차선이 하는 중: G-150 · G-151 · G-910 · G-911",
+  "group": "G-146",
+  "step": "5",
+  "attempt": "1",
+  "report": {
+   "problem": "ammo_picker.gd 머리 주석의 긴 7줄을 두 줄로 나눴다 — 바뀐 곳만 26개 파일 229개 테스트 통과",
+   "approach": "앞 단계에서 「가방에 없는 탄도 뜨지 않는다 (Attack.usable_rounds).」 를 앞줄에 이어 붙여 7줄만 유독 길었다. 문장 경계에서 끊어 「…(Attack.usable_rounds).」 와 「줄마다 고르는 숫자키 · …를 적고,」 두 줄로 나눴다. 주석만 바뀌어 동작은 그대로다 — 새 테스트는 짜지 않았고(기준에 테스트 표시가 없다) changed_tests.py 가 고른 26개 파일(229개)을 돌려 모두 통과했다.",
+   "why": "",
+   "files": [
+    "game/ui/hud/ammo_picker.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "ammo_picker.gd 머리 주석 한 줄이 너무 길다 — game/ui/hud/ammo_picker.gd 7줄에 「가방에 없는 탄도 뜨지 않는다 (Attack.usable_rounds).」 를 앞줄에 이어 붙여 다른 줄보다 훨씬 길어졌다. 옆 줄들처럼 두 줄로 나눠라",
+     "evidence": "git diff 로 확인 — 7줄이 문장 경계에서 「…가방에 없는 탄도 뜨지 않는다 (Attack.usable_rounds).」 와 「줄마다 고르는 숫자키 · 탄 이름 · 가방에 든 발 수를 적고,」 두 줄로 나뉘었다. 머리 주석 줄 길이가 이제 79~137바이트로 옆 줄들(118~137)과 같은 폭 안이다 (전에는 190바이트 가까이). 내용은 한 글자도 빠지지 않았고 주석만 바뀌어 동작 테스트는 필요 없다. test.log 전체 174개 파일 1496개 테스트 통과, guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "t_right_click.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/core/test_guard.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           174\nTests            1496\nPassing Tests    1496\nFailing Tests       0\nPending             0\nAsserts         69286\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]

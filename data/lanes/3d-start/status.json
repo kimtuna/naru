@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "G-146 합쳤다",
- "updated": "2026-09-26 08:49:56",
- "updated_epoch": 1790380196,
- "ended": "2026-09-26 07:11:34",
+ "state": "done",
+ "reason": "이 차선(3d-start) 몫을 다 했다 — 다른 차선이 아직 하는 중: G-150 · G-151 · G-910 · G-911",
+ "updated": "2026-09-26 08:49:58",
+ "updated_epoch": 1790380198,
+ "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 41,
   "groups_done": 34,
