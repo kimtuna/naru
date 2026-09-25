@@ -832,7 +832,7 @@
 - [x] 5. (앞 단계 QA) _put_down 은 조준이 맞기 전에 놓을 수 있다
   - 기준: _put_down 은 조준이 맞기 전에 놓을 수 있다 — test_from_empty_hands.gd 의 _put_down(700줄 근처)은 _look 뒤 곧바로 _right_click 하고 stations.aimed_station() 을 한 번만 읽는다. 조준 대기(_until_aims_ground 로 땅을 짚을 때까지 기다린 뒤 우클릭)를 넣고 assert_not_null 메시지에 _where() 를 붙여라 — 이번 기준(5 · 10단계)은 풀렸지만 같은 흔들림이 제련로 · 연구대 놓기에서 날 수 있다
 
-## [ ] G-146 플레이하고 짚은 것 — 밤 · 횃불 · 오버레이 · 탄 고르기
+## [x] G-146 플레이하고 짚은 것 — 밤 · 횃불 · 오버레이 · 탄 고르기
 - 차선: 3d-start (대화 세션이 나눴다 2026-09-24 — 3d-start 는 건축 쪽, 3d-lane2 는 겹치지 않는 것)
 - spec: spec/03_world/lighting.md, spec/06_build/building.md, spec/08_combat/tools-as-weapons.md
 - 설치물 오버레이(옛 4번)는 G-150 으로 옮겼다 — 놓기 코드를 G-150 과 같이 만져 차선이 갈리면 부딪힌다 (2026-09-26)
