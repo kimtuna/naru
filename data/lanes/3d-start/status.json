@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 07:58:08",
- "updated_epoch": 1790377088,
+ "updated": "2026-09-26 07:58:10",
+ "updated_epoch": 1790377090,
  "ended": "2026-09-26 07:11:34",
  "progress": {
   "groups_total": 42,
@@ -13,11 +13,11 @@
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-146",
- "step": "2",
- "step_title": "노을부터 새벽까지 내내 어둡다 — 한밤이 밝지 않다",
- "attempt": "2",
- "phase": "QA",
- "phase_since": "2026-09-26 07:54:16",
+ "step": "3",
+ "step_title": "횃불이 제 둘레를 밝힌다",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-26 07:58:10",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00"
