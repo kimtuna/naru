@@ -858,12 +858,14 @@
   - 기준: 밤에 횃불 하나를 놓고 찍는다 — 둘레만 밝고 섬 반대편은 그대로다
   - 기준: (앞 단계 QA) SKY_SHARE 에 「임시」 표시가 없다 — game/world/day_night/day_light.gd 의 const SKY_SHARE := 0.7 주석에 **임시** 가 빠졌다. report.json 의 temporary 에는 올라 있다. DAY_FILL · NIGHT_BELOW 처럼 주석에 **임시** 를 붙여라
   - 기준: (앞 단계 QA) 테스트의 땅 빛에 하늘 복사광이 빠졌다 — DayLight.ground_light 는 햇빛+달빛+평평한 주변광만 더하고 주변광의 70%(하늘 몫)는 뺀다. 지금은 사진으로 순서가 맞음을 확인했지만, Sky3D 가 밤하늘을 밝게 바꾸면 테스트는 못 잡는다. shots.gd 가 이미 재는 땅 밝기(_brightness(shot, GROUND))로 time_* 네 장의 순서를 단언하는 가벼운 검사를 더하거나, ground_light 주석에 이 빈틈을 적어 두어라
-- [ ] 4. R 꾹 — 없는 탄은 안 보인다
+- [x] 4. R 꾹 — 없는 탄은 안 보인다
   - 「R 꾹 눌렀을 때, 있지 않은 탄의 종류는 표시되지 않는다」 — 지금은 0 개인 것도 다 뜬다
   - 기준: 탄 고르기에 **가방에 있는 탄만** 뜬다 (테스트)
   - 기준: 들고 있는 총이 쓰는 계통의 탄만 뜬다 — 지금 규칙 그대로다 (테스트)
   - 기준: 쓸 탄이 하나도 없으면 고르기가 뜨지 않는다 (테스트)  - 기준: (앞 단계 QA) shots.gd 의 밤 판정이 단언이 아니라 출력뿐이다 — game/core/debug/shots.gd 의 TIME_ORDER · TORCH_NIGHT 는 「틀렸다」를 print 만 하고 종료 코드는 그대로다. 사진을 찍는 세션이 줄을 읽지 않으면 놓친다. 틀렸을 때 push_error 로 남기거나 quit(1) 로 끝내 harness/shot.sh 가 실패로 돌려주게 하라
   - 기준: (앞 단계 QA) test_torch.gd 머리 주석의 단계 번호가 틀렸다 — game/tests/world/lighting/test_torch.gd 1줄 「G-146.2」 는 이번 단계(G-146.3)다. shots.gd 의 torch_night 주석(「(G-146.2, spec/03_world/lighting.md)」)도 같다. G-146.3 으로 고쳐라
+- [ ] 5. (앞 단계 QA) ammo_picker.gd 머리 주석 한 줄이 너무 길다
+  - 기준: ammo_picker.gd 머리 주석 한 줄이 너무 길다 — game/ui/hud/ammo_picker.gd 7줄에 「가방에 없는 탄도 뜨지 않는다 (Attack.usable_rounds).」 를 앞줄에 이어 붙여 다른 줄보다 훨씬 길어졌다. 옆 줄들처럼 두 줄로 나눠라
 
 ## [x] G-147 지도에서 자리를 찾는다 — 좌표 읽기 · 좌표로 찾기
 - 차선: 3d-lane2 (대화 세션이 나눴다 2026-09-24 — 3d-start 는 건축 쪽, 3d-lane2 는 겹치지 않는 것)

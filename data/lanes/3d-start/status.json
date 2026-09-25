@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 08:08:41",
- "updated_epoch": 1790377721,
+ "updated": "2026-09-26 08:40:59",
+ "updated_epoch": 1790379659,
  "ended": "2026-09-26 07:11:34",
  "progress": {
-  "groups_total": 42,
+  "groups_total": 41,
   "groups_done": 33,
   "groups_waiting": 0,
-  "steps_total": 163,
-  "steps_done": 136
+  "steps_total": 164,
+  "steps_done": 138
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-146",
  "step": "4",
  "step_title": "R 꾹 — 없는 탄은 안 보인다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 08:08:41",
+ "phase": "QA",
+ "phase_since": "2026-09-26 08:39:12",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00"
