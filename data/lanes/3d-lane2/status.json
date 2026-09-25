@@ -1,8 +1,8 @@
 {
- "state": "waiting",
- "reason": "토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
- "updated": "2026-09-25 16:51:49",
- "updated_epoch": 1790322709,
+ "state": "running",
+ "reason": "재개",
+ "updated": "2026-09-25 17:21:53",
+ "updated_epoch": 1790324513,
  "ended": "2026-09-25 16:51:49",
  "progress": {
   "groups_total": 38,
