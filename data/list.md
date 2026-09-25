@@ -864,7 +864,7 @@
   - 기준: 들고 있는 총이 쓰는 계통의 탄만 뜬다 — 지금 규칙 그대로다 (테스트)
   - 기준: 쓸 탄이 하나도 없으면 고르기가 뜨지 않는다 (테스트)  - 기준: (앞 단계 QA) shots.gd 의 밤 판정이 단언이 아니라 출력뿐이다 — game/core/debug/shots.gd 의 TIME_ORDER · TORCH_NIGHT 는 「틀렸다」를 print 만 하고 종료 코드는 그대로다. 사진을 찍는 세션이 줄을 읽지 않으면 놓친다. 틀렸을 때 push_error 로 남기거나 quit(1) 로 끝내 harness/shot.sh 가 실패로 돌려주게 하라
   - 기준: (앞 단계 QA) test_torch.gd 머리 주석의 단계 번호가 틀렸다 — game/tests/world/lighting/test_torch.gd 1줄 「G-146.2」 는 이번 단계(G-146.3)다. shots.gd 의 torch_night 주석(「(G-146.2, spec/03_world/lighting.md)」)도 같다. G-146.3 으로 고쳐라
-- [ ] 5. (앞 단계 QA) ammo_picker.gd 머리 주석 한 줄이 너무 길다
+- [x] 5. (앞 단계 QA) ammo_picker.gd 머리 주석 한 줄이 너무 길다
   - 기준: ammo_picker.gd 머리 주석 한 줄이 너무 길다 — game/ui/hud/ammo_picker.gd 7줄에 「가방에 없는 탄도 뜨지 않는다 (Attack.usable_rounds).」 를 앞줄에 이어 붙여 다른 줄보다 훨씬 길어졌다. 옆 줄들처럼 두 줄로 나눠라
 
 ## [x] G-147 지도에서 자리를 찾는다 — 좌표 읽기 · 좌표로 찾기
