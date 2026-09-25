@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-22 04:09:05",
-  "epoch": 1790017745,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-22 04:14:20",
   "epoch": 1790018060,
   "type": "start",
@@ -8042,5 +8036,60 @@
   },
   "test": "est_food.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      3s  res://tests/ui/layout/test_window_layout.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/hud/test_map_window.gd\nok      1s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      0s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok    420s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           118\nTests            1082\nPassing Tests    1082\nFailing Tests       0\nPending             0\nAsserts         65110\nTime           420s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "8a17c03"
+ },
+ {
+  "time": "2026-09-26 08:08:38",
+  "epoch": 1790377718,
+  "type": "pass",
+  "title": "통과 — G-146 단계 3 (횃불이 제 둘레를 밝힌다)",
+  "group": "G-146",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "횃불이 제 둘레를 밝힌다 — 놓아도 · 들어도 반경 7m 안만 밝고 밖은 그대로. 앞 단계 QA 두 가지 확인 · SKY_SHARE 줄에 임시 표시",
+   "approach": "횃불 불빛(TorchLight · Torch · Torches · 손의 불빛)과 test_torch.gd 는 앞 회차 도중 커밋(6158d0e)에 이미 들어와 있었다 — 이번에 돌려 7개 모두 통과를 확인했다. 밤 torch_night 을 찍어 보니 횃불 둘레 0.159 · 반경 밖 먼 땅 0.005(횃불 없는 밤 땅 0.007~0.008 과 같은 수준) — 둘레만 밝고 반대편은 그대로다. 앞 단계 QA: SKY_SHARE 는 위 주석에 임시가 있었지만 const 줄 자체에도 「# 임시」를 붙였다. 하늘 복사광 빈틈은 ground_light 주석에 적혀 있고, shots.gd 가 time_* 땅 밝기로 TIME_ORDER 를 단언한다 — 이번 촬영에서 「맞다」(노을 0.043, 밤 0.007~0.013). 바뀐 곳 그물(day_night 4개) + test_torch = 5파일 28개 통과. 전체는 돌리지 않았다.",
+   "why": "TorchLight.RADIUS 7m · ENERGY 3.0 · COLOR — spec 에 광원 반경 · 세기 값이 없다 (lighting.md 미정); DayLight.SKY_SHARE 0.7 — spec 에 값이 없다",
+   "files": [
+    "game/world/day_night/day_light.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "횃불을 **놓으면** 그 둘레가 밝아진다 — 반경 밖은 그대로다 (spec/03_world/lighting.md) (테스트)",
+     "evidence": "tests/world/lighting/test_torch.gd — test_a_placed_torch_lights_around_it 는 진짜 캐릭터 · 진짜 우클릭으로 놓고, 놓기 전보다 놓은 자리 · 반경 안 3.5m 자리가 더 밝아지는지(assert_gt before) 본다. test_outside_the_radius_is_as_dark_as_without_the_torch 는 반경+0.5m · 반경+2m · 섬 반대편(150,150) 세 곳이 놓기 전과 같은지, 그리고 그림을 그리는 OmniLight 의 omni_range 가 RADIUS 와 같은지 단언한다. 부수면 꺼지는 것 · 저장 뒤 돌아와 밝히는 것도 본다. test.log 에서 통과(64줄)"
+    },
+    {
+     "ok": true,
+     "criterion": "횃불을 **손에 들어도** 둘레가 밝아진다 (테스트)",
+     "evidence": "test_a_held_torch_lights_around_the_player — 목재를 들면 손 불빛이 꺼져 있고 발밑이 0, 횃불을 들면 켜지고 발밑 · 3m 둘레가 >0, 반경+3m 는 0. test_the_held_light_walks_with_the_player(걸어간 자리 밝고 떠난 자리 0) · test_putting_the_torch_away_puts_the_light_out(빈손이면 0) 이 막아야 할 경우를 넣었다. held_item.gd 의 _paint 가 _item == Torch.ITEM 일 때만 켠다"
+    },
+    {
+     "ok": true,
+     "criterion": "밤에 횃불 하나를 놓고 찍는다 — 둘레만 밝고 섬 반대편은 그대로다",
+     "evidence": "QA 가 지금 코드로 harness/shot.sh /tmp/qa_torch torch_night 을 다시 찍었다: TORCH_NIGHT 횃불 둘레 0.160 · 먼 땅 0.006 (횃불 없는 밤 땅 0.007~0.013 수준). .loop/out/day_light/torch_night.png 를 눈으로 봐도 횃불 둘레 7m 쯤만 노랗게 밝고 나머지는 밤 그대로다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) SKY_SHARE 에 「임시」 표시가 없다 — game/world/day_night/day_light.gd 의 const SKY_SHARE := 0.7 주석에 **임시** 가 빠졌다",
+     "evidence": "위 주석 줄에 **임시** 가 있고, 이번에 const 줄 끝에도 「# 임시 — DAY_FILL · NIGHT_BELOW 처럼 spec 에 값이 없다」를 붙였다 (git diff)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 테스트의 땅 빛에 하늘 복사광이 빠졌다 — shots.gd 로 time_* 순서를 단언하거나 ground_light 주석에 빈틈을 적어라",
+     "evidence": "둘 다 있다 — day_light.gd ground_light 위 주석이 하늘 몫을 모른다는 빈틈을 적었고, shots.gd 가 time_* 여섯 장의 땅 밝기로 「노을보다 밝지 않다 · NIGHT_GROUND_LEAST 보다 어둡지 않다」를 TIME_ORDER 로 판정한다 (6158d0e · 8a17c03 에 들어와 있다)"
+    }
+   ],
+   "issues": [
+    "shots.gd 의 밤 판정이 단언이 아니라 출력뿐이다 — game/core/debug/shots.gd 의 TIME_ORDER · TORCH_NIGHT 는 「틀렸다」를 print 만 하고 종료 코드는 그대로다. 사진을 찍는 세션이 줄을 읽지 않으면 놓친다. 틀렸을 때 push_error 로 남기거나 quit(1) 로 끝내 harness/shot.sh 가 실패로 돌려주게 하라",
+    "test_torch.gd 머리 주석의 단계 번호가 틀렸다 — game/tests/world/lighting/test_torch.gd 1줄 「G-146.2」 는 이번 단계(G-146.3)다. shots.gd 의 torch_night 주석(「(G-146.2, spec/03_world/lighting.md)」)도 같다. G-146.3 으로 고쳐라"
+   ],
+   "good": []
+  },
+  "test": "_parts.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      3s  res://tests/ui/layout/test_window_layout.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           118\nTests            1082\nPassing Tests    1082\nFailing Tests       0\nPending             0\nAsserts         65110\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "abf3fe7"
  }
 ]
