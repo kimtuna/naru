@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 07:57:24",
- "updated_epoch": 1790377044,
+ "updated": "2026-09-26 08:04:16",
+ "updated_epoch": 1790377456,
  "ended": "2026-09-26 07:11:37",
  "progress": {
   "groups_total": 42,
   "groups_done": 33,
   "groups_waiting": 0,
-  "steps_total": 161,
-  "steps_done": 134
+  "steps_total": 163,
+  "steps_done": 135
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-150",
  "step": "2",
  "step_title": "계단은 토대에만 붙고, 토대 위에도 놓인다 — Tab 으로 스냅을 바꾼다",
- "attempt": "1",
- "phase": "기계 검사",
- "phase_since": "2026-09-26 07:57:24",
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-26 08:04:16",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-26 07:00:00"
