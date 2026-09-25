@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 08:27:04",
- "updated_epoch": 1790378824,
+ "updated": "2026-09-26 08:27:07",
+ "updated_epoch": 1790378827,
  "ended": "2026-09-26 07:11:37",
  "progress": {
   "groups_total": 41,
@@ -13,11 +13,11 @@
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-150",
- "step": "2",
- "step_title": "계단은 토대에만 붙고, 토대 위에도 놓인다 — Tab 으로 스냅을 바꾼다",
- "attempt": "2",
- "phase": "QA",
- "phase_since": "2026-09-26 08:25:26",
+ "step": "3",
+ "step_title": "지붕은 하늘을 보고 놓는다",
+ "attempt": "1",
+ "phase": "구현",
+ "phase_since": "2026-09-26 08:27:07",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-26 07:00:00"
