@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-22 03:46:17",
-  "epoch": 1790016377,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-22 03:53:23",
   "epoch": 1790016803,
   "type": "start",
@@ -7972,5 +7966,29 @@
   "epoch": 1790374512,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-26 07:37:23",
+  "epoch": 1790375843,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-146 단계 2 (시도 1)",
+  "group": "G-146",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "밤은 내내 어둡다 — 해가 진 뒤 어느 시각도 노을보다 밝지 않고, 한밤도 새까맣지 않게 밤 주변광을 새로 맞췄다. 바뀐 곳만: 84개 파일 719개 테스트 통과",
+   "approach": "먼저 18·19·20·22·0·3·5시를 찍어 쟀다. 이 브랜치(G-146.1 뒤)에서는 20시가 노을보다 밝지 않았다(땅 밝기 18시 0.043 · 19시 0.008 · 20시 이후 0.000). 사람이 본 「20시가 엄청 밝다」는 G-146.1 앞의 달빛 · 밤 주변광 보정 때문으로 보인다. 오히려 남은 문제는 반대쪽이었다 — 한밤 땅이 0.000 으로 새까매 day-night.md 의 「못 나갈 만큼 어두우면 안 된다」를 어겼다. 풀이: DayLight 의 평평한 주변광 곡선을 바꿨다. NIGHT_FILL 0.45→1.1, NIGHT_BELOW -0.45→-0.3 — 해가 지평선 밑 약 17°(19시 조금 뒤 · 5시 조금 앞)까지 내려가면 더 줄지 않고 새벽까지 같은 밝기다. 곡선은 여전히 해가 높을수록 커지기만 해서 해가 진 뒤는 노을보다 밝아질 수 없다. 값은 찍어 보며 골랐다: 0.8 은 땅 0.002(거의 새까맣다), 1.1 은 0.007(풀 · 나무 · 캐릭터 윤곽이 어둡게 보인다). 테스트: 섬을 세워 30분마다 땅 빛(ground_light)을 재어 (1) 19·20·22·0·3·5시와 그 사이 30분마다가 18시 노을보다 밝지 않다 (2) 해가 진 뒤 모든 시각이 문턱 0.3 이상 — 찍어 보니 0.24 는 새까맸고 0.33 은 윤곽이 보였다 (3) 20~3시가 같은 어둠이다. 옛 값(0.45)으로 돌리면 (2)가, 밤 값을 낮보다 높게(1.6) 하면 (1)이 떨어지는 것을 확인했다. 눈으로: harness/shot.sh 의 time_* 자리를 낮 · 18 · 20 · 22 · 3 · 5시 여섯으로 바꾸고 3×2 로 붙인 time_all.png(.loop/out/day_light/)를 봤다 — 땅 0.647 · 0.043 · 0.008 · 0.007 · 0.007 · 0.013, TIME_ORDER 가 노을 뒤 모두 노을보다 어둡고 새까맣지 않음(문턱 0.004)을 확인한다. 횃불 밤 그림은 둘레 0.160 · 먼 땅 0.006 으로 횃불이 여전히 값을 한다. spec: lighting.md 의 「밤이 가장 어둡다」 줄을 「밤은 내내 어둡다 (사람 결정 2026-09-26)」로 바꾸고, day-night.md 에는 그 줄이 없어 규칙에 더했다. 저장: 새 상태가 아니다 — 시계 시각에서 매 프레임 다시 계산한다.",
+   "why": "DayLight.NIGHT_FILL = 1.1 — 밤의 평평한 주변광 밝기. 찍어서 골랐다(spec 에 밝기 값이 없다); DayLight.NIGHT_BELOW = -0.3 — 해가 이보다 깊이 지면 밤 밝기 그대로. 19시 무렵부터 새벽 5시 무렵까지; test_day_light.gd NIGHT_LEAST = 0.3 — 밤 땅 빛의 최소 문턱. 그림으로 맞췄다 (0.24 새까맣다 · 0.33 윤곽 보인다); shots.gd NIGHT_GROUND_LEAST = 0.004 — 그림의 밤 땅 밝기 문턱 (0.002 새까맣다 · 0.007 윤곽 보인다)",
+   "files": [
+    "game/world/day_night/day_light.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/world/day_night/test_day_light.gd",
+    "game/world/terrain/test_island.gd",
+    "spec/03_world/lighting.md",
+    "spec/03_world/day-night.md"
+   ],
+   "decision": null
+  },
+  "test": "_islands/test_islands.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nFAIL  417s  res://tests/craft/test_from_empty_hands.gd\n\n================ 떨어진 파일: res://tests/craft/test_from_empty_hands.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/craft/test_from_empty_hands.gd\n* test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    한 바퀴 1. 맨손으로 나무 일곱 · 돌 둘을 캐고 밟아 줍는다 (1초)\n    한 바퀴 2. 가방에서 제작대를 만든다 (13초)\n    한 바퀴 3. 제작대에서 도끼와 곡괭이를 만든다 (13초)\n    한 바퀴 4. 곡괭이를 들고 돌 · 철광석을, 도끼를 들고 남은 나무를 (13초)\n    한 바퀴 4. 23번째까지 캤다 (32초)\n    한 바퀴 4. 38번째까지 캤다 (55초)\n    한 바퀴 4. 53번째까지 캤다 (77초)\n    한 바퀴 5. 제작대로 돌아와 제련로를 세우고 철괴 열넷을 뽑는다 (96초)\n    한 바퀴 5-1. 제작대에서 연구대 · 선착장을 만든다 (153초)\n    한 바퀴 5-2. 연구대를 놓고 열쇠를 만든다 (153초)\n    한 바퀴 5-3. 물가에 선착장을 놓는다 (166초)\n    한 바퀴 5-4. 열쇠로 개척 섬을 열고 배로 건너간다 (169초)\n    한 바퀴 5-5. 개척 섬에서 유황 넷 · 석회 하나를 캔다 (169초)\n    한 바퀴 5-6. 배로 내 섬에 돌아온다 (186초)\n    한 바퀴 6. 제작대로 돌아서서 철괴로 리볼버 · 권총탄을 만든다 (G-903.1) (214초)\n    한 바퀴 7. 리볼버를 들고 과녁을 실제로 쏜다 (214초)\n    한 바퀴 8. R 로 재장전 (218초)\n    한 바퀴 9. 탄이 없으면 R 을 눌러도 채워지지 않는다 (228초)\n    --- Awaiting 1.0 seconds  ---\n    한 바퀴 10. 빈 땅으로 걸어가 밭을 놓는다 (229초)\n    한 바퀴 11. 씨앗을 들고 우클릭으로 심는다 (236초)\n    한 바퀴 12. 물뿌리개를 들고 날마다 물을 주며 사흘을 보낸다 (236초)\n    한 바퀴 13. 씨앗도 물뿌리개도 아닌 것을 들고 우클릭으로 거둔다 (236초)\n    한 바퀴 14. 요리대를 놓고 밀로 빵을 굽는다 (236초)\n    한 바퀴 15. 빵을 들고 우클릭으로 먹는다 (236초)\n    한 바퀴 16. 빈 밭에 벨라도나를 심어 사흘 물 주고 거둔다 (236초)\n    한 바퀴 17. 제작대로 돌아와 제련로에서 철괴 셋 · 유황 셋을 더 뽑고 (236초)\n    한 바퀴 18. 사슴을 찾아가 **다리만** 쏴 잡는다 (252초)\n    한 바퀴 19. 주검에 다가가 우클릭으로 도축한다 (302초)\n    한 바퀴 20. 다른 사슴을 찾아 다리로 체력 10% 아래까지 몰고 (303초)\n    한 바퀴 21. 제작대로 돌아와 목재를 판자로 켜고 (327초)\n    한 바퀴 22. 빈 땅으로 걸어가 토대를 놓는다 (378초)\n    한 바퀴 23. 토대 위로 걸어 올라가 한가운데에 서서 (407초)\n    한 바퀴 24. 머리 위에 지붕을 얹는다 (410초)\n    한 바퀴 25. 방 안에 선 채 저장한다 (411초)\n    한 바퀴 26. 집을 손으로 철거한다 (412초)\n    한 바퀴 27. 돌아온 재료로 다시 짓는다 (416초)\n    한 바퀴 22. 빈 땅으로 걸어가 토대를 놓는다 (416초)\n    [Failed]:  wood_foundation 를 놓을 자리가 미리 보인다 ((-10.5, 0.0, -10.5) 를 짚었다): { &\"at\": (-10.0, 0.2, -10.0), &\"depth\": 0.5, &\"cells\": [(-12, -12), (-12, -11), (-12, -10), (-12, -9), (-11, -12), (-11, -11), (-11, -10), (-11, -9), (-10, -12), (-10, -11), (-10, -10), (-10, -9), (-9, -12), (-9, -11), (-9, -10), (-9, -9)], &\"attached\": false, &\"ok\": false, &\"why\": \"water\" }\n      at line -1\n    [Failed]:  Expected [<null>] to be anything but NULL:  토대를 놓았다\n      at line -1\n    [Failed]:  돌려받은 재료만으로 집을 다시 지었다\n      at line 1280\n0/1 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/craft/test_from_empty_hands.gd\n- test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    [Failed]:  wood_foundation 를 놓을 자리가 미리 보인다 ((-10.5, 0.0, -10.5) 를 짚었다): { &\"at\": (-10.0, 0.2, -10.0), &\"depth\": 0.5, &\"cells\": [(-12, -12), (-12, -11), (-12, -10), (-12, -9), (-11, -12), (-11, -11), (-11, -10), (-11, -9), (-10, -12), (-10, -11), (-10, -10), (-10, -9), (-9, -12), (-9, -11), (-9, -10), (-9, -9)], &\"attached\": false, &\"ok\": false, &\"why\": \"water\" }\n          at line -1\n    [Failed]:  Expected [<null>] to be anything but NULL:  토대를 놓았다\n          at line -1\n    [Failed]:  돌려받은 재료만으로 집을 다시 지었다\n          at line 1280\n\nTotals\n------\nScripts               1\nTests                 1\nPassing Tests      none\nFailing Tests         1\nAsserts           1147/1150\nTime              416.037s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           118\nTests            1082\nPassing Tests    1081\nFailing Tests       1\nPending             0\nAsserts         65053\nTime           417s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/craft/test_from_empty_hands.gd\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
