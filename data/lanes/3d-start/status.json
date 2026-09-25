@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "",
- "updated": "2026-09-25 17:22:12",
- "updated_epoch": 1790324532,
- "ended": "2026-09-25 16:52:06",
+ "state": "waiting",
+ "reason": "토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
+ "updated": "2026-09-25 17:22:20",
+ "updated_epoch": 1790324540,
+ "ended": "2026-09-25 17:22:20",
  "progress": {
   "groups_total": 38,
   "groups_done": 33,
