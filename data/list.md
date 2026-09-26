@@ -1132,12 +1132,16 @@
   - 기준: 파일 머리 주석이 새 테스트를 말하지 않는다 — test_test_sh_counts_pending.gd 1~5줄 머리 주석은 Pending 합계만 설명한다. 이제 휴지통 안 쓰기 · 안쪽 import 건너뛰기(test_inner_test_sh_skips_import)도 지키므로 머리 주석에 한 줄씩 덧붙여라
 - [x] 2. 파일마다 보던 옛 검사가 겹쳐 남았다 (G-910 단계 3)
   - 기준: 파일마다 보던 옛 검사가 겹쳐 남았다 — game/tests/core/tools/test_test_sh_counts_pending.gd:86 의 src.count("OS." + "move_to_trash") 단언은 이제 test_no_move_to_trash.gd 가 game/ 전체를 보므로 겹친다. 지워도 되고 남겨도 해는 없다 — 남긴다면 주석에 전체 검사가 따로 있다고 적어 두어라
-- [ ] 3. 다른 테스트가 TMPDIR 에 임시 폴더를 남긴다 (G-910 단계 3)
+- [x] 3. 다른 테스트가 TMPDIR 에 임시 폴더를 남긴다 (G-910 단계 3)
   - 기준: 다른 테스트가 TMPDIR 에 임시 폴더를 남긴다 — 구현 세션 보고대로 TMPDIR 에 naru_key_* · naru_locked_* · naru_island_animals_* 따위가 쌓인다. game/tests 에서 OS.get_temp_dir() 로 폴더를 만드는 테스트를 찾아 after_each 에서 안의 파일 → 폴더 순으로 DirAccess.remove_absolute 로 지우게 하고, 돌린 뒤 그 폴더가 없는지 단언하라
 - [ ] 3. 휴지통 줄의 번호 표가 어긋난다 (G-910 단계 3)
   - 기준: 휴지통 줄의 번호 표가 어긋난다 — test_test_sh_counts_pending.gd 7줄과 after_each 위 23줄 주석이 휴지통 고침을 「G-910.21」로 적었지만 G-910.21 은 2줄의 Pending 합계 항목이고 휴지통 고침은 커밋 0342a6c 「G-910.8 … (G-910 단계 21)」이다. 8줄처럼 「G-910 단계 21」로 맞추고, 7줄에도 지키는 테스트 이름 test_after_each_removes_the_temp_dir_without_the_trash 를 적어 8줄과 꼴을 맞춰라
 - [ ] 3. 테스트 이름이 휴지통을 안 본다 (G-910 단계 2)
   - 기준: 테스트 이름이 휴지통을 안 본다 — test_test_sh_counts_pending.gd 의 test_after_each_removes_the_temp_dir_without_the_trash 는 이제 폴더가 지워졌는지만 본다. 휴지통 검사는 test_no_move_to_trash.gd 로 옮겨 갔으니 이름을 test_after_each_removes_the_temp_dir 로 줄이면 읽는 사람이 헷갈리지 않는다 (막는 것은 아니다)
+- [ ] 3. build/ 두 파일은 아직 지웠는지 단언이 없다 (G-910 단계 3)
+  - 기준: build/ 두 파일은 아직 지웠는지 단언이 없다 — tests/test_temp_dirs_are_cleaned.gd 의 NOT_OURS 가 tests/build/test_building_qa_sweep.gd · test_building_roof_stairs.gd 를 뺐다(차선 1 G-145 가 build/ 를 쥐고 있어서 — 이번 묶음 제약상 옳다). 그 차선이 풀린 뒤 두 파일의 지우는 곳을 TempDir.clean(self, path) 로 바꾸고 NOT_OURS 를 비워라
+- [ ] 4. 훑기 검사가 글자 하나만 본다 (G-910 단계 3)
+  - 기준: 훑기 검사가 글자 하나만 본다 — _leaks 는 파일 안에 TempDir.clean(self, 가 한 번이라도 있으면 통과로 친다. 한 파일이 임시 폴더를 둘 만들고 하나만 clean 에 넘겨도 못 잡는다. 지금 그런 파일은 없어 보이나, 막으려면 테스트 뒤 TMPDIR 에 naru_* 가 새로 생겼는지 보는 검사(예: tools/test.sh 가 돌기 전후 TMPDIR 의 naru_* 목록을 비교해 늘었으면 알린다)를 더하라
 
 ## [x] G-913 G-910 에서 뗀 셋 — 차선 2 가 같이 한다 (사람 결정 2026-09-26)
 - 차선: 3d-lane2
