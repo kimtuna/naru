@@ -2079,5 +2079,14 @@
    "decision": null
   },
   "test": "--- 전체 ---\ntest.sh: 파일 184 개를 6 개씩 한꺼번에 돌린다\nok     46s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok     52s  res://tests/life/hunting/test_animal_walk.gd\nok     53s  res://tests/combat/tools_as_weapons/test_magazine.gd\nok     65s  res://tests/build/test_building_qa_sweep.gd\nok     42s  res://tests/build/test_placeable_previews.gd\nok     48s  res://tests/settings/save/test_round_trip.gd\nok     49s  res://tests/world/terrain/test_island_resources.gd\nok     46s  res://tests/world/terrain/test_island_in_game.gd\nok     31s  res://tests/combat/tools_as_weapons/test_fire_rate.gd\n"
+ },
+ {
+  "time": "2026-09-26 17:10:55",
+  "epoch": 1790410255,
+  "type": "wait",
+  "title": "기다린다 — 세션이 51초 만에 아무것도 못 남기고 끝났다 — 밖의 사정으로 보고 5분 뒤 다시 한다",
+  "group": "G-154",
+  "step": "3",
+  "attempt": "1"
  }
 ]
