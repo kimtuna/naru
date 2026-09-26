@@ -961,7 +961,7 @@
 - [x] 9. (앞 단계 QA) grade_color 섞는 비율 0.5 에 「임시」 표시가 없다
   - 기준: grade_color 섞는 비율 0.5 에 「임시」 표시가 없다 — game/build/buildings.gd 의 grade_color 머리말 주석에 report.json 처럼 「**임시** — 눈에 갈리게 0.5 로 정했다」를 적어라
 
-## [ ] G-151 카메라 · 장비칸 — 사람이 플레이하고 짚은 것
+## [x] G-151 카메라 · 장비칸 — 사람이 플레이하고 짚은 것
 - 차선: 3d-start (사람 결정 2026-09-26 — Opus 가 G-151 부터 쭉 돈다. Fable 은 G-150 까지)
 - spec: spec/02_player/movement-controls.md, spec/01_settings/display.md, spec/02_player/equipment.md, spec/12_ui/hud.md
 - 사람이 플레이해 보고 짚었다 (2026-09-26)
