@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 15:42:38",
- "updated_epoch": 1790404958,
+ "updated": "2026-09-26 16:01:15",
+ "updated_epoch": 1790406075,
  "ended": "2026-09-26 13:33:36",
  "progress": {
   "groups_total": 41,
   "groups_done": 35,
   "groups_waiting": 0,
   "steps_total": 169,
-  "steps_done": 148
+  "steps_done": 150
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-152",
  "step": "2",
  "step_title": "밭 거르기가 지형 확인이 아닌 제외 목록이다 (G-134 단계 2)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 15:42:38",
+ "phase": "QA",
+ "phase_since": "2026-09-26 15:59:57",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-26 12:00:00",
