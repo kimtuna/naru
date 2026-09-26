@@ -1554,5 +1554,70 @@
   },
   "test": "uild/test_building_stairs_note.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok    419s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           179\nTests            1526\nPassing Tests    1526\nFailing Tests       0\nPending             0\nAsserts         70807\nTime           419s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "7e13dd9"
+ },
+ {
+  "time": "2026-09-26 13:16:39",
+  "epoch": 1790396199,
+  "type": "pass",
+  "title": "통과 — G-150 단계 8 (사슬 끝 4 · 5번째 자리는 그 등급으로 바로 놓인다 (결정 대기 → 사람 결정 2026-09-26))",
+  "group": "G-150",
+  "step": "8",
+  "attempt": "1",
+  "report": {
+   "problem": "한도를 넘는 자리는 설 수 있는 가장 낮은 등급으로 미리보기가 뜨고 그 등급 · 그 재료로 놓인다 (4번째 석재 · 5번째 철 · 6번째 빨강)",
+   "approach": "손으로 놓는 것이 늘 나무(picked())라 4번째 자리가 나무 한도 3 에 걸려 빨강이었다. plan() 을 plan_held_at(aimed, facing) 으로 나누고, 종류별 계획이 too_far 를 내면 fit_grade(item, count) 로 제 등급부터 위로 올라가며 그 개수를 버티는 가장 낮은 등급(4 → 석재 · 5 → 철)을 골라 계획의 item 을 바꾼다 (fitted = true). 재료 검사와 place_held 는 손에 든 것이 아니라 계획의 item 을 본다 — 그래서 석재 블록이 모자라면 no_materials 로 빨강이고, 놓이면 spent 도 석재다. 철(5)도 못 버티면 그대로 too_far 빨강. 기둥 계획은 늘 wood_pillar 로 재던 것을 item 을 받게 고쳤다 (기둥은 개수 0 이라 실제로는 늘 나무). 미리보기 색은 preview_color_for(plan) 으로 — 등급을 맞춘 자리는 초록에 그 등급 색을 반 섞어(grade_color) 한눈에 갈린다. 한도 안은 OK_COLOR 그대로라 기존 테스트가 안 흔들린다. shots.gd 에 chain_grade 자리를 더해 석재로 올린 지붕 세 장 끝에서 4 · 5 · 6번째 유령 판을 손이 실제로 보는 계획(plan_held_at)의 색으로 띄웠다 — .loop/out/shots/chain_grade/chain_grade.png 에 4번째 석재 초록 · 5번째 철 초록 · 6번째 빨강이 찍혔다. G-150.6 의 QA 훑기 테스트 하나가 옛 규칙(4장째 빨강)을 단언해 새 규칙으로 고쳤다. 새 상태는 없다 — fitted · item 은 계획 시점의 것이라 저장하지 않는다. 테스트: changed_tests 그물 39파일 275개 중 옛 규칙 sweep 하나만 떨어졌고, 고친 뒤 그 파일 8/8 · 새 파일 5/5 · debug 4파일 포함 30/30 통과.",
+   "why": "grade_color: 초록(OK_COLOR)과 등급 색(BuildPiece.COLORS)을 반씩 섞는 비율 0.5 — 눈에 갈리게 임시로 정했다",
+   "files": [
+    "game/build/buildings.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_chain_grade.gd",
+    "game/tests/build/test_building_qa_sweep.gd",
+    "spec/06_build/building.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "나무 한도(3)를 넘는 자리를 겨누면 미리보기가 그 자리에 설 수 있는 가장 낮은 등급으로 뜬다 — 4번째는 석재 · 5번째는 철 (테스트)",
+     "evidence": "test_building_chain_grade.gd test_past_the_wood_limit_… 가 진짜 조준으로 4번째 plan().item == stone_roof · fitted · 석재 섞인 초록, 5번째 iron_roof 를 단언한다. test_fit_grade_picks_… 가 KINDS 전부에서 3→나무 · 4→석재 · 5→철 · 6→빈 것을 보고 벽 · 계단도 plan_held_at 으로 석재가 뜨는지 본다. plan_held_at 의 fit 갈래를 `and false` 로 막고 돌리니 5개 중 3개가 떨어졌다 (되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "놓으면 그 등급으로 서고 재료도 그 등급으로 든다. 그 재료가 모자라면 빨강이다 (테스트)",
+     "evidence": "같은 테스트가 우클릭 뒤 placed_item()==stone_roof · spent=={stone_block:4} · 판자는 그대로 · 5번째는 철괴가 빠짐을 단언. test_without_that_grades_material_… 가 판자는 넉넉하고 석재 블록 하나 모자랄 때 why==NO_MATERIALS · 빨강 · 안 놓임 · 판자로 대신 안 빼는지, 채우면 놓이는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "한도 안의 자리는 지금대로 나무로 놓인다 — 달라지는 것이 없다 (테스트)",
+     "evidence": "test_inside_the_limit_it_is_still_placed_as_wood — 지붕 두 장 뒤 3번째가 wood_roof · fitted=false · OK_COLOR 로 뜨고 판자만 빠진다. 전체 테스트(180파일)가 다 통과해 기존 동작이 안 흔들렸다"
+    },
+    {
+     "ok": true,
+     "criterion": "철 한도(5)를 넘는 자리는 여전히 빨강이다 (테스트)",
+     "evidence": "test_past_the_wood_limit_… 끝에서 6번째가 too_far · BAD_COLOR · 우클릭해도 안 놓이고 재료도 안 빠짐을 단언. qa_sweep 의 test_the_fourth_roof_in_a_row_is_placed_as_stone_the_sixth_is_red 도 6장째 빨강 · 5장까지만 놓임을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "spec/06_build/building.md 104줄 「손으로 놓는 것은 늘 나무」를 「한도를 넘는 자리는 설 수 있는 등급으로 바로 놓인다 (사람 결정 2026-09-26)」로 고친다",
+     "evidence": "git diff 로 그 줄만 바뀌었고 다른 사람 결정 줄은 안 건드렸다 (111줄). test_the_spec_says_… 가 새 문장 있음 · 옛 문장 없음을 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 석재로 올린 사슬 끝에 석재 미리보기가 뜬 그림",
+     "evidence": ".loop/out/shots/chain_grade/chain_grade.png — 석재 지붕 세 장 끝에 4번째 연한 초록(석재 섞임) · 5번째 진한 청록(철 섞임) · 6번째 빨강 유령 판이 찍혀 있다. shots.gd 가 손이 보는 계획(plan_held_at)의 색을 그대로 쓴다"
+    }
+   ],
+   "issues": [
+    "grade_color 섞는 비율 0.5 에 「임시」 표시가 없다 — game/build/buildings.gd 의 grade_color 머리말 주석에 report.json 처럼 「**임시** — 눈에 갈리게 0.5 로 정했다」를 적어라"
+   ],
+   "good": [
+    "한도를 넘어 등급을 맞춘 자리의 미리보기 색을 초록에 등급 색을 반 섞어 따로 냈다 (grade_color · preview_color_for). 기준은 「그 등급으로 뜬다」뿐이라 색 구분은 덤이지만 사람이 한눈에 갈리게 하는 쪽이라 해가 없다. spec 에는 안 적혀 있다"
+   ]
+  },
+  "test": "regrowth/test_regrowth.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/build/test_rooms.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      0s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           180\nTests            1531\nPassing Tests    1531\nFailing Tests       0\nPending             0\nAsserts         71138\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "66807c1"
  }
 ]

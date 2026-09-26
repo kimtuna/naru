@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 12:51:43",
- "updated_epoch": 1790394703,
+ "updated": "2026-09-26 13:16:39",
+ "updated_epoch": 1790396199,
  "ended": "2026-09-26 10:00:15",
  "progress": {
   "groups_total": 41,
   "groups_done": 34,
   "groups_waiting": 0,
-  "steps_total": 167,
-  "steps_done": 144
+  "steps_total": 168,
+  "steps_done": 145
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-150",
  "step": "8",
  "step_title": "사슬 끝 4 · 5번째 자리는 그 등급으로 바로 놓인다 (결정 대기 → 사람 결정 2026-09-26)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 12:51:43",
+ "phase": "QA",
+ "phase_since": "2026-09-26 13:15:06",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-26 12:00:00"
