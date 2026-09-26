@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 18:11:05",
- "updated_epoch": 1790413865,
+ "updated": "2026-09-26 18:23:52",
+ "updated_epoch": 1790414632,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 41,
   "groups_done": 38,
   "groups_waiting": 0,
   "steps_total": 176,
-  "steps_done": 163
+  "steps_done": 166
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "22",
  "step_title": "test.sh 가 파일별 로그를 남기지 않는다 (G-910 단계 14)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 18:11:05",
+ "phase": "QA",
+ "phase_since": "2026-09-26 18:22:47",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",

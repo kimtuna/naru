@@ -1100,7 +1100,7 @@
   - 기준: 탄창 주석이 spec 에 없는 말을 한다 — game/life/climbing/grapple.gd:29 「등급이 생기면 등급표가 덮는다」는 spec/04_life/climbing.md 에 없다. 등급마다 다른 것은 **최대 거리**(사람 결정 2026-09-17)뿐이고 탄창은 4발로 정해졌다. 그 문장을 지워라 (test_the_magazine_is_not_marked_temporary 는 「임시」·「사람 결정」만 보니 지워도 통과한다)
 - [x] 21. test.sh 합계의 Pending 이 늘 0 으로 찍힌다 (G-910 단계 14)
   - 기준: test.sh 합계의 Pending 이 늘 0 으로 찍힌다 — tools/test.sh 끝의 awk 가 '^Pending +[0-9]' 를 찾는데 GUT(addons/gut/summary.gd:64) 는 그 줄을 'Risky/Pending N' 으로 찍고 0 이면 아예 안 찍는다. 그래서 pending·risky 가 있어도 합계에 안 보이고 Tests 와 Passing 만 어긋나 보인다 — 이번 기준의 「하나가 어느 쪽에도 안 든다」가 바로 그것이었다. awk 패턴을 '^(Risky\/)?Pending +[0-9]' 로 바꾸고 $NF 를 더하라. 테스트: pending() 하나만 있는 임시 테스트 파일로 test.sh 를 돌려 합계의 Pending 이 1 로 찍히는지 보는 셸 테스트(tests/ 아래 GD 로 어렵다면 harness/ 의 python 테스트)를 짜라
-- [ ] 22. test.sh 가 파일별 로그를 남기지 않는다 (G-910 단계 14)
+- [x] 22. test.sh 가 파일별 로그를 남기지 않는다 (G-910 단계 14)
   - 기준: test.sh 가 파일별 로그를 남기지 않는다 — 기준이 「test.sh 가 남기는 파일별 로그에서 risky 를 찾아라」고 했지만 tools/test.sh 는 mktemp 폴더에 두고 trap 으로 지운다. 구현 세션이 찾을 수 없어 파일마다 godot 을 따로 띄워 되짚었다. 떨어졌을 때만이 아니라 늘 .loop/out/test_files/ 같은 곳에 파일별 로그를 복사해 두거나(하네스 쪽이면 [결정] 아님 — 세션이 tools/test.sh 를 고칠 수 있다), 아니면 위 awk 고침으로 합계에 Risky/Pending 이 보이게 해서 로그 없이도 찾게 하라
 - [ ] 23. 지키는 테스트 머리말이 실제 검사보다 세게 말한다 (G-910 단계 14)
   - **줄기에는 아직 없는 파일이다** — `test_from_empty_hands_asserts_to_the_end.gd` 는 `g/G-910` 에만 있다. 덧붙여 그 파일이 전제한 「마지막 걸음 = 25」도 낡았다 — 지금 test_from_empty_hands.gd 는 27번(돌아온 재료로 다시 짓는다)까지 간다 (2026-09-26 확인)
