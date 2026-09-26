@@ -1,37 +1,5 @@
 [
  {
-  "time": "2026-09-22 18:41:32",
-  "epoch": 1790070092,
-  "type": "pass",
-  "title": "통과 — G-900 단계 1 (test_enter_game.gd:109 test_the_other_world_did_not_get_t… (G-102 단계 3))",
-  "group": "G-900",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "늘 참이던 test_the_other_world_did_not_get_the_items 를 '같은 월드에 다른 캐릭터로 들어가면 가방이 비어 있다'를 보는 테스트로 고쳤다",
-   "approach": "옛 테스트는 월드 저장본에 'inventory' 키가 없는지만 봤다 — WorldData.to_dict() 는 키가 고정된 리터럴을 돌려주므로 어떤 코드에서도 참이라 아무것도 지키지 않았다. 대신 메뉴를 거쳐 실제로 확인하게 바꿨다: before_each 가 캐릭터를 둘(보리 · 미르) 만들고, _enter() 가 캐릭터 이름으로 칸을 찾아 누르게 넓혔다(칸 차례는 저장 쪽이 정하므로 번호로 찍지 않는다). 새 테스트는 보리로 나루섬에 들어가 나무 3개를 넣고 저장한 뒤, 미르로 같은 나루섬에 들어가 character.inventory 가 []이고 inventory.slot(0) 이 {} 임을 본다. 정말 지키는지 확인하려고 일부러 망가뜨려 봤다 — GameRoot.save() 가 인벤토리를 world.islands 에 같이 적고 _ready 가 빈 가방일 때 그것을 도로 꺼내게 고치자 새 테스트만 떨어졌고(86/87), 되돌리니 도로 통과했다. 폴더 검사 res://tests/ui/menu 87/87 통과, 전체는 test.log 기준 89개 스크립트 810개 테스트 전부 통과(505.8초).",
-   "why": "",
-   "files": [
-    "game/tests/ui/menu/test_enter_game.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "test_enter_game.gd:109 test_the_other_world_did_not_get_the_items 는 늘 참인 테스트다 — WorldData.to_dict() 는 {name, seed, created_at} 리터럴을 돌려주므로 'inventory' in w.to_dict() 는 어떤 코드에서도 false 다. 기준 3 은 다른 테스트가 제대로 막고 있어 통과지만, 이 테스트는 아무것도 지키지 않는다. 인벤토리가 캐릭터에만 붙는다는 것을 정말 보려면 '월드 A 에서 넣고 저장한 뒤 다른 캐릭터로 같은 월드 A 에 들어가면 인벤토리가 비어 있다'를 확인하게 고쳐라",
-     "evidence": "늘 참이던 단언이 사라졌다 — test_enter_game.gd 에 'inventory' in w.to_dict() 는 한 줄도 남아 있지 않다. 대신 test_another_character_in_the_same_world_did_not_get_the_items(:123~135) 가 기준이 말한 그 길을 그대로 걷는다: before_each 가 보리·미르 둘을 만들고, 보리로 나루섬에 들어가 wood 3 을 넣고 save() 가 true 인지 본 뒤, _enter('나루섬','미르') 로 같은 월드에 다른 캐릭터로 들어가 character_name()=='미르' · world_name()=='나루섬' 을 먼저 못박고 character.inventory==[] 와 inventory.slot(0)=={} 를 본다. 칸은 번호가 아니라 이름(slot.text)으로 찾고, 못 찾으면 fail_test 로 떨어진다 — 엉뚱한 캐릭터로 들어가 놓고 통과하는 길이 막혀 있다. 껍데기가 아닌지 직접 깨 보았다: game_root.gd 의 save() 가 character.inventory 를 world.islands['__inv'] 에 같이 적고 _ready 가 빈 가방일 때 그것을 도로 꺼내게 고치자 res://tests/ui/menu 87개 중 **이 테스트 하나만** 떨어졌다(86/87, 두 단언 모두 붉게: [{wood,3}] != [] · {wood,3} != {}). 되돌린 뒤 game_root.gd 는 git diff 가 비어 있다. 짝이 되는 test_inventory_follows_the_character_into_another_world 가 '보리의 나무는 다른 월드로 따라온다'를 지키므로, 저장이 인벤토리를 통째로 흘려 버려도 통과하는 구멍은 그쪽이 막고 있다."
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 1 개 ---\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/ui/menu/test_enter_game.gd\n* test_choosing_a_world_enters_the_game_scene\n* test_the_game_knows_the_character_and_the_world\n* test_the_menu_is_gone_after_entering\n* test_inventory_follows_the_character_into_another_world\n* test_another_character_in_the_same_world_did_not_get_the_items\n5/5 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               1\nTests                 5\nPassing Tests         5\nAsserts              15\nTime              0.983s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "06e4f1e"
- },
- {
   "time": "2026-09-22 18:53:51",
   "epoch": 1790070831,
   "type": "pass",
@@ -7997,5 +7965,40 @@
   },
   "test": "/hud/test_map_coords.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           199\nTests            1681\nPassing Tests    1681\nFailing Tests       0\nRisky/Pending       0\nAsserts         76604\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "d842970"
+ },
+ {
+  "time": "2026-09-26 23:36:48",
+  "epoch": 1790433408,
+  "type": "pass",
+  "title": "통과 — G-910 단계 2 (_erase 를 지운 자리에 빈 줄이 남았다 (G-910 단계 3))",
+  "group": "G-910",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "_erase 를 지운 자리의 남은 빈 줄 둘을 지웠다 — 바뀐 곳만 2개 파일 16개 테스트 통과",
+   "approach": "test_building_qa_sweep.gd 의 _apply_island_state 와 _stand_and_aim 사이 빈 줄 셋을 둘로, test_building_roof_stairs.gd 의 _held_count 뒤 파일 끝 빈 줄 하나를 지웠다. 빈 줄만 지운 일이라 새 테스트는 짜지 않았다. changed_tests.py 가 고른 두 파일(16개 테스트)을 돌려 모두 통과했다.",
+   "why": "",
+   "files": [
+    "game/tests/build/test_building_qa_sweep.gd",
+    "game/tests/build/test_building_roof_stairs.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "_erase 를 지운 자리에 빈 줄이 남았다 — game/tests/build/test_building_qa_sweep.gd 의 _apply_island_state 와 _stand_and_aim 사이에 빈 줄이 셋이다(함수 사이는 둘). game/tests/build/test_building_roof_stairs.gd 는 _held_count 뒤 파일 끝에 빈 줄이 하나 더 남았다. 하나씩 지워라",
+     "evidence": "빈 줄만 지우는 모양새 일이라 테스트가 걸린 기준이 아니다. git diff 로 확인: test_building_qa_sweep.gd 560행 뒤 빈 줄 셋→둘(561·562만 남고 563 이 주석), test_building_roof_stairs.gd 는 od 로 보니 'return n\\n' 으로 끝나 끝 빈 줄이 없다. 다른 줄은 바뀌지 않았다(각 파일 -1 줄). test.log 의 전체 실행 199 파일 1681 테스트 모두 통과, guard 통과 — 두 파일도 ok"
+    }
+   ],
+   "issues": [
+    "test_foundation_wheel_attach.gd 에 빈 줄 셋 — game/tests/build/test_foundation_wheel_attach.gd 51~53행이 빈 줄 셋이다(함수 사이는 둘). 하나를 지워라. 이번 기준 밖이고 build/ 는 차선 1 몫이니 그쪽 묶음 단계로 넘겨도 된다"
+   ],
+   "good": []
+  },
+  "test": "ut/test_input_spec_table.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok    479s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           199\nTests            1681\nPassing Tests    1681\nFailing Tests       0\nRisky/Pending       0\nAsserts         76602\nTime           479s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "63db488"
  }
 ]
