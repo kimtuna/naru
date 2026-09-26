@@ -1118,7 +1118,7 @@
   - 기준: 진짜 섬 물로 채우는 테스트가 없다 — 채우기 테스트는 모두 가짜 연못(fresh_water_level 을 테스트가 넣은 Callable)이다. test_island.gd 가 crops.fresh_water_level 을 shape.fresh_water_level_at 에 이었는지는 아무 테스트도 안 본다. tests/world/terrain/test_island_in_game.gd 같은 섬 테스트에 「섬의 crops.fresh_water_level 이 유효하고 섬의 연못 한 자리에서 수면 높이를 낸다」는 단언을 더하라
 - [x] 8. _process 주석의 줄 수도 낡았다 (G-910 단계 19)
   - 기준: _process 주석의 줄 수도 낡았다 — game/ui/hud/station_window.gd 160행 「줄이 스물 몇이라 세는 값이 싸다」도 가공대 레시피 45줄과 안 맞는다. 「줄이 마흔 몇이라」로 고쳐라 (주석만 — 막는 것은 아니다)
-- [ ] 8. 테스트 사이 빈 줄이 하나뿐이다 (G-910 단계 20)
+- [x] 8. 테스트 사이 빈 줄이 하나뿐이다 (G-910 단계 20)
   - 기준: 테스트 사이 빈 줄이 하나뿐이다 — game/tests/life/climbing/test_grapple_magazine_size.gd 의 test_the_magazine_does_not_vary_by_grade 끝과 다음 ## 주석(test_the_check_catches_the_old_shape) 사이에 빈 줄이 하나다. 파일의 다른 함수들처럼 두 줄로 맞춰라 (모양만의 문제다)
 - [ ] 8. 테스트가 매번 사용자 휴지통에 폴더를 버린다 (G-910 단계 21)
   - 기준: 테스트가 매번 사용자 휴지통에 폴더를 버린다 — test_test_sh_counts_pending.gd 의 after_each 가 OS.move_to_trash(_dir) 를 불러 테스트가 돌 때마다 macOS ~/.Trash 에 naru_pending_only 폴더가 하나씩 쌓인다(사람 환경을 건드린다). 임시 파일은 DirAccess.remove_absolute(_file) 뒤 DirAccess.remove_absolute(_dir) 로 바로 지워라

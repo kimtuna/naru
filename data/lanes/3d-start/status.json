@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 20:06:59",
- "updated_epoch": 1790420819,
+ "updated": "2026-09-26 20:17:40",
+ "updated_epoch": 1790421460,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 42,
   "groups_done": 39,
   "groups_waiting": 0,
   "steps_total": 181,
-  "steps_done": 173
+  "steps_done": 174
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "8",
  "step_title": "테스트 사이 빈 줄이 하나뿐이다 (G-910 단계 20)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 20:06:59",
+ "phase": "QA",
+ "phase_since": "2026-09-26 20:16:41",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
