@@ -1,15 +1,15 @@
 {
- "state": "done",
- "reason": "이 차선(3d-lane2) 몫을 다 했다 — 다른 차선 몫으로 남은 것: G-910 · G-990 (그 차선이 꺼져 있으면 아무도 안 한다)",
- "updated": "2026-09-26 18:55:16",
- "updated_epoch": 1790416516,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-26 20:20:38",
+ "updated_epoch": 1790421638,
  "ended": "2026-09-26 18:55:16",
  "progress": {
-  "groups_total": 41,
+  "groups_total": 42,
   "groups_done": 39,
   "groups_waiting": 0,
-  "steps_total": 177,
-  "steps_done": 168
+  "steps_total": 181,
+  "steps_done": 174
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-911",
