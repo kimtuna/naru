@@ -183,7 +183,7 @@ function renderStatus(s) {
     <dl class="kv">
       <dt>마지막 갱신</dt><dd>${esc(s.updated)} <span class="sub">(${ago(s.updated_epoch)})</span></dd>
       <dt>지금 작업</dt><dd>${cur}</dd>
-      ${s.model ? `<dt>AI</dt><dd><b>${esc(modelName(s.model))}</b>${s.lane ? ` · 차선 ${esc(s.lane)}` : ""}</dd>` : ""}
+      ${s.model ? `<dt>AI</dt><dd><b>${esc(modelName(s.model))}${s.effort ? ` · 추론 ${esc(s.effort)}` : ""}</b>${s.lane ? ` · 차선 ${esc(s.lane)}` : ""}</dd>` : ""}
       ${state === "running" && s.phase ? `<dt>단계</dt><dd>${esc(s.phase)} — ${esc(s.phase_since)} 부터</dd>` : ""}
       ${s.resume_at ? `<dt>재개 예정</dt><dd>${esc(s.resume_at)}</dd>` : ""}
       <dt>이번 실행</dt><dd>${esc(s.started)} 시작${s.ended && state !== "running" ? ` · ${esc(s.ended)} 종료` : ""}</dd>
@@ -237,7 +237,8 @@ function renderList(text, status) {
   const groups = parseList(text);
   if (!groups.length) { $("list").innerHTML = '<div class="empty">목록이 비어 있다</div>'; return; }
   const TAG = { "x": ["t-ok", "완료"], ">": ["t-bad", "결정 대기"], " ": ["t-info", "할 일"] };
-  // 「진행 중」은 **차선이 지금 하고 있는 묶음**이다 — 차선이 둘이면 둘. 차선 기록이 없으면 첫 할 일.
+  // 「진행 중」은 **차선이 지금 하고 있는 묶음**이다 — 차선이 둘이면 둘. 도는 차선이 없으면 첫 할 일은
+  // 「다음 할 일」이다 — 「진행 중」이라고 보이면 아무도 안 도는데 도는 줄 안다 (2026-09-26 사람이 헷갈렸다)
   const working = new Set(RUNNING.map((x) => x.group).filter(Boolean));
   const who = {};
   for (const x of RUNNING) if (x.group) who[x.group] = `${modelName(x.model)} · ${x.lane || ""}`;
@@ -245,7 +246,8 @@ function renderList(text, status) {
   $("list").innerHTML = groups.map((g) => {
     const done = g.steps.filter((s) => s.done).length;
     const isCur = working.has(g.id) || (firstTodo && g.id === firstTodo.id);
-    const [cls, label] = isCur ? ["t-fail", who[g.id] ? `진행 중 — ${who[g.id]}` : "진행 중"] : TAG[g.state];
+    const [cls, label] = working.has(g.id) ? ["t-fail", who[g.id] ? `진행 중 — ${who[g.id]}` : "진행 중"]
+      : isCur ? ["t-info", "다음 할 일 — 도는 차선이 없다"] : TAG[g.state];
     return `<details ${isCur ? "open" : ""}><summary><span class="tag ${cls}">${label}</span>
       <span class="title">${esc(g.id)} ${esc(g.title)}</span><span class="count">${g.steps.length ? `${done}/${g.steps.length}` : (g.state === "x" ? "끝남" : "—")}</span></summary>
       <div class="body">${g.steps.length ? "" : `<div class="empty">${esc(g.note || "단계 기록이 archive 로 옮겨졌다")}</div>`}<ul class="steps">${g.steps.map((s) => `<li><span>${s.done ? "✅" : "⬜"}</span><span>${esc(s.title)}
