@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 01:42:17",
- "updated_epoch": 1790440937,
+ "updated": "2026-09-27 01:55:59",
+ "updated_epoch": 1790441759,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 43,
   "groups_done": 41,
   "groups_waiting": 0,
   "steps_total": 205,
-  "steps_done": 197
+  "steps_done": 198
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-990",
  "step": "3",
  "step_title": "(앞 단계 QA) 횃불 · 건축물 · 선착장의 남은 대수 왕복 테스트가 없다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 01:42:17",
+ "phase": "QA",
+ "phase_since": "2026-09-27 01:54:42",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
