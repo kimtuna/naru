@@ -1152,7 +1152,7 @@
   - 기준: placeable.gd 빈 줄 셋이 아직 남았다 — game/build/placeable.gd 125~127행(return {at = spot, ok = true, why = ""} 뒤, '## 이 놓인 것을 부수면' 앞)의 빈 줄 셋을 둘로 줄여라. build/ 를 맡은 쪽 단계에서 할 일이다. 고친 뒤에는 game/tests/core/tools/test_no_triple_blank_lines.gd 의 LEFT_FOR_LANE_1 에서 "build/placeable.gd" 를 지워 빈 목록으로 두고, test_no_script_under_game_has_three_blank_lines_in_a_row 가 그대로 통과하는지 확인하라
 - [x] 2. 예외 목록이 낡아도 알 수 없다 (G-910 단계 1)
   - 기준: 예외 목록이 낡아도 알 수 없다 — test_no_triple_blank_lines.gd 의 LEFT_FOR_LANE_1 에 든 파일을 고쳐도 목록에서 지우지 않으면 그 파일은 계속 검사 밖에 남고, 이를 알리는 것이 없다. 목록의 파일마다 assert_false(_triple_blanks(...).is_empty(), "<파일>은 이제 고쳐졌다 — LEFT_FOR_LANE_1 에서 지워라") 를 두어, 고친 뒤 목록이 남아 있으면 테스트가 떨어지게 하라
-- [ ] 2. 빈 LEFT_FOR_LANE_1 과 낡은 주석이 남았다 (G-910 단계 1)
+- [x] 2. 빈 LEFT_FOR_LANE_1 과 낡은 주석이 남았다 (G-910 단계 1)
   - 기준: 빈 LEFT_FOR_LANE_1 과 낡은 주석이 남았다 — game/tests/core/tools/test_no_triple_blank_lines.gd 7~8행의 '아직 남은 채로 두는 파일 — 건축(build/)은 차선 1 몫이라 …' 주석과 빈 상수 LEFT_FOR_LANE_1, 그리고 테스트 안의 'if rel in LEFT_FOR_LANE_1: continue' 는 이제 지키는 것이 없다. 예외가 없으니 셋을 모두 지우고 훑기가 예외 없이 game/ 전체를 본다는 것을 머리 주석에 적어라 (예외 자리가 남아 있으면 다음에 파일을 슬쩍 올려 두기 쉽다)
 - [ ] 2. 새 테스트 뒤 빈 줄이 하나뿐이다 (G-910 단계 2)
   - 기준: 새 테스트 뒤 빈 줄이 하나뿐이다 — game/tests/core/tools/test_no_triple_blank_lines.gd 의 test_files_left_for_lane_1_still_have_three_blank_lines 끝(pass_test 줄)과 func test_the_check_catches_three_blank_lines 사이 빈 줄이 하나다. 파일의 다른 함수 사이처럼 둘로 맞춰라
