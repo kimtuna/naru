@@ -896,7 +896,7 @@
   아이콘이 나온 뒤에 따로 한다 (사람 결정 2026-09-24)
   - 기준: (앞 단계 QA) 밝힌 칸이 지도 네모 밖으로 삐져나온다 — .loop/shots/map/map_ko.png 오른쪽 아래를 보면 (200,200) 언저리 밝힌 칸이 지도 테두리(아래·오른쪽) 바깥까지 그려진다. 이번 단계(좌표 글자) 밖의, 원래 있던 _draw 흠이다. game/ui/hud/map_window.gd _draw 에서 밝힌 칸 Rect 를 map_rect() 로 잘라(Rect2.intersection) 그리고, tests/ui/hud/test_map_window.gd 에 「섬 가장자리 칸을 밝혀도 그린 칸이 map_rect 를 넘지 않는다」 단언을 더하라
 
-## [ ] G-150 건축 손보기 — 사람이 플레이하고 짚은 것 (2차)
+## [x] G-150 건축 손보기 — 사람이 플레이하고 짚은 것 (2차)
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 건축은 Fable 이 맡는다)
 - spec: spec/06_build/building.md, spec/06_build/rooms.md, spec/06_build/storage.md, spec/04_life/farming.md
 - 사람이 플레이해 보고 짚었다 (2026-09-26)
