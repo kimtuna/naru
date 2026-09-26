@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 23:07:26",
- "updated_epoch": 1790431646,
+ "updated": "2026-09-26 23:26:37",
+ "updated_epoch": 1790432797,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 42,
   "groups_done": 40,
   "groups_waiting": 0,
   "steps_total": 190,
-  "steps_done": 187
+  "steps_done": 188
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "4",
  "step_title": "훑기 검사가 글자 하나만 본다 (G-910 단계 3)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 23:07:26",
+ "phase": "QA",
+ "phase_since": "2026-09-26 23:25:33",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",

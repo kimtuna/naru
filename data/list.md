@@ -1140,7 +1140,7 @@
   - 기준: 테스트 이름이 휴지통을 안 본다 — test_test_sh_counts_pending.gd 의 test_after_each_removes_the_temp_dir_without_the_trash 는 이제 폴더가 지워졌는지만 본다. 휴지통 검사는 test_no_move_to_trash.gd 로 옮겨 갔으니 이름을 test_after_each_removes_the_temp_dir 로 줄이면 읽는 사람이 헷갈리지 않는다 (막는 것은 아니다)
 - [x] 3. build/ 두 파일은 아직 지웠는지 단언이 없다 (G-910 단계 3)
   - 기준: build/ 두 파일은 아직 지웠는지 단언이 없다 — tests/test_temp_dirs_are_cleaned.gd 의 NOT_OURS 가 tests/build/test_building_qa_sweep.gd · test_building_roof_stairs.gd 를 뺐다(차선 1 G-145 가 build/ 를 쥐고 있어서 — 이번 묶음 제약상 옳다). 그 차선이 풀린 뒤 두 파일의 지우는 곳을 TempDir.clean(self, path) 로 바꾸고 NOT_OURS 를 비워라
-- [ ] 4. 훑기 검사가 글자 하나만 본다 (G-910 단계 3)
+- [x] 4. 훑기 검사가 글자 하나만 본다 (G-910 단계 3)
   - 기준: 훑기 검사가 글자 하나만 본다 — _leaks 는 파일 안에 TempDir.clean(self, 가 한 번이라도 있으면 통과로 친다. 한 파일이 임시 폴더를 둘 만들고 하나만 clean 에 넘겨도 못 잡는다. 지금 그런 파일은 없어 보이나, 막으려면 테스트 뒤 TMPDIR 에 naru_* 가 새로 생겼는지 보는 검사(예: tools/test.sh 가 돌기 전후 TMPDIR 의 naru_* 목록을 비교해 늘었으면 알린다)를 더하라
 - [ ] 2. _erase 를 지운 자리에 빈 줄이 남았다 (G-910 단계 3)
   - 기준: _erase 를 지운 자리에 빈 줄이 남았다 — game/tests/build/test_building_qa_sweep.gd 의 _apply_island_state 와 _stand_and_aim 사이에 빈 줄이 셋이다(함수 사이는 둘). game/tests/build/test_building_roof_stairs.gd 는 _held_count 뒤 파일 끝에 빈 줄이 하나 더 남았다. 하나씩 지워라
