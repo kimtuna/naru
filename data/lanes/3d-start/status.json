@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 17:01:34",
- "updated_epoch": 1790409694,
+ "updated": "2026-09-26 17:14:00",
+ "updated_epoch": 1790410440,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 41,
   "groups_done": 37,
   "groups_waiting": 0,
   "steps_total": 171,
-  "steps_done": 154
+  "steps_done": 155
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "17",
  "step_title": "전체 합계에서 테스트 하나가 통과도 실패도 아니다 (G-910 단계 5)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 17:01:34",
+ "phase": "QA",
+ "phase_since": "2026-09-26 17:12:45",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",

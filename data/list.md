@@ -1087,7 +1087,7 @@
   - 기준: test.log 합계 한 줄이 어긋난다 — 전체 결과가 Tests 1430 · Passing 1429 · Failing 0 · Pending 0 이라 하나가 어느 쪽에도 안 든다. 단언 없는(GUT 의 risky) 테스트가 하나 있을 것이다. 이번 단계와 무관하다 (test_butchery 는 10개 다 통과·단언 110). test.sh 가 남기는 파일별 로그에서 'risky' 를 찾아 그 테스트에 진짜 단언을 넣어라
 - [x] 13. 죽음 상자 안에서는 풀린 짐승의 게이지가 멈춘다 (G-910 단계 5)
   - 기준: 죽음 상자 안에서는 풀린 짐승의 게이지가 멈춘다 — combat/damage_death/death_chest.gd:43 은 가방을 _items 에 통째로 옮기므로 accepts 를 거치지 않는다. 30분 뒤 상자가 사라지니 「영영」은 아니지만(사람 결정 2026-09-16), 열어 두면 상자 시간도 멈추므로 그동안 게이지가 얼어 있다. spec/04_life/hunting.md 「미정」에 「죽었을 때 풀린 짐승 — 죽음 상자에 얼린 채 두나, 그 자리에 놓아 도망가게 하나」 한 줄을 적고, 지금 행동(얼린 채 죽음 상자에 간다)을 test_death_chest.gd 에 단언 하나로 못 박아라
-- [ ] 17. 전체 합계에서 테스트 하나가 통과도 실패도 아니다 (G-910 단계 5)
+- [x] 17. 전체 합계에서 테스트 하나가 통과도 실패도 아니다 (G-910 단계 5)
   - 기준: 전체 합계에서 테스트 하나가 통과도 실패도 아니다 — test.log 합친 결과가 Tests 1440 · Passing 1439 · Failing 0 · Pending 0 이다. GUT 의 risky(단언 없는) 테스트가 하나 있는 것으로 보이는데 tools/test.sh 가 임시 폴더를 지워 어느 파일인지 남지 않는다. test.sh 의 합치는 awk 에 Risky 줄도 더하고, Tests 와 Passing+Failing+Pending 이 안 맞으면 그 파일 이름을 맨 뒤에 찍게 하라
 - [ ] 18. 줄 · 버퍼 칸 누르기에는 지킴이가 없다 (G-910 단계 8)
   - 기준: 줄 · 버퍼 칸 누르기에는 지킴이가 없다 — station_window.gd 의 _press 와 _collect 는 _station == null 만 보고 _drop_freed() 를 안 부른다. 제작대가 풀린 그 프레임 안(_process 의 _refresh 가 돌기 전)에 줄이나 버퍼 칸이 눌리면 풀린 객체로 start_craft · collect 를 불러 같은 SCRIPT ERROR 가 난다. _press · _collect 첫머리에 _drop_freed() 를 넣고, test_station_window.gd 의 test_a_station_freed_while_the_window_is_open_is_not_asked_anything 에서 station.free() 직후 wait_process_frames 없이 row(AXE).pressed.emit() · buffer_slot(0).pressed.emit() 을 먼저 한 번 더 눌러 조용한지 단언하라 (지금은 station_kind() 가 먼저 불려 null 이 된 뒤에만 누른다)
