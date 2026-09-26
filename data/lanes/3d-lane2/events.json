@@ -2451,5 +2451,64 @@
    "decision": null
   },
   "test": "_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_animal_walk.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_animal_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:164)\n         [1] _ready (res://world/terrain/test_island.gd:96)\n         [2] before_all (res://tests/life/hunting/test_animal_walk.gd:17)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [5] test_scripts (res://addons/gut/gut.gd:1047)\n         [6] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [8] main (res://addons/gut/cli/gut_cli.gd:297)\n         [9] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_wanders_around_home\n* test_never_steps_into_water_even_when_sent_there\n* test_does_not_fall_off_cliff_even_when_sent_below\n* test_nav_mesh_has_no_water_or_cliff\n* test_goes_around_trees_not_stuck\n    [Failed]:  [1] expected to equal [0]:  나무에 걸려 끼이지 않는다\n      at line 237\n* test_walk_values_live_in_one_place_marked_temporary\n5/6 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_animal_walk.gd\n- test_goes_around_trees_not_stuck\n    [Failed]:  [1] expected to equal [0]:  나무에 걸려 끼이지 않는다\n          at line 237\n\nTotals\n------\nScripts               1\nTests                 6\nPassing Tests         5\nFailing Tests         1\nAsserts           253/254\nTime              49.506s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           191\nTests            1628\nPassing Tests    1627\nFailing Tests       1\nPending             0\nAsserts         74540\nTime           286s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_animal_walk.gd\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-26 18:48:50",
+  "epoch": 1790416130,
+  "type": "pass",
+  "title": "통과 — G-911 단계 7 (spec 에 낡은 줄 둘이 남았다 (2026-09-24 md 점검 — 2026-09-26 다시 재어 셋은 이미 됐다))",
+  "group": "G-911",
+  "step": "7",
+  "attempt": "2",
+  "report": {
+   "problem": "spec 낡은 줄 둘(building.md 「건축물 = 벽 · 문 · 지붕 · 계단」 · farming.md 미정 절의 밭 2×2 사본)을 지우고, 연쇄 테스트 머리 주석을 고치고, 코드로 만든 설계 값은 섬 저장본을 쓰지 않게 막았다. 바뀐 곳만 29개 파일 288개 통과",
+   "approach": "spec: building.md 78줄에서 여섯 가지와 어긋나는 「건축물 = 벽 · 문 · 지붕 · 계단.」만 지우고 뒤의 사람 결정(실내 규칙)은 남겼다. farming.md 미정 절의 밭 2×2 사본을 지웠고, 남은 미정 넷(작물 목록 · 레시피 개수 · 비료/물뿌리개 크기 · 씨앗 출처)은 모두 아직 정해지지 않은 것임을 읽어 확인했다. 연쇄 테스트 머리 주석 첫 줄을 「그 위 설치물(상자)이 떠서 남는다」로 고쳤다. unnamed 저장본: IslandCache.can_cache(bp)(섬 이름이 unnamed 가 아닐 때만)를 두고, IslandShape 가 use_cache=true 인데 코드 설계 값이면 push_warning 하고 캐시 없이 굽는다 — 테스트 둘로 .tres 는 캐시 가능 · 코드/복제 설계 값은 불가 · 실제로 저장본 파일을 안 쓴다를 단언. 앞 회차 전체 실행에서 떨어진 test_animal_walk(test_goes_around_trees_not_stuck)는 이번 변경과 닿지 않는다(동물 · 테스트 파일 모두 G-132.4 뒤로 안 바뀜) — hunting 폴더 단독 실행과 changed_tests 그물 실행 둘 다에서 통과했다. Engine.time_scale 로 빨리 돌리며 걸림 시계를 재는 테스트라 godot 6개가 한꺼번에 돌 때 부하로 흔들린 것으로 보인다",
+   "why": "",
+   "files": [
+    "spec/06_build/building.md",
+    "spec/04_life/farming.md",
+    "game/tests/build/test_building_collapse.gd",
+    "game/world/terrain/island_cache.gd",
+    "game/world/terrain/island_shape.gd",
+    "game/tests/world/terrain/test_island_cache.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "`spec/06_build/building.md` 78줄의 옛 줄 「**건축물 = 벽 · 문 · 지붕 · 계단.**」을 지운다 — 같은 파일 8줄에 「건축물 = 토대 · 벽 · 문 · 지붕 · 계단 · 기둥」이 이미 있어 여섯 가지와 어긋난다",
+     "evidence": "git diff 로 80줄에서 「건축물 = 벽 · 문 · 지붕 · 계단.」만 지워졌다. 같은 줄의 사람 결정(2026-09-18 실내 규칙)은 날짜와 함께 남았다. building.md 안에서 네 가지로 적힌 곳은 grep 으로 더 없다. 문서만 고치는 기준이라 테스트는 필요 없다"
+    },
+    {
+     "ok": true,
+     "criterion": "`spec/04_life/farming.md` 「## 미정」 절 40줄의 「밭 한 장은 2×2칸 (사람 결정 2026-09-24)」을 지운다 — 규칙 절(9줄)로 옮겨졌는데 사본이 남아 **정해진 값이 아직 「미정」에 앉아 있다**",
+     "evidence": "diff 에서 미정 절의 사본 줄과 그 앞 빈 줄이 지워졌다. 9줄 규칙 절에는 「밭 한 장 = 2×2칸(4m²) … 토대 한 장(4×4칸) 위에 네 장」이 그대로 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "정해진 것이 「미정」 절에 남은 곳이 farming.md 에 더 없다 (읽어서 확인)",
+     "evidence": "파일 전체(43줄)를 읽었다. 미정 절 넷(작물 목록·성장 일수 · 레시피 개수 · 비료 효과/물뿌리개 크기 · 씨앗 출처)은 모두 정해지지 않았거나 「임시」라고 적힌 값이다. 첫 작물 밀·3일은 수치 절에 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 새 연쇄 테스트의 머리 주석이 틀린 까닭을 적는다 — test_building_collapse.gd 의 test_a_support_placed_later_still_brings_down_the_whole_chain 위 첫 줄이 「한 번 훑기로는 R1 · P · R2 가 떠서 남는다」라고 하지만, 같은 주석 아래와 구현 보고대로 G-145 뒤에는 건축물은 _link_counts 가 다 잡고 떠 남는 것은 상자(설치물)다. 첫 줄을 「한 번 훑기로는 그 위 설치물(상자)이 떠서 남는다」로 고쳐라",
+     "evidence": "game/tests/build/test_building_collapse.gd 200줄이 「한 번 훑기로는 그 위 설치물(상자)이 떠서 남는다」로 고쳐졌다. 아래 주석(_link_counts · 상자가 먼저 훑인다)과 맞는다. 주석만 바뀌었고 코드는 그대로다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) unnamed 저장본이 끝없이 쌓일 수 있다 — island_cache.gd prune 이 unnamed 끼리 안 지우므로, 코드로 만든 설계 값을 use_cache=true 로 굽는 곳이 생기면 user://island_cache 에 unnamed 판이 SOURCES 해시가 바뀔 때마다 늘어난다(지금은 그런 곳이 없어 막는 것은 아니다). 코드 설계 값에서 use_cache 를 켜면 push_warning 하거나, island_key 주석처럼 테스트 하나로 「캐시를 켜는 곳은 모두 .tres」를 단언해 두면 막힌다",
+     "evidence": "IslandCache.can_cache 를 새로 두었다. IslandShape._init 은 코드로 만든 설계 값에 use_cache 가 켜져 있으면 push_warning 을 띄우고 캐시를 끈다. test_island_cache.gd 의 test_only_blueprints_from_files_can_use_the_cache 는 .tres 둘은 참, new() 와 duplicate() 는 거짓임을 단언한다. test_a_code_blueprint_never_writes_to_the_cache 는 실제 저장 경로에 파일이 없음을 단언한다. 일부러 깨 봤다: 가드의 use_cache=false 를 pass 로 바꾸자 이 테스트가 떨어졌다(9개 중 1개 실패). 되돌렸고, 그 실행이 남긴 unnamed .bin 도 지웠다"
+    }
+   ],
+   "issues": [
+    "spec/README.md 에 건축물 네 가지 줄이 남았다 — 30줄 「building.md — 벽 · 문 · 지붕 · 계단 건축」이 building.md 8줄의 여섯 가지(토대 · 벽 · 문 · 지붕 · 계단 · 기둥)와 어긋난다. 「building.md — 토대 · 벽 · 문 · 지붕 · 계단 · 기둥 건축」으로 고쳐라"
+   ],
+   "good": []
+  },
+  "test": "://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           191\nTests            1628\nPassing Tests    1628\nFailing Tests       0\nPending             0\nAsserts         74541\nTime           284s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ecb0404"
  }
 ]

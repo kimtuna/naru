@@ -1160,7 +1160,7 @@
   - 기준: 연쇄 되풀이를 지키는 테스트가 없다 — buildings.gd collapse() 의 while 루프에서 `more = true` 를 지워 한 번만 훑게 해도 tests/build 53개가 다 통과했다. 지금 테스트는 받치는 것이 늘 받쳐지는 것보다 먼저 놓여(무리 순서가 유리해) 한 번 훑기로도 잡힌다. 받침이 나중에 놓인 경우를 짜라: 토대 A · 벽 W1(A) · 지붕 R1 · R1 위 기둥 P · 지붕 R2 를 놓은 뒤, 옆 토대 C 와 R1 을 받치는 벽 W2(C) 를 나중에 놓고 W1 을 손으로 부순다. 그다음 C 를 부수면 W2 · R1 · P · R2 가 전부 무너지는지 단언하라 (한 번 훑기면 R1 · P · R2 가 떠서 남는다)
   - 기준: (앞 단계 QA) 코드로 만든 설계 값이 저장본 한 칸을 나눠 쓴다 — IslandCache.island_key 가 resource_path 가 빈 설계 값을 모두 「unnamed」 하나로 쳐서, 캐시를 켠(use_cache=true) 서로 다른 코드 설계 값 둘이 번갈아 저장하면 서로의 저장본을 옛 판이라며 지운다. 지금은 캐시를 켜는 곳(test_island.gd · test_lime · test_volcano · test_island_resources · test_dock_building · test_hunger_thirst)이 모두 .tres 를 load 한 것이라 드러나지 않는다(막는 것은 아니다). 고치려면 island_cache.gd 의 prune 에서 key 가 "unnamed" 이면 지우지 않거나(주석으로 까닭을 적기), island_key 주석에 「unnamed 는 한 칸 — 캐시를 켜려면 .tres 로 두라」고 적고, test_island_cache.gd 에 unnamed 를 저장해도 다른 unnamed 저장본에 대한 기대(남는지/지우는지)를 단언으로 박아 둔다. 또 test_save_leaves_other_islands_alone 의 「시험 섬(코드로 만든 설계 값)」 설명은 틀렸다 — 시험 섬은 test_island_blueprint.tres 이다. 설명을 「코드로 만든 설계 값」으로 고친다
   - 기준: (앞 단계 QA) 차선끼리 저장본 폴더를 나눠 써 옛 형식이 다시 생긴다 — user://island_cache 는 모든 체크아웃이 같이 쓴다. QA 시점(18:08)에 옛 코드를 도는 다른 차선이 섬 이름 없는 옛 형식(4_39d4…bin 26MB · 4_7658…bin 5.2MB)을 다시 만들었고, 이 차선이 다음에 구우면 또 지워 저쪽이 다시 굽는다. 합친 뒤에는 사라지지만, 합친 뒤에도 차선마다 굽는 코드(SOURCES 해시)가 다르면 같은 섬의 두 판을 서로 지우며 번갈아 굽는다(틀리진 않고 느려진다). island_cache.gd 의 prune 주석에 이 사정을 한 줄 적어 두면 다음 사람이 헤매지 않는다
-- [ ] 7. spec 에 낡은 줄 둘이 남았다 (2026-09-24 md 점검 — 2026-09-26 다시 재어 셋은 이미 됐다)
+- [x] 7. spec 에 낡은 줄 둘이 남았다 (2026-09-24 md 점검 — 2026-09-26 다시 재어 셋은 이미 됐다)
   - 뺀 까닭: G-145 가 같은 spec 을 고치는 중이었다 (그 뒤 G-145 는 끝났다)
   - **이미 된 것 (2026-09-26 확인)**: farming.md 9줄이 「밭 2×2 · 토대 4×4 위에 네 장」으로 고쳐졌다 ·
     rooms.md 11줄이 「토대 한 장 (… 3×3 에서 키웠다 2026-09-24)」로 날짜와 함께 남았다 ·
@@ -1172,6 +1172,8 @@
   - 기준: 정해진 것이 「미정」 절에 남은 곳이 farming.md 에 더 없다 (읽어서 확인)
   - 기준: (앞 단계 QA) 새 연쇄 테스트의 머리 주석이 틀린 까닭을 적는다 — test_building_collapse.gd 의 test_a_support_placed_later_still_brings_down_the_whole_chain 위 첫 줄이 「한 번 훑기로는 R1 · P · R2 가 떠서 남는다」라고 하지만, 같은 주석 아래와 구현 보고대로 G-145 뒤에는 건축물은 _link_counts 가 다 잡고 떠 남는 것은 상자(설치물)다. 첫 줄을 「한 번 훑기로는 그 위 설치물(상자)이 떠서 남는다」로 고쳐라
   - 기준: (앞 단계 QA) unnamed 저장본이 끝없이 쌓일 수 있다 — island_cache.gd prune 이 unnamed 끼리 안 지우므로, 코드로 만든 설계 값을 use_cache=true 로 굽는 곳이 생기면 user://island_cache 에 unnamed 판이 SOURCES 해시가 바뀔 때마다 늘어난다(지금은 그런 곳이 없어 막는 것은 아니다). 코드 설계 값에서 use_cache 를 켜면 push_warning 하거나, island_key 주석처럼 테스트 하나로 「캐시를 켜는 곳은 모두 .tres」를 단언해 두면 막힌다
+- [ ] 8. (앞 단계 QA) spec/README.md 에 건축물 네 가지 줄이 남았다
+  - 기준: spec/README.md 에 건축물 네 가지 줄이 남았다 — 30줄 「building.md — 벽 · 문 · 지붕 · 계단 건축」이 building.md 8줄의 여섯 가지(토대 · 벽 · 문 · 지붕 · 계단 · 기둥)와 어긋난다. 「building.md — 토대 · 벽 · 문 · 지붕 · 계단 · 기둥 건축」으로 고쳐라
 
 ## [x] G-152 농사가 된다 — 물 주기 · 비료
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 차선 2 를 Opus 로 바꿔 이 묶음을 맡긴다)
