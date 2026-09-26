@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 22:35:04",
- "updated_epoch": 1790429704,
+ "updated": "2026-09-26 22:45:03",
+ "updated_epoch": 1790430303,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 42,
   "groups_done": 40,
   "groups_waiting": 0,
   "steps_total": 189,
-  "steps_done": 184
+  "steps_done": 185
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "3",
  "step_title": "휴지통 줄의 번호 표가 어긋난다 (G-910 단계 3)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 22:35:04",
+ "phase": "QA",
+ "phase_since": "2026-09-26 22:44:02",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",

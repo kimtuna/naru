@@ -1134,7 +1134,7 @@
   - 기준: 파일마다 보던 옛 검사가 겹쳐 남았다 — game/tests/core/tools/test_test_sh_counts_pending.gd:86 의 src.count("OS." + "move_to_trash") 단언은 이제 test_no_move_to_trash.gd 가 game/ 전체를 보므로 겹친다. 지워도 되고 남겨도 해는 없다 — 남긴다면 주석에 전체 검사가 따로 있다고 적어 두어라
 - [x] 3. 다른 테스트가 TMPDIR 에 임시 폴더를 남긴다 (G-910 단계 3)
   - 기준: 다른 테스트가 TMPDIR 에 임시 폴더를 남긴다 — 구현 세션 보고대로 TMPDIR 에 naru_key_* · naru_locked_* · naru_island_animals_* 따위가 쌓인다. game/tests 에서 OS.get_temp_dir() 로 폴더를 만드는 테스트를 찾아 after_each 에서 안의 파일 → 폴더 순으로 DirAccess.remove_absolute 로 지우게 하고, 돌린 뒤 그 폴더가 없는지 단언하라
-- [ ] 3. 휴지통 줄의 번호 표가 어긋난다 (G-910 단계 3)
+- [x] 3. 휴지통 줄의 번호 표가 어긋난다 (G-910 단계 3)
   - 기준: 휴지통 줄의 번호 표가 어긋난다 — test_test_sh_counts_pending.gd 7줄과 after_each 위 23줄 주석이 휴지통 고침을 「G-910.21」로 적었지만 G-910.21 은 2줄의 Pending 합계 항목이고 휴지통 고침은 커밋 0342a6c 「G-910.8 … (G-910 단계 21)」이다. 8줄처럼 「G-910 단계 21」로 맞추고, 7줄에도 지키는 테스트 이름 test_after_each_removes_the_temp_dir_without_the_trash 를 적어 8줄과 꼴을 맞춰라
 - [ ] 3. 테스트 이름이 휴지통을 안 본다 (G-910 단계 2)
   - 기준: 테스트 이름이 휴지통을 안 본다 — test_test_sh_counts_pending.gd 의 test_after_each_removes_the_temp_dir_without_the_trash 는 이제 폴더가 지워졌는지만 본다. 휴지통 검사는 test_no_move_to_trash.gd 로 옮겨 갔으니 이름을 test_after_each_removes_the_temp_dir 로 줄이면 읽는 사람이 헷갈리지 않는다 (막는 것은 아니다)
