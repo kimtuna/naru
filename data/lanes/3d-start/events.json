@@ -1,77 +1,5 @@
 [
  {
-  "time": "2026-09-22 23:08:46",
-  "epoch": 1790086126,
-  "type": "pass",
-  "title": "통과 — G-900 단계 12 (쓰레기와 죽은 코드를 지운다)",
-  "group": "G-900",
-  "step": "12",
-  "attempt": "1",
-  "report": {
-   "problem": "G-900.12 — 죽은 접근자 station() · gun_at() 을 지우고, 정해진 규칙(갈고리 탄은 제작대에서 · R 로 채운다)을 spec 규칙 쪽과 키 표에 못 박고 검사를 붙였다",
-   "approach": "기준 일곱 중 넷(craft_progress()/craft_recipe() · test_zz_probe.gd.uid · game_root 의 clock() · )은 지금 나무에 이미 없었다 — 앞선 커밋 191e29c 「G-117.2 제작대 4종」이 craft_progress/craft_recipe 와 func clock() 을 걷어냈고, .uid 는 git 에 들어간 적조차 없이 사라져 있었다 (git log -S · git ls-files · 저장소 전체 grep 으로 넷 다 0건 확인). 남은 셋을 했다. (1) station_window.gd 의 station() 과 tool_catalog.gd 의 gun_at() 을 지웠다 — .tscn 까지 포함해 저장소 전체 grep 이 정의 한 줄뿐이었다. (2) climbing.md 25줄의 「갈고리 탄」 항목에 「제작대에서 만든다(recipes.json 의 grapple_ammo — 철괴1+나무2 → 4개) · R 로 채운다」를 붙였다. 앞 회차가 「미정」에서 물음만 지워, 답이 spec 어디에도 없던 자리다. 검사는 「## 규칙」 절만 떼어 그 항목이 「제작대」와 「R」을 말하는지 본다 — 「미정」 절을 읽는 기존 헬퍼와 같은 꼴이고, 빈 검사가 아닌지(규칙 밖의 줄 · 말하지 않는 항목 · 이어지는 들여쓴 줄)도 함께 본다. (3) input.md 12줄 R 을 「재장전 (총 · 갈고리총을 들었을 때) (사람 결정 2026-09-22, 04_life/climbing.md)」로 고치고, 키 표 검사에 R 줄 검사와 「정말 두 곳(attack.gd · climb_gear.gd)이 InputActions.RELOAD 를 듣나」를 더했다. BOUND 에도 R→reload/KEY_R 을 넣어 표가 InputMap 과 어긋나면 걸리게 했다. 같은 말을 하던 input_actions.gd:17 의 주석도 한 줄 맞췄다. 테스트: changed_tests.py 가 빈 목록을 냈다 — 고친 곳이 spec/ 이라 game/ 밖이어서 고르지 못한다 — 그래서 지시대로 전체를 돌렸다. test.log 가 말한 것: Scripts 103 · Tests 895 · Passing 895 · Asserts 12506 · 517.0s, All tests passed.",
-   "why": "",
-   "files": [
-    "game/ui/hud/station_window.gd",
-    "game/combat/tools_as_weapons/tool_catalog.gd",
-    "game/core/input/input_actions.gd",
-    "spec/04_life/climbing.md",
-    "spec/01_settings/input.md",
-    "game/tests/life/climbing/test_climbing_temporary_notes.gd",
-    "game/tests/core/input/test_input_spec_table.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "CraftingStation.craft_progress() 와 craft_recipe() 는 부르는 곳도 테스트도 없다 … 안 쓸 것이면 지워라.",
-     "evidence": "저장소 전체(game/ · spec/) grep 결과 0건 — 정의도 부르는 곳도 없다. 구현 세션 말대로 앞선 커밋 191e29c 에서 이미 걷혔다. 전체 테스트 895개가 다 통과했으니 지워진 채로 깨지는 곳도 없다"
-    },
-    {
-     "ok": true,
-     "criterion": "쓰레기 파일이 남았다 — game/tests/ui/hud/test_zz_probe.gd.uid … rm 으로 지워라",
-     "evidence": "find . -name '*zz_probe*' (.git 제외) 결과 0건. 나무에도 git 에도 없다"
-    },
-    {
-     "ok": true,
-     "criterion": "쓰는 곳이 없는 clock() 접근자 — game_root.gd:226 의 func clock() -> GameClock … 지워라.",
-     "evidence": "grep -rn 'func clock' game/ 결과 game/core/game_root.gd:305 의 clock_label() 한 줄뿐. clock() 은 정의가 없다"
-    },
-    {
-     "ok": true,
-     "criterion": "쓰지 않는 station() 접근자가 남았다 — ui/hud/station_window.gd 의 func station() -> CraftingStation 를 지워라.",
-     "evidence": "git diff 가 station_window.gd:62~65 의 func station() 삭제를 보여 준다. grep -rn '\\.station()' game/ 결과 0건 — 부르던 곳이 없어 깨진 데도 없고, 남은 station_kind() 는 그대로다"
-    },
-    {
-     "ok": true,
-     "criterion": "쓰이지 않는 gun_at() 이 남았다 — tool_catalog.gd:170 의 gun_at(계통, 단) 을 지워라",
-     "evidence": "git diff 가 tool_catalog.gd 의 func gun_at() 8줄 삭제를 보여 준다. grep -rn 'gun_at' game/ 결과 0건. 바로 아래 reload_seconds() 주석과 guns_of() · tier() 는 손대지 않았다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 정해진 규칙이 spec 미정 줄에만 있다 — climbing.md:25 갈고리 탄 줄에 「제작대에서 만든다 · R 로 채운다」를 붙이고, test_climbing_temporary_notes.gd 에 그 줄이 「제작대」와 「R」을 말하는지 보는 단언을 더해라",
-     "evidence": "spec/04_life/climbing.md 25~28줄의 「갈고리 탄」 항목에 「**제작대에서 만든다** (recipes.json 의 grapple_ammo — 철괴1+나무2 → 4개) · **R 로 채운다** (사람 결정 2026-09-22, 01_settings/input.md)」가 붙었다. 적힌 수치가 진짜와 맞는지 직접 봤다 — recipes.json:39 가 grapple_ammo / station workbench / iron_ingot 1 + wood 2 / count 4 로 spec 과 똑같다. 검사는 test_the_rules_say_where_the_grapple_ammo_is_made_and_filled 가 새 _rules() 로 「## 규칙」 절만 떼고 _bullet() 로 「갈고리 탄」 항목(이어지는 들여쓴 줄 포함)을 집어 「제작대」와 「R 」이 있는지 본다. 껍데기가 아닌지도 test_the_rules_check_catches_a_missing_answer 가 도우미에 가짜 md 셋을 먹여 본다 — 「규칙」 밖 줄은 빈 글로 나오고, 제작대가 없는 얇은 항목은 안 센다(assert_false 가 걸린다). 그 얇은 경우가 있으니 진짜 검사의 contains(\"제작대\") 는 깨질 수 있는 단언이다. 「아직 참인가」 쪽은 test_the_r_key_really_fills_the_grapple_gun 이 climb_gear.gd 가 InputActions.RELOAD 를 듣는지(실제 50줄) · reload 액션이 InputMap 에 있는지를 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) R 키 줄이 갈고리총을 빼놓는다 — input.md:12 을 「재장전 (총 · 갈고리총을 들었을 때) …」로 고치고, RELOAD 를 쓰는 곳이 둘이라는 것을 보는 단언을 한 줄 더해라",
-     "evidence": "spec/01_settings/input.md:12 가 「**R** | 재장전 (총 · 갈고리총을 들었을 때) (사람 결정 2026-09-22, 04_life/climbing.md)」로 바뀌었다 — 「사람 결정 2026-09-22」는 그대로 남았다. test_the_reload_row_names_the_grapple_gun_too 가 그 줄에 「재장전」 · 「갈고리총」 · climbing.md 가리킴이 다 있는지 본다. test_two_places_really_listen_to_the_reload_action 이 RELOAD_LISTENERS 둘을 파일로 읽어 InputActions.RELOAD 가 있는지 본다 — 실제로 attack.gd:79 · climb_gear.gd:50 둘 다 있다. 덤으로 BOUND 에 R→reload/KEY_R 이 들어가 기존 test_every_row_still_matches_what_the_input_map_binds 가 표와 InputMap 이 어긋나면 걸어 준다"
-    }
-   ],
-   "issues": [
-    "늘 참인 단언이 빈 검사 자리에 또 들어갔다 — game/tests/core/input/test_input_spec_table.gd:124 의 `assert_false(_row(elsewhere, \"R\").contains(\"갈고리총\"), …)` 는 지키는 것이 없다. elsewhere 는 바로 윗줄에서 만든 `\"| **R** | 재장전. M 은 여기 없다 |\"` 라 「갈고리총」이라는 글자가 애초에 없다 — _row() 가 그 줄을 그대로 돌려주든 빈 글을 돌려주든 contains() 는 늘 false 라서, 저장소가 어떻게 바뀌어도 이 단언은 통과한다. 같은 함수의 116 · 117 · 120 · 123 줄은 _row() 가 망가지면 걸리는데 이 한 줄만 아니다. G-900.11 QA 가 잡은 test_island_design_notes.gd:125 의 `doubled.count(...)` 와 똑같은 자리다. 고치는 법: 「R 줄이 갈고리총을 말하나」를 도우미로 빼고(예: `func _names(row: String, word: String) -> bool`) 진짜 검사 test_the_reload_row_names_the_grapple_gun_too 와 이 빈 검사가 **같은 도우미**를 부르게 한 뒤, 빈 검사에서는 갈고리총을 말하는 가짜 줄로 assert_true · 말하지 않는 가짜 줄로 assert_false 를 짝지어 두 갈래를 다 걸어라. 그럴 생각이 없으면 124~125 두 줄을 지워라 — 없는 편이 낫다"
-   ],
-   "good": [
-    "game/core/input/input_actions.gd:16 의 RELOAD 주석을 「재장전 (총 · 갈고리총을 들었을 때) (사람 결정 2026-09-22, spec/04_life/climbing.md)」로 함께 고쳤다 — 기준은 spec/01_settings/input.md:12 만 짚었지만 같은 말을 하던 자리라 한쪽만 고치면 곧바로 낡는다. 기능을 더하지 않았고 G-900 의 「낡은 주석을 사실대로」와 결이 같아 문제로 세지 않는다"
-   ]
-  },
-  "test": "ind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/storage/test_reach_temporary_notes.gd\n* test_the_chest_reach_is_marked_temporary\n* test_the_station_reach_is_marked_temporary\n* test_both_notes_still_tell_the_truth_about_being_the_same_value\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             103\nTests               895\nPassing Tests       895\nAsserts           12506\nTime              516.595s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "a0acf9b"
- },
- {
   "time": "2026-09-22 23:29:29",
   "epoch": 1790087369,
   "type": "pass",
@@ -7975,5 +7903,44 @@
    "good": []
   },
   "test": " 1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/core/test_project_setup.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           200\nTests            1690\nPassing Tests    1690\nFailing Tests       0\nRisky/Pending       0\nAsserts         76849\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-27 02:16:44",
+  "epoch": 1790443004,
+  "type": "pass",
+  "title": "통과 — G-920 단계 1 (벽에 박은 앵커가 저장되지 않는다 (G-990 단계 1))",
+  "group": "G-920",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "벽에 박은 앵커를 섬마다 월드에 저장하고 되돌린다 — 왕복 테스트로 확인 (바뀐 곳만: 61개 파일 535개 통과)",
+   "approach": "앵커는 박을 때 가방에서 빠지는데, 박힌 앵커(ClimbGear 아래 Anchor 노드)를 담는 곳이 없어 불러오면 사라졌다. ClimbGear 에 place_at(at, normal) 을 떼어 내 drive_anchor 와 되돌리기가 같은 길로 박게 하고, 횃불과 같은 모양으로 standing() → [{at, normal}] · restore(list) 를 달았다(Anchor 에 normal() 을 더했다). IslandState.of/apply 가 이를 섬마다 'anchors' 키로 담고 되돌린다. world_data.gd 의 키 표 주석에도 더했다(test_world_data_keys_note 가 지킨다). 왕복 테스트의 _play 에서 앵커 하나를 박고, 돌아와서 같은 자리 · 같은 방향으로 하나가 있는지, 씬 전체 비교에서 Island/ClimbGear/ 아래가 새지 않는지 단언한다. 되돌리기를 잠깐 끄면 이 테스트가 실패하는 것을 확인했다. 참고: current.md(plan/list.md G-920 단계 1)의 수용 기준 줄이 묶음 머리글을 그대로 복사해 깨져 있었다 — 기준 글은 G-990.1 커밋의 「d. 벽에 박은 앵커를 저장하지 않는다. 가방에서는 빠졌는데 불러오면 앵커가 없다」를 보고 다른 저장 단계와 같은 방식(담고 왕복 테스트)으로 풀었다. 이 묶음을 목록에 붙이는 쪽이 첫 단계의 기준에 머리글을 넣는 것으로 보인다.",
+   "why": "",
+   "files": [
+    "game/life/climbing/climb_gear.gd",
+    "game/life/climbing/anchor.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/settings/save/world_data.gd",
+    "game/tests/settings/save/test_round_trip.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "## [ ] G-920 루프가 찾은 것 — 스스로 갚는다 루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다",
+     "evidence": "기준 줄은 묶음 머리글이 잘못 복사된 것이라(plan/list.md:1267) 단계 제목과 G-990.1 커밋의 d항 「벽에 박은 앵커를 저장하지 않는다. 가방에서는 빠졌는데 불러오면 앵커가 없다」를 기준으로 채점했다. ClimbGear.standing()/restore() 와 IslandState.of/apply 의 'anchors' 키로 섬마다 담고 되돌린다. test_round_trip.gd::test_anchors_driven_into_a_wall_come_back 은 _play 에서 앵커 하나를 박고, 불러온 뒤 개수 1 · 같은 at · 같은 normal · Island/ClimbGear/ 아래가 씬 비교에서 새지 않는지를 단언한다. 일부러 깨 봤다: island_state.gd 의 climb_gear.restore(anchors) 를 pass 로 바꾸자 이 테스트가 「[0] expected to equal [1]: 들어와도 앵커가 박혀 있다」로 실패했고, 씬 전체 비교 테스트들도 함께 실패했다(4개). 확인한 뒤 원래대로 되돌렸다. test.log: 바뀐 곳만 61개 파일, 535개 통과, guard 통과. world_data.gd 의 키 표 주석도 test_world_data_keys_note 가 지키고 통과한다"
+    }
+   ],
+   "issues": [
+    "[결정] G-920 단계 1의 기준 줄에 묶음 머리글이 들어갔다 — plan/list.md:1267-1270 에서 「- 기준:」 뒤에 실제 기준 대신 「## [ ] G-920 루프가 찾은 것 …」 머리글과 묶음 설명 두 줄이 복사됐다. 그래서 current.md 의 수용 기준이 「## [ ] G-920 …」 한 줄뿐이었다. 2~7단계 기준은 멀쩡하니, QA problems 를 G-9xx 묶음에 붙이는 쪽(harness)이 묶음을 새로 만들 때 첫 단계의 기준에 머리글을 넣는 것으로 보인다. 이번에는 G-990.1 커밋의 d항으로 채점했다. harness 에서 첫 단계 기준을 만드는 곳을 고치고, list.md:1267 을 「벽에 박은 앵커가 저장되지 않는다 — 박은 앵커를 섬마다 저장하고, 왕복 테스트로 같은 자리 · 같은 방향으로 돌아오는지 단언하라」로 바꾸고, 1268-1270 의 겹친 설명 줄은 지워야 한다. 세션이 손댈 수 없는 하네스 쪽 일이라 사람이 봐야 한다",
+    "앵커를 박는 길이 왕복 테스트에서 빠졌다 — test_round_trip.gd 의 _play 는 drive_anchor() 대신 climb_gear.place_at() 으로 곧장 박는다. drive_anchor 도 place_at 을 거치니 저장 쪽에는 빈틈이 없다. 다만 「가방에서 하나 빠지고 벽에 하나 남는다」를 한 번에 보려면 tests/life/climbing/test_anchor.gd 에 drive_anchor 성공 뒤 climb_gear.standing().size() 가 1 늘었는지 보는 단언을 더하면 된다"
+   ],
+   "good": []
+  },
+  "test": "ntier_islands/test_voyage.gd\nok     32s  res://tests/world/terrain/test_island_in_game.gd\nok     34s  res://tests/settings/save/test_round_trip.gd\nok     35s  res://tests/life/hunting/test_island_animals.gd\nok     14s  res://tests/world/frontier_islands/test_volcano.gd\nok     53s  res://tests/build/test_building_qa_sweep.gd\nok     22s  res://tests/life/climbing/test_climbing.gd\nok     26s  res://tests/world/terrain/test_island_walk.gd\nok     27s  res://tests/settings/save/test_dead_save.gd\nok     14s  res://tests/core/debug/test_dev_box.gd\nok     13s  res://tests/build/test_building_roof_stairs.gd\nok      9s  res://tests/life/climbing/test_grapple.gd\nok      9s  res://tests/core/debug/test_dev_box_open.gd\nok     12s  res://tests/life/climbing/test_anchor.gd\nok      7s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      5s  res://tests/combat/damage_death/test_death.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      6s  res://tests/settings/save/test_autosave.gd\nok      7s  res://tests/world/frontier_islands/test_lime.gd\nok      5s  res://tests/ui/menu/test_pause_menu.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok    479s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            61\nTests             535\nPassing Tests     535\nFailing Tests       0\nRisky/Pending       0\nAsserts          5293\nTime           479s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "00dbf5a"
  }
 ]
