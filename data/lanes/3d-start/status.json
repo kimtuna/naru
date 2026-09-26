@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 19:10:21",
- "updated_epoch": 1790417421,
+ "updated": "2026-09-26 19:20:05",
+ "updated_epoch": 1790418005,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 41,
   "groups_done": 39,
   "groups_waiting": 0,
   "steps_total": 179,
-  "steps_done": 169
+  "steps_done": 170
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "24",
  "step_title": "옛 시각 상수가 테스트에 남았다 (G-146 단계 2)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 19:10:21",
+ "phase": "QA",
+ "phase_since": "2026-09-26 19:19:34",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
