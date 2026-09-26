@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 20:59:05",
- "updated_epoch": 1790423945,
+ "updated": "2026-09-26 21:09:04",
+ "updated_epoch": 1790424544,
  "ended": "2026-09-26 18:55:16",
  "progress": {
   "groups_total": 42,
   "groups_done": 39,
   "groups_waiting": 0,
   "steps_total": 183,
-  "steps_done": 178
+  "steps_done": 180
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-913",
  "step": "3",
  "step_title": "토대 위 횃불 놓기에 테스트가 없다 (G-910 단계 25)",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-26 20:59:05",
+ "phase": "QA",
+ "phase_since": "2026-09-26 21:08:11",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-26 12:00:00",

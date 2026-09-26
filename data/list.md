@@ -1140,7 +1140,7 @@
   - 기준: 머리말의 옛 단언 수가 낡았다 — 같은 파일 머리말 6~7줄의 「지금은 814개를 단언하고 끝까지 간다 (전체 1507 · 통과 1507)」가 지금(1092 단언 · 전체 1665)과 다르다. 「G-148 때는」처럼 그때 일로 적거나 숫자를 빼라
 - [x] 2. PLACERS 주석이 놓는 곳을 넷만 적는다 (G-910 단계 25)
   - 기준: PLACERS 주석이 놓는 곳을 넷만 적는다 — game/build/placeable.gd 25줄 「(Stations · Chests · Farmland · Buildings)」에 Torches 가 빠졌다. 이 묶음은 build/ 를 건드리지 않아 남겼다. 「(Stations · Chests · Farmland · Buildings · Torches)」로 고쳐라
-- [ ] 3. 토대 위 횃불 놓기에 테스트가 없다 (G-910 단계 25)
+- [x] 3. 토대 위 횃불 놓기에 테스트가 없다 (G-910 단계 25)
   - 기준: 토대 위 횃불 놓기에 테스트가 없다 — torches.gd aimed_spot 이 Placeable.plan_cell 로 합쳐지면서 토대 · 지붕 윗면에도 횃불이 놓이게 됐는데(전에는 BuildPiece 위를 막았다), 이를 지키는 테스트가 없다. tests/world/lighting/test_torch.gd 에 토대를 하나 놓고 윗면을 짚어 place_held 가 횃불을 그 윗면 높이에 세우는지, 벽 옆면을 짚으면 안 놓이는지 단언을 넣어라
 
 
