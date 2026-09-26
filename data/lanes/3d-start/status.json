@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 22:06:46",
- "updated_epoch": 1790428006,
+ "updated": "2026-09-26 22:10:06",
+ "updated_epoch": 1790428206,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 42,
@@ -15,9 +15,9 @@
  "group": "G-910",
  "step": "3",
  "step_title": "다른 테스트가 TMPDIR 에 임시 폴더를 남긴다 (G-910 단계 3)",
- "attempt": "2",
- "phase": "QA",
- "phase_since": "2026-09-26 22:06:46",
+ "attempt": "3",
+ "phase": "구현",
+ "phase_since": "2026-09-26 22:10:06",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
