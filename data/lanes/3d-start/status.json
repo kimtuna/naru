@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 00:39:27",
- "updated_epoch": 1790437167,
+ "updated": "2026-09-27 00:49:07",
+ "updated_epoch": 1790437747,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 42,
   "groups_done": 40,
   "groups_waiting": 0,
   "steps_total": 196,
-  "steps_done": 194
+  "steps_done": 195
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "2",
  "step_title": "새 테스트 뒤 빈 줄이 하나뿐이다 (G-910 단계 2)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 00:39:27",
+ "phase": "QA",
+ "phase_since": "2026-09-27 00:48:38",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
