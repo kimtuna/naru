@@ -1095,7 +1095,7 @@
   - 기준: 줄 · 버퍼 칸 누르기에는 지킴이가 없다 — station_window.gd 의 _press 와 _collect 는 _station == null 만 보고 _drop_freed() 를 안 부른다. 제작대가 풀린 그 프레임 안(_process 의 _refresh 가 돌기 전)에 줄이나 버퍼 칸이 눌리면 풀린 객체로 start_craft · collect 를 불러 같은 SCRIPT ERROR 가 난다. _press · _collect 첫머리에 _drop_freed() 를 넣고, test_station_window.gd 의 test_a_station_freed_while_the_window_is_open_is_not_asked_anything 에서 station.free() 직후 wait_process_frames 없이 row(AXE).pressed.emit() · buffer_slot(0).pressed.emit() 을 먼저 한 번 더 눌러 조용한지 단언하라 (지금은 station_kind() 가 먼저 불려 null 이 된 뒤에만 누른다)
 - [x] 19. station_window.gd 머리말의 줄 수가 낡았다 (G-910 단계 10)
   - 기준: station_window.gd 머리말의 줄 수가 낡았다 — 25행 「제작대 레시피가 스물 몇 줄이라 화면 아래로 넘쳤다」인데 recipes.json 의 가공대 레시피는 44줄이다(이번 테스트 주석은 「마흔 몇 줄」로 맞다). 「마흔 몇 줄」로 고쳐라 (막는 것은 아니다)
-- [ ] 20. 탄창 주석이 spec 에 없는 말을 한다 (G-910 단계 16)
+- [x] 20. 탄창 주석이 spec 에 없는 말을 한다 (G-910 단계 16)
   - **줄기에는 아직 없는 코드다** — 이 묶음의 브랜치 `g/G-910`(99ab8a9)이 넣은 주석이다. 그 브랜치에서 이어 하면 보인다 (2026-09-26 확인)
   - 기준: 탄창 주석이 spec 에 없는 말을 한다 — game/life/climbing/grapple.gd:29 「등급이 생기면 등급표가 덮는다」는 spec/04_life/climbing.md 에 없다. 등급마다 다른 것은 **최대 거리**(사람 결정 2026-09-17)뿐이고 탄창은 4발로 정해졌다. 그 문장을 지워라 (test_the_magazine_is_not_marked_temporary 는 「임시」·「사람 결정」만 보니 지워도 통과한다)
 - [ ] 21. test.sh 합계의 Pending 이 늘 0 으로 찍힌다 (G-910 단계 14)
@@ -1118,6 +1118,8 @@
   - 기준: 진짜 섬 물로 채우는 테스트가 없다 — 채우기 테스트는 모두 가짜 연못(fresh_water_level 을 테스트가 넣은 Callable)이다. test_island.gd 가 crops.fresh_water_level 을 shape.fresh_water_level_at 에 이었는지는 아무 테스트도 안 본다. tests/world/terrain/test_island_in_game.gd 같은 섬 테스트에 「섬의 crops.fresh_water_level 이 유효하고 섬의 연못 한 자리에서 수면 높이를 낸다」는 단언을 더하라
 - [ ] 8. _process 주석의 줄 수도 낡았다 (G-910 단계 19)
   - 기준: _process 주석의 줄 수도 낡았다 — game/ui/hud/station_window.gd 160행 「줄이 스물 몇이라 세는 값이 싸다」도 가공대 레시피 45줄과 안 맞는다. 「줄이 마흔 몇이라」로 고쳐라 (주석만 — 막는 것은 아니다)
+- [ ] 8. 테스트 사이 빈 줄이 하나뿐이다 (G-910 단계 20)
+  - 기준: 테스트 사이 빈 줄이 하나뿐이다 — game/tests/life/climbing/test_grapple_magazine_size.gd 의 test_the_magazine_does_not_vary_by_grade 끝과 다음 ## 주석(test_the_check_catches_the_old_shape) 사이에 빈 줄이 하나다. 파일의 다른 함수들처럼 두 줄로 맞춰라 (모양만의 문제다)
 
 ## [ ] G-911 G-910 에서 뺀 것 — 차선을 나누느라 갈라졌던 것 (2026-09-26 다시 합쳤다)
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 차선 2 가 G-154 다음에 한다)
