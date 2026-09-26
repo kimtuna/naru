@@ -983,7 +983,7 @@
   - 기준: 찍어서 확인한다 — 가방 창이 두 줄이다
   - 기준: (앞 단계 QA) spec 이 값 자리를 player_config.tres 라고 한다 — movement-controls.md 21줄 「값은 player_config.tres, 임시」인데 shoulder_right · shoulder_up 은 player_config.tres 에 없고 player_config.gd 의 기본값(0.9 · 0.4)에만 있다. spec 을 「player_config.gd」로 고치거나 tres 에 두 값을 적어라
   - 기준: (앞 단계 QA) 조준 사진에서 캐릭터가 핫바를 덮는다 — .loop/out/shoulder/shoulder_aim_ko.png 에서 좁힌 시야로 캐릭터 몸이 커져 핫바 2~3번 칸 위를 가린다. 조준점은 비지만 핫바 글자가 캐릭터 뒤에 묻힌다. 조준 때 캐릭터를 더 왼쪽으로 두거나(shoulder_right 를 조준 때만 늘리기) 몸이 핫바 네모(화면 좌표)와 겹치지 않는지 보는 단언을 test_shoulder_camera.gd 에 더해라
-- [ ] 3. 장비칸
+- [x] 3. 장비칸
   - 「인벤토리 칸 위에 있고, 왼쪽에 캐릭터가 보이고 그 주변으로 장비칸이 있는 느낌」
   - 기준: 가방 창의 **인벤토리 칸 위**에 장비 영역이 있다 — **왼쪽에 캐릭터 모습**, 그 둘레에 장비칸 (테스트)
   - 기준: 장비칸은 **신발 · 하의 · 상의 · 모자 · 귀걸이 · 목걸이 · 반지 · 가방** 여덟 (사람 결정 2026-09-26) (테스트)
@@ -994,6 +994,9 @@
   - 기준: `spec/02_player/equipment.md` 에 여덟 칸 · 가방칸 규칙을 사람 결정으로 적는다. 장비마다의 스탯은 「미정」
   - 기준: 찍어서 확인한다 — 창이 잘리지 않고 1280×720 안에 들어간다
   - 기준: (앞 단계 QA) test_shoulder_camera 주석이 옛 방식을 말한다 — game/tests/player/movement_controls/test_shoulder_camera.gd 의 핫바 단언 위 주석 「조준 때는 어깨를 더 비킨다」는 버린 방식이다. 지금은 좁힌 시야만큼 카메라가 시선을 따라 물러난다(Player.set_camera_fov). 주석을 「조준 때는 좁힌 시야만큼 카메라가 물러난다」로 고쳐라
+- [ ] 4. (앞 단계 QA) 배낭 레시피·무게가 spec 에 「임시」로 없다
+  - 기준: 배낭 레시피·무게가 spec 에 「임시」로 없다 — recipes.json 의 backpack(제작대, 가죽 4 · 목재 2) 과 weights.json 의 backpack 1.0kg 은 지어낸 값인데 report 에만 임시라고 적혔다. spec/02_player/equipment.md 수치 절에 「배낭 레시피 제작대 가죽 4 · 목재 2 · 무게 1.0kg — 임시」 한 줄을 더해라
+  - 기준: (앞 단계 QA) 장비칸을 맞지 않는 칸에 놓으면 받는 척한다 — slot_drop.gd _can_drop_data 가 equip 데이터면 chest==null 만 보고 true 라, 스파이크를 끌어 목재가 든 칸에 놓으면 드롭 표시가 뜨고 Equipment.unequip 이 조용히 false 를 낸다. 빈 칸이거나 fits(slot, 그 칸)일 때만 true 로 하고, test_bag_gear 에 「목재 칸은 신발칸 것을 안 받는다」 단언을 더해라
 
 ## [ ] G-154 계단이 걸린다 — 오르막이 느리다 · 토대 위로 안 붙는다 (사람이 플레이하고 짚었다 2026-09-26)
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 차선 2 가 G-152 다음에 한다)

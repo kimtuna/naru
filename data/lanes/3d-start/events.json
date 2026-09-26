@@ -1,67 +1,5 @@
 [
  {
-  "time": "2026-09-22 07:20:18",
-  "epoch": 1790029218,
-  "type": "pass",
-  "title": "통과 — G-119 단계 1 (부수면 그대로 돌아온다)",
-  "group": "G-119",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "놓은 것을 부수면 재료가 아니라 그것이 그대로 돌아온다 — 규칙을 build/placeable.gd 한 곳에 뒀다",
-   "approach": "제작대가 목재 10개를 뱉던 까닭은 Stations.returns_of 가 stations.json 의 cost 를 RETURN_RATE(0.5) 만큼 돌려주고 있었기 때문이다. 제작대만 고치면 상자·횃불이 놓이게 될 때 같은 병이 또 생기므로, 「부수면 놓은 것이 그대로 돌아온다」를 build/placeable.gd 한 곳에 뒀다: 놓이는 것은 placed_item()(돌아올 아이템 이름)과 vanish() 둘만 갖추고 Placeable.GROUP 에 들면 되고, 부수는 길(그 자리에 DroppedItem 한 개를 떨어뜨리고 사라진다)은 하나뿐이다. 제작대와 선착장이 그 길에 붙었고, Stations.break_station 은 이제 돌아온 아이템 이름을 돌려준다(RETURN_RATE·returns_of 는 지웠다). stations.json 의 cost 와 StationCatalog.cost_of 도 함께 지웠다 — 부술 때 말고는 쓰는 데가 없었고, 남겨 두면 만드는 재료가 레시피와 두 곳에 적히기 때문이다. 대신 「제작대 목록에 재료를 따로 적지 않는다」를 검사로 못 박았다. 테스트는 (1) 게임 화면을 띄우고 진짜 좌클릭으로 부숴 제작대 다섯 종류가 저마다 자기 자신 한 개로 떨어지고 재료는 한 톨도 안 떨어지는지, (2) 걸어가 주우면 가방에 그 제작대가 들어오고 그 칸을 골라 우클릭해 다시 놓이는지, (3) 선착장과 「아직 놓는 길이 없는 상자·횃불」까지 같은 규칙 하나로 돌아오는지를 본다. 남은 구멍 하나: 선착장은 부딪히는 몸통이 없어(설계상 — 내리는 캐릭터가 널판에 끼여서) 조준해서 부술 길이 아직 없다. 규칙은 붙였고 테스트로 확인하지만, 게임 안에서 선착장을 부수는 손짓은 없다. res://tests 아래 아홉 폴더(build·craft·player·world·ui·core·settings·life·combat)를 나눠 전부 돌렸고 610개가 다 통과했다. guard 도 통과했다.",
-   "why": "제작대를 부수면 만들던 것과 출력 버퍼는 함께 사라진다 — spec/05_craft/crafting-stations.md 의 미정(임시: 사라진다) 그대로다. 코드 주석(crafting_station.gd vanish)에 임시라고 적었다",
-   "files": [
-    "game/build/placeable.gd",
-    "game/craft/stations/stations.gd",
-    "game/craft/stations/crafting_station.gd",
-    "game/craft/stations/station_catalog.gd",
-    "game/craft/stations/stations.json",
-    "game/world/frontier_islands/dock.gd",
-    "game/world/frontier_islands/dock_builder.gd",
-    "game/tests/build/test_placeable.gd",
-    "game/tests/craft/stations/test_stations.gd",
-    "game/tests/craft/stations/test_station_recipes.gd",
-    "game/tests/player/pickup/test_pickup.gd",
-    "list.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "제작대를 부수면 **그 제작대 아이템**이 나온다 — 재료가 아니다 (테스트)",
-     "evidence": "tests/craft/stations/test_stations.gd 의 test_breaking_a_station_returns_the_station_itself_not_its_materials 가 실제 좌클릭으로 부순 뒤 _assert_only_dropped(WORKBENCH) 로 「떨어진 것이 한 가지뿐 · workbench 1개」를 못 박고, 레시피의 inputs 를 훑어 재료가 0개임을 따로 확인한다. test_every_kind_of_station_returns_its_own_kind 가 stations.json 의 다섯 종류 전부에 같은 검사를 돌린다. 일부러 깨 봤다 — Placeable.break_into 가 목재 10개를 함께 떨어뜨리게 고치자 두 테스트가 떨어졌다({workbench:1, wood:10} 로 잡힘). 고친 것은 되돌렸고 md5 로 원래와 같음을 확인했다"
-    },
-    {
-     "ok": true,
-     "criterion": "주우면 가방에 그 제작대가 들어오고, 다시 놓을 수 있다 (테스트)",
-     "evidence": "test_stations.gd 의 test_the_broken_station_goes_back_into_the_bag_and_can_be_placed_again 이 놓고(가방 0개 확인) · 부수고 · Pickup.collect 로 주워 가방에 workbench 1개가 들어오는지 보고, 그 칸을 골라 손에 든 뒤 다시 _place_one() 으로 놓고 가방이 0개로 빠지는지까지 본다. tests/player/pickup/test_pickup.gd 의 test_walking_over_what_a_broken_station_drops_picks_it_up 은 걸어가서 밟아 줍는 길로 같은 것을 확인하고, 「재료는 애초에 떨어지지 않았다」(wood 0개)도 단언한다"
-    },
-    {
-     "ok": true,
-     "criterion": "상자 · 횃불 · 선착장처럼 놓는 것 전부 같은 규칙이다 (테스트)",
-     "evidence": "규칙이 build/placeable.gd 한 곳에 모였고(Placeable.break_into), 부수는 길은 이제 하나다 — Stations.break_station 도 Dock 도 그 길을 부른다. RETURN_RATE · returns_of · StationCatalog.cost_of 는 지워졌고 남은 참조가 없음을 grep 으로 확인했다. tests/build/test_placeable.gd 가 제작대 다섯(진짜 CraftingStation)과 선착장(진짜 Dock)이 저마다 자기 자신 1개로 돌아오는지, 놓은 것이 아닌 노드는 이 길로 부서지지 않는지를 본다. 일부러 깨 봤다 — CraftingStation.placed_item 을 \"wood\", Dock.placed_item 을 \"plank\" 로 고치자 test_every_kind_of_station_returns_itself 와 test_a_dock_returns_a_dock 이 떨어졌다. 되돌렸다. 다만 상자 · 횃불은 놓는 길이 아직 없어(G-120) 흉내(_FakePlaceable)로만 확인한다 — problems 에 적었다"
-    }
-   ],
-   "issues": [
-    "[결정] 선착장을 부수는 손짓이 없다 — Dock 은 부딪히는 몸통이 없어(내리는 캐릭터가 널판에 끼여서, 설계상) 조준점이 맞히지 못한다. 규칙은 붙었고 test_placeable.gd 가 확인하지만 게임 안에서 선착장을 부술 길은 없다. 선착장을 부술 수 있어야 하는가 · 몸통 없이 무엇을 겨누게 하는가(널판 위 어느 칸? 기둥?)를 사람이 정해야 한다. spec/03_world/frontier-islands.md 에 한 줄 필요하다",
-    "부순 선착장이 저장본에서 되살아날 수 있다 — Dock.vanish() 는 Placeable.GROUP 에서만 빠지고 queue_free() 를 부른다. 지우는 것은 프레임 끝이라 그때까지 DockBuilder 의 자식으로 남고, DockBuilder.standing()(dock_builder.gd:100 근처)은 무리가 아니라 get_children() 을 훑는다 — 부순 프레임에 섬이 저장되면 부순 선착장이 다시 적힌다. 지금은 부술 길이 없어 터지지 않지만 위 결정이 내려지면 바로 드러난다. Dock.vanish() 가 부모에서 먼저 떼어 내게 하고(CraftingStation 이 무리에서 먼저 빠지는 것과 같은 이유), 「부순 선착장은 standing() 에 남지 않는다」 테스트를 tests/world/frontier_islands/test_dock_building.gd 에 짜라",
-    "상자 · 횃불은 진짜 코드가 아니라 흉내로만 확인한다 — tests/build/test_placeable.gd 의 test_a_newly_placeable_thing_gets_the_same_rule_for_free 는 테스트 파일 안에 든 _FakePlaceable(placed_item · vanish 만 갖춘 가짜)로 규칙을 본다. 상자 · 횃불은 놓는 길이 아직 없어(G-120) 이번 회차로는 이것이 최선이고 기준을 막지는 않지만, 이 검사는 앞으로 나올 진짜 상자가 Placeable.GROUP 에 들도록 강제하지 못한다. 한편 game/world/storage/chest.gd 에 이미 진짜 Chest(StaticBody3D)가 있다 — 죽은 자리 상자 · 개발용 상자가 물려받는 것이라 부수면 안 되는 것이 맞으니 지금 규칙을 붙이지 않은 것은 옳다. G-120 에서 놓는 나무 상자를 만들 때 이 가짜 검사를 진짜 상자로 갈아 끼워라"
-   ],
-   "good": [
-    "stations.json 의 cost 칸과 StationCatalog.cost_of 를 지웠다 — 기준에 없지만 병의 뿌리다(부술 때 말고 쓰는 데가 없었고, 만드는 재료가 레시피와 두 곳에 적혀 있었다). 대신 test_station_recipes.gd 의 test_what_a_station_costs_is_what_its_recipe_takes 를 test_a_station_costs_only_what_its_recipe_takes 로 바꿔 「cost 를 따로 적지 않는다」를 못 박았다. 판단은 타당하나 기준 밖의 데이터 칸 삭제다",
-    "game/build/ 디렉터리와 Placeable 클래스를 새로 냈다 — 기준 3 의 「같은 규칙 하나」를 둘 자리로 필요했다. spec/06_build 아래 앞으로 올 건축물도 이 자리를 쓰게 된다",
-    "DockBuilder.ITEM 을 Dock.ITEM 으로 옮겼다 (작은 손질)",
-    "dock_builder.restore() 의 queue_free() 를 vanish() 로 바꿨다 — 기준 밖이지만 부수는 길과 같은 자리를 쓰게 한 것이다"
-   ]
-  },
-  "test": "_a_station_spot_cannot_be_tilled\n10/10 passed.\n\n\nres://tests/life/food/test_food.gd\n* test_the_bread_is_a_cook_table_recipe_made_of_wheat\n* test_cooking_wheat_at_the_cook_table_gives_the_bread\n* test_the_bread_is_not_cooked_at_another_station\n* test_the_bread_has_a_korean_and_an_english_name\n* test_eating_puts_the_buff_on_for_the_time_in_the_file\n* test_the_buff_comes_off_when_the_time_is_up\n* test_the_buff_time_runs_on_its_own_while_the_game_runs\n    --- Awaiting 0.6 seconds  ---\n* test_the_buff_changes_the_walk_and_gives_it_back\n* test_the_right_click_eats_the_food_in_hand\n* test_the_right_click_that_ate_does_not_reach_what_is_behind\n* test_nothing_is_eaten_when_the_hand_is_not_holding_food\n* test_nothing_is_eaten_while_a_window_is_open\n* test_the_effect_and_the_time_come_from_the_data_file\n* test_every_food_in_the_file_has_an_effect_and_a_time\n* test_a_food_with_nothing_written_in_it_is_dropped\n15/15 passed.\n\n\nres://tests/player/pickup/test_pickup.gd\n* test_walking_over_a_drop_picks_it_up_without_a_click\n* test_a_drop_left_far_away_is_not_picked_up\n    --- Awaiting 1.0 seconds  ---\n* test_several_piles_on_the_way_all_go_in\n* test_what_a_felled_tree_drops_is_picked_up_by_walking_over_it\n* test_a_full_bag_leaves_the_whole_pile_on_the_ground\n* test_only_what_fits_goes_in_and_the_rest_stays\n* test_the_leftover_can_still_be_picked_up_once_there_is_room\n* test_walking_over_what_a_broken_station_drops_picks_it_up\n8/8 passed.\n\n\nres://tests/ui/hud/test_bag_hand_craft.gd\n* test_the_bag_has_a_made_by_hand_panel\n* test_only_the_three_hand_recipes_show_up_there\n* test_a_recipe_that_needs_a_station_does_not_show_up_there\n* test_a_hand_recipe_added_to_the_file_shows_up_in_the_bag\n* test_a_station_recipe_added_to_the_file_does_not_show_up_in_the_bag\n* test_from_empty_hands_to_the_first_axe\n6/6 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n8/8 passed.\n\n\nres://tests/world/frontier_islands/test_islands.gd\n* test_the_list_has_my_island_and_a_frontier_island\n* test_the_two_docks_sail_to_each_other\n* test_each_island_has_its_own_fixed_map\n* test_what_is_left_on_each_island_is_saved_apart\n* test_an_old_save_without_islands_starts_on_my_island\n5/5 passed.\n\n\nres://tests/world/frontier_islands/test_volcano.gd\n* test_the_frontier_island_is_a_fixed_map\n* test_only_the_resources_follow_the_world_seed\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_one_mountain_stands_in_the_middle_of_the_island\n* test_the_summit_has_a_crater\n* test_cliffs_ring_the_volcano\n* test_one_way_up_is_left_open_but_not_into_the_crater\n* test_my_islands_mountain_has_no_crater\n* test_sulfur_grows_here_and_iron_does_not\n* test_iron_grows_on_my_island_and_sulfur_does_not\n* test_the_list_gives_each_ore_to_one_island_only\n11/11 passed.\n\n\nres://tests/world/frontier_islands/test_voyage.gd\n* test_my_island_has_no_dock_until_i_build_one\n* test_building_the_dock_at_the_water_opens_the_sea\n* test_boarding_at_the_dock_lands_me_on_the_frontier_island\n* test_my_bag_crosses_with_me\n* test_the_frontier_island_does_not_carry_my_islands_marks\n* test_sailing_back_finds_my_island_as_i_left_it\n* test_each_island_is_saved_on_its_own\n* test_going_back_to_the_frontier_island_finds_it_as_i_left_it\n8/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              15\nTests               125\nPassing Tests       125\nAsserts            1117\nTime              99.592s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "17e4576"
- },
- {
   "time": "2026-09-22 07:48:01",
   "epoch": 1790030881,
   "type": "pass",
@@ -8156,5 +8094,96 @@
   },
   "test": "t_building_collapse.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_hotbar.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok    240s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           147\nTests            1314\nPassing Tests    1314\nFailing Tests       0\nPending             0\nAsserts         63725\nTime           240s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "195e982"
+ },
+ {
+  "time": "2026-09-26 16:17:49",
+  "epoch": 1790407069,
+  "type": "pass",
+  "title": "통과 — G-151 단계 3 (장비칸)",
+  "group": "G-151",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "가방 창 인벤토리 칸 위에 장비 영역(왼쪽 캐릭터 모습 + 둘레 장비칸 여덟)을 만들고, 부위에 맞는 것만 끼우며, 가방칸의 배낭이 인벤토리를 한 줄 늘리고 늘어난 칸에 물건이 있으면 빠지지 않게 했다. 바뀐 곳만: 161개 파일 · 1400개 테스트 통과",
+   "approach": "장비는 이미 CharacterData.equipment 딕셔너리로 저장되고 있었지만 칸 이름도 끼우는 길도 없었다. 규칙을 Equipment(player/equipment/equipment.gd) 한 곳에 두었다 — 여덟 칸 · 아이템→칸 표(FITS) · 가방→늘어나는 칸(BAG_EXTRA) · equip/unequip. 인벤토리 칸 수는 const SLOTS(20) 대신 size() = SLOTS + 가방이 더한 몫으로 바꿔, 게임 코드(가방 창 · 상자 · 잡은 짐승)가 size() 를 본다. 늘어난 몫은 저장하지 않고 들어올 때 장비칸에서 다시 계산하며, 옛 칸 거두기(fold_overflow)보다 먼저 맞춰 늘어난 칸의 물건을 넘친 것으로 보지 않게 했다. 가방 창에는 Gear(왼쪽 2×2 · 캐릭터 모습 · 오른쪽 2×2)를 칸 위에 넣었다. 창이 커지니 Center 를 위로 자라게(grow_vertical=BEGIN) 해 아래 끝이 핫바 위에 머문다. 상자와 같이 뜰 때는 상자 창과 부딪혀 장비 영역을 접는다. 캐릭터 모습 크기를 .tscn 에 적어 테마 검사에 걸렸다 — 테마 Window 의 gear_look_* 로 옮겼다. 배낭 아이템(ITEM_backpack, 제작대: 가죽 4 · 목재 2, 무게 1kg)을 더했다 — 없으면 가방칸에 끼울 것이 없다. 찍어 봤다(.loop/out/gear/bag_ko·en, chest_ko·en) — 잘리지 않고 1280×720 안이며 핫바를 덮지 않는다. QA 흠: test_shoulder_camera 주석을 「조준 때는 좁힌 시야만큼 카메라가 물러난다」로 고쳤다.",
+   "why": "배낭 한 등급이 늘려 주는 칸 10 (한 줄) — equipment.gd BAG_EXTRA, 사람이 등급 · 수를 정한다; 배낭 레시피(제작대, 가죽 4 · 목재 2) · 무게 1.0kg — 지어낸 값; 장비 영역 배치(캐릭터 왼쪽 2×2: 모자·상의/하의·신발, 오른쪽 2×2: 귀걸이·목걸이/반지·가방)와 캐릭터 모습 크기 96×116 (테마 gear_look_*); 빈 장비칸 이름표의 흐림 0.45 (equip_slot.gd EMPTY_ALPHA)",
+   "files": [
+    "game/player/equipment/equipment.gd",
+    "game/player/inventory_hotbar/inventory.gd",
+    "game/ui/hud/equip_slot.gd",
+    "game/ui/hud/bag.gd",
+    "game/ui/hud/bag.tscn",
+    "game/ui/hud/slot_drop.gd",
+    "game/ui/theme/naru_theme.tres",
+    "game/core/game_root.gd",
+    "game/world/storage/chest.gd",
+    "game/life/hunting/captives.gd",
+    "game/life/climbing/climbing.gd",
+    "game/craft/recipes/recipes.json",
+    "game/player/inventory_hotbar/weights.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/player/movement_controls/test_shoulder_camera.gd",
+    "spec/02_player/equipment.md",
+    "spec/02_player/inventory-hotbar.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "가방 창의 **인벤토리 칸 위**에 장비 영역이 있다 — **왼쪽에 캐릭터 모습**, 그 둘레에 장비칸 (테스트)",
+     "evidence": "tests/ui/hud/test_bag_gear.gd test_the_gear_sits_above_the_inventory_slots(장비 영역 아래 끝 < 칸 격자 위 끝) · test_the_character_is_on_the_left_with_slots_around_it(캐릭터 중심이 창 중심보다 왼쪽, 여덟 칸이 캐릭터와 겹치지 않고 같은 높이, 왼쪽·오른쪽에 모두 칸). 찍은 bag_ko.png 에서도 칸 위에 캐릭터+둘레 칸이 보인다"
+    },
+    {
+     "ok": true,
+     "criterion": "장비칸은 **신발 · 하의 · 상의 · 모자 · 귀걸이 · 목걸이 · 반지 · 가방** 여덟 (사람 결정 2026-09-26) (테스트)",
+     "evidence": "test_equipment.gd test_there_are_eight_slots 가 Equipment.SLOTS 를 여덟 이름 그대로 비교, test_bag_gear.gd test_eight_gear_slots_with_translated_names 가 창에 실제로 놓인 칸 여덟을 비교"
+    },
+    {
+     "ok": true,
+     "criterion": "그 부위에 맞는 것만 들어간다 — 스파이크 신발은 신발칸 (테스트). 장비칸은 저장본에 담긴다 (테스트)",
+     "evidence": "test_spikes_go_into_the_shoes_slot · test_spikes_fit_no_other_slot(다른 일곱 칸 거부, 가방 칸 그대로) · test_plain_items_fit_no_slot · 창에서 모자칸이 스파이크를 안 받는 드래그 테스트. 저장: test_the_equipment_rides_in_the_save 가 CharacterData.to_dict→JSON→from_dict 왕복 뒤 신발·가방칸을 확인, test_entering_with_a_bag_keeps_the_extra_slots 가 저장본으로 들어와 늘어난 칸과 그 안의 물건이 그대로인지 확인. Player.equipment 와 CharacterData.equipment 가 같은 딕셔너리(test_drag_spikes… 에서 game.character.equipment 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "칸 이름은 번역 키 (ko · en)",
+     "evidence": "ko.po · en.po 에 EQUIP_shoes…EQUIP_bag 여덟 + ITEM_backpack. test_every_slot_name_is_translated 가 두 언어에서 tr(key)!=key 를 본다. 빈 칸 이름표가 EQUIP_<칸> 키임도 test_bag_gear 가 확인"
+    },
+    {
+     "ok": true,
+     "criterion": "**가방칸에 가방을 끼우면 인벤토리 칸이 는다** (사람 결정 2026-09-26) — 늘어나는 수 · 가방 등급은 임시. 가방을 빼려는데 늘어난 칸에 물건이 있으면 빠지지 않는다 (잃지 않게) (테스트)",
+     "evidence": "test_a_bag_adds_slots(size = SLOTS+extra, 늘어난 칸에 넣을 수 있음) · test_a_bag_will_not_come_off_while_its_slots_hold_things(물건 있으면 false·가방·물건 그대로, 비우면 빠지고 칸이 준다) · test_a_bag_cannot_be_put_down_into_its_own_slots · 창에서 한 줄 늘고 안 빠지는 test_a_backpack_adds_a_row_to_the_window. 일부러 깨 봄: unequip 의 _empty_from 검사를 지우자 test_equipment 가 FAIL(되돌림 확인). BAG_EXTRA 10 은 코드·spec 수치에 「임시」로 적혀 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "`spec/02_player/equipment.md` 에 여덟 칸 · 가방칸 규칙을 사람 결정으로 적는다. 장비마다의 스탯은 「미정」",
+     "evidence": "규칙 절에 여덟 칸 · 가방칸 규칙을 (사람 결정 2026-09-26)으로, 미정 절에 「장비마다의 스탯 — 미정」·가방 등급 수. 기존 줄 삭제 없음, 32줄"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 창이 잘리지 않고 1280×720 안에 들어간다",
+     "evidence": ".loop/out/gear/bag_ko·en, chest_ko·en 을 직접 봤다 — 잘리지 않고 핫바를 덮지 않는다. test_the_window_fits_1280x720 · 가방을 낀 3줄 창도 _assert_fits_the_screen 로 화면 안·핫바 위를 잰다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) test_shoulder_camera 주석이 옛 방식을 말한다 — game/tests/player/movement_controls/test_shoulder_camera.gd 의 핫바 단언 위 주석 「조준 때는 어깨를 더 비킨다」는 버린 방식이다. 지금은 좁힌 시야만큼 카메라가 시선을 따라 물러난다(Player.set_camera_fov). 주석을 「조준 때는 좁힌 시야만큼 카메라가 물러난다」로 고쳐라",
+     "evidence": "diff 에서 해당 주석이 「조준 때는 좁힌 시야만큼 카메라가 물러난다」로 바뀌었다"
+    }
+   ],
+   "issues": [
+    "배낭 레시피·무게가 spec 에 「임시」로 없다 — recipes.json 의 backpack(제작대, 가죽 4 · 목재 2) 과 weights.json 의 backpack 1.0kg 은 지어낸 값인데 report 에만 임시라고 적혔다. spec/02_player/equipment.md 수치 절에 「배낭 레시피 제작대 가죽 4 · 목재 2 · 무게 1.0kg — 임시」 한 줄을 더해라",
+    "장비칸을 맞지 않는 칸에 놓으면 받는 척한다 — slot_drop.gd _can_drop_data 가 equip 데이터면 chest==null 만 보고 true 라, 스파이크를 끌어 목재가 든 칸에 놓으면 드롭 표시가 뜨고 Equipment.unequip 이 조용히 false 를 낸다. 빈 칸이거나 fits(slot, 그 칸)일 때만 true 로 하고, test_bag_gear 에 「목재 칸은 신발칸 것을 안 받는다」 단언을 더해라"
+   ],
+   "good": [
+    "배낭 아이템(ITEM_backpack) · 제작대 레시피 · 무게 — 가방칸에 끼울 것이 있어야 해서 더했다",
+    "가방 칸 Shift+클릭이 열린 상자가 없으면 맞는 장비칸에 끼운다",
+    "상자와 같이 뜰 때 장비 영역을 접는다"
+   ]
+  },
+  "test": "ests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           187\nTests            1587\nPassing Tests    1587\nFailing Tests       0\nPending             0\nAsserts         73195\nTime           276s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "c179b57"
  }
 ]
