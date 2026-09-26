@@ -1032,10 +1032,12 @@
   - 기준: `spec/06_build/building.md` 에서 「올라가 닿는 바닥에 매달린다」를 「딛고 선 바닥에 받쳐진다 (사람 결정 2026-09-26)」로
     고친다 — 옛 줄이 남지 않는다 (grep)
   - 기준: 찍어서 확인한다 — 토대 한 장 위로 오르는 계단이 선 그림 · 그 위 지붕을 부순 뒤에도 계단이 선 그림
-- [ ] 3. (앞 단계 QA) stairs_roof 머리 주석이 낡았다
+- [x] 3. (앞 단계 QA) stairs_roof 머리 주석이 낡았다
   - 기준: stairs_roof 머리 주석이 낡았다 — game/tests/build/test_building_stairs_roof.gd 3~5행 「그래서 계단이 올라가 닿는 판에는 늘 바닥이 있다」는 이제 틀렸다(위층 바닥 없이도 위로 가는 계단이 놓인다). 그 문장을 지우거나 「위층 바닥 변에서 놓을 때는」으로 좁혀라
   - 기준: (앞 단계 QA) test_rooms 주석에 옛 까닭이 남았다 — game/tests/build/test_rooms.gd 92행 「(사람 결정 2026-09-24 — 붙는 쪽은 늘 받침이 있는 쪽이다)」는 G-154.2 로 덮였다. 「받침은 딛고 선 A (사람 결정 2026-09-26)」로 고쳐라
   - 기준: (앞 단계 QA) stairs_host 와 _link_of 의 바닥 판정이 두 벌이다 — BuildPiece.stairs_host() 는 서 있는 바닥만 보고 Buildings._link_of 는 무너진 것까지 본다(_floor_under). 지금은 무너진 계단이 곧 사라져 드러나지 않지만, 한 곳(예: Buildings 의 정적 함수)으로 모아 두 규칙이 어긋나지 않게 하라
+- [ ] 4. (앞 단계 QA) 받침 한 벌 테스트의 무너짐 단언이 헛돈다
+  - 기준: 받침 한 벌 테스트의 무너짐 단언이 헛돈다 — test_building_stairs_flip.gd::test_stairs_host_and_link_count_read_one_floor_rule 은 C 를 _link_counts 의 무너짐 표({c: true})에만 넣는다. C 노드는 트리에 그대로 서 있다. 그래서 그 뒤의 assert_eq(s.stairs_host(), own, "…두 판정이 어긋나지 않는다") 는 옛 「서 있는 바닥만」 반복문으로 되돌려도 그대로 통과한다. 무너짐을 흉내 내려면 C 를 트리에서 떼거나(remove_child · 무너짐 처리 중 상태), 무너진 C 를 담은 pieces 로 stairs_floor_under 를 직접 불러 true 인지 단언하라. 그 단언이 있어야 이름대로 「한 규칙」을 지킨다. 기준 3 자체는 코드상 하나로 모였으므로 막는 것은 아니다
 
 ## [ ] G-910 루프가 찾은 것 — 스스로 갚는다 (2차)
 - 차선: 3d-start (사람 결정 2026-09-26 — Opus 가 G-151 부터 쭉 돈다. Fable 은 G-150 까지)
