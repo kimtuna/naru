@@ -1124,7 +1124,7 @@
   - 기준: 테스트가 매번 사용자 휴지통에 폴더를 버린다 — test_test_sh_counts_pending.gd 의 after_each 가 OS.move_to_trash(_dir) 를 불러 테스트가 돌 때마다 macOS ~/.Trash 에 naru_pending_only 폴더가 하나씩 쌓인다(사람 환경을 건드린다). 임시 파일은 DirAccess.remove_absolute(_file) 뒤 DirAccess.remove_absolute(_dir) 로 바로 지워라
 - [x] 9. 안쪽 test.sh 가 --import 를 다시 부른다 (G-910 단계 21)
   - 기준: 안쪽 test.sh 가 --import 를 다시 부른다 — 이 테스트는 전체 실행 도중 test.sh 를 한 번 더 띄우므로 안쪽 test.sh 머리의 godot --import 가 다른 godot 들이 같은 game/.godot/ 를 쓰는 동안 돈다. 지금은 통과했지만 겹치면 흔들릴 수 있다. 안쪽 실행에서 import 를 건너뛰는 환경 변수(예: TEST_SKIP_IMPORT=1)를 test.sh 에 두고 이 테스트가 그것을 넘기게 하라
-- [ ] 8. 단언문 하나에 낡은 25번이 남았다 (G-910 단계 23)
+- [x] 8. 단언문 하나에 낡은 25번이 남았다 (G-910 단계 23)
   - 기준: 단언문 하나에 낡은 25번이 남았다 — test_from_empty_hands_asserts_to_the_end.gd 의 test_the_check_catches_the_old_tail 에서 `assert_eq(_assert_lines(_after_last_step(fine, LOOP_FUNC)), 1, "25번 아래의 단언을 못 센다")` 의 글이 아직 25번이라고 한다. LAST_STEP 은 이제 27 이니 「마지막 걸음 아래의 단언을 못 센다」로 고쳐라
 - [ ] 3. 다른 테스트 셋도 휴지통에 버린다 (G-910 단계 8)
   - 기준: 다른 테스트 셋도 휴지통에 버린다 — game/tests/core/tools/test_test_totals_awk.gd:29 · game/tests/core/tools/test_test_sh_keeps_file_logs.gd:32 · game/tests/ui/hud/test_map_pin.gd:218 이 여전히 OS.move_to_trash 를 불러 돌 때마다 사람의 ~/.Trash 에 폴더를 쌓는다. test_test_sh_counts_pending.gd 의 after_each 처럼 안의 파일(logs/ 같은 하위 폴더 포함)을 DirAccess.remove_absolute 로 지운 뒤 폴더를 지워라. 지키는 것으로는 game/ 아래 .gd 전체에 "OS." + "move_to_trash" 가 0 번인지 보는 테스트 하나를 두어라 (지금은 파일마다 제 소스만 본다)
