@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "G-152 합쳤다",
- "updated": "2026-09-26 16:01:17",
- "updated_epoch": 1790406077,
- "ended": "2026-09-26 13:33:36",
+ "state": "done",
+ "reason": "이 차선(3d-lane2) 몫을 다 했다 — 다른 차선 몫으로 남은 것: G-151 · G-154 · G-910 · G-911 · G-990 (그 차선이 꺼져 있으면 아무도 안 한다)",
+ "updated": "2026-09-26 16:01:19",
+ "updated_epoch": 1790406079,
+ "ended": "2026-09-26 16:01:19",
  "progress": {
   "groups_total": 41,
   "groups_done": 36,
