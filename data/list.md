@@ -1155,7 +1155,7 @@
   - 기준: 여러 godot 이 한꺼번에 돌 때(tools/test.sh) 남이 쓰는 중인 파일을 지워 터지지 않는다 — 없으면 다시 굽는 것으로 족하다
   - 기준: (앞 단계 QA) 임시 폴더 지킴 테스트가 글자만 본다 — test_temp_dir.gd:test_every_test_that_makes_temp_erases_it_through_one_place 는 파일에 「TempDir.erase(」 글자가 한 번이라도 있으면 통과라, 한 파일이 임시 폴더를 둘 만들고 하나만 지워도 못 잡는다. 지금 57 개 파일은 맞게 고쳐져 있어 막는 것은 아니다. 더 굳히려면 before_all/after_all 에서 $TMPDIR 의 naru_* 목록을 테스트 앞뒤로 비교하는 식(또는 OS.get_temp_dir() 가 나온 횟수 ≤ erase 가 닿는 변수 수)을 검토하라
   - 기준: (앞 단계 QA) 이미 쌓인 옛 임시 폴더가 남아 있다 — $TMPDIR 에 naru_locked_* · naru_key_* · naru_island_animals_* 가 수백 개 남았다(보고서: 639개). 새 코드는 더 쌓지 않지만 옛 것은 손으로 지워야 한다: rm -rf "$TMPDIR"/naru_* (다른 체크아웃의 테스트가 돌지 않을 때)
-- [ ] 6. 연쇄 되풀이를 지키는 테스트가 없다 (G-133 단계 3)
+- [x] 6. 연쇄 되풀이를 지키는 테스트가 없다 (G-133 단계 3)
   - 뺀 까닭: buildings.gd collapse — G-145 가 건축을 다시 짜는 중
   - 기준: 연쇄 되풀이를 지키는 테스트가 없다 — buildings.gd collapse() 의 while 루프에서 `more = true` 를 지워 한 번만 훑게 해도 tests/build 53개가 다 통과했다. 지금 테스트는 받치는 것이 늘 받쳐지는 것보다 먼저 놓여(무리 순서가 유리해) 한 번 훑기로도 잡힌다. 받침이 나중에 놓인 경우를 짜라: 토대 A · 벽 W1(A) · 지붕 R1 · R1 위 기둥 P · 지붕 R2 를 놓은 뒤, 옆 토대 C 와 R1 을 받치는 벽 W2(C) 를 나중에 놓고 W1 을 손으로 부순다. 그다음 C 를 부수면 W2 · R1 · P · R2 가 전부 무너지는지 단언하라 (한 번 훑기면 R1 · P · R2 가 떠서 남는다)
   - 기준: (앞 단계 QA) 코드로 만든 설계 값이 저장본 한 칸을 나눠 쓴다 — IslandCache.island_key 가 resource_path 가 빈 설계 값을 모두 「unnamed」 하나로 쳐서, 캐시를 켠(use_cache=true) 서로 다른 코드 설계 값 둘이 번갈아 저장하면 서로의 저장본을 옛 판이라며 지운다. 지금은 캐시를 켜는 곳(test_island.gd · test_lime · test_volcano · test_island_resources · test_dock_building · test_hunger_thirst)이 모두 .tres 를 load 한 것이라 드러나지 않는다(막는 것은 아니다). 고치려면 island_cache.gd 의 prune 에서 key 가 "unnamed" 이면 지우지 않거나(주석으로 까닭을 적기), island_key 주석에 「unnamed 는 한 칸 — 캐시를 켜려면 .tres 로 두라」고 적고, test_island_cache.gd 에 unnamed 를 저장해도 다른 unnamed 저장본에 대한 기대(남는지/지우는지)를 단언으로 박아 둔다. 또 test_save_leaves_other_islands_alone 의 「시험 섬(코드로 만든 설계 값)」 설명은 틀렸다 — 시험 섬은 test_island_blueprint.tres 이다. 설명을 「코드로 만든 설계 값」으로 고친다
@@ -1170,6 +1170,8 @@
   - 기준: `spec/04_life/farming.md` 「## 미정」 절 40줄의 「밭 한 장은 2×2칸 (사람 결정 2026-09-24)」을 지운다 —
     규칙 절(9줄)로 옮겨졌는데 사본이 남아 **정해진 값이 아직 「미정」에 앉아 있다**
   - 기준: 정해진 것이 「미정」 절에 남은 곳이 farming.md 에 더 없다 (읽어서 확인)
+  - 기준: (앞 단계 QA) 새 연쇄 테스트의 머리 주석이 틀린 까닭을 적는다 — test_building_collapse.gd 의 test_a_support_placed_later_still_brings_down_the_whole_chain 위 첫 줄이 「한 번 훑기로는 R1 · P · R2 가 떠서 남는다」라고 하지만, 같은 주석 아래와 구현 보고대로 G-145 뒤에는 건축물은 _link_counts 가 다 잡고 떠 남는 것은 상자(설치물)다. 첫 줄을 「한 번 훑기로는 그 위 설치물(상자)이 떠서 남는다」로 고쳐라
+  - 기준: (앞 단계 QA) unnamed 저장본이 끝없이 쌓일 수 있다 — island_cache.gd prune 이 unnamed 끼리 안 지우므로, 코드로 만든 설계 값을 use_cache=true 로 굽는 곳이 생기면 user://island_cache 에 unnamed 판이 SOURCES 해시가 바뀔 때마다 늘어난다(지금은 그런 곳이 없어 막는 것은 아니다). 코드 설계 값에서 use_cache 를 켜면 push_warning 하거나, island_key 주석처럼 테스트 하나로 「캐시를 켜는 곳은 모두 .tres」를 단언해 두면 막힌다
 
 ## [x] G-152 농사가 된다 — 물 주기 · 비료
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 차선 2 를 Opus 로 바꿔 이 묶음을 맡긴다)
