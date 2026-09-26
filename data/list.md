@@ -1102,7 +1102,7 @@
   - 기준: test.sh 합계의 Pending 이 늘 0 으로 찍힌다 — tools/test.sh 끝의 awk 가 '^Pending +[0-9]' 를 찾는데 GUT(addons/gut/summary.gd:64) 는 그 줄을 'Risky/Pending N' 으로 찍고 0 이면 아예 안 찍는다. 그래서 pending·risky 가 있어도 합계에 안 보이고 Tests 와 Passing 만 어긋나 보인다 — 이번 기준의 「하나가 어느 쪽에도 안 든다」가 바로 그것이었다. awk 패턴을 '^(Risky\/)?Pending +[0-9]' 로 바꾸고 $NF 를 더하라. 테스트: pending() 하나만 있는 임시 테스트 파일로 test.sh 를 돌려 합계의 Pending 이 1 로 찍히는지 보는 셸 테스트(tests/ 아래 GD 로 어렵다면 harness/ 의 python 테스트)를 짜라
 - [x] 22. test.sh 가 파일별 로그를 남기지 않는다 (G-910 단계 14)
   - 기준: test.sh 가 파일별 로그를 남기지 않는다 — 기준이 「test.sh 가 남기는 파일별 로그에서 risky 를 찾아라」고 했지만 tools/test.sh 는 mktemp 폴더에 두고 trap 으로 지운다. 구현 세션이 찾을 수 없어 파일마다 godot 을 따로 띄워 되짚었다. 떨어졌을 때만이 아니라 늘 .loop/out/test_files/ 같은 곳에 파일별 로그를 복사해 두거나(하네스 쪽이면 [결정] 아님 — 세션이 tools/test.sh 를 고칠 수 있다), 아니면 위 awk 고침으로 합계에 Risky/Pending 이 보이게 해서 로그 없이도 찾게 하라
-- [ ] 23. 지키는 테스트 머리말이 실제 검사보다 세게 말한다 (G-910 단계 14)
+- [x] 23. 지키는 테스트 머리말이 실제 검사보다 세게 말한다 (G-910 단계 14)
   - **줄기에는 아직 없는 파일이다** — `test_from_empty_hands_asserts_to_the_end.gd` 는 `g/G-910` 에만 있다. 덧붙여 그 파일이 전제한 「마지막 걸음 = 25」도 낡았다 — 지금 test_from_empty_hands.gd 는 27번(돌아온 재료로 다시 짓는다)까지 간다 (2026-09-26 확인)
   - 기준: 지키는 테스트 머리말이 실제 검사보다 세게 말한다 — test_from_empty_hands_asserts_to_the_end.gd 머리말·단언문은 「중간에 return 으로 빠져 뒤가 비지 않는다」고 하지만 검사는 글자 줄 수만 센다. '# 25.' 바로 아래에 `return` 을 넣어도 통과했다(일부러 깨 봄). 몸통에 들여쓴 `return` 줄이 없는지도 같이 단언하거나(_body_of 결과에서 strip_edges()=='return' 줄 0개), 머리말을 「25번 아래에 단언 글줄이 있다」로 낮춰 적어라
 - [ ] 24. 옛 시각 상수가 테스트에 남았다 (G-146 단계 2)
@@ -1124,6 +1124,10 @@
   - 기준: 테스트가 매번 사용자 휴지통에 폴더를 버린다 — test_test_sh_counts_pending.gd 의 after_each 가 OS.move_to_trash(_dir) 를 불러 테스트가 돌 때마다 macOS ~/.Trash 에 naru_pending_only 폴더가 하나씩 쌓인다(사람 환경을 건드린다). 임시 파일은 DirAccess.remove_absolute(_file) 뒤 DirAccess.remove_absolute(_dir) 로 바로 지워라
 - [ ] 9. 안쪽 test.sh 가 --import 를 다시 부른다 (G-910 단계 21)
   - 기준: 안쪽 test.sh 가 --import 를 다시 부른다 — 이 테스트는 전체 실행 도중 test.sh 를 한 번 더 띄우므로 안쪽 test.sh 머리의 godot --import 가 다른 godot 들이 같은 game/.godot/ 를 쓰는 동안 돈다. 지금은 통과했지만 겹치면 흔들릴 수 있다. 안쪽 실행에서 import 를 건너뛰는 환경 변수(예: TEST_SKIP_IMPORT=1)를 test.sh 에 두고 이 테스트가 그것을 넘기게 하라
+- [ ] 8. 단언문 하나에 낡은 25번이 남았다 (G-910 단계 23)
+  - 기준: 단언문 하나에 낡은 25번이 남았다 — test_from_empty_hands_asserts_to_the_end.gd 의 test_the_check_catches_the_old_tail 에서 `assert_eq(_assert_lines(_after_last_step(fine, LOOP_FUNC)), 1, "25번 아래의 단언을 못 센다")` 의 글이 아직 25번이라고 한다. LAST_STEP 은 이제 27 이니 「마지막 걸음 아래의 단언을 못 센다」로 고쳐라
+- [ ] 9. 머리말의 옛 단언 수가 낡았다 (G-910 단계 23)
+  - 기준: 머리말의 옛 단언 수가 낡았다 — 같은 파일 머리말 6~7줄의 「지금은 814개를 단언하고 끝까지 간다 (전체 1507 · 통과 1507)」가 지금(1092 단언 · 전체 1665)과 다르다. 「G-148 때는」처럼 그때 일로 적거나 숫자를 빼라
 
 ## [x] G-911 G-910 에서 뺀 것 — 차선을 나누느라 갈라졌던 것 (2026-09-26 다시 합쳤다)
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 차선 2 가 G-154 다음에 한다)
