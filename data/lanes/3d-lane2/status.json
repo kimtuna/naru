@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 08:46:37",
- "updated_epoch": 1790379997,
+ "updated": "2026-09-26 09:26:12",
+ "updated_epoch": 1790382372,
  "ended": "2026-09-26 07:11:37",
  "progress": {
   "groups_total": 41,
-  "groups_done": 33,
+  "groups_done": 34,
   "groups_waiting": 0,
   "steps_total": 164,
-  "steps_done": 139
+  "steps_done": 141
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-150",
  "step": "4",
  "step_title": "설치물은 1칸 단위로 자유롭게 놓인다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 08:46:37",
+ "phase": "QA",
+ "phase_since": "2026-09-26 09:24:23",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-26 07:00:00"
