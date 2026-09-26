@@ -1120,12 +1120,15 @@
   - 기준: _process 주석의 줄 수도 낡았다 — game/ui/hud/station_window.gd 160행 「줄이 스물 몇이라 세는 값이 싸다」도 가공대 레시피 45줄과 안 맞는다. 「줄이 마흔 몇이라」로 고쳐라 (주석만 — 막는 것은 아니다)
 - [x] 8. 테스트 사이 빈 줄이 하나뿐이다 (G-910 단계 20)
   - 기준: 테스트 사이 빈 줄이 하나뿐이다 — game/tests/life/climbing/test_grapple_magazine_size.gd 의 test_the_magazine_does_not_vary_by_grade 끝과 다음 ## 주석(test_the_check_catches_the_old_shape) 사이에 빈 줄이 하나다. 파일의 다른 함수들처럼 두 줄로 맞춰라 (모양만의 문제다)
-- [ ] 8. 테스트가 매번 사용자 휴지통에 폴더를 버린다 (G-910 단계 21)
+- [x] 8. 테스트가 매번 사용자 휴지통에 폴더를 버린다 (G-910 단계 21)
   - 기준: 테스트가 매번 사용자 휴지통에 폴더를 버린다 — test_test_sh_counts_pending.gd 의 after_each 가 OS.move_to_trash(_dir) 를 불러 테스트가 돌 때마다 macOS ~/.Trash 에 naru_pending_only 폴더가 하나씩 쌓인다(사람 환경을 건드린다). 임시 파일은 DirAccess.remove_absolute(_file) 뒤 DirAccess.remove_absolute(_dir) 로 바로 지워라
 - [ ] 9. 안쪽 test.sh 가 --import 를 다시 부른다 (G-910 단계 21)
   - 기준: 안쪽 test.sh 가 --import 를 다시 부른다 — 이 테스트는 전체 실행 도중 test.sh 를 한 번 더 띄우므로 안쪽 test.sh 머리의 godot --import 가 다른 godot 들이 같은 game/.godot/ 를 쓰는 동안 돈다. 지금은 통과했지만 겹치면 흔들릴 수 있다. 안쪽 실행에서 import 를 건너뛰는 환경 변수(예: TEST_SKIP_IMPORT=1)를 test.sh 에 두고 이 테스트가 그것을 넘기게 하라
 - [ ] 8. 단언문 하나에 낡은 25번이 남았다 (G-910 단계 23)
   - 기준: 단언문 하나에 낡은 25번이 남았다 — test_from_empty_hands_asserts_to_the_end.gd 의 test_the_check_catches_the_old_tail 에서 `assert_eq(_assert_lines(_after_last_step(fine, LOOP_FUNC)), 1, "25번 아래의 단언을 못 센다")` 의 글이 아직 25번이라고 한다. LAST_STEP 은 이제 27 이니 「마지막 걸음 아래의 단언을 못 센다」로 고쳐라
+- [ ] 3. 다른 테스트 셋도 휴지통에 버린다 (G-910 단계 8)
+  - 기준: 다른 테스트 셋도 휴지통에 버린다 — game/tests/core/tools/test_test_totals_awk.gd:29 · game/tests/core/tools/test_test_sh_keeps_file_logs.gd:32 · game/tests/ui/hud/test_map_pin.gd:218 이 여전히 OS.move_to_trash 를 불러 돌 때마다 사람의 ~/.Trash 에 폴더를 쌓는다. test_test_sh_counts_pending.gd 의 after_each 처럼 안의 파일(logs/ 같은 하위 폴더 포함)을 DirAccess.remove_absolute 로 지운 뒤 폴더를 지워라. 지키는 것으로는 game/ 아래 .gd 전체에 "OS." + "move_to_trash" 가 0 번인지 보는 테스트 하나를 두어라 (지금은 파일마다 제 소스만 본다)
+
 ## [ ] G-913 G-910 에서 뗀 셋 — 차선 2 가 같이 한다 (사람 결정 2026-09-26)
 - 차선: 3d-lane2
 - **이 묶음의 브랜치 `g/G-913` 은 `g/G-910` 끝에서 갈라 두었다** — 셋 다 G-910 단계 23 · 25 가 만든 코드를
