@@ -966,7 +966,7 @@
 - spec: spec/02_player/movement-controls.md, spec/01_settings/display.md, spec/02_player/equipment.md, spec/12_ui/hud.md
 - 사람이 플레이해 보고 짚었다 (2026-09-26)
 - **자가 피드백**: 깨끗해질 때까지 단계를 계속 붙인다
-- [ ] 1. 캐릭터를 화면 왼쪽 아래로 — 평소에도 조준할 때도
+- [x] 1. 캐릭터를 화면 왼쪽 아래로 — 평소에도 조준할 때도
   - 「총을 조준할 때 캐릭터가 가운데 있어서 표적이 안 보인다. 오른손잡이라 생각하고 캐릭터를 왼쪽 아래로」 ·
     「플레이어가 너무 가운데 있어 부자연스럽다. 왼쪽 아래로 조금」
   - 기준: 평소 카메라에서 캐릭터가 화면 가운데보다 **왼쪽 아래**에 선다 — 조준점(화면 가운데)을 가리지 않는다 (테스트 — 화면 좌표로 잰다)
@@ -981,6 +981,8 @@
   - 기준: 무게 규칙 · 줍기 · 칸 옮기기 · 상자 Shift+클릭이 20칸에서 그대로 된다 (테스트)
   - 기준: spec/02_player/inventory-hotbar.md 수치 「가방 30칸」을 「20칸 (핫바 포함, 사람 결정 2026-09-26)」으로
   - 기준: 찍어서 확인한다 — 가방 창이 두 줄이다
+  - 기준: (앞 단계 QA) spec 이 값 자리를 player_config.tres 라고 한다 — movement-controls.md 21줄 「값은 player_config.tres, 임시」인데 shoulder_right · shoulder_up 은 player_config.tres 에 없고 player_config.gd 의 기본값(0.9 · 0.4)에만 있다. spec 을 「player_config.gd」로 고치거나 tres 에 두 값을 적어라
+  - 기준: (앞 단계 QA) 조준 사진에서 캐릭터가 핫바를 덮는다 — .loop/out/shoulder/shoulder_aim_ko.png 에서 좁힌 시야로 캐릭터 몸이 커져 핫바 2~3번 칸 위를 가린다. 조준점은 비지만 핫바 글자가 캐릭터 뒤에 묻힌다. 조준 때 캐릭터를 더 왼쪽으로 두거나(shoulder_right 를 조준 때만 늘리기) 몸이 핫바 네모(화면 좌표)와 겹치지 않는지 보는 단언을 test_shoulder_camera.gd 에 더해라
 - [ ] 3. 장비칸
   - 「인벤토리 칸 위에 있고, 왼쪽에 캐릭터가 보이고 그 주변으로 장비칸이 있는 느낌」
   - 기준: 가방 창의 **인벤토리 칸 위**에 장비 영역이 있다 — **왼쪽에 캐릭터 모습**, 그 둘레에 장비칸 (테스트)

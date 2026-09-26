@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 15:21:11",
- "updated_epoch": 1790403671,
+ "updated": "2026-09-26 15:33:01",
+ "updated_epoch": 1790404381,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 41,
   "groups_done": 35,
   "groups_waiting": 0,
   "steps_total": 168,
-  "steps_done": 146
+  "steps_done": 147
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-151",
  "step": "1",
  "step_title": "캐릭터를 화면 왼쪽 아래로 — 평소에도 조준할 때도",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-26 15:21:11",
+ "phase": "QA",
+ "phase_since": "2026-09-26 15:31:18",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
