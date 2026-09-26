@@ -1259,6 +1259,7 @@
   - 기준: 횃불 · 건축물 · 선착장의 남은 대수 왕복 테스트가 없다 — 코드는 torches.gd · buildings.gd · dock_builder.gd 모두 with_hits/restore_hits 로 담지만, test_round_trip.gd 의 test_hits_left_on_placed_things_come_back 은 station · chest · field 셋만 친다. _play 에서 횃불(island.torches.place_at)과 건축물 하나를 놓고 한 대씩 친 뒤 _placed_hits 에 'torch' · 'building' 을 더해 HITS-1 로 돌아오는지 단언하라 (선착장은 시험 섬에 놓을 수 있으면 같이)
 
 ## [ ] G-920 루프가 찾은 것 — 스스로 갚는다
+- 차선: 3d-start (루프가 가져갔다 2026-09-27 01:56)
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다

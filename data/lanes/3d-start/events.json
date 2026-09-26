@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-22 22:44:11",
-  "epoch": 1790084651,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-22 23:08:46",
   "epoch": 1790086126,
   "type": "pass",
@@ -7923,6 +7917,37 @@
  {
   "time": "2026-09-27 01:56:03",
   "epoch": 1790441763,
+  "type": "fail",
+  "title": "차선 합치기 실패 — 3d-lane2(438cd2b) → 3d-start",
+  "group": "G-990",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "왕복 테스트가 횃불 · 건축물(토대) · 선착장도 한 대 친 뒤 저장 → 불러오기 해서 남은 대수 HITS-1 로 돌아오는지 단언한다 (바뀐 곳만: test_round_trip.gd 17개 통과)",
+   "approach": "_play 에서 횃불(torches.place_at) · 토대(buildings.place_at wood_foundation) · 내 섬 물가 선착장(test_voyage.gd 와 같은 길로 해안을 찾아 dock_builder.place_at)을 놓고 각자의 hit 길(hit_torch · hit_piece · hit_dock)로 한 대씩 쳤다. _placed_hits 에 torch · building · dock 을 더하고 단언 목록에 셋을 넣었다. 처음 돌리자 누수 검사가 BuildPiece:spent.plank(<없음> → 4)를 잡았다 — place_at 은 가방을 거치지 않아 spent 가 비고, 저장은 refund()(비면 값)을 담기 때문이다. 손으로 놓는 place_held 는 늘 spent 를 채우므로 게임 흠이 아니라 시험 지름길의 차이다 — 테스트에서 spent 를 cost_of 로 맞췄다. 횃불 restore 에서 restore_hits 를 잠시 빼 보니 'torch 는 한 대 맞은 채로 돌아왔다' 가 3≠2 로 떨어져, 테스트가 정말 잡는 것을 확인하고 되돌렸다.",
+   "why": "",
+   "files": [
+    "game/tests/settings/save/test_round_trip.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "횃불 · 건축물 · 선착장의 남은 대수 왕복 테스트가 없다 — 코드는 torches.gd · buildings.gd · dock_builder.gd 모두 with_hits/restore_hits 로 담지만, test_round_trip.gd 의 test_hits_left_on_placed_things_come_back 은 station · chest · field 셋만 친다. _play 에서 횃불(island.torches.place_at)과 건축물 하나를 놓고 한 대씩 친 뒤 _placed_hits 에 'torch' · 'building' 을 더해 HITS-1 로 돌아오는지 단언하라 (선착장은 시험 섬에 놓을 수 있으면 같이)",
+     "evidence": "test_round_trip.gd 의 _play 가 횃불(torches.place_at) · 토대(buildings.place_at wood_foundation) · 선착장(_build_home_dock → dock_builder.place_at)을 놓고 hit_torch · hit_piece · hit_dock 로 한 대씩 친다. _placed_hits 가 torch · building · dock 을 모으고, test_hits_left_on_placed_things_come_back 이 저장 전과 불러온 뒤 모두 HITS-1 인지 단언한다. QA 가 일부러 깨 봤다: buildings.gd:1251 과 dock_builder.gd:178 의 restore_hits 를 빼니 'building/dock 는 한 대 맞은 채로 돌아왔다' 가 3≠2 로 떨어졌다(되돌림 확인). 횃불은 구현 세션이 같은 방법으로 확인했다. 전체 테스트 1690/1690 통과, guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": " 1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/core/test_project_setup.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           200\nTests            1690\nPassing Tests    1690\nFailing Tests       0\nRisky/Pending       0\nAsserts         76849\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-27 01:56:05",
+  "epoch": 1790441765,
   "type": "fail",
   "title": "차선 합치기 실패 — 3d-lane2(438cd2b) → 3d-start",
   "group": "G-990",
