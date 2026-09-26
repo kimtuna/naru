@@ -1128,12 +1128,14 @@
   - 기준: 단언문 하나에 낡은 25번이 남았다 — test_from_empty_hands_asserts_to_the_end.gd 의 test_the_check_catches_the_old_tail 에서 `assert_eq(_assert_lines(_after_last_step(fine, LOOP_FUNC)), 1, "25번 아래의 단언을 못 센다")` 의 글이 아직 25번이라고 한다. LAST_STEP 은 이제 27 이니 「마지막 걸음 아래의 단언을 못 센다」로 고쳐라
 - [x] 3. 다른 테스트 셋도 휴지통에 버린다 (G-910 단계 8)
   - 기준: 다른 테스트 셋도 휴지통에 버린다 — game/tests/core/tools/test_test_totals_awk.gd:29 · game/tests/core/tools/test_test_sh_keeps_file_logs.gd:32 · game/tests/ui/hud/test_map_pin.gd:218 이 여전히 OS.move_to_trash 를 불러 돌 때마다 사람의 ~/.Trash 에 폴더를 쌓는다. test_test_sh_counts_pending.gd 의 after_each 처럼 안의 파일(logs/ 같은 하위 폴더 포함)을 DirAccess.remove_absolute 로 지운 뒤 폴더를 지워라. 지키는 것으로는 game/ 아래 .gd 전체에 "OS." + "move_to_trash" 가 0 번인지 보는 테스트 하나를 두어라 (지금은 파일마다 제 소스만 본다)
-- [ ] 3. 파일 머리 주석이 새 테스트를 말하지 않는다 (G-910 단계 9)
+- [x] 3. 파일 머리 주석이 새 테스트를 말하지 않는다 (G-910 단계 9)
   - 기준: 파일 머리 주석이 새 테스트를 말하지 않는다 — test_test_sh_counts_pending.gd 1~5줄 머리 주석은 Pending 합계만 설명한다. 이제 휴지통 안 쓰기 · 안쪽 import 건너뛰기(test_inner_test_sh_skips_import)도 지키므로 머리 주석에 한 줄씩 덧붙여라
 - [ ] 2. 파일마다 보던 옛 검사가 겹쳐 남았다 (G-910 단계 3)
   - 기준: 파일마다 보던 옛 검사가 겹쳐 남았다 — game/tests/core/tools/test_test_sh_counts_pending.gd:86 의 src.count("OS." + "move_to_trash") 단언은 이제 test_no_move_to_trash.gd 가 game/ 전체를 보므로 겹친다. 지워도 되고 남겨도 해는 없다 — 남긴다면 주석에 전체 검사가 따로 있다고 적어 두어라
 - [ ] 3. 다른 테스트가 TMPDIR 에 임시 폴더를 남긴다 (G-910 단계 3)
   - 기준: 다른 테스트가 TMPDIR 에 임시 폴더를 남긴다 — 구현 세션 보고대로 TMPDIR 에 naru_key_* · naru_locked_* · naru_island_animals_* 따위가 쌓인다. game/tests 에서 OS.get_temp_dir() 로 폴더를 만드는 테스트를 찾아 after_each 에서 안의 파일 → 폴더 순으로 DirAccess.remove_absolute 로 지우게 하고, 돌린 뒤 그 폴더가 없는지 단언하라
+- [ ] 3. 휴지통 줄의 번호 표가 어긋난다 (G-910 단계 3)
+  - 기준: 휴지통 줄의 번호 표가 어긋난다 — test_test_sh_counts_pending.gd 7줄과 after_each 위 23줄 주석이 휴지통 고침을 「G-910.21」로 적었지만 G-910.21 은 2줄의 Pending 합계 항목이고 휴지통 고침은 커밋 0342a6c 「G-910.8 … (G-910 단계 21)」이다. 8줄처럼 「G-910 단계 21」로 맞추고, 7줄에도 지키는 테스트 이름 test_after_each_removes_the_temp_dir_without_the_trash 를 적어 8줄과 꼴을 맞춰라
 
 ## [x] G-913 G-910 에서 뗀 셋 — 차선 2 가 같이 한다 (사람 결정 2026-09-26)
 - 차선: 3d-lane2
