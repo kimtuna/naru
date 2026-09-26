@@ -1,64 +1,5 @@
 [
  {
-  "time": "2026-09-22 17:56:49",
-  "epoch": 1790067409,
-  "type": "pass",
-  "title": "통과 — G-125 단계 2 (개척 섬은 부서진 채로 시작한다)",
-  "group": "G-125",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "개척 섬 선착장을 부서진 채로(기둥만) 시작하게 하고, 잠긴 섬으로는 배가 가지 않게 막았다",
-   "approach": "잠금을 어디에 두느냐가 전부였다. 「기둥만 서 있다」는 섬 쪽 이야기지만 「배가 가지 않는다」는 **떠나는 섬**에서 갈 섬을 보고 정해야 해서, 섬이 아니라 월드에 둘 수밖에 없었다 — WorldData 에 opened_islands(연 섬) 를 넣었다. 새 월드는 비어 있고, 저장본에 그대로 실려 한 번 열면 다시 잠기지 않는다(옛 저장본은 빈 것으로 읽힌다). 어느 섬이 부서진 채로 시작하는지는 코드가 아니라 islands.json 의 dock_starts_open 이 정한다 — 섬을 늘려도 코드를 안 고친다. 적히지 않으면 성한 것으로 친다: 제 손으로 짓는 내 섬 선착장은 짓는 순간 성해야 한다. 말은 한 갈래로 맞췄다 — Islands.dock_starts_open · WorldData.opened_islands · TestIsland.island_opened · Dock.opened · GameRoot.island_open. 「부서졌다」를 Dock 의 이름으로 쓰지 않은 까닭은 DockBuilder 의 broken 신호(부숴서 사라졌다)와 뜻이 엇갈리기 때문이다. 그림 쪽은 Dock._ready 를 기둥 먼저 · 널판은 opened 일 때만으로 갈랐다 — 부서진 선착장은 「기둥만 남은 꼴」이 그대로 된다. 몸통은 원래 기둥에만 있어(G-125.1) 부서져도 겨눠지는 것은 그대로다. 막는 것은 두 자리다: 갈 섬 쪽은 GameRoot.sail_to 가 island_open 으로 돌아서고, 선 자리 쪽은 Dock.board 가 부서진 선착장에서 false 를 준다(널판이 없으면 댈 배도 없다). 검사는 섬을 거의 세우지 않는다 — 잠금이 지형을 안 보므로 껍데기 섬(Node3D 하나를 pack 한 씬)으로 GameRoot 를 세워 진짜 우클릭까지 넣었다. 다만 「새 월드에 들어가면 기둥만 있다」 하나는 진짜 개척 섬을 세워 본다: GameRoot → TestIsland → Dock 이 다 이어져야 참이라서다. 그 섬을 검사 안에서 세웠더니 Terrain3D 가 내는 deprecated 잔소리가 그 검사의 실패로 잡혀, test_island_in_game.gd 처럼 before_all 로 옮겼다. test_voyage.gd 는 이제 개척 섬이 잠겨 배가 안 가므로 월드를 열어 둔 채(opened_islands) 시작하게 한 줄 고쳤다 — 거기서 보는 것은 「열린 섬 사이를 오간다」다. harness/shot.sh 로 개척 섬 선착장을 찍어 PNG 를 열어 봤다: 물가에 기둥 둘만 서 있고 널판이 없으며, 묻히거나 떠 있지 않다. 앞 단계 QA 가 말한 game/core/debug/ui_shots.gd.uid 는 **이미 추적되고 있었다** — 앞 회차 커밋 b7c8dc4 에 들어갔다(git ls-files 로 확인). 지금 추적 안 된 것은 이번에 새로 만든 test_locked_island.gd(.uid) 뿐이다. 돌린 것: test_locked_island 11/11, tests/world/ 전체 180/180(19개 스크립트, 292초), tests/settings/save/ 23/23, tests/core/ 20/20, guard 통과. **전체 786개는 돌리지 않았다** — 이 묶음의 마지막 단계가 아니라 바뀐 곳 둘레만 돌렸다.",
-   "why": "",
-   "files": [
-    "game/world/frontier_islands/islands.json",
-    "game/world/frontier_islands/islands.gd",
-    "game/world/frontier_islands/dock.gd",
-    "game/world/terrain/test_island.gd",
-    "game/settings/save/world_data.gd",
-    "game/core/game_root.gd",
-    "game/tests/world/frontier_islands/test_locked_island.gd",
-    "game/tests/world/frontier_islands/test_voyage.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "새 월드에서 개척 섬 선착장은 기둥만 서 있다 (테스트)",
-     "evidence": "tests/world/frontier_islands/test_locked_island.gd 의 test_a_new_worlds_frontier_island_stands_on_pillars_only 가 before_all 에서 새 월드(opened_islands 빈 것)를 개척 섬에 세우고 — GameRoot → TestIsland → Dock 이 다 이어진 진짜 섬이다 — island.dock.get_node_or_null(\"Plank\") 가 null 이고 Pillar* 메시가 둘임을 본다. test_a_broken_dock_stands_on_pillars_only 는 선착장 하나만 두고 같은 것에 더해 CollisionShape3D 가 둘임(겨눠진다)을, test_an_open_dock_has_its_plank 가 견주는 자로 성한 선착장에는 널판이 있음을 본다. 일부러 깨 봤다: dock.gd _ready 의 `if opened:` 를 없애 널판을 늘 깔면 11개 중 2개가 떨어진다 (본 뒤 되돌렸다)"
-    },
-    {
-     "ok": true,
-     "criterion": "잠긴 섬으로는 배가 가지 않는다 — 내 섬 선착장에서 타도 안 간다 (테스트)",
-     "evidence": "test_boarding_at_my_dock_does_not_reach_the_locked_island 가 내 섬에 성한 Dock 을 GameRoot 밑에 세우고(GameRoot._on_node_added 가 boarded 를 sail_to 에 이어 준다 — game_root.gd:448) 플레이어를 선착장에 세운 뒤 진짜 우클릭 InputEventMouseButton 을 눌렀다 뗀다. in_reach() 와 dock.opened 를 먼저 단언해 「우클릭이 안 닿아서 통과」를 막았고, 뒤에 island_id() 가 home 그대로이고 로딩 화면조차 안 뜬다를 본다. test_a_new_world_keeps_the_frontier_island_locked 가 sail_to 를 바로 불러서도 같은 것을 보고, test_once_the_island_is_opened_the_boat_goes 가 opened_islands 에 넣으면 arrived 가 와서 섬이 바뀌는 것을 견준다 — 막는 것이 「잠김」 하나임이 드러난다. 일부러 깨 봤다: game_root.gd sail_to 의 island_open 가드를 지우면 11개 중 2개가 떨어진다 (본 뒤 되돌렸다)"
-    },
-    {
-     "ok": true,
-     "criterion": "글자는 전부 번역 키다 (ko · en 둘 다)",
-     "evidence": "이번 단계는 새 글자를 하나도 넣지 않았다 (git diff 에 문자열 리터럴 추가 없음 — 늘어난 것은 dock_starts_open · opened_islands · island_opened 셋 다 불리언/배열이다). test_island_names_are_translation_keys_in_both_languages 가 catalog.ids() 를 돌며 locale 을 ko · en 으로 바꿔 tr(key) != key 와 ko != en 을 본다. i18n/ko.po · en.po 336줄에 ISLAND_SULFUR 가 둘 다 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 커밋 안 된 .uid 하나 — game/core/debug/ui_shots.gd.uid",
-     "evidence": "이미 추적되고 있다 — git log 로 보니 앞 회차 커밋 b7c8dc4 에 들어갔다. 앞 회차 QA 의 지적이 낡은 것이었다. 지금 추적 안 된 파일은 이번에 새로 만든 test_locked_island.gd(.uid) 짝뿐이고, 둘 다 있으므로 짝 없는 쓰레기가 아니다"
-    }
-   ],
-   "issues": [
-    "잠긴 섬으로 타려 해도 아무 말이 없다 — 내 섬 선착장은 성해 보이는데(널판이 깔려 있다) 우클릭하면 GameRoot.sail_to 가 조용히 return 만 한다 (game_root.gd:164). 소리도 글자도 없어 「고장났나」로 읽힌다. 다음 단계(G-125.3 연구대 열쇠로 연다)에서 같이 갚아라: sail_to 가 island_open 에 걸려 돌아설 때 HUD 에 한 줄 띄우고(번역 키 ko · en 둘 다 — 예 DOCK_ISLAND_LOCKED), tests/world/frontier_islands/test_locked_island.gd 에 「잠긴 섬으로 우클릭하면 그 글자가 뜬다 · 열린 섬으로 타면 안 뜬다」를 견주는 단언을 더해라"
-   ],
-   "good": [
-    "step 3 의 기준 하나를 미리 만들었다 — test_locked_island.gd 의 test_an_opened_island_stays_opened_in_the_save 가 SaveStore 로 디스크에 썼다 다시 읽어 opened_islands 가 남는 것을 본다. 이것은 G-125 단계 3 의 기준 「열린 것이 저장본에 남는다」와 겹친다. 다만 WorldData.opened_islands 자체는 이번 기준(「내 섬에서 탈 때 갈 섬이 열렸는지 본다」)을 만들려면 있어야 하는 바탕이라, 덤이라기보다 바탕에 붙은 검사다. 단계 3 이 남겨야 할 것은 「나갔다 들어와도 열려 있다」쪽 — 게임을 껐다 켜는 길이다",
-    "test_voyage.gd 의 before_all 이 한 줄 늘었다 (w.opened_islands 에 sulfur 를 미리 넣는다). 기준 밖 수정이 아니라, 개척 섬이 잠기면서 그 검사가 보려던 「열린 섬 사이를 오간다」를 그대로 두기 위한 손질이다"
-   ]
-  },
-  "test": "save.gd\n* test_the_chest_and_what_is_inside_are_still_there_after_leaving_and_returning\n* test_an_empty_chest_comes_back_empty\n* test_a_broken_chest_does_not_come_back\n* test_each_island_keeps_its_own_chests\n* test_restoring_twice_does_not_stack_chests\n5/5 passed.\n\n\nres://tests/world/storage/test_chest_slots.gd\n* test_the_window_lays_out_one_slot_for_every_slot_of_the_chest\n* test_an_empty_slot_cannot_be_dragged\n* test_dragging_a_bag_slot_into_the_chest_moves_it_there\n* test_dropping_onto_the_same_item_in_the_chest_stacks_it\n* test_what_goes_over_one_slot_stays_in_the_bag\n* test_dragging_a_chest_slot_into_the_bag_takes_it_out\n* test_taking_out_onto_the_same_item_stacks_it_in_the_bag\n* test_dropping_onto_another_item_swaps_the_two_slots\n* test_an_eleventh_kind_does_not_fit_in_a_ten_slot_chest\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n9/9 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              50\nTests               470\nPassing Tests       470\nAsserts            9265\nTime              372.21s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "d65d77d"
- },
- {
   "time": "2026-09-22 18:28:20",
   "epoch": 1790069300,
   "type": "pass",
@@ -8048,5 +7989,41 @@
   },
   "test": "/tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           198\nTests            1679\nPassing Tests    1679\nFailing Tests       0\nRisky/Pending       0\nAsserts         76583\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "4b5b566"
+ },
+ {
+  "time": "2026-09-26 23:07:24",
+  "epoch": 1790431644,
+  "type": "pass",
+  "title": "통과 — G-910 단계 3 (build/ 두 파일은 아직 지웠는지 단언이 없다 (G-910 단계 3))",
+  "group": "G-910",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "build/ 테스트 두 파일(qa_sweep · roof_stairs)이 임시 폴더를 TempDir.clean 으로 지우고 지웠는지 단언한다 · NOT_OURS 를 없앴다 — 바뀐 곳만 3개 파일 21개 테스트 통과",
+   "approach": "차선 1 의 G-145 가 build/ 를 쥐고 있어서 두 파일을 NOT_OURS 로 빼 두었다. G-145 는 끝나 합쳐졌다(plan/list.md [x] G-145 · 커밋 97d24f5) — 차선이 풀렸다. 두 파일의 after_each 가 제 손 _erase 대신 TempDir.clean(self, path) 를 부르게 하고 복사본 _erase 를 지웠다. test_temp_dirs_are_cleaned.gd 의 NOT_OURS 와 그것을 거르던 두 줄을 없앴다. 바뀐 곳 그물(changed_tests.py → 3개 파일) 21/21 통과.",
+   "why": "",
+   "files": [
+    "game/tests/build/test_building_qa_sweep.gd",
+    "game/tests/build/test_building_roof_stairs.gd",
+    "game/tests/test_temp_dirs_are_cleaned.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "build/ 두 파일은 아직 지웠는지 단언이 없다 — tests/test_temp_dirs_are_cleaned.gd 의 NOT_OURS 가 tests/build/test_building_qa_sweep.gd · test_building_roof_stairs.gd 를 뺐다(차선 1 G-145 가 build/ 를 쥐고 있어서 — 이번 묶음 제약상 옳다). 그 차선이 풀린 뒤 두 파일의 지우는 곳을 TempDir.clean(self, path) 로 바꾸고 NOT_OURS 를 비워라",
+     "evidence": "차선이 풀렸다: plan/list.md 706줄 [x] G-145, 커밋 97d24f5(G-145 완료)가 HEAD 의 조상이다. 두 파일의 after_each 가 TempDir.clean(self, _save_root / _root) 를 부르고(temp_dir.gd 의 clean 은 지운 뒤 assert_false(left(path)) 로 단언한다) 복사본 _erase 를 지웠다. NOT_OURS 상수와 두 곳의 거름을 없앴다(grep NOT_OURS 결과 없음). 일부러 깨 봤다 — qa_sweep 을 제 손 _erase 로 되돌리자 test_temp_dirs_are_cleaned.gd 가 5개 중 2개 실패(test_every_test_that_uses_the_temp_dir_cleans_through_the_helper · test_no_test_keeps_its_own_eraser). 되돌린 뒤 파일이 원래와 같음을 cmp 로 확인. test.log 전체 198파일 1679/1679 통과, guard 통과."
+    }
+   ],
+   "issues": [
+    "_erase 를 지운 자리에 빈 줄이 남았다 — game/tests/build/test_building_qa_sweep.gd 의 _apply_island_state 와 _stand_and_aim 사이에 빈 줄이 셋이다(함수 사이는 둘). game/tests/build/test_building_roof_stairs.gd 는 _held_count 뒤 파일 끝에 빈 줄이 하나 더 남았다. 하나씩 지워라"
+   ],
+   "good": []
+  },
+  "test": "/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      0s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           198\nTests            1679\nPassing Tests    1679\nFailing Tests       0\nRisky/Pending       0\nAsserts         76585\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "54db64b"
  }
 ]
