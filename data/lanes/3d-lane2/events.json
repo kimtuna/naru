@@ -1450,5 +1450,72 @@
   "group": "G-150",
   "step": "6",
   "attempt": "1"
+ },
+ {
+  "time": "2026-09-26 12:38:00",
+  "epoch": 1790393880,
+  "type": "pass",
+  "title": "통과 — G-150 단계 6 (건축 전체 QA — 한 바퀴 훑어 흠을 찾는다 (G-153 을 옮겼다 2026-09-26))",
+  "group": "G-150",
+  "step": "6",
+  "attempt": "1",
+  "report": {
+   "problem": "건축 전체를 실제 입력으로 한 바퀴 훑었다 — 흠 하나(등 뒤 열린 문을 겨눔)를 고치고, 여섯 가지 × 세 등급 · 휠 · 하늘 지붕 · 개수 · 무너짐 · 방 · 2층 · 저장을 테스트 8개로 묶었다. 바뀐 곳 그물 47파일 389개 통과",
+   "approach": "실제 입력(도면 들기 · R · 휠 · Tab · 우클릭 · 좌클릭 · G · H · T, 조준은 Pointer)으로만 지어 본 결과표 —\n| 해 본 것 | 결과 |\n|---|---|\n| 토대 · 벽 · 문 · 지붕 · 계단 · 기둥 여섯 놓기 (나무) | 된다 |\n| 등급 올리기 G 두 번(석재 → 철) · 내리기 H 두 번 · 다시 올리기 — 여섯 가지 다 | 된다. 낸 재료가 정확히 빠지고 돌아온다 |\n| 철거(좌클릭 셋) — 재료가 전부 돌아오나 | 된다. 여섯을 다 철거하면 가방이 처음(세 재료 60씩)과 정확히 같다 |\n| 벽 T 회전 | 된다 (같은 변에서 반 바퀴) |\n| 옆에 붙이기 | 된다 (기존 test_foundation_attach 그대로) |\n| 휠로 높이기 5m 한도 | 된다. 윗면 = 땅 + 판 두께 0.2 라 열아홉 칸(4.75m)까지 초록, 스무 칸은 빨강이고 안 놓인다 |\n| 계단 아래(기본) · 위(Tab) | 된다 |\n| 지붕을 하늘 보고 놓기 | 된다 (벽 위 하늘 30° 를 보면 초록, 우클릭에 놓인다) |\n| 이어 붙인 개수 — 나무 넷째 장 | 빨강이고 안 놓인다 |\n| 토대 부수기 → 벽 · 문 · 지붕 · 지붕 위 상자 연쇄 | 된다. 전부 바닥에 떨어지고 가방엔 토대 몫만 |\n| 방 생김 · 없어짐 (문을 부수면 없어지고 다시 달면 돌아온다) | 된다 |\n| 2층 — 지붕 위 벽 넷 · 지붕, 층마다 제 방 | 된다 (방 둘, 바닥 높이 다름) |\n| 저장 · 불러오기 — 자리 · 등급(철 벽 · 석재 문) · 열린 문 · 들어간 재료 | 된다. 불러온 철 벽을 철거해도 전부 돌아온다 |\n| **열린 문을 등지고 앞의 벽에 G** | **안 됐다 → 고쳤다.** 카메라가 열린 문 밖으로 나가 광선이 등 뒤의 문구멍(Area3D)을 먼저 짚어 문이 올라갔다. aimed_piece 가 캐릭터 뒤에서 맞은 구멍을 건너뛴다 |\n\n그림(.loop/out/shots/qa/): qa_house(여섯 가지 · 세 등급이 선 집) · qa_house_restored(저장하고 불러온 뒤 — 같다) · qa_house_collapsed(동쪽 토대를 부순 뒤 — 서 토대 · 계단만 남고 나머지는 바닥에 떨어졌다). 앞 단계 QA 둘도 갚았다 — FLOOR_TOP_NORMAL 주석에 「임시다 — 눈대중」, 그림은 harness/shot.sh 로 남겼다.\n고치지 않고 QA 에 넘기는 것(흠이 아니라 규칙의 결과): ① 손으로 놓는 것은 늘 나무라, 이어 붙일 개수 4 · 5 자리에는 석재 · 철 사슬을 올려도 새 것을 못 놓는다 — 올린 개수는 받침을 잃었을 때 버티는 데만 쓰인다 (spec 미정 「손으로 놓는 것은 늘 나무」의 결과). ② 기둥이 옆 토대와 나누는 모서리에 서면 제 토대를 부숴도 옆 토대가 받쳐 지붕이 남는다 (규칙대로다 — 그림 자리를 옮겨 피했다).",
+   "why": "",
+   "files": [
+    "game/build/buildings.gd",
+    "game/build/placeable.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_qa_sweep.gd",
+    "game/tests/build/test_building_qa_sweep.gd.uid"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "아래를 전부 실제 입력으로 해 보고, 되는 것 · 안 되는 것을 report 에 표로 적는다 — 토대 · 벽 · 문 · 지붕 · 계단 · 기둥 여섯 × 세 등급 놓기 / 등급 올리기 · 내리기 / 회전 / 철거 / 옆에 붙이기 / 휠 5m / 계단 Tab / 하늘 지붕 / 개수 빨강 / 연쇄 무너짐 + 설치물 / 방 / 2층 / 저장",
+     "evidence": "report.json how 에 15줄 결과표가 있다. tests/build/test_building_qa_sweep.gd 8개가 전부 R · 휠 · Tab · 우클릭 · 좌클릭 · G · H · T 입력 이벤트와 Pointer.simulate_motion 으로만 짓는다 — test_six_kinds…(여섯 × 세 등급 오르내림 · T 회전 · 철거 후 가방 60·60·60 복귀), test_the_wheel…(19칸 초록 · 20칸 빨강 · 안 놓임), test_a_roof…(Aim.at 이 비어 있는 채 놓임 + Tab 위 계단), test_the_fourth_wood_roof…(4장째 빨강 · 3장만 놓임), test_breaking_the_foundation…(벽 · 문 · 지붕 · 지붕 위 상자 무너짐 · 방 0 · 떨어진 것 y<1), test_walls_and_a_roof…(2층 · 방 둘 · level 다름), test_save_and_restore…(자리 · 등급 · 방향 · 두께 · 문 열림 · refund 사전 비교). 옆에 붙이기만 기존 test_foundation_attach 에 기댄다. 전체 179파일 1526개 통과(test.log 전체)"
+    },
+    {
+     "ok": true,
+     "criterion": "찾은 흠 중 그 자리에서 고칠 수 있는 것은 고치고 테스트를 단다 (테스트)",
+     "evidence": "흠 하나(열린 문을 등지면 등 뒤 문구멍이 겨눠짐)를 buildings.gd aimed_piece 에서 캐릭터 뒤 Area3D 를 건너뛰게 고쳤다. test_an_open_door_behind_the_camera_is_not_what_you_aim_at 가 지킨다 — 건너뛰기를 끄자(dot < -1e9) 그 테스트와 test_save_and_restore 둘이 깨졌다(5 단언). 되돌렸고 파일이 원본과 같다"
+    },
+    {
+     "ok": true,
+     "criterion": "나머지는 QA 가 적어 다음 단계로 붙인다",
+     "evidence": "report 가 넘긴 둘(손으로 놓는 것은 늘 나무라 4·5번째 자리에 못 놓음 · 나눈 모서리 기둥이 옆 토대에 받쳐짐)을 problems 에 적었다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 여섯 가지가 선 집 한 채 · 무너진 뒤 · 불러온 뒤",
+     "evidence": ".loop/out/shots/qa/qa_house.png(토대 둘 · 벽 · 열린 문 · 기둥 · 지붕 · 지붕 위 상자 · 계단, 등급 색이 섞여 있다) · qa_house_restored.png(같은 모습) · qa_house_collapsed.png(서 토대 · 계단만 남고 조각이 바닥에 흩어졌다) 세 장을 눈으로 봤다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) FLOOR_TOP_NORMAL 주석에 「임시다 — 눈대중」",
+     "evidence": "placeable.gd:46 에 「**임시**다 — 눈대중. … spec 에 수치가 없다」가 붙었다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 그림을 harness/shot.sh 로 남긴다",
+     "evidence": ".loop/out/shots/qa/ 에 세 장이 12:26 에 남아 있다"
+    }
+   ],
+   "issues": [
+    "[결정] 석재 · 철 사슬을 올려도 4 · 5번째 자리에 새 것을 못 놓는다 — spec building.md:52·86 은 「윗단일수록 이을 수 있는 개수도 하나 더 간다(석재 4 · 철 5)」인데, 손으로 놓는 것은 늘 나무(building.md:104)라 놓는 순간 나무 한도 3 에 걸려 4 · 5 자리는 영영 못 놓는다. 올린 개수는 받침을 잃었을 때 버티는 데만 쓰인다. 길은 셋 — ① 사슬(받침 쪽)의 등급으로 한도를 재서 나무를 놓게 하고 그 자리 나무는 곧 무너질 위험을 안는다 ② 4 · 5 자리는 미리보기에서 바로 석재 · 철로 놓게 한다(재료도 그 등급으로) ③ 지금대로 두고 spec 52줄을 「버티는 개수만」으로 좁힌다. 사람이 골라야 한다",
+    "무너짐 테스트의 상자를 손으로 놓았다 — test_building_qa_sweep.gd:264 가 StorageChest.make() 와 global_position 대입으로 지붕 위 상자를 세운다. 단계 참고 「함수를 직접 불러 맞추지 않는다」에 어긋난다. G-150.5 가 상자 미리보기를 붙였으니 상자를 손에 들고(set_slot) 지붕 위를 짚어 우클릭으로 놓게 바꾸고, 놓인 뒤 held_up(chest) 단언은 그대로 둬라",
+    "저장 · 불러오기가 저장 파일을 거치지 않는다 — test_building_qa_sweep.gd:374·389 가 buildings.standing() → restore() 만 잇는다. 기준 「저장하고 불러오면」을 끝까지 보려면 세계 저장(SaveGame 류)에 써서 새 GameRoot 로 읽어 오는 한 번을 더 두거나, 이미 그 길을 도는 테스트(tests/world/storage 쪽)에 등급 있는 건축물을 한 장 끼워라"
+   ],
+   "good": [
+    "core/debug/shots.gd 에 qa_house 세 장면(_set_up_house 85줄)이 붙었다 — 기준 「찍어서 확인」을 위한 것이라 기준 안이지만, 이후 찍을 때마다 집을 짓고 부순다(장면 셋). 찍는 시간이 늘면 QA 전용으로 빼는 것을 생각하라"
+   ]
+  },
+  "test": "ther_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_rooms.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           179\nTests            1526\nPassing Tests    1526\nFailing Tests       0\nPending             0\nAsserts         70795\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "18e2719"
  }
 ]
