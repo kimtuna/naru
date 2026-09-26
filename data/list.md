@@ -1146,8 +1146,12 @@
   - 기준: _erase 를 지운 자리에 빈 줄이 남았다 — game/tests/build/test_building_qa_sweep.gd 의 _apply_island_state 와 _stand_and_aim 사이에 빈 줄이 셋이다(함수 사이는 둘). game/tests/build/test_building_roof_stairs.gd 는 _held_count 뒤 파일 끝에 빈 줄이 하나 더 남았다. 하나씩 지워라
 - [x] 1. test_foundation_wheel_attach.gd 에 빈 줄 셋 (G-910 단계 2)
   - 기준: test_foundation_wheel_attach.gd 에 빈 줄 셋 — game/tests/build/test_foundation_wheel_attach.gd 51~53행이 빈 줄 셋이다(함수 사이는 둘). 하나를 지워라. 이번 기준 밖이고 build/ 는 차선 1 몫이니 그쪽 묶음 단계로 넘겨도 된다
-- [ ] 1. 다른 파일에도 빈 줄이 셋 이상 남았다 (G-910 단계 1)
+- [x] 1. 다른 파일에도 빈 줄이 셋 이상 남았다 (G-910 단계 1)
   - 기준: 다른 파일에도 빈 줄이 셋 이상 남았다 — addons/ 를 빼고 훑으면 game/build/placeable.gd 125~127행(return {at = spot, ok = true, why = ""} 뒤, '## 이 놓인 것을 부수면' 앞 빈 줄 셋), game/tests/life/hunting/test_animal_walk.gd 254~257행(파일 끝 빈 줄 넷 — 끝의 빈 줄은 모두 지워 줄바꿈 하나로 끝내라), game/tests/world/frontier_islands/test_dock_building.gd 386~388행(함수 사이 빈 줄 셋)이 걸린다. 함수 사이는 둘로 맞춰라. build/placeable.gd 는 차선 1 몫이니 그쪽 묶음 단계로 넘긴다. 다시 생기지 않게 하려면 tests/core/tools 에 '.gd 파일(addons 제외)에 빈 줄이 셋 이상 이어지는 곳이 없다'는 훑기 테스트를 두면 된다
+- [ ] 1. placeable.gd 빈 줄 셋이 아직 남았다 (G-910 단계 1)
+  - 기준: placeable.gd 빈 줄 셋이 아직 남았다 — game/build/placeable.gd 125~127행(return {at = spot, ok = true, why = ""} 뒤, '## 이 놓인 것을 부수면' 앞)의 빈 줄 셋을 둘로 줄여라. build/ 를 맡은 쪽 단계에서 할 일이다. 고친 뒤에는 game/tests/core/tools/test_no_triple_blank_lines.gd 의 LEFT_FOR_LANE_1 에서 "build/placeable.gd" 를 지워 빈 목록으로 두고, test_no_script_under_game_has_three_blank_lines_in_a_row 가 그대로 통과하는지 확인하라
+- [ ] 2. 예외 목록이 낡아도 알 수 없다 (G-910 단계 1)
+  - 기준: 예외 목록이 낡아도 알 수 없다 — test_no_triple_blank_lines.gd 의 LEFT_FOR_LANE_1 에 든 파일을 고쳐도 목록에서 지우지 않으면 그 파일은 계속 검사 밖에 남고, 이를 알리는 것이 없다. 목록의 파일마다 assert_false(_triple_blanks(...).is_empty(), "<파일>은 이제 고쳐졌다 — LEFT_FOR_LANE_1 에서 지워라") 를 두어, 고친 뒤 목록이 남아 있으면 테스트가 떨어지게 하라
 
 ## [x] G-913 G-910 에서 뗀 셋 — 차선 2 가 같이 한다 (사람 결정 2026-09-26)
 - 차선: 3d-lane2
