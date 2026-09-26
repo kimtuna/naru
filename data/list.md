@@ -1116,7 +1116,7 @@
   - 기준: `spec/03_world/lighting.md` 14줄 「지금은 들어도 · 놓아도 아무것도 안 밝다」를 지운다 — 횃불이 들어와 낡은 줄이다 (grep)
 - [x] 10. 진짜 섬 물로 채우는 테스트가 없다 (G-152 단계 1)
   - 기준: 진짜 섬 물로 채우는 테스트가 없다 — 채우기 테스트는 모두 가짜 연못(fresh_water_level 을 테스트가 넣은 Callable)이다. test_island.gd 가 crops.fresh_water_level 을 shape.fresh_water_level_at 에 이었는지는 아무 테스트도 안 본다. tests/world/terrain/test_island_in_game.gd 같은 섬 테스트에 「섬의 crops.fresh_water_level 이 유효하고 섬의 연못 한 자리에서 수면 높이를 낸다」는 단언을 더하라
-- [ ] 8. _process 주석의 줄 수도 낡았다 (G-910 단계 19)
+- [x] 8. _process 주석의 줄 수도 낡았다 (G-910 단계 19)
   - 기준: _process 주석의 줄 수도 낡았다 — game/ui/hud/station_window.gd 160행 「줄이 스물 몇이라 세는 값이 싸다」도 가공대 레시피 45줄과 안 맞는다. 「줄이 마흔 몇이라」로 고쳐라 (주석만 — 막는 것은 아니다)
 - [ ] 8. 테스트 사이 빈 줄이 하나뿐이다 (G-910 단계 20)
   - 기준: 테스트 사이 빈 줄이 하나뿐이다 — game/tests/life/climbing/test_grapple_magazine_size.gd 의 test_the_magazine_does_not_vary_by_grade 끝과 다음 ## 주석(test_the_check_catches_the_old_shape) 사이에 빈 줄이 하나다. 파일의 다른 함수들처럼 두 줄로 맞춰라 (모양만의 문제다)
@@ -1126,12 +1126,18 @@
   - 기준: 안쪽 test.sh 가 --import 를 다시 부른다 — 이 테스트는 전체 실행 도중 test.sh 를 한 번 더 띄우므로 안쪽 test.sh 머리의 godot --import 가 다른 godot 들이 같은 game/.godot/ 를 쓰는 동안 돈다. 지금은 통과했지만 겹치면 흔들릴 수 있다. 안쪽 실행에서 import 를 건너뛰는 환경 변수(예: TEST_SKIP_IMPORT=1)를 test.sh 에 두고 이 테스트가 그것을 넘기게 하라
 - [ ] 8. 단언문 하나에 낡은 25번이 남았다 (G-910 단계 23)
   - 기준: 단언문 하나에 낡은 25번이 남았다 — test_from_empty_hands_asserts_to_the_end.gd 의 test_the_check_catches_the_old_tail 에서 `assert_eq(_assert_lines(_after_last_step(fine, LOOP_FUNC)), 1, "25번 아래의 단언을 못 센다")` 의 글이 아직 25번이라고 한다. LAST_STEP 은 이제 27 이니 「마지막 걸음 아래의 단언을 못 센다」로 고쳐라
-- [ ] 9. 머리말의 옛 단언 수가 낡았다 (G-910 단계 23)
+## [ ] G-913 G-910 에서 뗀 셋 — 차선 2 가 같이 한다 (사람 결정 2026-09-26)
+- 차선: 3d-lane2
+- **이 묶음의 브랜치 `g/G-913` 은 `g/G-910` 끝에서 갈라 두었다** — 셋 다 G-910 단계 23 · 25 가 만든 코드를
+  고치는 일이라 줄기에서 갈라지면 그 파일이 아예 없다 (대화 세션이 미리 만들었다 2026-09-26)
+- G-910 을 빨리 끝내려고 사람이 셋을 떼어 차선 2 에 맡겼다. 나머지는 차선 1 이 이어서 한다
+- [ ] 1. 머리말의 옛 단언 수가 낡았다 (G-910 단계 23)
   - 기준: 머리말의 옛 단언 수가 낡았다 — 같은 파일 머리말 6~7줄의 「지금은 814개를 단언하고 끝까지 간다 (전체 1507 · 통과 1507)」가 지금(1092 단언 · 전체 1665)과 다르다. 「G-148 때는」처럼 그때 일로 적거나 숫자를 빼라
-- [ ] 8. PLACERS 주석이 놓는 곳을 넷만 적는다 (G-910 단계 25)
+- [ ] 2. PLACERS 주석이 놓는 곳을 넷만 적는다 (G-910 단계 25)
   - 기준: PLACERS 주석이 놓는 곳을 넷만 적는다 — game/build/placeable.gd 25줄 「(Stations · Chests · Farmland · Buildings)」에 Torches 가 빠졌다. 이 묶음은 build/ 를 건드리지 않아 남겼다. 「(Stations · Chests · Farmland · Buildings · Torches)」로 고쳐라
-- [ ] 9. 토대 위 횃불 놓기에 테스트가 없다 (G-910 단계 25)
+- [ ] 3. 토대 위 횃불 놓기에 테스트가 없다 (G-910 단계 25)
   - 기준: 토대 위 횃불 놓기에 테스트가 없다 — torches.gd aimed_spot 이 Placeable.plan_cell 로 합쳐지면서 토대 · 지붕 윗면에도 횃불이 놓이게 됐는데(전에는 BuildPiece 위를 막았다), 이를 지키는 테스트가 없다. tests/world/lighting/test_torch.gd 에 토대를 하나 놓고 윗면을 짚어 place_held 가 횃불을 그 윗면 높이에 세우는지, 벽 옆면을 짚으면 안 놓이는지 단언을 넣어라
+
 
 ## [x] G-911 G-910 에서 뺀 것 — 차선을 나누느라 갈라졌던 것 (2026-09-26 다시 합쳤다)
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 차선 2 가 G-154 다음에 한다)
