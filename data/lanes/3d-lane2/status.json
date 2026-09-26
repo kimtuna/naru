@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 09:26:14",
- "updated_epoch": 1790382374,
+ "updated": "2026-09-26 09:59:18",
+ "updated_epoch": 1790384358,
  "ended": "2026-09-26 07:11:37",
  "progress": {
   "groups_total": 41,
   "groups_done": 34,
   "groups_waiting": 0,
-  "steps_total": 164,
-  "steps_done": 141
+  "steps_total": 165,
+  "steps_done": 142
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-150",
  "step": "5",
  "step_title": "설치물도 놓을 자리가 보인다 (G-146 에서 옮겼다)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 09:26:14",
+ "phase": "QA",
+ "phase_since": "2026-09-26 09:53:45",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-26 07:00:00"
