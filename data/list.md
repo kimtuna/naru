@@ -1172,7 +1172,7 @@
   - 기준: 정해진 것이 「미정」 절에 남은 곳이 farming.md 에 더 없다 (읽어서 확인)
   - 기준: (앞 단계 QA) 새 연쇄 테스트의 머리 주석이 틀린 까닭을 적는다 — test_building_collapse.gd 의 test_a_support_placed_later_still_brings_down_the_whole_chain 위 첫 줄이 「한 번 훑기로는 R1 · P · R2 가 떠서 남는다」라고 하지만, 같은 주석 아래와 구현 보고대로 G-145 뒤에는 건축물은 _link_counts 가 다 잡고 떠 남는 것은 상자(설치물)다. 첫 줄을 「한 번 훑기로는 그 위 설치물(상자)이 떠서 남는다」로 고쳐라
   - 기준: (앞 단계 QA) unnamed 저장본이 끝없이 쌓일 수 있다 — island_cache.gd prune 이 unnamed 끼리 안 지우므로, 코드로 만든 설계 값을 use_cache=true 로 굽는 곳이 생기면 user://island_cache 에 unnamed 판이 SOURCES 해시가 바뀔 때마다 늘어난다(지금은 그런 곳이 없어 막는 것은 아니다). 코드 설계 값에서 use_cache 를 켜면 push_warning 하거나, island_key 주석처럼 테스트 하나로 「캐시를 켜는 곳은 모두 .tres」를 단언해 두면 막힌다
-- [ ] 8. (앞 단계 QA) spec/README.md 에 건축물 네 가지 줄이 남았다
+- [x] 8. (앞 단계 QA) spec/README.md 에 건축물 네 가지 줄이 남았다
   - 기준: spec/README.md 에 건축물 네 가지 줄이 남았다 — 30줄 「building.md — 벽 · 문 · 지붕 · 계단 건축」이 building.md 8줄의 여섯 가지(토대 · 벽 · 문 · 지붕 · 계단 · 기둥)와 어긋난다. 「building.md — 토대 · 벽 · 문 · 지붕 · 계단 · 기둥 건축」으로 고쳐라
 
 ## [x] G-152 농사가 된다 — 물 주기 · 비료

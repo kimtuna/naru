@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 18:48:53",
- "updated_epoch": 1790416133,
+ "updated": "2026-09-26 18:55:11",
+ "updated_epoch": 1790416511,
  "ended": "2026-09-26 17:10:55",
  "progress": {
   "groups_total": 41,
   "groups_done": 38,
   "groups_waiting": 0,
   "steps_total": 177,
-  "steps_done": 167
+  "steps_done": 168
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-911",
  "step": "8",
  "step_title": "(앞 단계 QA) spec/README.md 에 건축물 네 가지 줄이 남았다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 18:48:53",
+ "phase": "QA",
+ "phase_since": "2026-09-26 18:54:39",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-26 12:00:00",
