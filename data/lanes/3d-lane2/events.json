@@ -1980,5 +1980,84 @@
   },
   "test": " res://tests/world/frontier_islands/test_dock_building.gd\nok      5s  res://tests/build/test_blueprint.gd\nok      7s  res://tests/world/storage/test_chest_break.gd\nok      6s  res://tests/build/test_building_chain_grade.gd\nok      5s  res://tests/combat/damage_death/test_death.gd\nok      4s  res://tests/build/test_building_stairs_flip.gd\nok      5s  res://tests/build/test_building_preview.gd\nok      5s  res://tests/build/test_building_roof_skyward.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      5s  res://tests/combat/tools_as_weapons/test_ammo_kinds.gd\nok      4s  res://tests/build/test_building_grades.gd\nok      4s  res://tests/ui/menu/test_pause_menu.gd\nok      5s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      5s  res://tests/build/test_building_stairs_roof.gd\nok      3s  res://tests/build/test_foundation_wheel_attach.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      4s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      4s  res://tests/player/movement_controls/test_stairs_speed.gd\nok      3s  res://tests/build/test_building_downgrade.gd\nok      3s  res://tests/build/test_building_link_count.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/life/food/test_food.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      4s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      4s  res://tests/ui/hud/test_target_bars.gd\nok      4s  res://tests/ui/layout/test_window_layout.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      4s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/combat/damage_death/test_death_chest_look.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok    423s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           106\nTests            1001\nPassing Tests    1001\nFailing Tests       0\nPending             0\nAsserts         58727\nTime           423s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "7234528"
+ },
+ {
+  "time": "2026-09-26 16:51:05",
+  "epoch": 1790409065,
+  "type": "pass",
+  "title": "통과 — G-154 단계 2 (계단은 **딛고 선 바닥**에 받쳐진다 — 지붕이 아니라)",
+  "group": "G-154",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "계단의 받침을 딛고 선 바닥으로 바꿨다 — 지붕을 부숴도 계단은 서고, 딛고 선 바닥을 부수면 무너지며, 위층 바닥이 없어도 토대 위에서 위로 가는 계단이 놓인다 (바뀐 곳만: 42개 파일 307개 테스트 통과)",
+   "approach": "문제: 계단의 받침(stairs_host)이 기하로만 정해져 늘 '올라가 닿는 앞 판'이었다. 그래서 위로 놓은 계단이 지붕에 매달려 지붕을 부수면 같이 죽고, 위층 바닥이 없으면 no_support 로 못 놓았다. 풀이: (1) 오르는 쪽(방향)은 BuildPiece.stairs_top() 으로 떼어 내고 방향을 쓰던 곳(_link_counts · 이어 붙이기 · _stairs_edge)은 그것을 쓴다. (2) Buildings._link_of 의 계단 갈래 — 제 판 · 밑면 높이에 바닥(토대 · 지붕)이 있(었)으면 그 바닥 하나만 받침으로 본다. 밑에 바닥이 없는 계단(땅으로 내려가는 계단 · 이어 붙인 계단)만 전처럼 붙은 바닥 · 앞 계단에 매달린다. (3) '있었나'를 알려고 _link_index 에 무너진 것까지 넣는다(개수는 counts 에 든 것만 잇는다) — 설치물의 _held 가 쓰는 '발밑에 바닥이 있었으면 그것이 남아야 한다'와 같은 길이다. 그래서 딛고 선 바닥이 무너지면 위에 지붕이 멀쩡해도 받침이 옮겨 가지 않고 계단이 무너진다. 저장할 새 상태는 없다(자리만으로 다시 나온다). (4) stairs_host() · plan 의 host 도 같은 규칙. 위층 바닥 변을 짚어 내려 놓은 계단도 밑에 토대가 있으면 그 토대가 받침이 된다 — 같은 모양이라 규칙이 하나여야 한다. 옛 단언(매달렸다 · 지붕 개수 + 1 · 같이 무너진다)은 같은 자리에서 새 규칙을 묻게 고쳤다. spec 은 '딛고 선 바닥에 받쳐진다 (사람 결정 2026-09-26)'로 고치고 '매달린다'는 building.md 에 남지 않는다. 그림: harness/shot.sh 에 stairs_up · stairs_up_roof_gone 자리를 더해 찍었다 — 토대 위에서 지붕으로 오르는 계단, 지붕을 부순 뒤에도 선 계단을 눈으로 확인했다 (비탈이라 토대 두 장을 1m 올려 깐다).",
+   "why": "",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/build/buildings.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_building_stairs_flip.gd",
+    "game/tests/build/test_building_stairs_roof.gd",
+    "game/tests/build/test_building_roof_stairs.gd",
+    "game/tests/build/test_building_qa_sweep.gd",
+    "game/tests/build/test_rooms.gd",
+    "spec/06_build/building.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "계단의 **받침은 딛고 선 바닥**(토대 · 2층 바닥)이다 — `stairs_host` · `link_count` · `held_up` 이 전부 그것을 본다 (테스트)",
+     "evidence": "test_building_stairs_flip::test_stairs_go_up_from_the_top_of_a_foundation_to_the_upper_floor 가 stairs_host == A 판 · link_count == link_count(A)+1 · held_up 을 확인. test_building_stairs_roof::test_the_stairs_rest_on_the_floor_below_and_hold_no_roof 는 지붕 변에서 놓아도 받침이 A 이고 지붕+1 이 아님을 단언. _link_of 의 _floor_under 갈래를 끄자 stairs_flip · stairs_roof 둘 다 떨어졌다 (되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "**지붕(또는 위층 바닥)을 부숴도 계단은 그대로 선다** (테스트) — 지금은 같이 무너진다",
+     "evidence": "stairs_flip 의 위 테스트가 지붕을 받치던 벽을 부순 뒤 지붕은 사라지고 계단은 그룹에 남고 held_up · link_count 1 을 단언. stairs_roof::test_when_the_upper_floor_falls_the_stairs_still_stand 는 떨어진 재료가 지붕 몫뿐임까지 본다. 찍은 그림 stairs_up_roof_gone 에서도 지붕 없이 계단이 선다"
+    },
+    {
+     "ok": true,
+     "criterion": "**딛고 선 바닥을 부수면 계단이 무너진다** (테스트) — 받침이 바뀌었다고 떠 있는 계단이 생기면 안 된다 (spec 「받쳐야 선다」)",
+     "evidence": "stairs_flip::test_stairs_fall_with_the_floor_they_stand_on_even_while_the_upper_floor_stands — 위층 바닥이 선 채로 A 를 부수면 계단이 사라지고 남은 것이 모두 held_up. _link_counts 의 표에서 무너진 것을 빼는 변이(index = _link_index(pieces))를 넣자 이 파일이 떨어졌다 — 받침이 지붕으로 옮겨 가는 경우를 실제로 막는다"
+    },
+    {
+     "ok": true,
+     "criterion": "**위층 바닥이 하나도 없어도** 토대 위에서 위로 가는 계단이 놓인다 (테스트) — `no_support` 로 막지 않는다",
+     "evidence": "stairs_flip::test_stairs_up_stand_on_a_lone_foundation_without_any_upper_floor — 혼자 선 토대 C 에서 plan ok · why '' · host C, place_at 이 놓고 link_count 1 · held_up"
+    },
+    {
+     "ok": true,
+     "criterion": "앞의 동작을 지키던 **옛 단언을 고친다** — `test_building_stairs_flip.gd` 의 「위층 바닥에 매달렸다」 · 「매달린 바닥의 개수 + 1」 · `test_stairs_up_need_an_upper_floor_to_hang_from` 이 새 규칙으로 바뀌어 있다. 지우기만 하면 안 된다 — 같은 자리를 새 규칙으로 물어야 한다",
+     "evidence": "같은 자리의 단언이 「딛고 선 A 에 받쳐졌다」 · 「딛고 선 바닥의 개수 + 1」 로 바뀌었고, need_an_upper_floor 테스트는 lone_foundation 테스트로 같은 배치(토대 C)에서 새 규칙을 묻는다. qa_sweep · roof_stairs · stairs_roof 의 옛 host 단언도 새 규칙으로 고쳤다"
+    },
+    {
+     "ok": true,
+     "criterion": "「계단이 선 판에는 아무것도 못 짓는다」(G-149)는 그대로다 (테스트)",
+     "evidence": "lone_foundation 테스트 끝에서 stairs_in 이 C 판의 계단을 돌려주고, 계단 머리 변 벽 · 계단 판 위 지붕이 why 'taken'. 기존 G-149 테스트 파일들도 전체 실행(1573 통과)에서 그대로 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "`spec/06_build/building.md` 에서 「올라가 닿는 바닥에 매달린다」를 「딛고 선 바닥에 받쳐진다 (사람 결정 2026-09-26)」로 고친다 — 옛 줄이 남지 않는다 (grep)",
+     "evidence": "building.md 26행에 「딛고 선 바닥에 받쳐진다 (사람 결정 2026-09-26)」. grep '매달' spec/ 은 등반 · 다른 문서뿐이고 building.md 에는 없다. 파일 113줄"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 토대 한 장 위로 오르는 계단이 선 그림 · 그 위 지붕을 부순 뒤에도 계단이 선 그림",
+     "evidence": "QA 가 harness/shot.sh 로 stairs_up · stairs_up_roof_gone 을 다시 찍었다 — 토대 A 위에서 북쪽 B 지붕 쪽으로 오르는 경사가 보이고, 두 번째 그림에서 지붕이 사라진 뒤에도 계단이 그대로다. 로그 「STAIRS_UP 계단 선다 · 받침 판 (-101, 50) · 지붕 부서졌다」"
+    }
+   ],
+   "issues": [
+    "stairs_roof 머리 주석이 낡았다 — game/tests/build/test_building_stairs_roof.gd 3~5행 「그래서 계단이 올라가 닿는 판에는 늘 바닥이 있다」는 이제 틀렸다(위층 바닥 없이도 위로 가는 계단이 놓인다). 그 문장을 지우거나 「위층 바닥 변에서 놓을 때는」으로 좁혀라",
+    "test_rooms 주석에 옛 까닭이 남았다 — game/tests/build/test_rooms.gd 92행 「(사람 결정 2026-09-24 — 붙는 쪽은 늘 받침이 있는 쪽이다)」는 G-154.2 로 덮였다. 「받침은 딛고 선 A (사람 결정 2026-09-26)」로 고쳐라",
+    "stairs_host 와 _link_of 의 바닥 판정이 두 벌이다 — BuildPiece.stairs_host() 는 서 있는 바닥만 보고 Buildings._link_of 는 무너진 것까지 본다(_floor_under). 지금은 무너진 계단이 곧 사라져 드러나지 않지만, 한 곳(예: Buildings 의 정적 함수)으로 모아 두 규칙이 어긋나지 않게 하라"
+   ],
+   "good": []
+  },
+  "test": "ple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/world/storage/test_chest_slots.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_rooms.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok    423s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           184\nTests            1573\nPassing Tests    1573\nFailing Tests       0\nPending             0\nAsserts         73559\nTime           423s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "ef1c600"
  }
 ]
