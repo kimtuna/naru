@@ -1003,7 +1003,7 @@
 - spec: spec/06_build/building.md, spec/02_player/movement.md
 - 사람이 플레이해 보고 짚었다 (2026-09-26 오후) — G-150 을 합친 판(92638c3)에서
 - **자가 피드백**: 깨끗해질 때까지 단계를 계속 붙인다
-- [ ] 1. 계단에서는 이동 속도가 그대로다
+- [x] 1. 계단에서는 이동 속도가 그대로다
   - 「계단에서 오르막이 느리다. 계단은 이동속도 상관 없이 해야 할듯함」
   - 어디가 그런가: `game/player/movement_controls/player.gd` 의 `slope_factor()` 가 `get_floor_normal()` 로 비탈을 재는데,
     계단은 비탈면이라 `uphill_slowdown`(0.5, player_config.gd)이 그대로 걸려 **오를 때 속도가 절반**이 된다.

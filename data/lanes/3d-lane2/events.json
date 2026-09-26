@@ -1931,5 +1931,54 @@
    ]
   },
   "test": "s_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/test_guard.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      0s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    424s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           183\nTests            1570\nPassing Tests    1570\nFailing Tests       0\nPending             0\nAsserts         73288\nTime           424s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-26 16:24:55",
+  "epoch": 1790407495,
+  "type": "pass",
+  "title": "통과 — G-154 단계 1 (계단에서는 이동 속도가 그대로다)",
+  "group": "G-154",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "계단 위에서는 비탈 배율이 1 이다 — 오르내림 모두 평지 속력, 땅 비탈은 그대로 (바뀐 곳만: 106개 파일 1001개 테스트 통과)",
+   "approach": "slope_factor 가 바닥 법선만 보고 계단에도 uphill_slowdown 을 걸었다. 지형과 건축물을 가르는 길이 이미 있었다 — 계단 몸만 WALK_ANGLE_META 를 적고 땅은 적지 않는다. 그래서 딛고 선 바닥 몸이 그 메타를 적었으면 계단으로 보고(stands_on_stairs) 배율을 1 로 둔다. 처음엔 부딪힌 것(slide collision)으로 알아보려 했으나 내리막에서는 floor snap 만 하고 부딪힘이 남지 않아 내려갈 때 1.24 배로 빨라졌다 — 그래서 발밑으로 짧게 쏘는 광선(FLOOR_PROBE 0.3m)으로 바꿨다. 테스트는 진짜 계단(BuildPiece.make)과 같은 기울기의 맨 비탈 판에서 W 로 걸어 속력과 배율을 잰다. spec 이동 · 조작 수치에 사람 결정 줄과 수용 기준을 더했다.",
+   "why": "Player.FLOOR_PROBE = 0.3m — 딛고 선 바닥을 알아볼 광선 길이. 캡슐 발이 계단 비탈(약 39°)에서 뜬 높이보다 넉넉히 잡았다",
+   "files": [
+    "game/player/movement_controls/player.gd",
+    "game/tests/player/movement_controls/test_stairs_speed.gd",
+    "spec/02_player/movement-controls.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "계단 위에 서 있으면 비탈 배율이 1 이다 — 오를 때도 내려갈 때도 평지와 같은 속도다 (테스트)",
+     "evidence": "test_stairs_speed.gd test_stairs_do_not_slow_you_going_up_or_speed_you_going_down — 진짜 계단(BuildPiece.make(\"wood_stairs\"))을 W 로 오르내리며 is_on_floor · stands_on_stairs · slope_factor==1 · 속력≈평지(±0.1)를 단언한다. 일부러 slope_factor 에서 stands_on_stairs() 를 빼 보니 오르막 배율 0.6 · 속력 3.26, 내리막 1.24 · 6.74 로 4개 단언이 떨어졌다 (되돌렸다). test.log 에서도 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "땅 비탈은 그대로 느려지고 빨라진다 — 계단만 예외다 (테스트)",
+     "evidence": "test_ground_slopes_still_slow_you_up_and_speed_you_down — 계단과 같은 기울기의 맨 StaticBody3D 비탈에서 stands_on_stairs 가 거짓, 오르막 factor<1 · 속력<평지-0.3, 내리막 factor>1 · 속력>평지+0.3 을 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "계단을 딛고 선 것을 무엇으로 아는지 코드에 적는다 (바닥이 BuildPiece 의 계단인가). 지형과 건축물을 가르는 길이 이미 있으면 그것을 쓴다 — 새로 만들면 왜 필요한지 주석에 남긴다",
+     "evidence": "player.gd stands_on_stairs · _floor_has_walk_angle 주석 — 이미 있는 WALK_ANGLE_META(build_piece.gd:331 에서 계단 몸만 적는다)를 쓴다. 발밑 광선을 새로 쓴 까닭(내리막은 floor snap 만 해 slide collision 이 안 남는다)도 주석에 있다. FLOOR_PROBE 는 임시로 적혀 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "`spec/02_player/movement.md`(없으면 building.md 계단 절)에 「계단에서는 비탈 배율이 걸리지 않는다 (사람 결정 2026-09-26)」를 적는다",
+     "evidence": "movement.md 라는 파일은 없고 이동 spec 은 spec/02_player/movement-controls.md 다. 그 「규칙」에 그 문장 그대로 적었고 수용 기준에도 한 줄 더했다. 기존 사람 결정 줄은 지워지지 않았고 52줄이다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": " res://tests/world/frontier_islands/test_dock_building.gd\nok      5s  res://tests/build/test_blueprint.gd\nok      7s  res://tests/world/storage/test_chest_break.gd\nok      6s  res://tests/build/test_building_chain_grade.gd\nok      5s  res://tests/combat/damage_death/test_death.gd\nok      4s  res://tests/build/test_building_stairs_flip.gd\nok      5s  res://tests/build/test_building_preview.gd\nok      5s  res://tests/build/test_building_roof_skyward.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      5s  res://tests/combat/tools_as_weapons/test_ammo_kinds.gd\nok      4s  res://tests/build/test_building_grades.gd\nok      4s  res://tests/ui/menu/test_pause_menu.gd\nok      5s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      5s  res://tests/build/test_building_stairs_roof.gd\nok      3s  res://tests/build/test_foundation_wheel_attach.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      4s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      4s  res://tests/player/movement_controls/test_stairs_speed.gd\nok      3s  res://tests/build/test_building_downgrade.gd\nok      3s  res://tests/build/test_building_link_count.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/life/food/test_food.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      4s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      4s  res://tests/ui/hud/test_target_bars.gd\nok      4s  res://tests/ui/layout/test_window_layout.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      4s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/combat/damage_death/test_death_chest_look.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      3s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      3s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok    423s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           106\nTests            1001\nPassing Tests    1001\nFailing Tests       0\nPending             0\nAsserts         58727\nTime           423s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "7234528"
  }
 ]
