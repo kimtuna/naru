@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "재개",
- "updated": "2026-09-26 12:00:01",
- "updated_epoch": 1790391601,
+ "reason": "",
+ "updated": "2026-09-26 12:00:04",
+ "updated_epoch": 1790391604,
  "ended": "2026-09-26 10:00:15",
  "progress": {
   "groups_total": 41,
@@ -17,7 +17,7 @@
  "step_title": "건축 전체 QA — 한 바퀴 훑어 흠을 찾는다 (G-153 을 옮겼다 2026-09-26)",
  "attempt": "1",
  "phase": "구현",
- "phase_since": "2026-09-26 09:59:20",
+ "phase_since": "2026-09-26 12:00:04",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-26 12:00:00"
