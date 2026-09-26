@@ -12,3 +12,9 @@
 넘어온 묶음의 **통과한 단계는 브랜치(`g/<ID>`)에 그대로 남아 있다.** 이어서 하면 된다.
 
 ---
+
+## 물음 — 차선 3d-lane2(438cd2b) 을 3d-start 에 합치지 못했다
+- 물은 때: 2026-09-27 00:49:12
+- 어디서: 차선 합치기 (3d-start)
+- 무엇: 부딪힌다: game/tests/build/test_building_qa_sweep.gd game/tests/build/test_building_roof_stairs.gd game/tests/combat/tools_as_weapons/test_fire_rate.gd game/tests/combat/tools_as_weapons/test_no_shovel.gd game/tests/combat/tools_as_weapons/test_per_gun_magazine.gd — 이 줄기(3d-start)에서 `git merge 3d-lane2` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-lane2 없이 돈다
+- **사람이 답할 것**: 
