@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 02:16:46",
- "updated_epoch": 1790443006,
+ "updated": "2026-09-27 02:39:48",
+ "updated_epoch": 1790444388,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 43,
   "groups_done": 42,
   "groups_waiting": 0,
   "steps_total": 206,
-  "steps_done": 199
+  "steps_done": 200
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-920",
  "step": "2",
  "step_title": "웅크림 · 시선 방향이 저장되지 않는다 (G-990 단계 1)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 02:16:46",
+ "phase": "QA",
+ "phase_since": "2026-09-27 02:38:25",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
