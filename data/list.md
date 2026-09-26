@@ -998,7 +998,7 @@
   - 기준: 배낭 레시피·무게가 spec 에 「임시」로 없다 — recipes.json 의 backpack(제작대, 가죽 4 · 목재 2) 과 weights.json 의 backpack 1.0kg 은 지어낸 값인데 report 에만 임시라고 적혔다. spec/02_player/equipment.md 수치 절에 「배낭 레시피 제작대 가죽 4 · 목재 2 · 무게 1.0kg — 임시」 한 줄을 더해라
   - 기준: (앞 단계 QA) 장비칸을 맞지 않는 칸에 놓으면 받는 척한다 — slot_drop.gd _can_drop_data 가 equip 데이터면 chest==null 만 보고 true 라, 스파이크를 끌어 목재가 든 칸에 놓으면 드롭 표시가 뜨고 Equipment.unequip 이 조용히 false 를 낸다. 빈 칸이거나 fits(slot, 그 칸)일 때만 true 로 하고, test_bag_gear 에 「목재 칸은 신발칸 것을 안 받는다」 단언을 더해라
 
-## [ ] G-154 계단이 걸린다 — 오르막이 느리다 · 토대 위로 안 붙는다 (사람이 플레이하고 짚었다 2026-09-26)
+## [x] G-154 계단이 걸린다 — 오르막이 느리다 · 토대 위로 안 붙는다 (사람이 플레이하고 짚었다 2026-09-26)
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 차선 2 가 G-152 다음에 한다)
 - spec: spec/06_build/building.md, spec/02_player/movement.md
 - 사람이 플레이해 보고 짚었다 (2026-09-26 오후) — G-150 을 합친 판(92638c3)에서
