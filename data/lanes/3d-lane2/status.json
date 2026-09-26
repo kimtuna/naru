@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 17:23:39",
- "updated_epoch": 1790411019,
+ "updated": "2026-09-26 17:32:13",
+ "updated_epoch": 1790411533,
  "ended": "2026-09-26 17:10:55",
  "progress": {
   "groups_total": 41,
   "groups_done": 37,
   "groups_waiting": 0,
   "steps_total": 172,
-  "steps_done": 156
+  "steps_done": 157
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-154",
  "step": "4",
  "step_title": "(앞 단계 QA) 받침 한 벌 테스트의 무너짐 단언이 헛돈다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 17:23:39",
+ "phase": "QA",
+ "phase_since": "2026-09-26 17:31:10",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-26 12:00:00",
