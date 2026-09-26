@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 22:45:05",
- "updated_epoch": 1790430305,
+ "updated": "2026-09-26 22:56:23",
+ "updated_epoch": 1790430983,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 42,
   "groups_done": 40,
   "groups_waiting": 0,
   "steps_total": 189,
-  "steps_done": 185
+  "steps_done": 186
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "3",
  "step_title": "테스트 이름이 휴지통을 안 본다 (G-910 단계 2)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 22:45:05",
+ "phase": "QA",
+ "phase_since": "2026-09-26 22:54:49",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
