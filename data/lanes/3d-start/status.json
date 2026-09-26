@@ -1,13 +1,13 @@
 {
- "state": "running",
- "reason": "",
- "updated": "2026-09-27 02:39:50",
- "updated_epoch": 1790444390,
- "ended": "2026-09-26 08:49:58",
+ "state": "stopped",
+ "reason": "G-920: 캔 약초는 다시 나는가? spec/03_world/resources-regrowth.md 의 재생 표에 약초가 없어 지금은 한 번 캐면 그 턱이 영영 비고, 내 섬의 20포기가 평생 전부다. 나무 · 돌처럼 며칠 뒤 다시 날지(난다면 며칠), 아니면 한정 자원으로 둘지 정해 주면 된다.",
+ "updated": "2026-09-27 02:53:22",
+ "updated_epoch": 1790445202,
+ "ended": "2026-09-27 02:53:22",
  "progress": {
   "groups_total": 43,
   "groups_done": 42,
-  "groups_waiting": 0,
+  "groups_waiting": 1,
   "steps_total": 206,
   "steps_done": 200
  },
