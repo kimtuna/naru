@@ -1,8 +1,8 @@
 {
- "state": "waiting",
- "reason": "세션이 51초 만에 아무것도 못 남기고 끝났다 — 밖의 사정으로 보고 5분 뒤 다시 한다",
- "updated": "2026-09-26 17:10:55",
- "updated_epoch": 1790410255,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-26 17:11:33",
+ "updated_epoch": 1790410293,
  "ended": "2026-09-26 17:10:55",
  "progress": {
   "groups_total": 41,
