@@ -1,12 +1,12 @@
 {
  "state": "running",
- "reason": "",
- "updated": "2026-09-27 01:55:59",
- "updated_epoch": 1790441759,
+ "reason": "G-990 합쳤다",
+ "updated": "2026-09-27 01:56:01",
+ "updated_epoch": 1790441761,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 43,
-  "groups_done": 41,
+  "groups_done": 42,
   "groups_waiting": 0,
   "steps_total": 205,
   "steps_done": 198
