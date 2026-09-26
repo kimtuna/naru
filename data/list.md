@@ -1107,7 +1107,7 @@
   - 기준: 지키는 테스트 머리말이 실제 검사보다 세게 말한다 — test_from_empty_hands_asserts_to_the_end.gd 머리말·단언문은 「중간에 return 으로 빠져 뒤가 비지 않는다」고 하지만 검사는 글자 줄 수만 센다. '# 25.' 바로 아래에 `return` 을 넣어도 통과했다(일부러 깨 봄). 몸통에 들여쓴 `return` 줄이 없는지도 같이 단언하거나(_body_of 결과에서 strip_edges()=='return' 줄 0개), 머리말을 「25번 아래에 단언 글줄이 있다」로 낮춰 적어라
 - [x] 24. 옛 시각 상수가 테스트에 남았다 (G-146 단계 2)
   - 기준: 옛 시각 상수가 테스트에 남았다 — test_day_light.gd 에 DUSK_AT 18.5 · DAWN_AT 5.5 가 새 SUNSET_AT 18.0 과 같이 있다. 앞 테스트(test_brightness_runs_…)가 아직 쓰고 있어서 틀린 것은 아니다. 다만 「노을」이 두 시각이라 읽기가 헷갈린다. 주석에 둘이 무엇이 다른지 한 줄 적거나 하나로 합쳐라
-- [ ] 25. 횃불이 미리보기 그물에 없다 (G-150 단계 5 — 2026-09-26 다시 쟀다)
+- [x] 25. 횃불이 미리보기 그물에 없다 (G-150 단계 5 — 2026-09-26 다시 쟀다)
   - 앞 전제는 사라졌다: 횃불 놓기는 G-146.3 으로 생겼다 (`world/lighting/torches.gd` place_held · place_at, 불빛은 torch_light.gd)
   - 기준: `Torches` 가 `Placeable.PLACERS` 에 든다 — 지금 드는 것은 stations · chests · farmland · buildings 넷뿐이라
     횃불만 미리보기가 없다. 들면 놓일 자리가 초록 · 빨강으로 뜬다 (테스트)
@@ -1128,6 +1128,10 @@
   - 기준: 단언문 하나에 낡은 25번이 남았다 — test_from_empty_hands_asserts_to_the_end.gd 의 test_the_check_catches_the_old_tail 에서 `assert_eq(_assert_lines(_after_last_step(fine, LOOP_FUNC)), 1, "25번 아래의 단언을 못 센다")` 의 글이 아직 25번이라고 한다. LAST_STEP 은 이제 27 이니 「마지막 걸음 아래의 단언을 못 센다」로 고쳐라
 - [ ] 9. 머리말의 옛 단언 수가 낡았다 (G-910 단계 23)
   - 기준: 머리말의 옛 단언 수가 낡았다 — 같은 파일 머리말 6~7줄의 「지금은 814개를 단언하고 끝까지 간다 (전체 1507 · 통과 1507)」가 지금(1092 단언 · 전체 1665)과 다르다. 「G-148 때는」처럼 그때 일로 적거나 숫자를 빼라
+- [ ] 8. PLACERS 주석이 놓는 곳을 넷만 적는다 (G-910 단계 25)
+  - 기준: PLACERS 주석이 놓는 곳을 넷만 적는다 — game/build/placeable.gd 25줄 「(Stations · Chests · Farmland · Buildings)」에 Torches 가 빠졌다. 이 묶음은 build/ 를 건드리지 않아 남겼다. 「(Stations · Chests · Farmland · Buildings · Torches)」로 고쳐라
+- [ ] 9. 토대 위 횃불 놓기에 테스트가 없다 (G-910 단계 25)
+  - 기준: 토대 위 횃불 놓기에 테스트가 없다 — torches.gd aimed_spot 이 Placeable.plan_cell 로 합쳐지면서 토대 · 지붕 윗면에도 횃불이 놓이게 됐는데(전에는 BuildPiece 위를 막았다), 이를 지키는 테스트가 없다. tests/world/lighting/test_torch.gd 에 토대를 하나 놓고 윗면을 짚어 place_held 가 횃불을 그 윗면 높이에 세우는지, 벽 옆면을 짚으면 안 놓이는지 단언을 넣어라
 
 ## [x] G-911 G-910 에서 뺀 것 — 차선을 나누느라 갈라졌던 것 (2026-09-26 다시 합쳤다)
 - 차선: 3d-lane2 (사람 결정 2026-09-26 — 차선 2 가 G-154 다음에 한다)
