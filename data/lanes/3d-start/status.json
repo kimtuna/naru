@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 19:40:17",
- "updated_epoch": 1790419217,
+ "updated": "2026-09-26 19:57:35",
+ "updated_epoch": 1790420255,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 41,
   "groups_done": 39,
   "groups_waiting": 0,
   "steps_total": 181,
-  "steps_done": 171
+  "steps_done": 172
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-910",
  "step": "10",
  "step_title": "진짜 섬 물로 채우는 테스트가 없다 (G-152 단계 1)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 19:40:17",
+ "phase": "QA",
+ "phase_since": "2026-09-26 19:51:50",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
