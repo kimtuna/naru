@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "G-910 합쳤다",
- "updated": "2026-09-27 00:49:12",
- "updated_epoch": 1790437752,
+ "updated": "2026-09-27 00:49:14",
+ "updated_epoch": 1790437754,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 42,
@@ -17,7 +17,7 @@
  "step_title": "새 테스트 뒤 빈 줄이 하나뿐이다 (G-910 단계 2)",
  "attempt": "1",
  "phase": "차선 합치기",
- "phase_since": "2026-09-27 00:49:12",
+ "phase_since": "2026-09-27 00:49:14",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
