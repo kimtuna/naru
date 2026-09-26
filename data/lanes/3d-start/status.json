@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-26 16:17:51",
- "updated_epoch": 1790407071,
+ "updated": "2026-09-26 16:26:17",
+ "updated_epoch": 1790407577,
  "ended": "2026-09-26 08:49:58",
  "progress": {
   "groups_total": 41,
   "groups_done": 36,
   "groups_waiting": 0,
   "steps_total": 170,
-  "steps_done": 151
+  "steps_done": 153
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-151",
  "step": "4",
  "step_title": "(앞 단계 QA) 배낭 레시피·무게가 spec 에 「임시」로 없다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-26 16:17:51",
+ "phase": "QA",
+ "phase_since": "2026-09-26 16:25:23",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
