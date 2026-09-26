@@ -1148,7 +1148,7 @@
   - 기준: 테스트 폴더 전체에서 `OS.get_temp_dir()` 아래 만든 것을 안 지우는 곳이 없다 — 찾아서 같이 고친다
   - 기준: (앞 단계 QA) 상자 창 여백 주석이 낡았다 — game/ui/hud/chest_window.gd:35 주석이 「왼쪽 위 조작 안내 줄(HUD/Hint)을 덮지 않게 위 여백을 비워 둔다」고 하지만, 이제 창이 뜨면 HUD/Hint 는 숨는다(G-911.3). 주석을 지금 사정에 맞게 고치거나(안내 줄은 숨지만 자리는 비워 둔다 등 까닭을 적기) 여백이 더 필요 없으면 여백과 주석을 함께 정리하고 test_window_layout 이 그대로 통과하는지 본다
   - 기준: (앞 단계 QA) 함수 이름이 하는 일과 어긋난다 — player.gd _show_crosshair 가 이제 조준점과 위 안내 줄을 같이 다룬다. _show_walk_hud 처럼 둘을 아우르는 이름으로 바꾸고 부르는 곳(lock_controls · unlock_controls)도 함께 고친다 (막는 것은 아니다)
-- [ ] 5. 섬 저장본(island_cache)이 옛 판을 안 지운다 (2026-09-24 대화 세션 점검)
+- [x] 5. 섬 저장본(island_cache)이 옛 판을 안 지운다 (2026-09-24 대화 세션 점검)
   - user://island_cache 에 24 개 · 379MB. 굽는 코드가 바뀔 때마다 새 이름으로 하나씩 는다 (VERSION · SOURCES 해시)
   - 기준: 새로 구워 저장할 때 **같은 섬의 옛 판**을 지운다 — 섬마다 최신 하나만 남는다 (테스트)
   - 기준: 다른 섬(개척 섬 · 시험 섬)의 저장본은 지우지 않는다 (테스트)
@@ -1158,6 +1158,8 @@
 - [ ] 6. 연쇄 되풀이를 지키는 테스트가 없다 (G-133 단계 3)
   - 뺀 까닭: buildings.gd collapse — G-145 가 건축을 다시 짜는 중
   - 기준: 연쇄 되풀이를 지키는 테스트가 없다 — buildings.gd collapse() 의 while 루프에서 `more = true` 를 지워 한 번만 훑게 해도 tests/build 53개가 다 통과했다. 지금 테스트는 받치는 것이 늘 받쳐지는 것보다 먼저 놓여(무리 순서가 유리해) 한 번 훑기로도 잡힌다. 받침이 나중에 놓인 경우를 짜라: 토대 A · 벽 W1(A) · 지붕 R1 · R1 위 기둥 P · 지붕 R2 를 놓은 뒤, 옆 토대 C 와 R1 을 받치는 벽 W2(C) 를 나중에 놓고 W1 을 손으로 부순다. 그다음 C 를 부수면 W2 · R1 · P · R2 가 전부 무너지는지 단언하라 (한 번 훑기면 R1 · P · R2 가 떠서 남는다)
+  - 기준: (앞 단계 QA) 코드로 만든 설계 값이 저장본 한 칸을 나눠 쓴다 — IslandCache.island_key 가 resource_path 가 빈 설계 값을 모두 「unnamed」 하나로 쳐서, 캐시를 켠(use_cache=true) 서로 다른 코드 설계 값 둘이 번갈아 저장하면 서로의 저장본을 옛 판이라며 지운다. 지금은 캐시를 켜는 곳(test_island.gd · test_lime · test_volcano · test_island_resources · test_dock_building · test_hunger_thirst)이 모두 .tres 를 load 한 것이라 드러나지 않는다(막는 것은 아니다). 고치려면 island_cache.gd 의 prune 에서 key 가 "unnamed" 이면 지우지 않거나(주석으로 까닭을 적기), island_key 주석에 「unnamed 는 한 칸 — 캐시를 켜려면 .tres 로 두라」고 적고, test_island_cache.gd 에 unnamed 를 저장해도 다른 unnamed 저장본에 대한 기대(남는지/지우는지)를 단언으로 박아 둔다. 또 test_save_leaves_other_islands_alone 의 「시험 섬(코드로 만든 설계 값)」 설명은 틀렸다 — 시험 섬은 test_island_blueprint.tres 이다. 설명을 「코드로 만든 설계 값」으로 고친다
+  - 기준: (앞 단계 QA) 차선끼리 저장본 폴더를 나눠 써 옛 형식이 다시 생긴다 — user://island_cache 는 모든 체크아웃이 같이 쓴다. QA 시점(18:08)에 옛 코드를 도는 다른 차선이 섬 이름 없는 옛 형식(4_39d4…bin 26MB · 4_7658…bin 5.2MB)을 다시 만들었고, 이 차선이 다음에 구우면 또 지워 저쪽이 다시 굽는다. 합친 뒤에는 사라지지만, 합친 뒤에도 차선마다 굽는 코드(SOURCES 해시)가 다르면 같은 섬의 두 판을 서로 지우며 번갈아 굽는다(틀리진 않고 느려진다). island_cache.gd 의 prune 주석에 이 사정을 한 줄 적어 두면 다음 사람이 헤매지 않는다
 - [ ] 7. spec 에 낡은 줄 둘이 남았다 (2026-09-24 md 점검 — 2026-09-26 다시 재어 셋은 이미 됐다)
   - 뺀 까닭: G-145 가 같은 spec 을 고치는 중이었다 (그 뒤 G-145 는 끝났다)
   - **이미 된 것 (2026-09-26 확인)**: farming.md 9줄이 「밭 2×2 · 토대 4×4 위에 네 장」으로 고쳐졌다 ·
