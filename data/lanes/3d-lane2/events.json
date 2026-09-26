@@ -1713,5 +1713,75 @@
    "good": []
   },
   "test": "   1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/build/test_placeable.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/test_project_setup.gd\nok    421s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           180\nTests            1532\nPassing Tests    1532\nFailing Tests       0\nPending             0\nAsserts         71143\nTime           421s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-26 15:42:36",
+  "epoch": 1790404956,
+  "type": "pass",
+  "title": "통과 — G-152 단계 1 (물 주기 · 비료가 게임 안에서 실제로 된다)",
+  "group": "G-152",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "물뿌리개에 물을 담아(연못 · 개울에서 우클릭) 뿌리고, 비료를 심은 밭에 주면 물 준 날마다 두 단계씩 자라며 흰 알갱이가 보이고, 안 되는 까닭 · 할 일이 화면 아래 한 줄로 뜬다 — 바뀐 곳에 걸리는 83개 파일 746개 테스트 통과",
+   "approach": "문제: 물뿌리개가 빈손처럼 무한히 물을 줬고 물이 어디서 오는지 알 길이 없었다. 비료는 밭 재료로만 쓰였고 밭에 줄 수 없었다. 안 되면 아무 글도 없었다. 풀이: (1) 물뿌리개는 가방 칸에 물(water)을 적는다(WateringCan, 임시 5번치) — 가방이 곧 캐릭터 저장본이라 저장이 따라간다. 연못 · 개울(민물)을 겨누고 우클릭하면 가득 찬다 — 마시기와 같은 물음을 Drinking.aims_at_fresh_water 로 떼어 같이 쓰고, 채운 클릭은 여기서 끝내 같은 클릭으로 마시지 않게 했다(가득 차 있으면 마시기로 넘어간다). (2) 비료를 들고 심은 밭에 우클릭하면 한 포대가 빠지고, 거둘 때까지 물 준 날마다 2단계씩 자란다(밀 3일 → 2일). 네 귀퉁이에 흰 알갱이가 놓이고, 저장본에 fertilized 로 담긴다(옛 저장본은 안 준 것으로 읽는다). (3) 물 준 밭은 흙판이 젖은 흙빛(짙고 번들)으로 바뀌고, 날이 넘어가면 다시 마른다. (4) Notice 가 'notice' 무리에 들고 Notice.say 로 섬 쪽이 말한다 — 물이 없다 · 이미 줬다 · 심지 않았다 · 이미 비료 · 이미 심겼다 · 다 자랐다 · 밭이 아니다 까닭과, 물뿌리개/비료를 들고 밭을 겨누면 '우클릭: 물 주기 (남은 물 n/5) — 연못 · 개울을 겨누고 우클릭해 채운다' 안내가 뜬다(번역 키, ko/en). 손에 든 것을 바꾸자마자 누른 클릭의 까닭을 다음 프레임 안내가 덮던 것을 테스트가 잡아, 클릭한 겨눔은 안내를 띄운 것으로 치게 고쳤다. (5) 빈손 한 바퀴(test_from_empty_hands)는 개척 섬에서 석회 하나를 더 캐 비료를 둘 만들고, 평평한 땅에 밭 옆 연못(민물 높이 물음)을 둬 빈 물뿌리개 까닭 → 채우기 → 비료 → 이틀 성장 → 수확까지 우클릭 · 카메라만으로 친다(단독 7분 통과). 섬에는 crops.fresh_water_level 을 이어 줬다. (6) harness/shot.sh 의 farm_water 자리 — 안 준 밭(밝은 흙) · 물 준 밭(짙은 흙) · 물+비료(짙은 흙 + 흰 알갱이)가 나란히 갈려 보이는 것을 그림으로 확인했다(.loop/out/shots/farm_water.png).",
+   "why": "WateringCan.CAPACITY = 5 — 물뿌리개 한 통으로 물 주는 밭 수. 물 마름 규칙이 미정이라 밭 다섯 장을 하루 한 번 돌 만큼으로 잡았다; Crops.FERTILIZED_GROWTH = 2 — 비료 준 밭이 물 준 하루에 자라는 단계. 비료 효과 크기가 spec 에 없어 밀 3일이 2일로 눈에 띄게 줄게 잡았다; Crops.WET_COLOR (0.16,0.10,0.06) · WET_ROUGHNESS 0.35 — 젖은 흙빛. 찍어 보고 마른 밭과 한눈에 갈리게 잡았다; Crops.FERTILIZER_SIZE 0.18 · FERTILIZER_COLOR — 비료 알갱이 크기 · 색. 눈으로 보고 잡았다",
+   "files": [
+    "game/life/farming/crops.gd",
+    "game/life/farming/watering_can.gd",
+    "game/player/hunger_thirst/drinking.gd",
+    "game/ui/hud/notice.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/debug/shots.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/life/farming/test_water_and_fertilizer.gd",
+    "game/tests/life/farming/test_crops.gd",
+    "game/tests/life/farming/test_farm_save.gd",
+    "game/tests/craft/test_from_empty_hands.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "**빈손에서 시작해** 밭을 놓고 → 심고 → **물을 주고** → 비료를 주고 → 자라 → 수확하는 길을 **실제 입력(클릭 · 키)만으로** 친다 — 중간에 함수를 직접 부르지 않는다 (테스트)",
+     "evidence": "tests/craft/test_from_empty_hands.gd 12~13단계 — 석회 둘을 캐 비료 둘(밭 하나 · 밭에 줄 것 하나)을 만들고, 우클릭으로 밭을 놓고 심은 뒤, 빈 물뿌리개 우클릭에 FARM_NO_WATER 까닭 → 돌아서 연못 우클릭으로 가득 채움 → 비료 우클릭(is_fertilized · 가방에서 빠짐 · 알갱이) → 물 주며 게임 시계로 이틀 → 수확까지 우클릭 · 카메라 돌리기만 쓴다. 연못은 테스트 섬에 민물 높이 물음으로 차린 환경일 뿐 행동 중에 함수를 부르지 않는다. test.log 에서 423s ok"
+    },
+    {
+     "ok": true,
+     "criterion": "물은 어디서 어떻게 얻고 어떻게 뿌리는지 게임 안에서 알 수 있다 — 물을 들고 밭을 겨누면 안내 한 줄이 뜬다 (번역 키) (테스트)",
+     "evidence": "test_water_and_fertilizer.gd::test_holding_the_can_over_a_field_shows_how_to_water_and_where_water_comes_from — GameRoot HUD 의 Notice 글자가 tr(FARM_HINT_WATER) 이고 「연못」「우클릭」이 들어 있는지 본다. test_the_hint_is_a_translation_key_with_korean_and_english 가 열두 키 모두 ko.po · en.po 에 있는지 본다. test_an_empty_can_says_it_is_empty_and_the_pond_fills_it 가 연못 우클릭으로 채워지는 길을 실제 입력으로 친다"
+    },
+    {
+     "ok": true,
+     "criterion": "비료를 주면 무엇이 달라지는지 눈에 보인다 (자라는 속도 · 표시) (테스트)",
+     "evidence": "test_fertilizer_makes_the_crop_grow_two_stages_per_watered_day(비료 안내 한 줄 · 하루 두 단계 · 비료 없는 3일보다 빠름), test_a_fertilized_field_shows_white_lumps_until_harvest(알갱이 넷 · 그 밭 위 · 거두면 걷힘), test_fertilizer_without_water_does_not_grow_the_crop. 일부러 FERTILIZED_GROWTH 를 1 로 바꿔 돌리니 「비료 없는 밀보다 빠르다」 단언이 깨졌다 (되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "안 되는 까닭(물이 없다 · 이미 줬다 · 심지 않았다)을 한 줄로 띄운다 — 「아무 일도 안 일어남」이 없다 (테스트)",
+     "evidence": "물이 없다: test_an_empty_can_says_it_is_empty_and_the_pond_fills_it, 이미 줬다: test_watering_twice_in_a_day_says_it_is_already_watered · test_a_second_fertilizer_says_it_is_already_given, 심지 않았다: test_a_field_with_nothing_planted_says_so_for_water_and_fertilizer — 모두 last_said 와 HUD Notice 글자를 둘 다 본다. 덤으로 밭이 아니다 · 이미 심겼다 · 다 자랐다도 본다. 일부러 _say(SAY_NO_WATER) 를 지우니 두 단언이 깨졌다 (되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 물 준 밭 · 안 준 밭이 달라 보인다",
+     "evidence": ".loop/out/shots/farm_water.png — 왼쪽 안 준 밭은 밝은 갈색, 가운데 · 오른쪽 물 준 밭은 짙은 흙빛, 오른쪽 밭 귀퉁이에 흰 비료 알갱이가 보인다. test_a_watered_field_looks_darker_than_a_dry_one_and_dries_the_next_day 가 WET_COLOR · 명도 차 · 이튿날 마름을 본다"
+    }
+   ],
+   "issues": [
+    "spec 에 새 규칙이 안 적혔다 — spec/04_life/farming.md 「규칙」에 이번에 만든 규칙이 없다: 물은 물뿌리개에 담아 뿌린다(연못 · 개울 민물을 겨누고 우클릭해 채움, 바닷물 안 됨) · 비료를 심은 밭에 주면 거둘 때까지 물 준 날마다 두 단계 자란다 · 안 되는 까닭은 한 줄로 띄운다. 이 세 줄을 「규칙」에 더하고, 「미정」에 「비료 효과의 크기(지금 임시 2배) · 물뿌리개 한 통 크기(지금 임시 5번치)」를 한 줄 적어라",
+    "가득 찬 물뿌리개로 물을 겨누면 「밭이 아니다」가 뜬다 — crops.gd interact() 에서 catalog.waters(held) 이고 밭이 아니면 fill_held() or _no_field(ground) 인데, 가득 차 fill_held 가 false 를 내면 연못 바닥을 겨눈 것이라 _no_field 가 FARM_NO_FIELD 를 띄우고 같은 클릭으로 Drinking 이 물을 마신다. 민물을 겨눴을 때(Drinking.aims_at_fresh_water 가 참)는 _no_field 를 부르지 않게 하고, test_filling_the_can_does_not_also_drink 끝에 「마실 때 last_said 가 FARM_NO_FIELD 가 아니다」 단언을 더하라",
+    "진짜 섬 물로 채우는 테스트가 없다 — 채우기 테스트는 모두 가짜 연못(fresh_water_level 을 테스트가 넣은 Callable)이다. test_island.gd 가 crops.fresh_water_level 을 shape.fresh_water_level_at 에 이었는지는 아무 테스트도 안 본다. tests/world/terrain/test_island_in_game.gd 같은 섬 테스트에 「섬의 crops.fresh_water_level 이 유효하고 섬의 연못 한 자리에서 수면 높이를 낸다」는 단언을 더하라"
+   ],
+   "good": [
+    "FARM_ALREADY_PLANTED · FARM_GROWN · FARM_NO_FIELD 까닭과 FARM_WATERED · FARM_CAN_FILLED · FARM_FERTILIZED 알림 — 기준의 셋 밖이지만 「아무 일도 안 일어남이 없다」의 연장이라 받아들일 만하다",
+    "Drinking.aims_at_fresh_water 로 마시기 물음을 떼어 냈다 — 물뿌리개 채우기가 같이 쓴다"
+   ]
+  },
+  "test": "est_field_free_grid.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok      8s  res://tests/world/day_night/test_day_in_world.gd\nok      9s  res://tests/core/debug/test_dev_box_open.gd\nok     11s  res://tests/world/day_night/test_day_light.gd\nok      7s  res://tests/life/gathering/test_gathering.gd\nok      8s  res://tests/life/gathering/test_herbs.gd\nok      6s  res://tests/world/frontier_islands/test_dock_building.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      4s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok    147s  res://tests/world/terrain/test_island_shape.gd\nok      6s  res://tests/world/storage/test_chest_break.gd\nok      2s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      4s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      4s  res://tests/ui/hud/test_target_bars.gd\nok      4s  res://tests/ui/menu/test_pause_menu.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/ui/hud/test_ammo_label.gd\nok      3s  res://tests/life/food/test_food.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      2s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      2s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/ui/layout/test_window_layout.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      2s  res://tests/world/storage/test_throw_out.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      3s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok    423s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            83\nTests             746\nPassing Tests     746\nFailing Tests       0\nPending             0\nAsserts         36492\nTime           423s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "2f400ee"
  }
 ]
