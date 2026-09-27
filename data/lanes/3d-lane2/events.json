@@ -3548,5 +3548,80 @@
   },
   "test": "--- 바뀐 곳만: 54 개 ---\ntest.sh: 파일 54 개를 6 개씩 한꺼번에 돌린다\nok     16s  res://tests/world/terrain/test_island_shape_marks_note.gd\nok     18s  res://tests/player/hunger_thirst/test_hunger_thirst.gd\nok     14s  res://tests/core/debug/test_dev_box.gd\nok     12s  res://tests/combat/tools_as_weapons/test_per_gun_magazine.gd\nok     31s  res://tests/combat/tools_as_weapons/test_fire_rate.gd\nok     35s  res://tests/life/hunting/test_animal_sound.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     10s  res://tests/player/inventory_hotbar/test_weight.gd\nok      9s  res://tests/core/debug/test_ui_shots.gd\nok      8s  res://tests/player/movement_controls/test_crouch.gd\nok     45s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok      6s  res://tests/build/test_building_chain_grade.gd\nok      6s  res://tests/life/climbing/test_climb_face_aim.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      2s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      4s  res://tests/ui/layout/test_window_layout.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok     51s  res://tests/life/hunting/test_animal_walk.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            54\nTests             431\nPassing Tests     431\nFailing Tests       0\nRisky/Pending       0\nAsserts         58481\nTime           57s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "3f94235"
+ },
+ {
+  "time": "2026-09-28 01:50:32",
+  "epoch": 1790527832,
+  "type": "pass",
+  "title": "통과 — G-158 단계 2 (떡밥을 풀면 물고기가 생기고, 그 안에 던져야 문다)",
+  "group": "G-158",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "떡밥을 물에 우클릭하면 보이는 영역이 생기고(물고기 3~5마리, 떡밥 등급에서) 그 안에 낚싯대를 던져야 문다. 다 잡거나 10분이면 끝나고, 영역·남은 마리·남은 시간이 저장된다. 새 테스트 15개 통과, 바뀐 곳 그물 1337개 중 왕복 검사 3개가 떨어져 고친 뒤 그 파일 21개 통과",
+   "approach": "낚시 코드가 없었다. life/fishing/fishing.gd(Fishing)를 새로 만들어 섬에 작물 뒤로 붙였다(떡밥·낚싯대를 든 우클릭을 먼저 받는다; 물을 안 겨누면 손대지 않아 상자 열기 등은 그대로). 떡밥을 들고 물(바다·연못·개울 — shape.water_level_at)을 겨눠 우클릭하면 가방에서 한 덩이 빠지고 영역이 생긴다: 흐린 떡밥 빛 원판·테두리·퍼지는 물결·남은 물고기 그림자. 마리 수는 BAIT_GRADES{bait:[3,5]}에서 랜덤, 종류는 FISH_KINDS에서 랜덤(임시 한 종). 낚싯대를 들고 우클릭하면 던지는데 영역 반지름 안이어야 bit — 밖이면 FISH_NOT_IN_BAIT 한 줄. 게이지는 다음 단계라 지금은 물면 곧바로 한 마리를 건진다(임시, land 가 게이지 성공 자리). 남은 시간은 _process→pass_time 으로 줄고 0 이면 끝, 다 잡아도 끝(먼저 오는 쪽). 저장은 IslandState 의 bait_zones(at·fish·left) — 물결의 때를 남은 시간에서 뽑아 따로 적는 상태가 없게 했다. 왕복 검사에 영역 하나를 풀고 한 마리 낚는 것을 넣었더니 Fishing:last_said 와 HUD/Notice:_left(몇 초 뜨는 한 줄)가 새어 DONT_SAVE 에 까닭과 함께 올리고 save.md 목록도 맞췄다. 낚싯대(목재 3)·떡밥(밀 1→2)을 제작대 레시피로 이었다. shots.gd 에 bait_zone 자리를 더해 찍어 봤다 — 처음엔 원판 아래로 물고기 그림자 하나가 숨어 render_priority 로 고쳤고, 푼 물과 안 푼 물이 뚜렷이 갈린다. 돌린 것: 새 파일 15개 통과 → changed_tests 그물(1337개) 에서 test_round_trip 3개 실패 → 고친 뒤 test_round_trip 21개 통과 + save.md 를 읽는 파일들 재통과. 그물 전체를 다시 돌리지는 않았다(바뀐 것은 그 테스트 파일과 md 뿐이다).",
+   "why": "낚싯대 레시피 목재 3 → 1 (제작대) · 떡밥 레시피 밀 1 → 2덩이 (제작대) — 떡밥·낚싯대를 얻는 법이 미정(spec/04_life/fishing.md 미정). recipes.json _temporary 에 적었다; 물고기 종류 FISH_KINDS = [\"fish\"] 한 종 — 목록은 사람이 나중에 알려 준다; 떡밥 영역 반지름 RADIUS 3m · 던지는 거리 CAST_RANGE 15m — spec 에 크기가 없다; 물면 곧바로 한 마리를 건진다 — 게이지(실패하면 한 마리 놓침)는 다음 단계; 무게 fishing_rod 1.0 · bait 0.2 · fish 0.5 kg — weights.json 의 다른 지어낸 값과 같은 임시; 영역 모습의 색·두께 — 아트는 프로토타입 범위 밖",
+   "files": [
+    "game/life/fishing/fishing.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/settings/save/world_data.gd",
+    "game/craft/recipes/recipes.json",
+    "game/combat/tools_as_weapons/tools.json",
+    "game/player/inventory_hotbar/weights.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/shots.gd",
+    "game/tests/life/fishing/test_bait_zone.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "spec/04_life/fishing.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "떡밥을 **물에 대고 우클릭**하면 그 자리에 영역이 생긴다 — 눈에 보인다 (물결 · 표시) (테스트)",
+     "evidence": "test_bait_zone.gd test_right_click_bait_on_water_makes_a_visible_zone — GameRoot 에 진짜 마우스 우클릭을 넣어 영역 1개 · 떡밥 1 감소 · 수면 높이 · Cloud/Rim/Ripple0 메시 · 그림자 수를 본다. test_ripples_move_with_time 이 물결이 움직이는지, test_bait_on_dry_ground_does_nothing 이 맨땅이면 안 생기는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "영역에 물고기가 **3~5마리** 생긴다 (가장 낮은 등급). 마리 수는 떡밥 등급에서 온다 — 등급이 하나뿐이면 그 하나로 (테스트)",
+     "evidence": "test_lowest_bait_makes_three_to_five_fish — 120번 풀어 전부 3~5 이고 3·4·5 가 다 나오는지, BAIT_GRADES[bait]==[3,5]. test_count_comes_from_the_bait_grade 가 fish_count(등급) 경로와 등급 하나를 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "**영역 안에 던져야** 문다 — 밖에 던지면 아무 일도 없고 왜 안 되는지 한 줄이 뜬다 (번역 키) (테스트)",
+     "evidence": "test_cast_inside_the_zone_bites(우클릭으로 던져 bit · 물고기 1 · 남은 수 감소) · test_cast_outside_the_zone_does_nothing_and_says_why(bit 없음 · 물고기 그대로 · HUD 한 줄 = tr(FISH_NOT_IN_BAIT) · 번역됨). ko/en.po 둘 다 있다. 일부러 zone_at 반지름을 100배로 깨 보니 test_bait_zone 에서 1개가 떨어졌다 (되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "영역은 **다 잡으면** 사라진다 · **10분이 지나면** 사라진다 — 먼저 오는 쪽 (테스트, 시계를 돌려 본다)",
+     "evidence": "test_zone_ends_when_every_fish_is_caught(마지막 한 마리 전엔 남고 뒤엔 사라짐 · ended CAUGHT_ALL) · test_zone_ends_after_ten_minutes(599초엔 남고 600초에 사라짐 · TIMED_OUT) · test_the_clock_really_runs(_process 로 실제 줄어듦) · test_whichever_comes_first(두 영역)"
+    },
+    {
+     "ok": true,
+     "criterion": "떡밥 · 낚싯대를 얻는 길이 게임 안에 있다 — 재료 · 개수는 **임시**로 두고 코드와 report 에 「임시」를 적는다",
+     "evidence": "recipes.json 에 workbench 레시피 fishing_rod(목재 3) · bait(밀 1→2) 추가, _temporary 에 임시라고 적었고 report temporary · spec/04_life/fishing.md 미정에도 (임시) 로 적혔다. ITEM_ 번역 키 · 무게 · 도구 정의도 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "영역과 남은 마리 수가 **저장된다** — 껐다 켜도 그대로 (테스트, spec/01_settings/save.md)",
+     "evidence": "IslandState of/apply 에 bait_zones. test_zone_and_fish_left_survive_the_disk(SaveStore 디스크 왕복 — 자리 · 남은 마리 · 남은 시간 · 모습) · test_island_state_carries_the_zones · test_round_trip.gd test_bait_zone_comes_back(게임 전체 저장→재진입). 안 담는 last_said · Notice._left 는 DONT_SAVE 와 save.md 목록에 까닭과 함께 올랐다. 바뀐 곳 149파일 1337개 전부 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 떡밥을 푼 물과 안 푼 물이 다르게 보인다",
+     "evidence": "shots.gd 에 bait_zone 자리 추가. /tmp/naru_bait/bait_zone.png 를 직접 봤다 — 연못 위에 밝은 테두리의 원판 · 물결 고리 · 물고기 그림자 4개가 보이고 둘레 물은 그대로라 뚜렷이 갈린다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      0s  res://tests/test_po_is_in_one_place.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           149\nTests            1337\nPassing Tests    1337\nFailing Tests       0\nRisky/Pending       0\nAsserts         76525\nTime           436s  (godot 6 개)\n\nTMPDIR 에 새로 남은 naru_* 3 개 (테스트가 TempDir.clean 으로 지우지 않았다 — /var/folders/13/ht4_hck554d3rdqm2b3342880000gn/T):\n  naru_round_trip_4263382187\n  naru_villager_3126921602\n  naru_voyage_3119713241\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "2d5a300"
  }
 ]
