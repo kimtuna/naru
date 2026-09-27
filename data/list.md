@@ -1385,7 +1385,7 @@
 - [x] 1. spec 에도 옛 이름 가공대가 남았다 (G-920 단계 1)
   - 기준: spec 에도 옛 이름 가공대가 남았다 — 이번 기준은 .gd 파일만이라 기준 밖이다. spec/06_build/rooms.md 20·37·38행(「제작소 | 가공대」, 「가공대만 있는 막힌 공간」, 「가공대 + 제련로」), spec/05_craft/crafting-stations.md 17행(「1판 구상: 가공대(열 없는 가공) · …」), spec/08_combat/tools-as-weapons.md 70행(「총알은 가공대에서 만든다」)이 workbench 를 옛 이름으로 부른다. 「제작대(workbench)」로 고쳐라 — crafting-stations.md 17행은 갈래 목록이라 「제작대(workbench, 열 없는 가공)」처럼 적는다. tools-as-weapons.md 70행은 사람 결정 줄이니 이름만 바꾸고 날짜 · 뜻은 그대로 둔다. 테스트 test_no_old_workbench_name.gd 는 .gd 만 보니 spec 을 지키려면 res://../spec 의 .md 도 훑도록 넓히거나 따로 검사를 두어라
 
-## [ ] G-157 NPC 가 어떤 존재인지 spec 에 적는다 (사람 결정 2026-09-28)
+## [x] G-157 NPC 가 어떤 존재인지 spec 에 적는다 (사람 결정 2026-09-28)
 - 차선: 3d-start
 - spec: spec/07_automation/npc-villagers.md, spec/00_core/roadmap.md
 - 사람이 정해 준 것이다 (2026-09-28). 지금 npc-villagers.md 미정 절의
