@@ -1340,10 +1340,12 @@
   - 기준: 남의 상자를 우클릭해도 아무 알림이 없다 — Death.interact 가 남의 데스 상자에서 입력을 삼키고 조용히 끝난다(game/combat/damage_death/death.gd interact/open). 플레이어는 왜 안 열리는지 모른다. G-920.3(막힌 장착 알림)처럼 거절 때 번역 키 알림(한국어·영어)을 띄우고, 미르로 우클릭하면 알림이 뜨는지 단언하는 테스트를 붙여라
 - [x] 7. 조준 시간 표시 주석이 낡았다 (G-920 단계 5)
   - 기준: 조준 시간 표시 주석이 낡았다 — game/ui/hud/chest_timer_label.gd:10 「열리는 상자에만 뜬다」인데 이제 남의 데스 상자는 조준은 되지만 열리지 않는다. 남의 상자에도 시간이 뜨는 것이 맞는지 주석을 지금 동작에 맞춰 고쳐라
-- [ ] 7. 새 테스트의 단언 글이 낡은 이름을 쓴다 (G-920 단계 6)
+- [x] 7. 새 테스트의 단언 글이 낡은 이름을 쓴다 (G-920 단계 6)
   - 기준: 새 테스트의 단언 글이 낡은 이름을 쓴다 — game/tests/ui/hud/test_station_row_columns.gd 의 test_needs_stands_in_one_column_in_every_language 에서 workbench(제작대)를 여는데 단언 글이 「가공대는 줄이 많다」다. 「제작대는 줄이 많다」로 고쳐라
 - [ ] 4. spec 에 등반 중 조준 규칙이 없다 (G-920 단계 6)
   - 기준: spec 에 등반 중 조준 규칙이 없다 — face_aim 이 붙은 동안 안 돈다는 규칙이 코드 주석에만 있다. spec/02_player/movement-controls.md 의 「휘두르기 · 쏘기 · 상호작용 때 캐릭터가 조준점 쪽을 본다」 줄 옆(또는 spec/04_life/climbing.md)에 「벽에 붙었거나 줄에 걸린 동안은 몸이 벽 · 줄 쪽을 그대로 본다」 한 줄을 적어라
+- [ ] 2. 옆 테스트 주석이 제작대를 가공대라 부른다 (G-920 단계 7)
+  - 기준: 옆 테스트 주석이 제작대를 가공대라 부른다 — 이번 기준 밖이다. game/tests/ui/hud/test_station_output.gd(12·14·16·53행) · test_station_short_rows.gd(10·12행) · test_station_window.gd(11·14·16·18행)의 주석이 workbench 를 옛 이름 「가공대」로 부른다. 가리키는 것은 workbench 상수이고 ITEM_workbench 는 「제작대」다. 이 주석들의 「가공대」를 「제작대」로 고쳐라. test_station_window.gd 11행 「가공대 · 제련로 — 서로 다른 레시피를 든 두 제작대」는 「제작대(workbench) · 제련로 — …」처럼 이름과 갈래가 헷갈리지 않게 적어라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
