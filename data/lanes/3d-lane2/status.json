@@ -1,15 +1,15 @@
 {
- "state": "stopped",
- "reason": "하네스가 고장났다고 하는데 수리 세션이 못 고쳤다: harness/step.py read() 가 **묶음 머리 주석의 2칸 들여쓴 하위 목록**(`  - …`)을 버린다 — f5d06fd 가 고친 것은 4칸 이상(SUB_ITEM)뿐이다. 묶음에 아직 단계가 없을 때 `  - …` 는 STEP_NOTE 에 맞지만 `if m and b[\"steps\"]` 라 버려지고, NOTE_CONT 는 `- ` 로 시작하는 줄을 빼고, BUNDLE_NOTE 는 `^- ` 만 본다. 그래서 G-158 의 「사람이 준 규칙 그대로:」 아래 일곱 줄(사람 원문)이 current.md 에서 통째로 사라졌다 (G-157 과 같은 고장의 다른 자리). 고칠 곳: 단계가 없을 때 `^  - ` 를 앞 묶음 주석에 하위 줄로 붙인다. 이번 회차는 세션이 plan/list.md 의 G-158 머리만 읽어 규칙을 얻었지만, QA 세션도 current.md 만 보므로 「위 규칙을 적는다」를 대조할 수 없다.",
- "updated": "2026-09-28 00:41:11",
- "updated_epoch": 1790523671,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-28 01:16:45",
+ "updated_epoch": 1790525805,
  "ended": "2026-09-28 00:41:11",
  "progress": {
   "groups_total": 48,
   "groups_done": 46,
   "groups_waiting": 0,
   "steps_total": 229,
-  "steps_done": 224
+  "steps_done": 225
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-158",
