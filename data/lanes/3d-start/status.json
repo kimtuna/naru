@@ -1,14 +1,14 @@
 {
- "state": "stopped",
- "reason": "하네스가 고장났다고 하는데 수리 세션이 못 고쳤다: current.md 로 옮길 때 「사람이 준 글 그대로:」 아래 들여쓴 인용 줄(plan/list.md G-157 의 네 줄)이 빠졌다 — 들여쓴 하위 목록을 current.md 로 옮기는 쪽이 놓치는 듯하다. 이번엔 list.md 에서 찾아 메웠지만, 다른 묶음에서도 사람 원문이 조용히 빠질 수 있다",
- "updated": "2026-09-28 00:20:18",
- "updated_epoch": 1790522418,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-28 00:24:20",
+ "updated_epoch": 1790522660,
  "ended": "2026-09-28 00:20:18",
  "progress": {
   "groups_total": 47,
   "groups_done": 46,
   "groups_waiting": 0,
-  "steps_total": 224,
+  "steps_total": 226,
   "steps_done": 223
  },
  "started": "2026-09-21 06:54:49",
