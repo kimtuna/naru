@@ -1276,7 +1276,7 @@
 - [x] 2. (앞 단계 QA) 상자 창 안내 글이 가방과만 주고받는다고 한다
   - 기준: 상자 창 안내 글이 가방과만 주고받는다고 한다 — i18n/ko.po 177행 「칸을 끌어다 놓아 가방과 주고받는다 · 우클릭으로 닫는다」(en.po 짝 포함)가 이제 상자 안에서도 옮기고 합친다는 것을 말하지 않는다. 틀린 말은 아니나 낡았다. 바꿀 거면 ko · en 둘 다 고치고 tests/ui/layout/test_window_layout.gd 184행의 같은 글과 창 폭(잘림)도 같이 본다
 
-## [ ] G-155 사람이 정한 것을 spec 과 코드에 반영한다 (사람 결정 2026-09-27)
+## [x] G-155 사람이 정한 것을 spec 과 코드에 반영한다 (사람 결정 2026-09-27)
 - 결정: **유황은 그대로 둔다** (사람 결정 2026-09-27) — 섬마다 무슨 자원을 둘지는 사람이 나중에 정한다. 단계 1 의 기준을 약초 쪽으로 좁혔다
 - 차선: 3d-lane2 (사람 결정 2026-09-27 — 약초 · 채집을 만지는 것은 이 묶음 하나로 모은다)
 - spec: spec/04_life/gathering.md, spec/04_life/farming.md, spec/02_player/movement-controls.md, spec/02_player/inventory-hotbar.md, spec/03_world/spawn-conditions.md, spec/05_craft/crafting-stations.md
