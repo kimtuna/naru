@@ -1,46 +1,5 @@
 [
  {
-  "time": "2026-09-23 02:16:08",
-  "epoch": 1790097368,
-  "type": "pass",
-  "title": "통과 — G-900 단계 21 (저장에서 새는 것 — 부순 선착장 · 깎인 대수)",
-  "group": "G-900",
-  "step": "21",
-  "attempt": "1",
-  "report": {
-   "problem": "Dock.vanish() 가 부모에서 먼저 떼어 내게 고쳐, 부순 선착장이 부순 그 프레임에 저장본에 다시 적히지 않는다 — 바뀐 곳만 10개 파일 102개 통과",
-   "approach": "Dock.vanish() 는 무리에서만 빠지고 queue_free() 해서 프레임 끝까지 DockBuilder 의 자식으로 남았다. vanish() 가 remove_from_group 뒤에 부모에서도 떼어 내게 했고, restore() 가 따로 하던 remove_child 는 vanish() 에 맡겨 지웠다. 새 테스트는 기다리지 않고 같은 프레임에 hit_dock 을 HITS 번 불러 부순 뒤 standing() 이 비었는지 · 자식에서 빠졌는지 곧바로 보고, 두 프레임 뒤 지워졌는지 본다. 떼어 내는 줄을 일부러 빼 보니 이 테스트가 「짓는 곳의 자식에서 먼저 떼어 냈다」로 떨어졌다. 두 번째 기준(stations.gd standing() 위 임시 줄에 「남은 대수」)은 이미 적혀 있어 손대지 않았다. 확인: TESTS=changed_tests.py 목록 → 로그 Scripts 10 · Tests 102 · Passing 102 (전체는 돌리지 않았다).",
-   "why": "",
-   "files": [
-    "game/world/frontier_islands/dock.gd",
-    "game/world/frontier_islands/dock_builder.gd",
-    "game/tests/world/frontier_islands/test_dock_building.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "부순 선착장이 저장본에서 되살아날 수 있다 — Dock.vanish() 가 부모에서 먼저 떼어 내게 하고, 「부순 선착장은 standing() 에 남지 않는다」 테스트를 tests/world/frontier_islands/test_dock_building.gd 에 짜라",
-     "evidence": "dock.gd vanish() 가 remove_from_group 뒤 get_parent().remove_child(self) 후 queue_free() 한다. test_a_broken_dock_does_not_stay_in_standing 이 기다리지 않고 hit_dock 을 HITS 번 부른 뒤 standing() 이 비었는지 · builder 자식에서 빠졌는지 · queued_for_deletion 인지 보고, 두 프레임 뒤 지워졌는지 본다. QA 가 remove_child 줄을 일부러 빼고 TEST_DIR=res://tests/world/frontier_islands 를 돌리니 이 테스트만 「짓는 곳의 자식에서 먼저 떼어 냈다」로 떨어졌다 (71 중 70 통과). 되돌렸다. Placeable._break_into 는 vanish 전에 global_position 을 받아 두므로 트리에서 먼저 떼도 떨어지는 자리는 그대로다. restore() 의 중복 remove_child 는 vanish 로 합쳐졌다. test.log: 바뀐 곳 33개 파일 329개 모두 통과, guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "섬을 떠났다 오면 깎인 대수가 사라진다 — stations.gd standing() 위 「만들던 것 · 버퍼는 아직 담지 않는다 (임시)」 줄에 「남은 대수」도 함께 적어 둔다",
-     "evidence": "game/craft/stations/stations.gd:122-124 에 「만들던 것 · 버퍼 · **남은 대수**는 아직 담지 않는다 (**임시**) … 두 대 맞은 제작대도 저장 · 복원을 거치면 성한 몸으로 다시 선다」가 이미 커밋되어 있다 (이번 diff 에서 건드리지 않음)"
-    }
-   ],
-   "issues": [
-    "standing() 단언은 고친 곳을 지키지 않는다 — test_a_broken_dock_does_not_stay_in_standing 의 첫 단언 assert_eq(builder.standing().size(), 0) 은 standing() 이 이미 무리(Placeable.GROUP)로 거르므로 vanish() 의 remove_child 를 빼도 통과한다. 실제로 지키는 것은 둘째 단언(자식에서 빠졌다)뿐이다. 막는 것은 아니다. 테스트 주석에 「standing() 은 무리로도 거르므로, 떼어 냈는지는 자식 단언이 지킨다」 한 줄을 적어 두면 뒤에 누가 자식 단언을 지우지 않는다"
-   ],
-   "good": []
-  },
-  "test": "://tests/world/frontier_islands/test_islands.gd\n* test_the_list_has_my_island_and_a_frontier_island\n* test_the_two_docks_sail_to_each_other\n* test_each_island_has_its_own_fixed_map\n* test_what_is_left_on_each_island_is_saved_apart\n* test_an_old_save_without_islands_starts_on_my_island\n5/5 passed.\n\n\nres://tests/world/frontier_islands/test_locked_island.gd\n* test_only_the_frontier_islands_dock_starts_broken\n* test_a_new_world_has_opened_no_island\n* test_an_opened_island_stays_opened_in_the_save\n* test_island_names_are_translation_keys_in_both_languages\n* test_a_broken_dock_stands_on_pillars_only\n* test_an_open_dock_has_its_plank\n* test_no_boat_leaves_a_broken_dock\n* test_a_new_world_keeps_the_frontier_island_locked\n* test_boarding_at_my_dock_does_not_reach_the_locked_island\n* test_once_the_island_is_opened_the_boat_goes\n* test_the_locked_notice_is_written_in_both_languages\n* test_a_new_worlds_frontier_island_stands_on_pillars_only\n12/12 passed.\n\n\nres://tests/world/frontier_islands/test_volcano.gd\n* test_the_frontier_island_is_a_fixed_map\n* test_only_the_resources_follow_the_world_seed\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_one_mountain_stands_in_the_middle_of_the_island\n* test_the_summit_has_a_crater\n* test_cliffs_ring_the_volcano\n* test_one_way_up_is_left_open_but_not_into_the_crater\n* test_my_islands_mountain_has_no_crater\n* test_sulfur_grows_here_and_iron_does_not\n* test_iron_grows_on_my_island_and_sulfur_does_not\n* test_the_list_gives_each_ore_to_one_island_only\n11/11 passed.\n\n\nres://tests/world/frontier_islands/test_voyage.gd\n* test_my_island_has_no_dock_until_i_build_one\n* test_building_the_dock_at_the_water_opens_the_sea\n* test_boarding_at_the_dock_lands_me_on_the_frontier_island\n* test_my_bag_crosses_with_me\n* test_the_frontier_island_does_not_carry_my_islands_marks\n* test_sailing_back_finds_my_island_as_i_left_it\n* test_each_island_is_saved_on_its_own\n* test_going_back_to_the_frontier_island_finds_it_as_i_left_it\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              33\nTests               329\nPassing Tests       329\nAsserts            4911\nTime              178.61s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "7435bf2"
- },
- {
   "time": "2026-09-23 02:39:36",
   "epoch": 1790098776,
   "type": "pass",
@@ -7789,5 +7748,38 @@
   },
   "test": "apple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/core/test_guard.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           182\nTests            1621\nPassing Tests    1621\nFailing Tests       0\nRisky/Pending       0\nAsserts         76917\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "fe74894"
+ },
+ {
+  "time": "2026-09-27 18:10:45",
+  "epoch": 1790500245,
+  "type": "pass",
+  "title": "통과 — G-920 단계 5 (연사 중 몸이 조준을 안 따라간다 (G-920 단계 4))",
+  "group": "G-920",
+  "step": "5",
+  "attempt": "1",
+  "report": {
+   "problem": "자동총 연사 중에도 몸이 조준(카메라) 쪽을 따라 돈다 — Attack._process 의 연사 줄 앞에서 player.face_aim() 을 부른다. 바뀐 곳만 30개 파일 295개 테스트 통과",
+   "approach": "Attack._process 는 방아쇠를 누른 동안 shoot() 을 곧장 불러 swing() 안의 face_aim() 을 건너뛰었다 — 몸이 첫 발 방향에 남았다. 연사 줄(_trigger_down and holds_auto()) 에서 shoot() 앞에 player.face_aim() 을 넣었다 (조작이 꺼지면 그 줄에 오지 않으니 창이 떴을 때는 돌지 않는다). 테스트: 돌격소총을 들고 좌클릭을 누른 채 set_look 으로 카메라 yaw 를 90° 돌린 뒤, 이어 쏘는 것을 확인하고 몸(Body -Z)과 facing() 이 새 카메라 쪽인지 단언한다. 떼고 난 뒤 돌리면 몸이 그대로인지도 본다. 고친 줄을 빼면 새 테스트가 떨어지는 것을 확인했다. changed_tests 그물(30개 파일, 295개 테스트) 통과.",
+   "why": "",
+   "files": [
+    "game/combat/tools_as_weapons/attack.gd",
+    "game/tests/player/movement_controls/test_face_aim.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "연사 중 몸이 조준을 안 따라간다 — attack.gd:124 의 _process 는 방아쇠를 누르고 있는 동안 shoot() 을 곧장 불러 face_aim() 을 건너뛴다. 자동총을 누른 채 카메라를 돌리면 몸은 첫 발 방향에 남는다. shoot() 안(또는 _process 의 연사 줄 앞)에서 face_aim() 을 부르고, 자동총 방아쇠를 누른 채 카메라 yaw 를 바꾼 뒤 몸이 새 카메라 쪽인지 단언하라",
+     "evidence": "attack.gd _process 의 연사 줄(_trigger_down and holds_auto())에서 shoot() 앞에 player.face_aim() 을 부른다. test_face_aim.gd::test_auto_fire_turns_body_with_camera 가 돌격소총을 들고 USE 를 누른 채 set_look 으로 yaw 를 90° 돌린 뒤, 방아쇠가 눌려 있고 이어 쏘았음을 앞선 조건으로 확인하고 몸(Body -Z)과 facing() 이 새 카메라 쪽(dot>0.99)이며 첫 발 방향이 아님을 단언한다. QA 가 face_aim() 줄을 pass 로 바꿔 movement_controls 폴더를 돌리니 이 테스트가 떨어졌다(되돌림 확인). test_released_trigger_does_not_turn_body 는 떼고 나면 안 돈다는 반대 경우를 본다. test.log(바뀐 곳만 182개 파일) 1623개 전부 통과, guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "r_create.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      1s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/build/test_placeable.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/core/test_project_setup.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           182\nTests            1623\nPassing Tests    1623\nFailing Tests       0\nRisky/Pending       0\nAsserts         76930\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "bca4894"
  }
 ]
