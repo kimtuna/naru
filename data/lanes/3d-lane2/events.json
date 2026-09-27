@@ -3101,5 +3101,80 @@
     "question": "마취탄을 섬을 건너지 않고 만들려면 유황을 어떻게 할까? 벨라도나는 이제 메인섬 산비탈에서 맨손으로 캐지만, 마취탄 조합식은 「권총탄 조합식(철괴 1 + 유황 1) + 약초 1」(spec/08_combat/tools-as-weapons.md 91줄)이고 유황은 개척 섬에만 난다(frontier-islands.md 41줄 · 총알은 유황이 화약, 사람 결정 2026-09-22). 그래서 석회 사슬은 끊었어도 마취탄은 여전히 유황을 캐러 섬을 건너야 한다. 고를 것: (a) 마취탄은 화약이 없는 다트라 유황을 뺀다 (예: 철괴 1 + 약초 1) · (b) 1단 마취탄만 유황 없이 · (c) 유황을 그대로 두고 기준을 「약초 쪽은 섬을 건너지 않는다」로 누그러뜨린다"
    }
   }
+ },
+ {
+  "time": "2026-09-27 22:20:10",
+  "epoch": 1790515210,
+  "type": "pass",
+  "title": "통과 — G-155 단계 1 (벨라도나는 산비탈에 야생으로 난다 — 밭을 안 거친다)",
+  "group": "G-155",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "1단 벨라도나가 밭 대신 메인섬 산비탈 풀밭(스폰에서 걸어 닿는 8곳)에 야생으로 난다 — 빈손 새 게임에서 진짜 입력으로 238m 걸어가 캐는 테스트 포함. 바뀐 곳 그물 94파일 904개 통과",
+   "approach": "gathering.md 가 1단 벨라도나를 「재배한다」로 적어 밭 ← 비료 ← 석회 ← 개척 섬 사슬을 타야 마취탄을 만들 수 있었다. 사람 결정(2026-09-27)대로 벨라도나를 작물표 · 씨앗 레시피 · 번역 · 무게에서 빼고(약초는 어느 것도 밭에서 기르지 않는다), 섬을 구울 때 IslandShape 가 산비탈 풀밭 자리를 고르게 했다: 스폰에서 걸어 닿고(walk_reach) · 산 높이 40~120 · 기울기 0.2 이상이지만 가파르지 않고 · 풀이 날 몫(IslandVegetation.grass_chance) 0.4 이상인 점. 스폰에 가장 가까운 한 곳을 먼저, 나머지는 해시 차례로 28m 간격을 두고 8곳. 섬 저장본에 담았다(IslandCache VERSION 5). Herbs 는 턱엔 LEDGE 약초(만드라고라·투구꽃, 차례 그대로), 산비탈엔 SLOPE 약초(벨라도나)를 심고, 자리 번호는 턱 뒤에 이어 붙여 옛 저장본의 캔 턱 번호가 그대로다(캔 자리 저장은 기존 herbs_picked 로 담긴다). 새 테스트는 GameRoot 로 새 게임을 세워 빈 가방으로 스폰에서 45° 이하 걸음만 이은 길을 W·마우스로 238m 걸어가, 좌클릭 → 스킬체크 → 성공 구간 좌클릭으로 캐고 가방에 벨라도나 하나뿐임 · 오르지 않았음 · 섬을 안 건넜음 · 밭을 안 놓았음을 본다. 「턱이 아니다」 검사는 test_herbs 의 8m 잣대가 기울기 0.3 비탈에도 걸려 섬의 턱 자리와의 거리로 쟀다. farming.md 에는 「약초는 밭에서 기르지 않는다 — 석회 사슬을 타지 않는다, 사슬 자체는 그대로」를 적었다(지정된 16줄은 석회 비료 줄이라 그 아래에 붙였다). 찍은 그림: .loop/out/shots/belladonna0.png · belladonna1.png — 풀 사이 산비탈에 보라색 벨라도나가 선 것을 열어 확인했다. 곁일: shot.sh 가 처음엔 내가 shots.gd 에 넣은 변수 이름 겹침(parse error)으로 30분을 멈춰 있다 죽었다 — 고쳐 다시 찍었다. user://island_cache 를 다른 차선(naru, VERSION 4)과 같이 써서 서로 저장본을 지우며 다시 굽는다(틀리지는 않고 느려진다, 알려진 일). test_from_empty_hands 는 바뀐 곳 그물에서 437초 걸린다.",
+   "why": "slope_herb_spot_count = 8 (island_blueprint.gd) — 벨라도나 자리 수는 spec 미정. 턱 20곳의 절반을 넘지 않게 해 등반의 값어치를 남겼다; SLOPE_HERB_RAW 40~120 · SLOPE_HERB_GRADE 0.2 · SLOPE_HERB_GRASS 0.4 · SLOPE_HERB_STEP 4 (island_shape.gd) — 「산쪽 풀밭」을 재는 값을 내 섬을 재 보고 잡았다; 스폰에 가장 가까운 산비탈 자리를 먼저 둔다 — 처음 만나는 벨라도나가 멀지 않게 (내 섬에선 238m)",
+   "files": [
+    "game/world/terrain/island_shape.gd",
+    "game/world/terrain/island_blueprint.gd",
+    "game/world/terrain/island_vegetation.gd",
+    "game/world/terrain/island_cache.gd",
+    "game/world/terrain/test_island.gd",
+    "game/life/gathering/herbs.gd",
+    "game/life/farming/crops.gd",
+    "game/craft/recipes/recipes.json",
+    "game/player/inventory_hotbar/weights.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/shots.gd",
+    "spec/04_life/gathering.md",
+    "spec/04_life/farming.md",
+    "game/tests/life/gathering/test_belladonna_slope.gd",
+    "game/tests/life/gathering/test_herbs.gd",
+    "game/tests/life/gathering/test_herb_kinds.gd",
+    "game/tests/craft/test_from_empty_hands.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "1단 벨라도나가 메인섬 산비탈 풀밭에 야생으로 난다 — 등반 장비 · 밭 · 비료 없이 캔다 (테스트)",
+     "evidence": "tests/life/gathering/test_belladonna_slope.gd — test_belladonna_grows_on_my_island(메인섬 home 에 slope_herb_spot_count 만큼 난다) · test_belladonna_stands_on_a_grassy_mountain_slope(지형에서 다시 잰다: raw 40~120 · is_steep 아님 · grade ≥0.2 · 해안 아님 · 3m 안에 풀 · 턱 아님 · 땅에 붙음) · test_every_belladonna_is_within_walking_reach · test_no_herb_is_farmed(작물표 · 씨앗 레시피 없음). test_herb_kinds.gd 가 밭에 약초가 안 심기는 것도 본다. 만드라고라를 slope 로 바꿔 깨 보니 test_belladonna_slope 를 포함한 세 파일이 떨어졌다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "빈손에서 시작해 벨라도나를 캐는 데까지 실제 입력으로 닿는다 — 등반 · 밭 · 섬 건너기 없이 (테스트)",
+     "evidence": "test_belladonna_slope.gd 의 test_zz_walk_from_spawn_with_empty_hands_and_dig_a_belladonna — GameRoot 새 게임 · 빈 가방 · 스폰에서 45° 이하 걸음만 이은 길을 W + Pointer 마우스로 걸어가 진짜 좌클릭 → 스킬체크 → 성공 구간 좌클릭. climbing 안 함 · island_id home · tilled_cells 비었음 · 가방 {belladonna:1} 을 단언. test.log 에서 통과(64s)"
+    },
+    {
+     "ok": true,
+     "criterion": "2 · 3단(만드라고라 · 투구꽃)은 그대로 절벽 턱에만 난다 — 등반의 값어치가 남는다 (테스트)",
+     "evidence": "test_herbs.gd — 턱 약초 20 포기 · 턱 자리에서만(test_herbs_only_grow_on_cliff_ledges) · 턱 자리마다 2·3단, 턱 밖은 벨라도나뿐(test_the_ledges_grow_the_second_and_third_tier) · 걸어서 못 닿음(test_herbs_are_out_of_walking_reach, 20 포기 다 본다). test_herb_kinds 의 kinds_growing_on(LEDGE)==[mandragora, aconite]. 만드라고라를 slope 로 옮기자 test_herbs 가 떨어졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "spec/04_life/gathering.md 의 「재배한다」 예외를 「산비탈 풀밭에 야생으로 난다 (사람 결정 2026-09-27)」로 고치고 farming.md 16줄도 맞춘다 — 낡은 줄이 남지 않는다 (grep)",
+     "evidence": "gathering.md 17 · 26줄이 바뀌었고 farming.md 17~18줄에 「약초는 밭에서 기르지 않는다 … 석회 사슬을 타지 않는다, 사슬 자체는 그대로다」. spec/ · game/(테스트 밖)을 벨라도나 · belladonna_seed · 재배로 grep — 벨라도나를 기른다는 줄이 남지 않았다. 사람 결정 줄은 지워지지 않았다. 두 md 49 · 45줄"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 산비탈에 벨라도나가 난 그림",
+     "evidence": ".loop/out/shots/belladonna0.png 를 열어 보았다 — 풀이 난 산비탈 한가운데 보라색 벨라도나가 서 있다 (belladonna1.png 도 있다)"
+    }
+   ],
+   "issues": [
+    "gathering.md 「약초 자리 20곳」이 모호해졌다 — spec/04_life/gathering.md 14줄 「약초 자리는 정해진 스팟이다 — 내 섬에 20곳 (사람 결정 2026-09-19)」은 이제 턱 자리 수인데 섬에는 약초가 28포기(턱 20 + 산비탈 8, 임시) 난다. 사람 결정 줄은 지우지 말고 끝에 「— 턱(2 · 3단) 자리다. 벨라도나의 산비탈 자리는 따로 센다 (임시 8곳, island_blueprint.gd slope_herb_spot_count)」처럼 덧붙여라",
+    "옛 저장본의 벨라도나 씨앗이 이름 없는 물건이 된다 — belladonna_seed 를 레시피 · ko/en.po · weights.json 에서 뺐지만 옛 가방 · 상자에 든 씨앗은 그대로 불러와져 ITEM_belladonna_seed 글자가 번역 없이 뜬다. 불러올 때 모르는 물건을 버리거나 벨라도나로 바꾸는 처리를 하거나, spec/01_settings/save.md 에 「옛 벨라도나 씨앗은 버린다」를 적고 그 처리를 테스트로 박아라 (밭에 심긴 벨라도나는 Crops.restore 가 이미 건너뛴다)"
+   ],
+   "good": [
+    "test_from_empty_hands 16단계를 밭 재배에서 평지 풀밭 한 포기 캐기로 바꿨다 — 벨라도나 씨앗이 없어진 데 따른 것이라 기준에 딸린 일이다",
+    "IslandCache VERSION 4→5 · slope_herb_spots 를 섬 저장본에 담았다 — 새 상태를 담는 것이라 맞다"
+   ]
+  },
+  "test": "aim.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok      8s  res://tests/life/gathering/test_herbs.gd\nok      9s  res://tests/world/storage/test_chest_break.gd\nok      8s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      7s  res://tests/world/day_night/test_day_in_world.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      5s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      5s  res://tests/build/test_blueprint.gd\nok      7s  res://tests/world/frontier_islands/test_lime.gd\nok      4s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      4s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      4s  res://tests/ui/menu/test_pause_menu.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      2s  res://tests/life/food/test_food.gd\nok      4s  res://tests/life/climbing/test_grapple_ammo.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            94\nTests             904\nPassing Tests     904\nFailing Tests       0\nRisky/Pending       0\nAsserts         66393\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "42646dd"
  }
 ]

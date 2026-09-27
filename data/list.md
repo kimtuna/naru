@@ -1281,7 +1281,7 @@
 - 차선: 3d-lane2 (사람 결정 2026-09-27 — 약초 · 채집을 만지는 것은 이 묶음 하나로 모은다)
 - spec: spec/04_life/gathering.md, spec/04_life/farming.md, spec/02_player/movement-controls.md, spec/02_player/inventory-hotbar.md, spec/03_world/spawn-conditions.md, spec/05_craft/crafting-stations.md
 - 결정 대기 아홉 건을 풀며 사람이 정한 것들이다 (archive/decisions-done.md 2026-09-27)
-- [ ] 1. 벨라도나는 산비탈에 야생으로 난다 — 밭을 안 거친다
+- [x] 1. 벨라도나는 산비탈에 야생으로 난다 — 밭을 안 거친다
   - 「벨라도나가 마취약인데 왜 석회 얘기가 나오는지 모르겠는데 그냥 산쪽에 풀이랑 같이 자라게 만들면 될 것 같은데」
   - **석회 사슬 자체는 안 끊긴다** (사람이 짚었다 2026-09-27) — 밭 ← 비료(석회 2) ← 석회(개척 섬) 는 그대로다.
     이 단계는 **벨라도나가 그 사슬을 안 타게** 할 뿐이다. 사슬 자체는 따로 정할 일이다
@@ -1300,6 +1300,8 @@
   - 기준: `spec/03_world/resources-regrowth.md` 의 재생 표에 **약초**가 든다 — 나무 · 돌과 같은 자리 (grep)
   - 기준: 캔 자리에서 며칠 뒤 다시 난다 — 날이 지나면 나고, 그 전에는 안 난다 (테스트)
   - 기준: 날수는 **임시**다 — 코드에 「임시」를 적고 report 의 temporary 에도 적는다 (사람이 플레이해 보며 맞춘다)
+  - 기준: (앞 단계 QA) gathering.md 「약초 자리 20곳」이 모호해졌다 — spec/04_life/gathering.md 14줄 「약초 자리는 정해진 스팟이다 — 내 섬에 20곳 (사람 결정 2026-09-19)」은 이제 턱 자리 수인데 섬에는 약초가 28포기(턱 20 + 산비탈 8, 임시) 난다. 사람 결정 줄은 지우지 말고 끝에 「— 턱(2 · 3단) 자리다. 벨라도나의 산비탈 자리는 따로 센다 (임시 8곳, island_blueprint.gd slope_herb_spot_count)」처럼 덧붙여라
+  - 기준: (앞 단계 QA) 옛 저장본의 벨라도나 씨앗이 이름 없는 물건이 된다 — belladonna_seed 를 레시피 · ko/en.po · weights.json 에서 뺐지만 옛 가방 · 상자에 든 씨앗은 그대로 불러와져 ITEM_belladonna_seed 글자가 번역 없이 뜬다. 불러올 때 모르는 물건을 버리거나 벨라도나로 바꾸는 처리를 하거나, spec/01_settings/save.md 에 「옛 벨라도나 씨앗은 버린다」를 적고 그 처리를 테스트로 박아라 (밭에 심긴 벨라도나는 Crops.restore 가 이미 건너뛴다)
 - [ ] 3. 약초를 캐도 가방에 아무것도 안 들어온다 (G-990 단계 1)
   - 기준: 약초를 캐도 가방에 아무것도 안 들어온다 — Gathering.closed(herb, success) 를 듣는 곳이 tests/life/gathering/test_gathering.gd 말고 없다. 그래서 만드라고라 · 투구꽃은 개발 상자로만 구할 수 있다(gathering.md:7 · hunting.md:46). 게임에서 closed 를 받아 success 면 그 약초 아이템을 가방에 넣고 스팟을 캔 상태로 바꿔라. 게임 안 테스트로 스킬체크 성공 → 가방에 약초 1개, 실패 → 0개를 단언하라
 - [ ] 4. spec 의 「가공대」를 「제작대」로 맞춘다 (사람 결정 2026-09-27)
