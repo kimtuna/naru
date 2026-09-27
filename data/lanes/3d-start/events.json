@@ -1,56 +1,5 @@
 [
  {
-  "time": "2026-09-23 04:10:42",
-  "epoch": 1790104242,
-  "type": "pass",
-  "title": "통과 — G-127 단계 2 (비료와 밭을 만든다)",
-  "group": "G-127",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "제작대에 석회→비료 · 비료+흙→밭(farm_plot) 레시피를 넣고 제작 테스트를 짰다 — 바뀐 곳만 돌린 23개 스크립트 238개 테스트 통과",
-   "approach": "레시피는 데이터 파일(recipes.json)에 한 줄씩 적으면 제작대에 뜨므로 코드는 고치지 않았다. fertilizer(석회 2 → 1)와 farm_plot(비료 1 + 흙 4 → 1)을 workbench 에 넣고, 개수가 임시라는 말을 _temporary 에 적었다. 번역 키 ITEM_fertilizer(비료/Fertilizer) · ITEM_farm_plot(밭/Farm Plot)을 더했다. 테스트는 진짜 레시피 파일로 진짜 제작대를 세워 재료가 들어가고 · 끝나면 수령해 가방에 들어오는 것, 흙만 · 비료만으로는 시작되지 않는 것, 석회+흙에서 밭까지 이어지는 것, _temporary 에 임시라고 적힌 것을 본다. 개수는 파일에서 읽어 값이 바뀌어도 테스트가 그대로 산다. (앞 단계 QA) test_harvest.gd 의 없는 파일(test_harvest_soil_lime.gd)을 가리키던 주석을 같은 파일의 test_mining_a_rock_drops_soil_along_with_the_stone 으로 고쳤다. 밭을 땅에 놓는 것은 다음 단계 몫이라 하지 않았다. 확인: TEST_DIR=tests/life/farming 34개 통과, 바뀐 곳만(changed_tests.py) 23개 스크립트 238개 통과 — 전체는 돌리지 않았다.",
-   "why": "비료 레시피: 석회 2 → 비료 1 (spec/04_life/farming.md 미정 — 개수는 사람이 고른다); 밭 레시피: 비료 1 + 흙 4 → 밭 1칸 (같은 미정); 두 레시피 모두 workbench · 5초 — 다른 레시피와 같은 임시 제작대 · 임시 시간",
-   "files": [
-    "game/craft/recipes/recipes.json",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/life/farming/test_fertilizer_farm_plot.gd",
-    "game/tests/life/harvest/test_harvest.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "석회로 **비료**를 만든다 (테스트)",
-     "evidence": "test_fertilizer_farm_plot.gd::test_fertilizer_is_made_from_lime — 진짜 recipes.json 으로 진짜 제작대를 세워, 재료가 석회 하나뿐인지 · 석회 없이는 시작이 거부되는지 · 석회가 들어가고 비료가 가방에 들어오는지 본다. 일부러 재료를 stone 으로 바꾸자 ARRAY([\"stone\"]) != ARRAY([\"lime\"]) 로 깨졌다 (되돌림 확인). test.log 4/4 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "**비료 + 흙**으로 밭을 만든다 (테스트)",
-     "evidence": "test_a_farm_plot_is_made_from_fertilizer_and_soil — 재료가 정확히 비료·흙인지, 흙만 · 비료만으로는 시작이 거부되는지, 둘 다 있으면 밭이 가방에 들어오는지 본다. test_from_lime_and_soil_all_the_way_to_a_farm_plot 이 석회+흙→비료→밭 사슬을 잇는다. 재료를 wood+soil 로 바꾸자 깨졌다 (되돌림 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "재료 개수는 임시다 — 코드와 report 에 「임시」라고 적는다",
-     "evidence": "recipes.json _temporary 에 「비료(석회 2 → 1) · 밭(비료 1 + 흙 4 → 한 칸)의 재료 개수도 임시다」가 들어갔고 test_the_counts_are_written_down_as_temporary 가 그 문장을 찾아 「임시」를 확인한다. report.json temporary 에 두 레시피 · 5초 · workbench 가 임시라고 적혀 있다. spec/04_life/farming.md 미정에도 개수 미정 줄이 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 없는 파일을 가리키는 주석 — test_harvest.gd 의 test_each_resource_drops_its_own_yield 주석을 test_mining_a_rock_drops_soil_along_with_the_stone 으로 고쳐라",
-     "evidence": "git diff 로 확인 — 주석이 「이 파일의 test_mining_a_rock_drops_soil_along_with_the_stone 이 본다」로 바뀌었다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "oes_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n* test_the_pillars_stand_at_the_shore_corners_and_leave_the_landing_spot_clear\n* test_the_plank_has_no_body_so_the_one_who_lands_walks_out\n* test_hitting_the_shore_pillar_breaks_the_dock_and_gives_it_back\n* test_a_broken_dock_does_not_stay_in_standing\n* test_landing_without_a_dock_falls_back_to_the_spawn\n* test_the_other_pillar_can_be_aimed_at_too\n* test_a_dock_fixed_in_the_map_cannot_be_broken\n15/15 passed.\n\n\nres://tests/world/frontier_islands/test_island_key.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:150)\n         [1] _ready (res://world/terrain/test_island.gd:87)\n         [2] _build_island (res://core/game_root.gd:128)\n         [3] _ready (res://core/game_root.gd:105)\n         [4] _stand_opened_world_on (res://tests/world/frontier_islands/test_island_key.gd:287)\n         [5] before_all (res://tests/world/frontier_islands/test_island_key.gd:29)\n         [6] _call_before_all (res://addons/gut/gut.gd:684)\n         [7] _test_the_scripts (res://addons/gut/gut.gd:813)\n* test_every_island_that_starts_broken_has_an_unlock_item\n* test_the_unlock_item_is_made_only_at_the_research_bench\n* test_no_other_station_and_no_bare_hand_makes_the_unlock_item\n* test_the_research_bench_offers_the_unlock_item\n* test_the_key_is_not_made_of_what_only_the_locked_island_has\n* test_the_unlock_item_is_named_in_both_languages\n* test_inserting_the_key_at_the_dock_opens_the_island\n* test_after_the_key_the_boat_goes_to_that_island\n* test_nothing_opens_without_the_key_in_hand\n* test_the_key_is_not_spent_on_an_island_that_is_already_open\n* test_an_island_opened_with_the_key_stays_open_after_saving_and_loading\n* test_the_dock_of_an_opened_island_has_its_plank\n12/12 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              23\nTests               238\nPassing Tests       238\nAsserts            3633\nTime              88.957s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "736ced0"
- },
- {
   "time": "2026-09-23 04:31:09",
   "epoch": 1790105469,
   "type": "pass",
@@ -7677,5 +7626,51 @@
   },
   "test": "d\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      0s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           211\nTests            1758\nPassing Tests    1758\nFailing Tests       0\nRisky/Pending       0\nAsserts         78803\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "dd76c4b"
+ },
+ {
+  "time": "2026-09-27 19:48:57",
+  "epoch": 1790506137,
+  "type": "pass",
+  "title": "통과 — G-920 단계 1 (다른 코드 주석에도 가공대가 남았다 (G-920 단계 2))",
+  "group": "G-920",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "workbench 를 「가공대」로 부르던 코드 주석 · 단언 글을 10개 파일에서 전부 「제작대」로 고치고, 옛 이름이 돌아오지 못하게 지키는 테스트를 더했다 (바뀐 곳만: 40개 파일 386개 테스트 통과)",
+   "approach": "grep 로 찾은 「가공대」 30줄은 모두 workbench 를 가리켰다 — 전부 「제작대」로 바꿨다. 같은 줄이나 바로 옆에서 「제작대」가 갈래 이름(제작대 다섯 · 제작대는 카테고리별로 · 남의 제작대 · 제작대 + 제련로)으로도 쓰이는 곳은 「제작대(workbench)」로 풀어 적었다 (station_window.gd 13·24행, test_station_recipes.gd 4·13행, test_stations.gd 278행, test_recipes.gd 206·209행, test_food.gd 167행, test_room_chests.gd 6행, test_room_kinds.gd 90·130행). 앞 단계(G-920.2)가 한 파일씩 고치는 동안 옆 파일에 같은 흠이 남았으므로, res:// 아래 .gd 전부에서 옛 이름을 찾는 테스트를 하나 더했다 — 처음 돌렸을 때 제 머리 주석의 옛 이름을 잡아 떨어지는 것을 확인했고(음성 대조), 그 주석을 고친 뒤 통과한다. 확인: changed_tests.py 로 고른 40개 파일, 386개 테스트 통과.",
+   "why": "",
+   "files": [
+    "game/ui/hud/station_window.gd",
+    "game/tests/ui/hud/test_station_collect_note.gd",
+    "game/tests/craft/stations/test_station_recipes.gd",
+    "game/tests/craft/stations/test_stations.gd",
+    "game/tests/craft/recipes/test_recipes.gd",
+    "game/tests/life/food/test_food.gd",
+    "game/tests/life/hunting/test_carry_cage.gd",
+    "game/tests/life/farming/test_farmland.gd",
+    "game/tests/build/test_room_chests.gd",
+    "game/tests/build/test_room_kinds.gd",
+    "game/tests/craft/stations/test_no_old_workbench_name.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "다른 코드 주석에도 가공대가 남았다 — workbench 를 「가공대」로 부르는 주석이 game/ui/hud/station_window.gd(13·24행), game/tests/ui/hud/test_station_collect_note.gd, game/tests/craft/stations/test_station_recipes.gd · test_stations.gd, game/tests/craft/recipes/test_recipes.gd, game/tests/life/food/test_food.gd, game/tests/life/hunting/test_carry_cage.gd, game/tests/life/farming/test_farmland.gd, game/tests/build/test_room_chests.gd · test_room_kinds.gd 에 남아 있다. `grep -rn 가공대 game --include='*.gd'` 로 찾아 workbench 를 가리키는 것만 「제작대」로 고쳐라 (갈래 이름으로 쓴 곳은 「제작대(workbench)」처럼 풀어 적는다)",
+     "evidence": "`grep -rn 가공대 game --include='*.gd'` 결과가 0줄이다. diff 를 한 줄씩 봤다 — 고친 30줄은 모두 workbench(WORKBENCH 상수 · \"workbench\" 문자열 옆)를 가리키고, 「제작대」가 갈래 이름으로도 쓰이는 곳(station_window.gd 13·24행, test_station_recipes.gd 4·13행, test_stations.gd 278행, test_recipes.gd 206·209행, test_food.gd 167행, test_room_chests.gd 6행, test_room_kinds.gd 90·130행)은 「제작대(workbench)」로 풀어 적었다. 코드 동작은 안 바뀌고 주석 · 단언 글만 바뀌었다. 새 test_no_old_workbench_name.gd 가 res:// 아래 .gd 전부를 훑어 옛 이름을 찾는다 — station_window.gd 끝에 「## 가공대」를 일부러 붙여 craft/stations 폴더를 돌리니 'res://ui/hud/station_window.gd:391' 을 잡고 떨어졌다(되돌린 것도 확인). 전체 테스트: 212개 파일 1759개 모두 통과, guard 통과 (test.log)."
+    }
+   ],
+   "issues": [
+    "spec 에도 옛 이름 가공대가 남았다 — 이번 기준은 .gd 파일만이라 기준 밖이다. spec/06_build/rooms.md 20·37·38행(「제작소 | 가공대」, 「가공대만 있는 막힌 공간」, 「가공대 + 제련로」), spec/05_craft/crafting-stations.md 17행(「1판 구상: 가공대(열 없는 가공) · …」), spec/08_combat/tools-as-weapons.md 70행(「총알은 가공대에서 만든다」)이 workbench 를 옛 이름으로 부른다. 「제작대(workbench)」로 고쳐라 — crafting-stations.md 17행은 갈래 목록이라 「제작대(workbench, 열 없는 가공)」처럼 적는다. tools-as-weapons.md 70행은 사람 결정 줄이니 이름만 바꾸고 날짜 · 뜻은 그대로 둔다. 테스트 test_no_old_workbench_name.gd 는 .gd 만 보니 spec 을 지키려면 res://../spec 의 .md 도 훑도록 넓히거나 따로 검사를 두어라"
+   ],
+   "good": [
+    "game/tests/craft/stations/test_no_old_workbench_name.gd — 기준은 주석 고치기뿐이었지만 옛 이름이 다시 들어오지 못하게 지키는 테스트를 더했다. 묶음 머리의 「지키는 것이 없던 자리에 지키는 것을 넣는 일」과 맞고, 깨 보니 실제로 잡는다"
+   ]
+  },
+  "test": "s/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           212\nTests            1759\nPassing Tests    1759\nFailing Tests       0\nRisky/Pending       0\nAsserts         78804\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "f4a159f"
  }
 ]
