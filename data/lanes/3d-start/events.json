@@ -1,55 +1,5 @@
 [
  {
-  "time": "2026-09-23 02:08:00",
-  "epoch": 1790096880,
-  "type": "pass",
-  "title": "통과 — G-900 단계 20 (껍데기 테스트를 고친다 ④ — 빈 총 · 총마다 다른 탄 · 맨손 사슬)",
-  "group": "G-900",
-  "step": "20",
-  "attempt": "1",
-  "report": {
-   "problem": "껍데기 테스트 넷을 조였다 — 빈 총이 놓는 길을 지나고, 총마다 다른 탄을 보고, 첫 도끼 사슬이 맨손 채집부터 이어지고, 빈 무더기를 거른다. 바뀐 곳만: 4개 파일 28개 통과",
-   "approach": "셋은 기준에 적힌 한 줄씩을 넣었다: 빈 총 테스트는 도끼를 든 동안 magazine() 을 물어 「손에서 놓을 때」 도는 길을 지나게 했고, 탄 종류 테스트는 _guns() 가 먹는 탄을 Dictionary 에 모아 둘 이상인지 보며, 줍기 테스트는 무더기가 비어 있지 않은지 먼저 본다. 첫 도끼 사슬은 1단계에서 inventory.add() 로 건너뛰던 것을 바꿨다 — 조준점 앞 2m 에 소나무 한 그루를 세워 맨손 좌클릭으로 넘기고, 같은 자리에 돌 한 덩이를 세워 또 넘긴 뒤, 그 자리까지 W 로 걸어가 두 무더기를 주워 가방에 목재 · 돌이 들어왔는지 본다. 제작대 + 도끼 값(목재 23 · 돌 2)을 다 캐려면 맨손으로 수백 대라, 캔 것을 뺀 모자란 만큼만 채워 넣는다. 섬 없이 띄우는 화면이라 Pickup · ResourceView · Harvest 는 테스트에서 붙였다. 돌린 것: changed_tests.py 가 고른 4개 파일, 28개 통과 (전체는 돌리지 않았다).",
-   "why": "",
-   "files": [
-    "game/tests/combat/tools_as_weapons/test_per_gun_magazine.gd",
-    "game/tests/combat/tools_as_weapons/test_ammo_kinds.gd",
-    "game/tests/player/pickup/test_pickup.gd",
-    "game/tests/ui/hud/test_bag_hand_craft.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "빈 총 테스트가 탄창을 놓는 길을 지나지 않는다 — _hold(AXE) 뒤에 assert_null(attack.magazine(), \"도끼에는 탄창이 없다\") 한 줄을 넣어 놓는 길을 지나게 하라",
-     "evidence": "test_per_gun_magazine.gd:167 에 그 줄이 들어갔다. attack.gd magazine() 이 총을 안 들었을 때 _magazines.clear() 하도록 일부러 깨 TEST_DIR=res://tests/combat/tools_as_weapons 로 돌리니 test_an_empty_gun_stays_empty_after_being_put_down 이 「다시 들어도 비어 있다」(6≠0) 로 깨졌다 — 이제 이 테스트도 놓는 길을 지킨다. 되돌린 뒤 git diff 는 비어 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "총마다 다른 탄을 먹는지 아무 테스트도 안 본다 — test_every_gun_in_the_file_says_which_round_it_eats 에 _guns() 의 ammo_item 을 모아 assert_gt(seen.size(), 1, \"총마다 먹는 탄이 다르다\")",
-     "evidence": "test_ammo_kinds.gd:169~175 에 seen 딕셔너리와 단언이 들어갔다. ToolCatalog.ammo_item() 이 늘 \"pistol_ammo\" 를 돌려주게 깨고 폴더를 돌리니 「총마다 먹는 탄이 다르다」 1개가 실패했다 (전에는 62개 전부 통과). 되돌렸다"
-    },
-    {
-     "ok": true,
-     "criterion": "가벼운 것 하나 — test_from_empty_hands_to_the_first_axe 의 1단계를 실제 좌클릭으로 나무·돌을 쳐서 줍게",
-     "evidence": "test_bag_hand_craft.gd 의 _fell_by_hand 가 조준점 앞에 소나무 · 바위를 세우고 맨손(held 비었음 단언) 좌클릭 InputEventAction 으로 is_gone 까지 친다. 그다음 W 로 걸어가 무더기 2개가 0이 되고 wood>0 · stone>0 을 단언한다. 모자란 값만 채운다는 것은 주석에 밝혔다. test.log 에서 6/6 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 줍기 테스트가 빈 무더기를 거르지 않는다 — var count := drop.count 바로 뒤에 assert_gt(count, 0, ...)",
-     "evidence": "test_pickup.gd:272 에 assert_gt(count, 0, \"떨어진 무더기에 무엇이 들어 있다\") 가 그 자리에 들어갔다. test.log 에서 통과"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "time_is_shown\n* test_while_crafting_the_time_left_is_shown\n* test_the_time_left_counts_down\n* test_when_it_is_done_the_time_left_disappears\n* test_the_buffer_slots_stand_empty_until_something_is_made\n* test_what_was_made_shows_up_in_a_buffer_slot\n* test_a_recipe_that_makes_many_shows_how_many_are_waiting\n* test_pressing_the_buffer_slot_brings_it_into_the_bag\n* test_until_it_is_pressed_what_was_made_stays_in_the_buffer\n* test_when_the_buffer_is_full_the_window_says_the_next_craft_will_not_start\n* test_an_empty_buffer_says_nothing\n* test_collecting_makes_room_and_crafting_can_start_again\n* test_closing_and_reopening_keeps_the_timer_and_the_buffer\n* test_reopening_a_station_does_not_show_another_stations_buffer\n* test_the_buffer_message_has_a_korean_and_an_english_word\n15/15 passed.\n\n\nres://tests/ui/hud/test_station_window.gd\n* test_opening_a_station_lists_that_stations_recipes\n* test_another_station_lists_its_own_recipes\n* test_closing_the_station_empties_the_list\n* test_each_row_shows_what_comes_out_and_what_it_costs\n* test_a_recipe_that_makes_many_at_once_says_so\n* test_with_an_empty_bag_no_recipe_can_be_chosen\n* test_only_the_recipes_whose_materials_are_in_the_bag_can_be_chosen\n* test_a_row_that_cannot_be_chosen_does_nothing_when_pressed\n* test_a_row_goes_grey_the_moment_its_materials_run_out\n* test_choosing_a_recipe_takes_the_materials_and_starts_the_timer\n* test_the_row_is_what_catches_the_click_and_nothing_above_it_does\n* test_the_timer_finishes_into_the_buffer\n* test_choosing_again_while_one_is_already_running_starts_nothing\n* test_while_one_is_running_the_rows_are_grey\n* test_every_word_in_the_window_is_a_translation_key\n* test_the_station_name_at_the_top_is_a_translation_key\n* test_every_key_the_window_shows_has_a_korean_and_an_english_word\n17/17 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_tilling_bare_ground_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              25\nTests               254\nPassing Tests       254\nAsserts            4017\nTime              132.247s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "38fbf18"
- },
- {
   "time": "2026-09-23 02:16:08",
   "epoch": 1790097368,
   "type": "pass",
@@ -7806,5 +7756,38 @@
   },
   "test": "ests/ui/hud/test_map_coords.gd\nok      1s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           182\nTests            1618\nPassing Tests    1618\nFailing Tests       0\nRisky/Pending       0\nAsserts         76891\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "4702c8a"
+ },
+ {
+  "time": "2026-09-27 17:51:43",
+  "epoch": 1790499103,
+  "type": "pass",
+  "title": "통과 — G-920 단계 4 (우클릭 상호작용 때 몸이 안 돈다 (G-920 단계 4))",
+  "group": "G-920",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "우클릭(INTERACT)을 누르면 몸이 곧장 조준점(카메라) 쪽으로 돈다 — 바뀐 곳에 걸린 113개 파일 · 1070개 테스트 통과",
+   "approach": "좌클릭(Attack.swing · Harvest.swing)만 face_aim() 을 불렀다. 우클릭을 받는 쪽은 상자 · 작물 · 조준 · 등반 앵커 등 열 곳이 넘고 저마다 set_input_as_handled 로 먹어 버려, 한 곳의 _unhandled_input 에 넣으면 다른 곳이 먹은 우클릭에는 몸이 안 돈다. 그래서 Player 의 _input(누구보다 먼저 받는다, 먹지는 않는다)에서 조작이 살아 있고 죽지 않았을 때 face_aim() 을 부른다. 테스트는 test_face_aim.gd 처럼 뒤를 본 채 우클릭 — 받는 쪽이 없을 때 · 받는 쪽이 먹어 버릴 때 둘 다 몸이 카메라 쪽인지, 조작이 잠겼을 때는 안 도는지 본다. 새 상태가 없어 저장은 그대로(보는 쪽 _facing 은 이미 저장된다).",
+   "why": "",
+   "files": [
+    "game/player/movement_controls/player.gd",
+    "game/tests/player/movement_controls/test_face_aim.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "우클릭 상호작용 때 몸이 안 돈다 — movement-controls.md:19 는 휘두르기 · 쏘기 · 상호작용 때 조준점 쪽을 본다고 적었지만 이번엔 좌클릭(Attack.swing · Harvest.swing)만 face_aim() 을 부른다. 우클릭 상호작용이 시작되는 곳(INTERACT 액션을 받는 _unhandled_input)에서도 player.face_aim() 을 부르고, test_face_aim.gd 처럼 뒤를 본 채 상호작용하면 몸이 카메라 쪽인지 단언하는 테스트를 더하라",
+     "evidence": "player.gd:141 _input 에서 INTERACT 눌림 · 조작 켜짐 · 살아 있음일 때 face_aim() 을 부른다. 기준이 적은 _unhandled_input 대신 _input 을 쓴 까닭(받는 쪽 여럿이 set_input_as_handled 로 먹는다)이 주석에 있고, 먹히는 경우까지 덮으니 기준의 뜻을 더 잘 지킨다. test_face_aim.gd 에 셋: test_interact_turns_body_to_camera(뒤를 본 채 우클릭 → 몸 · facing() 이 카메라 쪽 dot>0.99), test_interact_turns_body_even_when_consumed(나중에 붙은 _InteractEater 가 _unhandled_input 에서 먼저 먹어도 돈다 — eater.taken==1 로 앞선 조건 확인), test_interact_does_not_turn_when_controls_off(잠그면 dot<-0.9). 일부러 깨 봄: face_aim() 호출을 지우니 앞의 둘이 실패, controls_enabled 검사를 지우니 셋째가 실패 — 되돌렸다. test.log(바뀐 곳만 182개 · 1621 테스트) 전부 통과 · guard 통과."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "apple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/combat/damage_death/test_death_chest.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/core/test_guard.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           182\nTests            1621\nPassing Tests    1621\nFailing Tests       0\nRisky/Pending       0\nAsserts         76917\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "fe74894"
  }
 ]

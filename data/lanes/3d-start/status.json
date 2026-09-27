@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 17:32:17",
- "updated_epoch": 1790497937,
+ "updated": "2026-09-27 17:51:43",
+ "updated_epoch": 1790499103,
  "ended": "2026-09-27 02:53:24",
  "progress": {
   "groups_total": 45,
   "groups_done": 43,
   "groups_waiting": 1,
   "steps_total": 216,
-  "steps_done": 207
+  "steps_done": 208
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-920",
  "step": "4",
  "step_title": "우클릭 상호작용 때 몸이 안 돈다 (G-920 단계 4)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 17:32:17",
+ "phase": "QA",
+ "phase_since": "2026-09-27 17:50:21",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",

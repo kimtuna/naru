@@ -1330,7 +1330,7 @@
   - 기준: 제작대 목록 글이 붙어 읽기 어렵다 — 「Axe 1 Needs Wood 3 Stone 2」처럼 이름 · 개수 · 재료가 구분 없이 이어진다. 이름과 재료를 줄이나 칸으로 나누고 shot.sh --ui 로 ko · en 을 찍어 확인하라
 - [x] 7. 앵커를 박는 길이 왕복 테스트에서 빠졌다 (G-920 단계 1)
   - 기준: 앵커를 박는 길이 왕복 테스트에서 빠졌다 — test_round_trip.gd 의 _play 는 drive_anchor() 대신 climb_gear.place_at() 으로 곧장 박는다. drive_anchor 도 place_at 을 거치니 저장 쪽에는 빈틈이 없다. 다만 「가방에서 하나 빠지고 벽에 하나 남는다」를 한 번에 보려면 tests/life/climbing/test_anchor.gd 에 drive_anchor 성공 뒤 climb_gear.standing().size() 가 1 늘었는지 보는 단언을 더하면 된다
-- [ ] 4. 우클릭 상호작용 때 몸이 안 돈다 (G-920 단계 4)
+- [x] 4. 우클릭 상호작용 때 몸이 안 돈다 (G-920 단계 4)
   - 기준: 우클릭 상호작용 때 몸이 안 돈다 — movement-controls.md:19 는 휘두르기 · 쏘기 · 상호작용 때 조준점 쪽을 본다고 적었지만 이번엔 좌클릭(Attack.swing · Harvest.swing)만 face_aim() 을 부른다. 우클릭 상호작용이 시작되는 곳(INTERACT 액션을 받는 _unhandled_input)에서도 player.face_aim() 을 부르고, test_face_aim.gd 처럼 뒤를 본 채 상호작용하면 몸이 카메라 쪽인지 단언하는 테스트를 더하라
 - [ ] 5. 연사 중 몸이 조준을 안 따라간다 (G-920 단계 4)
   - 기준: 연사 중 몸이 조준을 안 따라간다 — attack.gd:124 의 _process 는 방아쇠를 누르고 있는 동안 shoot() 을 곧장 불러 face_aim() 을 건너뛴다. 자동총을 누른 채 카메라를 돌리면 몸은 첫 발 방향에 남는다. shoot() 안(또는 _process 의 연사 줄 앞)에서 face_aim() 을 부르고, 자동총 방아쇠를 누른 채 카메라 yaw 를 바꾼 뒤 몸이 새 카메라 쪽인지 단언하라
