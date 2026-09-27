@@ -3005,5 +3005,39 @@
    "good": []
   },
   "test": "ld_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_rooms.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      0s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok    479s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           207\nTests            1721\nPassing Tests    1721\nFailing Tests       0\nRisky/Pending       0\nAsserts         77469\nTime           479s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-27 16:49:10",
+  "epoch": 1790495350,
+  "type": "stop",
+  "title": "루프 끝 — 이 차선(3d-lane2) 몫을 다 했다. 다른 차선 몫으로 남은 것: G-920",
+  "group": "G-155",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "1단 벨라도나가 메인섬 산비탈 풀밭에 야생으로 난다(8 포기, 걸어서 닿음) · 맨손 스킬체크 성공이면 가방에 든다 · 밭 재배 경로(작물표 · 씨앗 레시피)를 걷었다 — 단, 마취탄 재료의 유황이 개척 섬에만 나서 「섬을 건너지 않는다」는 사람 결정이 필요하다",
+   "approach": "벨라도나는 밭 ← 비료 ← 석회 ← 개척 섬에 걸려 있었다. (1) Herbs.KINDS 의 wild 칸을 on = SLOPE/LEDGE 로 바꾸고, Herbs.slope_spots 가 지형만 보고(시드 없이) 산 높이 20~90m · 풀밭(물 · 모래 · 가파른 곳 아님) · 둘레 한 점까지 평평한 곳을 6점 걸러 훑어 60m 넘게 떨어진 8곳을 고른다(35ms, 저장본 손대지 않음). 8곳 모두 스폰에서 walk_reach 로 닿는다. 턱 20곳은 그대로 만드라고라 · 투구꽃. (2) 채집은 판정까지만 있고 캔 약초가 가방에 들어오지 않았다 — 성공하면 한 단이 가방에 들고, 찬 가방이면 발밑에 떨어진다(밭 수확과 같은 길). (3) spec 이 「약초는 재배가 안 된다」의 예외를 없앴으므로 작물표의 belladonna · belladonna_seed 레시피 · 번역 · 무게를 뺐다. 옛 저장본의 벨라도나 밭은 Crops.restore 가 이미 「목록에서 빠진 작물은 없는 것으로 친다」. (4) 한 바퀴 테스트 16단계를 밭 재배에서 풀밭 포기를 진짜 좌클릭 스킬체크로 캐는 것으로 바꿨다. (5) test_herbs 의 _on_a_ledge(30m 안 8m 낙차)는 산비탈도 참으로 봐 벨라도나 구별에 못 써서 턱 자리 목록 대조로 갈음했다. (6) 그림: .loop/out/shots_g155/belladonna0 · 1.png — 풀 사이 산비탈에 보라색 포기. 처음 찍기는 shots.gd 의 변수 이름 충돌(down)로 파싱이 깨져 창이 30분 멈춰 있다 끊겼다 — 고쳐 다시 찍었다. 새 상태는 없다 — 포기는 캐도 남으므로(임시) 저장할 것이 없다. 남은 것: 기준 2의 「섬을 건너지 않는다」는 못 채웠다 — 아래 needs_decision. 한 바퀴 테스트가 남긴 TMPDIR naru_from_empty_hands_* 하나는 이 단계에서 손대지 않은 TempDir 정리 쪽이다.",
+   "why": "Herbs.SLOPE_MOUNTAIN 20~90m — 산비탈 띠. 걸어서 닿는 비탈이면 된다는 것만 사람 결정; Herbs.SLOPE_COUNT 8 · SLOPE_SPACING 60m — 단마다 몇 포기인가 미정 (gathering.md 미정); Gathering.YIELD 1 — 한 포기에서 몇 단이 나오나 미정; 캔 포기가 그 자리에 남는다 — 없어지고 다시 나는 규칙이 미정이라 (없애려면 캔 자리를 저장해야 한다)",
+   "files": [
+    "game/life/gathering/herbs.gd",
+    "game/life/gathering/gathering.gd",
+    "game/life/farming/crops.gd",
+    "game/craft/recipes/recipes.json",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/player/inventory_hotbar/weights.json",
+    "game/world/terrain/test_island.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/life/gathering/test_herbs.gd",
+    "game/tests/life/gathering/test_herb_kinds.gd",
+    "game/tests/life/gathering/test_gathering.gd",
+    "game/tests/craft/test_from_empty_hands.gd",
+    "spec/04_life/gathering.md",
+    "spec/04_life/farming.md"
+   ],
+   "decision": {
+    "question": "마취탄을 섬을 건너지 않고 만들려면 유황을 어떻게 할까? 벨라도나는 이제 메인섬 산비탈에서 맨손으로 캐지만, 마취탄 조합식은 「권총탄 조합식(철괴 1 + 유황 1) + 약초 1」(spec/08_combat/tools-as-weapons.md 91줄)이고 유황은 개척 섬에만 난다(frontier-islands.md 41줄 · 총알은 유황이 화약, 사람 결정 2026-09-22). 그래서 석회 사슬은 끊었어도 마취탄은 여전히 유황을 캐러 섬을 건너야 한다. 고를 것: (a) 마취탄은 화약이 없는 다트라 유황을 뺀다 (예: 철괴 1 + 약초 1) · (b) 1단 마취탄만 유황 없이 · (c) 유황을 그대로 두고 기준을 「약초 쪽은 섬을 건너지 않는다」로 누그러뜨린다"
+   }
+  }
  }
 ]
