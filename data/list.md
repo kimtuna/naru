@@ -1306,7 +1306,7 @@
   - 기준: 약초를 캐도 가방에 아무것도 안 들어온다 — Gathering.closed(herb, success) 를 듣는 곳이 tests/life/gathering/test_gathering.gd 말고 없다. 그래서 만드라고라 · 투구꽃은 개발 상자로만 구할 수 있다(gathering.md:7 · hunting.md:46). 게임에서 closed 를 받아 success 면 그 약초 아이템을 가방에 넣고 스팟을 캔 상태로 바꿔라. 게임 안 테스트로 스킬체크 성공 → 가방에 약초 1개, 실패 → 0개를 단언하라
   - 기준: (앞 단계 QA) 다시 나는 약초가 선 사람을 안 가린다 — resources-regrowth.md 「플레이어 몸이 서 있는 칸에도 안 자란다」는 표 전체의 규칙인데 Herbs.next_day 는 그 자리에 플레이어가 서 있어도 바로 심는다. 약초는 LAYER 3 이라 몸에 걸리지는 않지만 규칙과 어긋난다. next_day 에서 플레이어가 자리 반경 안이면 그날은 건너뛰게 하고(_picked 에 남겨 다음 날 다시 봄) test_herb_regrowth.gd 에 「선 자리에는 안 난다」 단언을 더하거나, spec 에 약초는 예외라고 적어라
   - 기준: (앞 단계 QA) world_data.gd 주석의 「캔 약초의 턱」이 낡았다 — herbs_picked 는 이제 턱과 산비탈 자리 번호를 함께 담는다. game/settings/save/world_data.gd 23줄 「herbs_picked(캔 약초의 턱) · herbs_picked_days(그 턱을 캔 날)」을 「캔 약초 자리(턱 · 산비탈)」로 고쳐라
-- [ ] 4. spec 의 「가공대」를 「제작대」로 맞춘다 (사람 결정 2026-09-27)
+- [x] 4. spec 의 「가공대」를 「제작대」로 맞춘다 (사람 결정 2026-09-27)
   - 게임 안 이름(ITEM_workbench)은 「제작대」인데 spec 은 「가공대」라 서로 달랐다. 사람이 보는 이름에 맞춘다
   - 기준: `spec/05_craft/crafting-stations.md` 17줄 · `spec/06_build/rooms.md` 20 · 37 · 38줄 ·
     `spec/08_combat/tools-as-weapons.md` 70줄의 「가공대」를 「제작대」로 고친다 — 사람 결정 줄은 날짜와 함께 남긴다
