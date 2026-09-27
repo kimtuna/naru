@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-28 00:24:22",
- "updated_epoch": 1790522662,
+ "updated": "2026-09-28 00:26:54",
+ "updated_epoch": 1790522814,
  "ended": "2026-09-28 00:20:18",
  "progress": {
   "groups_total": 47,
   "groups_done": 46,
   "groups_waiting": 0,
   "steps_total": 226,
-  "steps_done": 223
+  "steps_done": 224
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-157",
  "step": "1",
  "step_title": "NPC 를 「개인」으로 적는다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-28 00:24:22",
+ "phase": "QA",
+ "phase_since": "2026-09-28 00:26:06",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
