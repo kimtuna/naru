@@ -1429,7 +1429,7 @@
   - 기준: 맡긴 것이 **저장된다** — 껐다 켜도 하던 일을 이어 한다 (테스트)
   - 기준: 찍어서 확인한다 — NPC 가 밭에 물을 주는 그림 · 마른 밭과 준 밭이 다르게 보인다
   - 기준: (앞 단계 QA) IslandState 가 섬을 get 으로 묻는다 — island_state.gd 의 of · apply 는 다른 칸은 island.animals 처럼 바로 읽는데, 주민만 island.get(&"villagers") 로 묻는다. 주석에는 「주민이 없는 땅도 있어서」라고 적혀 있지만, 그런 땅이 어디인지(TestIsland 말고 IslandState 를 받는 섬이 있는지) 확인해라. 없다면 island.villagers 로 맞추고, 있다면 주석에 그 섬 이름을 적어라
-- [ ] 4. (앞 단계 QA) 찍기 주석이 그림과 다르다
+- [x] 4. (앞 단계 QA) 찍기 주석이 그림과 다르다
   - 기준: 찍기 주석이 그림과 다르다 — game/core/debug/shots.gd 의 villager_water 주석(「둘을 준 때(젖은 밭 둘 · 마른 밭 둘)」)과 달리 실제 첫 장은 젖은 셋 · 마른 하나다(물 2번치를 다 쓰고 이미 채워 하나 더 준 뒤 찍힌다). 주석을 「물 두 번치가 떨어져 연못에서 채우러 간 뒤, 젖은 밭 · 마른 밭이 섞인 때」처럼 실제 모습으로 고치거나, want 를 셋째 밭 전에 잡히게 기다림 조건을 고쳐라
   - 기준: (앞 단계 QA) water_spots 주석이 낡았다 — game/automation/villagers/field_care.gd 의 `var water_spots` 주석이 「연못 가운데 · 개울 점」이라 적혀 있는데, TestIsland._fresh_water_spots 는 연못 가운데가 아니라 물가 선의 점들을 준다. 「연못 물가 점 · 개울 점」으로 고쳐라
 

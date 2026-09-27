@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-28 01:37:34",
- "updated_epoch": 1790527054,
+ "updated": "2026-09-28 01:47:07",
+ "updated_epoch": 1790527627,
  "ended": "2026-09-28 00:20:18",
  "progress": {
   "groups_total": 48,
   "groups_done": 46,
   "groups_waiting": 0,
   "steps_total": 230,
-  "steps_done": 227
+  "steps_done": 228
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-157",
  "step": "4",
  "step_title": "(앞 단계 QA) 찍기 주석이 그림과 다르다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-28 01:37:34",
+ "phase": "QA",
+ "phase_since": "2026-09-28 01:46:35",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
