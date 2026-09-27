@@ -3176,5 +3176,71 @@
   },
   "test": "aim.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok      8s  res://tests/life/gathering/test_herbs.gd\nok      9s  res://tests/world/storage/test_chest_break.gd\nok      8s  res://tests/player/inventory_hotbar/test_bag_twenty_island.gd\nok      7s  res://tests/world/day_night/test_day_in_world.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      5s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      5s  res://tests/build/test_blueprint.gd\nok      7s  res://tests/world/frontier_islands/test_lime.gd\nok      4s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      4s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      4s  res://tests/ui/menu/test_pause_menu.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      2s  res://tests/life/food/test_food.gd\nok      4s  res://tests/life/climbing/test_grapple_ammo.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            94\nTests             904\nPassing Tests     904\nFailing Tests       0\nRisky/Pending       0\nAsserts         66393\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "42646dd"
+ },
+ {
+  "time": "2026-09-27 22:41:51",
+  "epoch": 1790516511,
+  "type": "pass",
+  "title": "통과 — G-155 단계 2 (약초는 며칠 뒤 다시 난다)",
+  "group": "G-155",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "캔 약초 자리에 5일(임시) 뒤 같은 약초가 다시 난다 · 캔 날을 저장한다 · 옛 저장본의 벨라도나 씨앗은 불러올 때 버린다 — 바뀐 곳만: 165개 파일 1455개 테스트 통과",
+   "approach": "약초는 한 번 캐면 그 자리가 영영 비었다. Herbs 가 자리마다 난 약초를 기억하고, 캔 자리를 「자리 번호 → 캔 날」로 적게 바꿨다. 섬의 시계가 하루 넘어갈 때 Herbs.next_day 를 불러 REGROW_DAYS 가 찬 자리에 같은 약초를 다시 심는다. 캔 날은 섬 저장에 herbs_picked_days 로 같이 담아 불러와도 캔 날부터 이어 세고, 날이 없는 옛 저장본은 오늘 캔 것으로 친다. 떠나 있는 동안 날이 다 찬 자리는 불러올 때 바로 다시 난다. 옛 벨라도나 씨앗은 가방 · 상자 · 데스 상자 · 바닥을 불러오는 네 길이 모두 거치는 OldItems(settings/save/old_items.gd)에서 버린다(빈 칸) — 건축물 아이템을 재료로 바꾸는 일도 거기서 Blueprint.refund_entry 로 이어 준다. spec: 재생 표에 약초 줄, gathering.md 20곳 사람 결정 줄 끝에 「턱 자리 · 산비탈은 따로 8곳(임시)」 덧붙임, save.md 에 「옛 벨라도나 씨앗은 버린다」.",
+   "why": "약초 재생 날 수 5일 (game/life/gathering/herbs.gd REGROW_DAYS) — 나무(3) 보다 길고 돌(7) 보다 짧게 잡았다. 사람이 플레이해 보며 맞춘다",
+   "files": [
+    "game/life/gathering/herbs.gd",
+    "game/world/terrain/test_island.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/settings/save/world_data.gd",
+    "game/settings/save/old_items.gd",
+    "game/settings/save/character_data.gd",
+    "game/world/storage/chests.gd",
+    "game/combat/damage_death/death.gd",
+    "game/player/pickup/pickup.gd",
+    "spec/03_world/resources-regrowth.md",
+    "spec/04_life/gathering.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "`spec/03_world/resources-regrowth.md` 의 재생 표에 **약초**가 든다 — 나무 · 돌과 같은 자리 (grep)",
+     "evidence": "재생 표 13줄에 「| 약초 | O — 게임 시간 며칠 (임시 5일, herbs.gd REGROW_DAYS) | … |」가 나무 · 돌 줄 바로 아래 같은 표에 들었다. 파일 37줄"
+    },
+    {
+     "ok": true,
+     "criterion": "캔 자리에서 며칠 뒤 다시 난다 — 날이 지나면 나고, 그 전에는 안 난다 (테스트)",
+     "evidence": "tests/life/gathering/test_herb_regrowth.gd 가 섬을 세우고 섬의 시계(clock.advance)로 날을 넘겨 REGROW_DAYS-1 일째까지 매일 빈 자리 · 그 다음 날 같은 자리에 턱 약초가 남을 확인한다. 벨라도나 · 저장 후 이어 세기 · 날 없는 옛 저장본도 본다. 일부러 깨 봄: next_day 의 조건을 >= REGROW_DAYS - 1 로 바꾸자 test_a_picked_ledge_herb_grows_back_after_some_days_and_not_before 가 떨어졌다 (되돌림 확인). herbs_picked_days 가 IslandState 로 섬 저장에 담긴다. test.log 바뀐 곳만 174개 1536 통과 · guard 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "날수는 **임시**다 — 코드에 「임시」를 적고 report 의 temporary 에도 적는다 (사람이 플레이해 보며 맞춘다)",
+     "evidence": "herbs.gd REGROW_DAYS 위 주석 「**임시** — 사람이 플레이해 보며 맞춘다」, spec 표에도 「임시 5일」, report.json temporary 에 5일 줄이 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) gathering.md 「약초 자리 20곳」이 모호해졌다 — spec/04_life/gathering.md 14줄 「약초 자리는 정해진 스팟이다 — 내 섬에 20곳 (사람 결정 2026-09-19)」은 이제 턱 자리 수인데 섬에는 약초가 28포기(턱 20 + 산비탈 8, 임시) 난다. 사람 결정 줄은 지우지 말고 끝에 「— 턱(2 · 3단) 자리다. 벨라도나의 산비탈 자리는 따로 센다 (임시 8곳, island_blueprint.gd slope_herb_spot_count)」처럼 덧붙여라",
+     "evidence": "사람 결정 줄이 그대로 남고 끝에 「— 턱(2 · 3단) 자리다. 벨라도나의 산비탈 자리는 따로 센다 (임시 8곳, island_blueprint.gd slope_herb_spot_count)」가 덧붙었다 (git diff 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 옛 저장본의 벨라도나 씨앗이 이름 없는 물건이 된다 — belladonna_seed 를 레시피 · ko/en.po · weights.json 에서 뺐지만 옛 가방 · 상자에 든 씨앗은 그대로 불러와져 ITEM_belladonna_seed 글자가 번역 없이 뜬다. 불러올 때 모르는 물건을 버리거나 벨라도나로 바꾸는 처리를 하거나, spec/01_settings/save.md 에 「옛 벨라도나 씨앗은 버린다」를 적고 그 처리를 테스트로 박아라 (밭에 심긴 벨라도나는 Crops.restore 가 이미 건너뛴다)",
+     "evidence": "settings/save/old_items.gd 를 가방(CharacterData.from_dict) · 상자(Chests.restore) · 데스 상자(Death.restore) · 바닥(Pickup.restore) 네 길이 거친다. save.md 에 「이제 없는 물건은 불러올 때 버린다 — … 벨라도나 씨앗」이 적혔다. tests/settings/save/test_old_belladonna_seed.gd 가 네 길 모두 씨앗이 빠지고 다른 칸은 자리 그대로임을 본다. 일부러 깨 봄: DROPPED 를 [] 로 비우자 3개 테스트가 다 떨어졌다 (되돌림 확인)"
+    }
+   ],
+   "issues": [
+    "다시 나는 약초가 선 사람을 안 가린다 — resources-regrowth.md 「플레이어 몸이 서 있는 칸에도 안 자란다」는 표 전체의 규칙인데 Herbs.next_day 는 그 자리에 플레이어가 서 있어도 바로 심는다. 약초는 LAYER 3 이라 몸에 걸리지는 않지만 규칙과 어긋난다. next_day 에서 플레이어가 자리 반경 안이면 그날은 건너뛰게 하고(_picked 에 남겨 다음 날 다시 봄) test_herb_regrowth.gd 에 「선 자리에는 안 난다」 단언을 더하거나, spec 에 약초는 예외라고 적어라",
+    "world_data.gd 주석의 「캔 약초의 턱」이 낡았다 — herbs_picked 는 이제 턱과 산비탈 자리 번호를 함께 담는다. game/settings/save/world_data.gd 23줄 「herbs_picked(캔 약초의 턱) · herbs_picked_days(그 턱을 캔 날)」을 「캔 약초 자리(턱 · 산비탈)」로 고쳐라"
+   ],
+   "good": []
+  },
+  "test": "ngs/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/build/test_placeable.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      0s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           174\nTests            1536\nPassing Tests    1536\nFailing Tests       0\nRisky/Pending       0\nAsserts         76777\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "aadb9ae"
  }
 ]

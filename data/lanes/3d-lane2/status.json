@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 22:20:12",
- "updated_epoch": 1790515212,
+ "updated": "2026-09-27 22:41:51",
+ "updated_epoch": 1790516511,
  "ended": "2026-09-27 20:49:56",
  "progress": {
   "groups_total": 46,
   "groups_done": 45,
   "groups_waiting": 0,
   "steps_total": 223,
-  "steps_done": 220
+  "steps_done": 221
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-155",
  "step": "2",
  "step_title": "약초는 며칠 뒤 다시 난다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 22:20:12",
+ "phase": "QA",
+ "phase_since": "2026-09-27 22:38:56",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-27 15:00:00",
