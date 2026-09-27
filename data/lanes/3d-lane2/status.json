@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "목록을 읽는다",
- "updated": "2026-09-27 20:49:54",
- "updated_epoch": 1790509794,
- "ended": "2026-09-27 16:49:10",
+ "state": "stopped",
+ "reason": "g/G-155 에 3d-lane2 를 넣지 못했다 (충돌) — 사람이 풀어야 한다",
+ "updated": "2026-09-27 20:49:56",
+ "updated_epoch": 1790509796,
+ "ended": "2026-09-27 20:49:56",
  "progress": {
   "groups_total": 45,
   "groups_done": 44,
