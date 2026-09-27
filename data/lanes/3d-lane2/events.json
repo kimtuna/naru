@@ -2823,5 +2823,57 @@
   "epoch": 1790489293,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-27 15:37:56",
+  "epoch": 1790491076,
+  "type": "pass",
+  "title": "통과 — G-991 단계 1 (buildings.gd (1453줄) 를 다듬는다)",
+  "group": "G-991",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "buildings.gd 다듬기 — 겹친 훑기 5벌 · 죽은 변수 · 긴 함수 둘 · 낡은 주석 하나를 고쳤다. 전체 1713 → 1718 통과 · 실패 0",
+   "approach": "buildings.gd(1453줄)를 훑어 겹친 코드 · 죽은 코드 · 긴 함수 · 낡은 주석을 찾아 그 자리에서 고쳤다. 겉 행동은 하나도 안 바꿨다 — 단언 값 · 개수 그대로.\n\n| # | 종류 | 자리 | 무엇 | 고침 |\n|---|---|---|---|---|\n| 1 | 겹친 코드 | floor_at · plan_roof_at · _support_level · plan_pillar_at · plan_stairs_at · _stairs_at · neighbor · _edge_taken (8곳) | 무리를 훑으며 `n as BuildPiece` 하고 null 이면 continue | `_pieces()` 하나로 |\n| 2 | 겹친 코드 | _link_of 벽 갈래 · _stairs_edge | 변 양쪽 판 셈이 두 벌 (BuildPiece.roof_plates 에도 같은 식) | `_edge_plates(e)` 하나로 |\n| 3 | 겹친 코드 | plan_roof_at · plan_stairs_at (2곳) | 「이 판 이 높이에 바닥이 있나」를 각자 훑음 — stairs_floor_under 와 같은 규칙 | `_floor_on(plate, y)` → stairs_floor_under 한 규칙 |\n| 4 | 겹친 코드 | _landing · _ground_height | 「걸러 내며 다시 쏘는 광선」이 두 벌 | `_first_hit(from, to, tries, skip)` 하나로 |\n| 5 | 겹친 코드 | _unhandled_input | 도면 키 넷을 is_action_pressed 로 두 번씩 물음 | `_blueprint_key(event)` 로 한 번씩 |\n| 6 | 죽은 코드 | plan_roof_at | `var below` 를 만들고 아무 데도 안 씀 | 지움 |\n| 7 | 죽은 매개변수 | _floor_count | slack 이 네 곳 모두 LEVEL_SLACK | 매개변수 뺌 · _same_level 로 |\n| 8 | 너무 긴 함수 | plan_at (78줄) | 땅 재기가 절반 | `_foundation_probes` · `_ground_span` 으로 뗌 → 43줄 |\n| 9 | 너무 긴 함수 | plan_stairs_at (70줄) | 붙을 자리 고르기가 절반 | `_stairs_anchor` 로 뗌 → 26줄 |\n| 10 | 낡은 주석 | edge_of 머리말 | 「토대 격자(3칸)」 — 2026-09-24 에 4×4 로 바뀜 | 「한 장 = 4칸」 |\n\n죽은 함수는 없다 — 함수 79개 전부 안팎에서 부르는 곳을 grep 으로 확인했다 (toggle_aimed_door · pick_next · neighbor · plan_for · snap 은 밖에서 안 부르지만 이 파일 안에서 쓴다). 낡은 주석도 머리말 · 상수 설명 · 각 함수 머리말을 spec(06_build/building.md) 과 대조했고 3칸 하나뿐이었다 (「맨땅에 벽」 미정은 spec 100~101줄에 아직 미정이라 그대로).\n\n테스트 개수: 앞 1713 (.loop/out/full_test_G991_1.log) → 뒤 1718 (이번 전체 실행, 206 파일 · 실패 0). +5 는 새 지키는 테스트(test_buildings_tidy.gd). 이 단계 기준이 「앞뒤 숫자」를 요구해 전체를 한 번(481초) 돌렸다 — 바뀐 곳 그물(changed_tests.py 33 파일)은 그 부분집합이다.\n\n이 파일 밖에서 눈에 띈 것(이 단계 몫이 아니라 손대지 않았다): build_piece.gd 81 · 385 줄 주석이 `Buildings.link_counts` 라 하는데 실제는 `_link_counts` 다 · build_piece.gd stairs_host 가 제 손으로 BuildPiece 목록을 또 만든다 (Buildings._pieces 와 같은 일). 그 파일 단계에서 다듬으면 된다.",
+   "why": "test_buildings_tidy.gd FUNC_LINES = 50 — 함수 하나의 줄 수 한도. 다듬은 뒤 가장 긴 plan_at 이 43줄이라 그 조금 위에 둔 임시 값",
+   "files": [
+    "game/build/buildings.gd",
+    "game/tests/build/test_buildings_tidy.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "이 파일에서 겹친 코드 · 죽은 코드(아무도 안 부른다) · 너무 긴 함수 · 낡은 주석을 찾아 report 에 표로 적고, 그 자리에서 고친다 (찾아만 두지 않는다)",
+     "evidence": "report.how 에 10줄 표(겹친 코드 5 · 죽은 코드 1 · 죽은 매개변수 1 · 긴 함수 2 · 낡은 주석 1)가 있고 git diff 가 열 개 모두와 맞는다. 행동 동치를 하나씩 대조했다 — _floor_on 은 _link_index.floors(plate_of · is_floor) + _floor_under(± LEVEL_SLACK) 라 원래의 is_floor ∧ _same_level ∧ plate_of == plate 와 같은 집합 · _first_hit 는 두 광선 루프(32/8회 · 걸러 내기 · 빈 손 반환)를 그대로 옮김 · _blueprint_key 는 네 키의 갈래가 원래와 같음 · plan_pillar_at 의 continue 조건은 and 로 합쳐졌을 뿐. everything_placed()→_pieces() 는 FieldPatch 가 BuildPiece 가 아니라 같은 집합. 남은 get_nodes_in_group 훑기(_taken 1223줄)는 BuildPiece 아닌 놓인 것도 봐야 하니 _pieces() 대상이 아니다. 새 테스트 test_buildings_tidy.gd 5개가 _edge_plates 값(roof_plates 와 대조 · 좌표 직접 단언) · _pieces 통일 · 「3칸」 삭제 · 함수 길이 한도를 지킨다. FUNC_LINES 를 40 으로 낮춰 돌리자 「plan_at 43줄」로 정확히 떨어졌다(되돌림) — 껍데기가 아니다"
+    },
+    {
+     "ok": true,
+     "criterion": "고칠 것이 없으면 없다고 적는다 — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다",
+     "evidence": "고칠 것이 있어 고쳤고, 죽은 함수는 「79개 전부 grep 으로 확인 · 밖에서 안 부르는 다섯은 안에서 쓴다」 · 낡은 주석은 「spec 06_build/building.md 와 대조 · 맨땅 벽 미정은 spec 도 미정」으로 괜찮다고 본 까닭을 적었다"
+    },
+    {
+     "ok": true,
+     "criterion": "전체 테스트 통과 개수가 줄지 않았다 — report 에 앞뒤 숫자를 적는다",
+     "evidence": "report 에 1713 (full_test_G991_1.log, 205 파일 · 실제 파일 확인) → 1718 (206 파일) 을 적었다. 바뀐 것은 buildings.gd 와 새 테스트 파일(5개)뿐이라 1713 + 5 = 1718 이 산술로 맞고, 바뀐 곳 그물 33 파일 224/224 통과(test.log)가 buildings.gd 를 무는 테스트를 덮는다. 다만 뒤 숫자의 전체 실행 로그는 남지 않았다(problems)"
+    },
+    {
+     "ok": true,
+     "criterion": "이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)",
+     "evidence": "test.log — 바뀐 곳만 33 파일 · 224 테스트 · 6278 단언 · 실패 0 · guard 통과. build/ 의 29 파일(plan_stairs_at · stairs_floor_under 를 직접 부르는 test_building_stairs_flip · sockets · link_count · stairs_plate · roof_stairs 포함)과 test_round_trip · test_from_empty_hands 가 들었다"
+    }
+   ],
+   "issues": [
+    "전체 실행의 뒤 숫자가 로그로 남지 않았다 — report 는 1718/1718 이라 하지만 .loop/out 에 앞 숫자(full_test_G991_1.log)만 있고 뒤 것은 없다 (test_files/ 는 루프의 바뀐 곳 실행이 덮어썼다). 이 묶음의 다음 단계부터 전체를 돌릴 때 `./tools/test.sh > .loop/out/full_test_G991_<단계>_after.log` 로 남겨라 — QA 가 산술 말고 로그로 확인할 수 있게",
+    "build_piece.gd 주석이 없는 이름을 가리킨다 — 81 · 385 줄 「(Buildings.link_counts)」인데 실제 함수는 Buildings._link_counts 다. build_piece.gd 를 다듬는 단계에서 두 줄을 _link_counts 로 고쳐라",
+    "build_piece.gd stairs_host 가 건축물 목록을 제 손으로 만든다 — 372~378 줄에서 Placeable.GROUP 을 훑어 BuildPiece 만 모으는데 Buildings._pieces_of 와 같은 일이다. build_piece.gd 단계에서 Buildings._pieces_of(get_tree().get_nodes_in_group(Placeable.GROUP)) 로 바꿔라 (겉 행동 그대로 · 단언 값 · 개수 그대로)"
+   ],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 33 개 ---\ntest.sh: 파일 33 개를 6 개씩 한꺼번에 돌린다\nok     15s  res://tests/build/test_building_walls.gd\nok     17s  res://tests/build/test_building_sockets.gd\nok      9s  res://tests/life/farming/test_field_free_grid.gd\nok     12s  res://tests/build/test_building_roof_stairs.gd\nok     31s  res://tests/settings/save/test_round_trip.gd\nok      8s  res://tests/build/test_building_pillar.gd\nok      7s  res://tests/build/test_building_stairs_plate.gd\nok      6s  res://tests/build/test_blueprint.gd\nok      5s  res://tests/build/test_building_preview.gd\nok      6s  res://tests/build/test_building_chain_grade.gd\nok      4s  res://tests/build/test_building_stairs_flip.gd\nok      5s  res://tests/build/test_building_stairs_roof.gd\nok     44s  res://tests/build/test_placeable_previews.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      3s  res://tests/build/test_building_grades.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      3s  res://tests/build/test_foundation_wheel_attach.gd\nok      3s  res://tests/build/test_building_downgrade.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      4s  res://tests/build/test_building_roof_skyward.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_rooms.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      0s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_room_chests.gd\nok     54s  res://tests/build/test_building_qa_sweep.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            33\nTests             224\nPassing Tests     224\nFailing Tests       0\nRisky/Pending       0\nAsserts          6278\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "86fe14d"
  }
 ]
