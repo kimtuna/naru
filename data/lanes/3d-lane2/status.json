@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "G-155 합쳤다",
- "updated": "2026-09-27 23:26:17",
- "updated_epoch": 1790519177,
+ "updated": "2026-09-27 23:26:19",
+ "updated_epoch": 1790519179,
  "ended": "2026-09-27 20:49:56",
  "progress": {
   "groups_total": 46,
@@ -16,8 +16,8 @@
  "step": "4",
  "step_title": "spec 의 「가공대」를 「제작대」로 맞춘다 (사람 결정 2026-09-27)",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-27 23:25:25",
+ "phase": "차선 합치기",
+ "phase_since": "2026-09-27 23:26:19",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-27 15:00:00",
