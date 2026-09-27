@@ -1482,7 +1482,7 @@
   - 기준: 찍어서 확인한다 — 게이지가 오르는 중 · 다 찬 뒤 두 장
 - [x] 4. (앞 단계 QA) 낚시 사진의 알림이 다른 말로 찍힌다
   - 기준: 낚시 사진의 알림이 다른 말로 찍힌다 — /tmp/fishshots2/fishing_en.png 에 「떡밥을 풀었다 — 물고기 5마리가 모인다」(한국어), fishing_full_ko.png 에 「Spread the groundbait — 3 fish gather」(영어)가 찍혔다. game/core/debug/ui_shots.gd 가 fishing_caught 만 again 으로 알림을 다시 띄우고 fishing · fishing_full 은 안 띄운다. fishing · fishing_full 에도 again = Notice.say(get_tree(), Fishing.SAY_SPREAD, [마리 수]) 를 달거나, 사진에 안 필요하면 _fishing() 끝에서 알림을 지워라. 막는 것은 아니다 — 창 자체는 두 말 다 맞게 찍혔다
-- [ ] 5. (앞 단계 QA) 낚시 알림 테스트가 ui_shots 를 돌려 보지 않는다
+- [x] 5. (앞 단계 QA) 낚시 알림 테스트가 ui_shots 를 돌려 보지 않는다
   - 기준: 낚시 알림 테스트가 ui_shots 를 돌려 보지 않는다 — test_fishing_shots_say_the_notice_again_in_each_language 의 뒤쪽 절반은 Notice.say 만 직접 불러 보고 ui_shots 의 _fishing 은 부르지 않는다. 소스 글자 검사로 회귀는 막지만, SHOTS.new() 로 shots._fishing(player, stations, "fishing") 을 불러 shots._fish_notice == [Fishing.SAY_SPREAD, [fishing.fish_left(...)]] 이고 "fishing_caught" 면 [Fishing.SAY_LANDED, [0 이상]] 인지 단언하는 검사를 덧붙이면 마리 수가 실제 영역과 맞는지까지 지킨다
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
