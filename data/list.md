@@ -1258,7 +1258,7 @@
 - [x] 3. (앞 단계 QA) 횃불 · 건축물 · 선착장의 남은 대수 왕복 테스트가 없다
   - 기준: 횃불 · 건축물 · 선착장의 남은 대수 왕복 테스트가 없다 — 코드는 torches.gd · buildings.gd · dock_builder.gd 모두 with_hits/restore_hits 로 담지만, test_round_trip.gd 의 test_hits_left_on_placed_things_come_back 은 station · chest · field 셋만 친다. _play 에서 횃불(island.torches.place_at)과 건축물 하나를 놓고 한 대씩 친 뒤 _placed_hits 에 'torch' · 'building' 을 더해 HITS-1 로 돌아오는지 단언하라 (선착장은 시험 섬에 놓을 수 있으면 같이)
 
-## [ ] G-156 상자 안에서 아이템이 안 옮겨진다 (사람이 플레이하고 짚었다 2026-09-27)
+## [x] G-156 상자 안에서 아이템이 안 옮겨진다 (사람이 플레이하고 짚었다 2026-09-27)
 - 차선: 3d-start
 - spec: spec/06_build/storage.md, spec/02_player/inventory-hotbar.md
 - **자가 피드백**: 깨끗해질 때까지 단계를 계속 붙인다
