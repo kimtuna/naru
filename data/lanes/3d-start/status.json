@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 19:08:19",
- "updated_epoch": 1790503699,
+ "updated": "2026-09-27 19:27:18",
+ "updated_epoch": 1790504838,
  "ended": "2026-09-27 02:53:24",
  "progress": {
   "groups_total": 45,
   "groups_done": 43,
   "groups_waiting": 1,
   "steps_total": 218,
-  "steps_done": 213
+  "steps_done": 214
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-920",
  "step": "4",
  "step_title": "spec 에 등반 중 조준 규칙이 없다 (G-920 단계 6)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 19:08:19",
+ "phase": "QA",
+ "phase_since": "2026-09-27 19:26:15",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
