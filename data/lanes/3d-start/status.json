@@ -1,8 +1,8 @@
 {
  "state": "running",
- "reason": "목록을 읽는다",
- "updated": "2026-09-27 20:53:23",
- "updated_epoch": 1790510003,
+ "reason": "",
+ "updated": "2026-09-27 20:53:25",
+ "updated_epoch": 1790510005,
  "ended": "2026-09-27 20:48:51",
  "progress": {
   "groups_total": 46,
@@ -12,12 +12,12 @@
   "steps_done": 217
  },
  "started": "2026-09-21 06:54:49",
- "group": "G-920",
+ "group": "G-156",
  "step": "1",
- "step_title": "spec 에도 옛 이름 가공대가 남았다 (G-920 단계 1)",
+ "step_title": "상자 안에서 칸끼리 옮기고 · 바꾸고 · 합친다",
  "attempt": "1",
- "phase": "차선 합치기",
- "phase_since": "2026-09-27 20:00:16",
+ "phase": "구현",
+ "phase_since": "2026-09-27 20:53:25",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
