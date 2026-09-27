@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 15:37:58",
- "updated_epoch": 1790491078,
+ "updated": "2026-09-27 15:57:54",
+ "updated_epoch": 1790492274,
  "ended": "2026-09-27 10:10:45",
  "progress": {
   "groups_total": 45,
   "groups_done": 42,
   "groups_waiting": 0,
   "steps_total": 213,
-  "steps_done": 201
+  "steps_done": 202
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-991",
  "step": "2",
  "step_title": "(앞 단계 QA) 전체 실행의 뒤 숫자가 로그로 남지 않았다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 15:37:58",
+ "phase": "QA",
+ "phase_since": "2026-09-27 15:56:28",
  "lane": "3d-lane2",
  "model": "fable",
  "resume_at": "2026-09-27 15:00:00",

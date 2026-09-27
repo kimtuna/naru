@@ -1320,7 +1320,7 @@
   - 기준: **고칠 것이 없으면 없다고 적는다** — 억지로 만들지 않는다. 무엇을 보고 왜 괜찮다고 봤는지 적는다
   - 기준: **전체 테스트 통과 개수가 줄지 않았다** — report 에 앞뒤 숫자를 적는다
   - 기준: 이 파일과 부르는 쪽에 걸리는 테스트가 전부 통과한다 (테스트)
-- [ ] 2. (앞 단계 QA) 전체 실행의 뒤 숫자가 로그로 남지 않았다
+- [x] 2. (앞 단계 QA) 전체 실행의 뒤 숫자가 로그로 남지 않았다
   - 기준: 전체 실행의 뒤 숫자가 로그로 남지 않았다 — report 는 1718/1718 이라 하지만 .loop/out 에 앞 숫자(full_test_G991_1.log)만 있고 뒤 것은 없다 (test_files/ 는 루프의 바뀐 곳 실행이 덮어썼다). 이 묶음의 다음 단계부터 전체를 돌릴 때 `./tools/test.sh > .loop/out/full_test_G991_<단계>_after.log` 로 남겨라 — QA 가 산술 말고 로그로 확인할 수 있게
   - 기준: (앞 단계 QA) build_piece.gd 주석이 없는 이름을 가리킨다 — 81 · 385 줄 「(Buildings.link_counts)」인데 실제 함수는 Buildings._link_counts 다. build_piece.gd 를 다듬는 단계에서 두 줄을 _link_counts 로 고쳐라
   - 기준: (앞 단계 QA) build_piece.gd stairs_host 가 건축물 목록을 제 손으로 만든다 — 372~378 줄에서 Placeable.GROUP 을 훑어 BuildPiece 만 모으는데 Buildings._pieces_of 와 같은 일이다. build_piece.gd 단계에서 Buildings._pieces_of(get_tree().get_nodes_in_group(Placeable.GROUP)) 로 바꿔라 (겉 행동 그대로 · 단언 값 · 개수 그대로)

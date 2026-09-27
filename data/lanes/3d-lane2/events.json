@@ -2875,5 +2875,50 @@
   },
   "test": "--- 바뀐 곳만: 33 개 ---\ntest.sh: 파일 33 개를 6 개씩 한꺼번에 돌린다\nok     15s  res://tests/build/test_building_walls.gd\nok     17s  res://tests/build/test_building_sockets.gd\nok      9s  res://tests/life/farming/test_field_free_grid.gd\nok     12s  res://tests/build/test_building_roof_stairs.gd\nok     31s  res://tests/settings/save/test_round_trip.gd\nok      8s  res://tests/build/test_building_pillar.gd\nok      7s  res://tests/build/test_building_stairs_plate.gd\nok      6s  res://tests/build/test_blueprint.gd\nok      5s  res://tests/build/test_building_preview.gd\nok      6s  res://tests/build/test_building_chain_grade.gd\nok      4s  res://tests/build/test_building_stairs_flip.gd\nok      5s  res://tests/build/test_building_stairs_roof.gd\nok     44s  res://tests/build/test_placeable_previews.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      3s  res://tests/build/test_building_grades.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      3s  res://tests/build/test_foundation_wheel_attach.gd\nok      3s  res://tests/build/test_building_downgrade.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      4s  res://tests/build/test_building_roof_skyward.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_rooms.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      0s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/build/test_room_chests.gd\nok     54s  res://tests/build/test_building_qa_sweep.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            33\nTests             224\nPassing Tests     224\nFailing Tests       0\nRisky/Pending       0\nAsserts          6278\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "86fe14d"
+ },
+ {
+  "time": "2026-09-27 15:57:54",
+  "epoch": 1790492274,
+  "type": "pass",
+  "title": "통과 — G-991 단계 2 ((앞 단계 QA) 전체 실행의 뒤 숫자가 로그로 남지 않았다)",
+  "group": "G-991",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "build_piece.gd 의 낡은 이름(Buildings.link_counts → _link_counts) 둘을 고치고 stairs_host 가 건축물 목록을 Buildings._pieces_of 로 받게 했다 · 전체 실행을 .loop/out/full_test_G991_2_after.log 로 남겼다 (207 파일 · 1721/1721 통과)",
+   "approach": "(1) 뒤 숫자 로그 — 이번 단계의 전체 실행을 `./tools/test.sh > .loop/out/full_test_G991_2_after.log` 로 남겼다. 로그 첫 줄 「파일 207 개」, 끝 「Tests 1721 · Passing 1721 · Failing 0 · Risky/Pending 0 · EXIT=0」. 앞 단계 로그(full_test_G991_1.log)는 205 파일 1713 이었고, 단계 1 의 test_buildings_tidy(5) 와 이번 test_build_piece_tidy(3) 가 더해진 수다. (2) 81 · 385 줄 주석의 「Buildings.link_counts」를 실제 함수 이름 「_link_counts」로 고쳤다 — 그런 이름이 다시 낡지 않게, build_piece.gd 가 「Buildings.<이름>」으로 가리키는 아홉 이름이 전부 Buildings 스크립트의 함수 · 상수 · 변수에 있는지 GDScript 반영(get_script_method_list · get_script_constant_map …)으로 확인하는 테스트를 두었다. (3) stairs_host 의 손수 만든 목록(Placeable.GROUP 훑어 is BuildPiece 로 거르기)을 Buildings._pieces_of(get_tree().get_nodes_in_group(Placeable.GROUP)) 로 바꿨다 — 같은 무리를 같은 차례로 거르므로 겉 행동이 그대로다. 기존 stairs_host 행동 테스트(test_building_stairs_flip · stairs_roof · qa_sweep)의 단언 값 · 개수는 손대지 않았고 전체가 그대로 통과했다. 새 테스트는 stairs_host 몸 안에 _pieces_of 호출이 있고 is BuildPiece · append 손 훑기가 없는지 본다. 넘은 선 없음.",
+   "why": "",
+   "files": [
+    "game/build/build_piece.gd",
+    "game/tests/build/test_build_piece_tidy.gd",
+    "game/tests/build/test_build_piece_tidy.gd.uid",
+    ".loop/out/full_test_G991_2_after.log"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "전체 실행의 뒤 숫자가 로그로 남지 않았다 — 이 묶음의 다음 단계부터 전체를 돌릴 때 ./tools/test.sh > .loop/out/full_test_G991_<단계>_after.log 로 남겨라",
+     "evidence": ".loop/out/full_test_G991_2_after.log 가 있다 (15:47, report 15:48 보다 앞). 첫 줄 「파일 207 개」, 끝 「Tests 1721 · Passing 1721 · Failing 0 · EXIT=0」. 앞 로그 full_test_G991_1.log 는 205 파일 1713 이었고, 새 test_buildings_tidy(5) + test_build_piece_tidy(3) = 8 이 더해진 수다. 로그 안에 test_build_piece_tidy.gd 가 ok 로 들어 있어 고친 뒤 돌린 것이 맞다. 루프의 test.log(전체) 도 207 파일 1721/1721 로 같다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) build_piece.gd 주석이 없는 이름을 가리킨다 — 81 · 385 줄 「(Buildings.link_counts)」를 _link_counts 로 고쳐라",
+     "evidence": "diff 에서 81 · 382(옛 385) 줄 둘 다 Buildings._link_counts 로 바뀌었고 grep link_counts 에 다른 낡은 줄이 없다. test_build_piece_tidy.test_every_buildings_name_it_points_at_exists 가 build_piece.gd 의 「Buildings.<이름>」 전부를 Buildings 스크립트의 함수·상수·변수 목록과 대조한다. 일부러 81 줄을 link_counts 로 되돌려 그 파일만 돌리니 「없는 이름 Buildings.link_counts 를 가리킨다」로 실패했다 (3 중 1 실패). 되돌린 뒤 3/3 통과 확인"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) build_piece.gd stairs_host 가 건축물 목록을 제 손으로 만든다 — Buildings._pieces_of(get_tree().get_nodes_in_group(Placeable.GROUP)) 로 바꿔라 (겉 행동 그대로 · 단언 값 · 개수 그대로)",
+     "evidence": "diff 에서 4 줄 손 훑기가 var pieces := Buildings._pieces_of(get_tree().get_nodes_in_group(Placeable.GROUP)) 한 줄로 바뀌었다. buildings.gd 392 줄 _pieces_of 는 static, Array 를 받아 같은 무리를 같은 차례로 is BuildPiece 로 거르므로 겉 행동이 같다 (stairs_floor_under 의 Array[BuildPiece] 인자 타입도 그대로). 단언 값·개수는 안 건드렸다 — 테스트 쪽 diff 는 새 파일 하나뿐. test_stairs_host_picks_pieces_through_buildings_helper 가 stairs_host 몸에 _pieces_of 호출이 있고 is BuildPiece · pieces.append 가 없는지 본다. stairs_host 행동 테스트(test_building_stairs_flip · stairs_roof · qa_sweep · stairs_note)는 전체 로그에서 모두 ok"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "ld_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      1s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_rooms.gd\nok      2s  res://tests/build/test_water_rule_at_sea_level.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      0s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok    479s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           207\nTests            1721\nPassing Tests    1721\nFailing Tests       0\nRisky/Pending       0\nAsserts         77469\nTime           479s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "891699c"
  }
 ]
