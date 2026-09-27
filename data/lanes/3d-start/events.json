@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-23 05:16:48",
-  "epoch": 1790108208,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-23 05:35:22",
   "epoch": 1790109322,
   "type": "pass",
@@ -7633,5 +7627,76 @@
    "good": []
   },
   "test": "     1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      0s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           212\nTests            1760\nPassing Tests    1760\nFailing Tests       0\nRisky/Pending       0\nAsserts         78812\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-27 21:14:57",
+  "epoch": 1790511297,
+  "type": "pass",
+  "title": "통과 — G-156 단계 1 (상자 안에서 칸끼리 옮기고 · 바꾸고 · 합친다)",
+  "group": "G-156",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "상자 칸을 같은 상자 칸에 끌어 놓으면 옮기고 · 바꾸고 · 합친다 (가방과 같은 SlotMove.drop). 새 테스트 8개 + 바뀐 곳 그물 135파일 1309개 통과",
+   "approach": "SlotDrop._can_drop_data 가 「상자 칸 → 상자 칸」을 막고 있었다 (d.chest == null or chest == null — 주석에 「상자 안에서 자리를 바꾸는 것은 아직 없다」). 같은 상자에서 온 것은 받게 넓히고, _drop_data 에서 Chest.move(from, to) 로 보낸다. Chest.move 는 Inventory.move 와 같이 SlotMove.drop 한 곳을 부른다 — 규칙은 베낀 것이 아니라 이미 한 곳(SlotMove)이고, 두 move 는 칸을 쥔 쪽(가방 · 상자)의 쓰기만 다르다. 가방과 같은 규칙인지는 같은 두 칸을 가방 · 상자에서 옮겨 결과가 같은지로 지킨다. 창의 빈 곳(패널 · 스크롤 · 창)은 드롭을 받지 않고 _get_drag_data 는 칸을 비우지 않으니 그대로 남는 것을 테스트로 본다. 저장은 새 상태가 없다(칸 배열 그대로) — IslandState → 디스크 → 되돌리기 길로 확인했다. 찍기: harness/shot.sh --ui <폴더> chest_merge 가 chest_merge_before · chest_merge 두 장을 찍는다 — 목재 60 + 50 → 끌어온 칸 11 · 받은 칸 99 가 보인다 (눈으로 확인). 테스트: tests/world/storage 전체 106개 통과, 바뀐 곳 그물(changed_tests) 135파일 1309개 통과.",
+   "why": "",
+   "files": [
+    "game/world/storage/chest.gd",
+    "game/ui/hud/slot_drop.gd",
+    "game/player/inventory_hotbar/slot_move.gd",
+    "game/player/inventory_hotbar/inventory.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "spec/06_build/storage.md",
+    "game/tests/world/storage/test_chest_move_inside.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "상자 칸을 **같은 상자의 빈 칸**으로 끌면 그리로 옮겨진다 (테스트)",
+     "evidence": "test_chest_move_inside.gd test_dragging_a_chest_slot_onto_an_empty_one_in_the_same_chest_moves_it_there — 엔진이 부르는 _get_drag_data · _can_drop_data · _drop_data 차례로 0→6 을 옮기고 칸 · 창 글자 · 개수를 본다. slot_drop.gd 의 `or d.get(\"chest\") == chest` 를 지워 보니 이 파일 5개가 깨졌다 (되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "**다른 아이템이 든 칸**으로 끌면 둘이 자리를 바꾼다 (테스트)",
+     "evidence": "test_dropping_onto_another_item_in_the_same_chest_swaps_the_two_slots — 목재3 ↔ 돌2 가 서로 자리를 바꾸고 창도 바뀐다"
+    },
+    {
+     "ok": true,
+     "criterion": "**같은 아이템이 든 칸**으로 끌면 합쳐진다 — 한 칸 최대(STACK_MAX)를 넘는 몫은 끌어온 칸에 남는다 (테스트)",
+     "evidence": "test_dropping_onto_the_same_item_in_the_same_chest_merges_the_stacks (3+4→7, 끌어온 칸 빔) · test_what_goes_over_one_slot_stays_in_the_chest_slot_it_came_from (10 + STACK_MAX-4 → STACK_MAX, 6 이 제자리) · 꽉 찬 칸 거부 테스트까지"
+    },
+    {
+     "ok": true,
+     "criterion": "칸 밖(창의 빈 곳)에 놓으면 **원래 자리에 그대로 있는다** — 사라지지 않는다 (테스트)",
+     "evidence": "test_dropping_on_the_empty_part_of_the_window_leaves_the_slot_where_it_was — 패널 · 스크롤 · 창이 드롭을 받지 않음을 단언하고 DRAG_END 뒤 칸 · 창 · 개수가 그대로인지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "가방에서 하는 것과 **같은 규칙**이다 — 두 곳이 같은 길을 쓰는지 보고, 베껴 쓴 것이면 한 곳으로 모은다",
+     "evidence": "Chest.move 와 Inventory.move 모두 SlotMove.drop 한 곳을 부른다 (규칙은 베끼지 않았다 — 겉의 범위 검사 · 칸 쓰기만 각자). test_the_chest_follows_the_same_rule_as_the_bag 가 빈칸 · 바꾸기 · 합치기 · 넘침 · 꽉 참 다섯 경우를 가방과 상자에서 돌려 결과가 같은지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "옮긴 뒤 저장하고 불러오면 그대로다 (테스트)",
+     "evidence": "test_what_was_moved_inside_the_chest_stays_there_after_saving_and_loading — 합치기 · 옮기기 뒤 IslandState → SaveStore 디스크 → load → apply 로 새 Chests 에 되돌려 네 칸을 확인. 새 상태는 없다 (칸 배열 그대로)"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 합치기 앞 · 뒤 두 장",
+     "evidence": "/tmp/naru_merge/chest_merge_before_ko.png (목재60 · 돌5 · 목재50) · chest_merge_ko.png (목재11 · 돌5 · 목재99) 를 직접 열어 봤다. en 두 장도 있다. ui_shots.gd 에 chest_merge 자리로 다시 찍을 수 있다"
+    }
+   ],
+   "issues": [
+    "상자 창 안내 글이 가방과만 주고받는다고 한다 — i18n/ko.po 177행 「칸을 끌어다 놓아 가방과 주고받는다 · 우클릭으로 닫는다」(en.po 짝 포함)가 이제 상자 안에서도 옮기고 합친다는 것을 말하지 않는다. 틀린 말은 아니나 낡았다. 바꿀 거면 ko · en 둘 다 고치고 tests/ui/layout/test_window_layout.gd 184행의 같은 글과 창 폭(잘림)도 같이 본다"
+   ],
+   "good": []
+  },
+  "test": "st_size_4x4.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok    479s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           215\nTests            1776\nPassing Tests    1776\nFailing Tests       0\nRisky/Pending       0\nAsserts         79009\nTime           479s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "c3620be"
  }
 ]
