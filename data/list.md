@@ -1310,7 +1310,7 @@
   - 기준: (앞 단계 QA) build_piece.gd 주석이 없는 이름을 가리킨다 — 81 · 385 줄 「(Buildings.link_counts)」인데 실제 함수는 Buildings._link_counts 다. build_piece.gd 를 다듬는 단계에서 두 줄을 _link_counts 로 고쳐라
   - 기준: (앞 단계 QA) build_piece.gd stairs_host 가 건축물 목록을 제 손으로 만든다 — 372~378 줄에서 Placeable.GROUP 을 훑어 BuildPiece 만 모으는데 Buildings._pieces_of 와 같은 일이다. build_piece.gd 단계에서 Buildings._pieces_of(get_tree().get_nodes_in_group(Placeable.GROUP)) 로 바꿔라 (겉 행동 그대로 · 단언 값 · 개수 그대로)
 
-## [ ] G-920 루프가 찾은 것 — 스스로 갚는다
+## [x] G-920 루프가 찾은 것 — 스스로 갚는다
 - 결정: **약초는 며칠 뒤 다시 난다** (사람 결정 2026-09-27) — resources-regrowth.md 재생 표에 약초를 넣는다. 날수는 임시(코드에 「임시」를 적는다). 약초는 마취탄 재료라 안 나면 포획이 영영 막힌다
 - 차선: 3d-start (사람 결정 2026-09-27 — 약초 쪽은 G-155 로 옮겼다. 여기는 약초를 안 만진다)
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
