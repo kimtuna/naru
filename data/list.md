@@ -1302,7 +1302,7 @@
   - 기준: 날수는 **임시**다 — 코드에 「임시」를 적고 report 의 temporary 에도 적는다 (사람이 플레이해 보며 맞춘다)
   - 기준: (앞 단계 QA) gathering.md 「약초 자리 20곳」이 모호해졌다 — spec/04_life/gathering.md 14줄 「약초 자리는 정해진 스팟이다 — 내 섬에 20곳 (사람 결정 2026-09-19)」은 이제 턱 자리 수인데 섬에는 약초가 28포기(턱 20 + 산비탈 8, 임시) 난다. 사람 결정 줄은 지우지 말고 끝에 「— 턱(2 · 3단) 자리다. 벨라도나의 산비탈 자리는 따로 센다 (임시 8곳, island_blueprint.gd slope_herb_spot_count)」처럼 덧붙여라
   - 기준: (앞 단계 QA) 옛 저장본의 벨라도나 씨앗이 이름 없는 물건이 된다 — belladonna_seed 를 레시피 · ko/en.po · weights.json 에서 뺐지만 옛 가방 · 상자에 든 씨앗은 그대로 불러와져 ITEM_belladonna_seed 글자가 번역 없이 뜬다. 불러올 때 모르는 물건을 버리거나 벨라도나로 바꾸는 처리를 하거나, spec/01_settings/save.md 에 「옛 벨라도나 씨앗은 버린다」를 적고 그 처리를 테스트로 박아라 (밭에 심긴 벨라도나는 Crops.restore 가 이미 건너뛴다)
-- [ ] 3. 약초를 캐도 가방에 아무것도 안 들어온다 (G-990 단계 1)
+- [x] 3. 약초를 캐도 가방에 아무것도 안 들어온다 (G-990 단계 1)
   - 기준: 약초를 캐도 가방에 아무것도 안 들어온다 — Gathering.closed(herb, success) 를 듣는 곳이 tests/life/gathering/test_gathering.gd 말고 없다. 그래서 만드라고라 · 투구꽃은 개발 상자로만 구할 수 있다(gathering.md:7 · hunting.md:46). 게임에서 closed 를 받아 success 면 그 약초 아이템을 가방에 넣고 스팟을 캔 상태로 바꿔라. 게임 안 테스트로 스킬체크 성공 → 가방에 약초 1개, 실패 → 0개를 단언하라
   - 기준: (앞 단계 QA) 다시 나는 약초가 선 사람을 안 가린다 — resources-regrowth.md 「플레이어 몸이 서 있는 칸에도 안 자란다」는 표 전체의 규칙인데 Herbs.next_day 는 그 자리에 플레이어가 서 있어도 바로 심는다. 약초는 LAYER 3 이라 몸에 걸리지는 않지만 규칙과 어긋난다. next_day 에서 플레이어가 자리 반경 안이면 그날은 건너뛰게 하고(_picked 에 남겨 다음 날 다시 봄) test_herb_regrowth.gd 에 「선 자리에는 안 난다」 단언을 더하거나, spec 에 약초는 예외라고 적어라
   - 기준: (앞 단계 QA) world_data.gd 주석의 「캔 약초의 턱」이 낡았다 — herbs_picked 는 이제 턱과 산비탈 자리 번호를 함께 담는다. game/settings/save/world_data.gd 23줄 「herbs_picked(캔 약초의 턱) · herbs_picked_days(그 턱을 캔 날)」을 「캔 약초 자리(턱 · 산비탈)」로 고쳐라
@@ -1311,6 +1311,7 @@
   - 기준: `spec/05_craft/crafting-stations.md` 17줄 · `spec/06_build/rooms.md` 20 · 37 · 38줄 ·
     `spec/08_combat/tools-as-weapons.md` 70줄의 「가공대」를 「제작대」로 고친다 — 사람 결정 줄은 날짜와 함께 남긴다
   - 기준: spec 에 「가공대」가 남지 않는다 (grep)
+  - 기준: (앞 단계 QA) test_map_pin 저장본 검사가 글자 꼴 좌표를 놓친다 — game/tests/ui/hud/test_map_pin.gd _is() 는 String 값이 「173」과 통째로 같을 때만 잡는다. 표가 "173,-211" 같은 한 글자열로 저장되면 통과해 버린다(예전 contains 검사는 잡았다). String 값은 split(",")·공백으로 쪼갠 조각 하나하나를 str(n) 과 비교하도록 _is 를 넓혀라 — 소수 속 우연한 173 은 조각이 "173.52" 라 걸리지 않는다
 
 
 ## [x] G-991 코드를 다듬는다 — 파일 하나씩 (사람 결정 2026-09-27)

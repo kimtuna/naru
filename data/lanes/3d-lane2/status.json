@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 22:58:55",
- "updated_epoch": 1790517535,
+ "updated": "2026-09-27 23:16:54",
+ "updated_epoch": 1790518614,
  "ended": "2026-09-27 20:49:56",
  "progress": {
   "groups_total": 46,
   "groups_done": 45,
   "groups_waiting": 0,
   "steps_total": 223,
-  "steps_done": 221
+  "steps_done": 222
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-155",
  "step": "3",
  "step_title": "약초를 캐도 가방에 아무것도 안 들어온다 (G-990 단계 1)",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-27 22:58:55",
+ "phase": "QA",
+ "phase_since": "2026-09-27 23:15:18",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-27 15:00:00",
