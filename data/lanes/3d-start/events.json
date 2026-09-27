@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-23 00:55:20",
-  "epoch": 1790092520,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-23 01:14:10",
   "epoch": 1790093650,
   "type": "pass",
@@ -7850,5 +7844,42 @@
     "question": "캔 약초는 다시 나는가? spec/03_world/resources-regrowth.md 의 재생 표에 약초가 없어 지금은 한 번 캐면 그 턱이 영영 비고, 내 섬의 20포기가 평생 전부다. 나무 · 돌처럼 며칠 뒤 다시 날지(난다면 며칠), 아니면 한정 자원으로 둘지 정해 주면 된다."
    }
   }
+ },
+ {
+  "time": "2026-09-27 16:15:01",
+  "epoch": 1790493301,
+  "type": "pass",
+  "title": "통과 — G-920 단계 3 (막힌 장착에 알림이 안 뜬다 (G-990 단계 1))",
+  "group": "G-920",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "막힌 장착 · 벗기에 까닭 알림(번역 키 ko · en)을 띄운다 — 바뀐 곳 39개 파일 361개 테스트 통과",
+   "approach": "Equipment.equip/unequip 이 false 를 돌려줘도 장비칸(끌어 놓기 · Shift+클릭)과 가방 칸(장비칸에서 끌어와 벗기 · Shift+클릭으로 끼우기)이 결과를 버려 아무 일도 안 일어났다. Equipment.blocked_key(slot) 로 까닭 키를 고른다 — 가방칸이면 EQUIP_BLOCKED_BAG_FULL(늘어난 칸에 든 것이 있다), 다른 칸이면 EQUIP_BLOCKED_NO_ROOM(벗은 것을 둘 빈 칸이 없다). false 일 때 Notice.say 로 띄운다. Shift+클릭으로 장비가 아닌 것을 누른 경우는 원래 갈 곳이 없으니 알림을 띄우지 않는다. 테스트: 게임 안 가방 창에서 가방을 낀 채 늘어난 칸에 돌을 넣고 끌어 벗기 · Shift+클릭 벗기를 하면 가방이 안 빠지고 알림이 뜬다. 로그: 새 파일 5개 통과, changed_tests 그물 39개 파일 361개 통과.",
+   "why": "",
+   "files": [
+    "game/player/equipment/equipment.gd",
+    "game/ui/hud/equip_slot.gd",
+    "game/ui/hud/slot_drop.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/ui/hud/test_equip_blocked_notice.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "막힌 장착에 알림이 안 뜬다 — hud.md:29 는 막힌 동작에 알림 줄을 띄운다고 적었는데, Equipment.equip/unequip 이 false 를 돌려줘도 ui 의 equip_slot.gd · slot_drop.gd 가 무시한다(예: 가방에 뭐가 들어 있어 가방을 못 벗을 때). false 일 때 notice 로 까닭 번역 키(ko · en)를 띄우고, 가방이 찬 채로 벗기를 시도하면 알림이 뜨는지 단언하는 테스트를 짜라",
+     "evidence": "equip_slot.gd(Shift+클릭 벗기 · 끌어 끼우기)와 slot_drop.gd(장비칸→가방 끌어 벗기 · Shift+클릭 끼우기)가 false 일 때 Notice.say(Equipment.blocked_key(slot)) 를 부른다. 번역 키 EQUIP_BLOCKED_BAG_FULL · EQUIP_BLOCKED_NO_ROOM 이 ko.po · en.po 둘 다에 있다. tests/ui/hud/test_equip_blocked_notice.gd 가 게임 안 가방 창에서 늘어난 칸에 돌을 넣고 끌어 벗기 · Shift+클릭 벗기를 해 가방이 안 빠지고 · 돌을 잃지 않고 · notice 가 보이며 글이 tr(EQUIP_BLOCKED_BAG_FULL) 인지 단언한다. 막히지 않은 벗기에서는 알림이 없는지(부정 경우), 끼우기 막힘의 NO_ROOM 알림, ko · en 번역 존재도 본다. 일부러 깨 봤다 — slot_drop._drop_data 와 equip_slot._gui_input 의 Notice.say 를 pass 로 바꾸자 끌어 벗기 · Shift+클릭 벗기 두 테스트가 떨어졌다(3/5). 되돌린 뒤 git diff 가 원래와 같다. test.log: 바뀐 곳 170개 파일 1550개 테스트 통과, guard 통과."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "i/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      3s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest_shift_click.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok    480s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           170\nTests            1550\nPassing Tests    1550\nFailing Tests       0\nRisky/Pending       0\nAsserts         75827\nTime           480s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "8c0fe1c"
  }
 ]

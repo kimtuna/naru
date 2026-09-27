@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 16:03:17",
- "updated_epoch": 1790492597,
+ "updated": "2026-09-27 16:15:01",
+ "updated_epoch": 1790493301,
  "ended": "2026-09-27 02:53:24",
  "progress": {
   "groups_total": 45,
   "groups_done": 43,
   "groups_waiting": 0,
   "steps_total": 210,
-  "steps_done": 202
+  "steps_done": 203
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-920",
  "step": "3",
  "step_title": "막힌 장착에 알림이 안 뜬다 (G-990 단계 1)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 16:03:17",
+ "phase": "QA",
+ "phase_since": "2026-09-27 16:14:01",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
