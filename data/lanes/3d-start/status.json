@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 21:14:59",
- "updated_epoch": 1790511299,
+ "updated": "2026-09-27 21:25:36",
+ "updated_epoch": 1790511936,
  "ended": "2026-09-27 20:48:51",
  "progress": {
   "groups_total": 46,
   "groups_done": 44,
   "groups_waiting": 0,
   "steps_total": 223,
-  "steps_done": 218
+  "steps_done": 219
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-156",
  "step": "2",
  "step_title": "(앞 단계 QA) 상자 창 안내 글이 가방과만 주고받는다고 한다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 21:14:59",
+ "phase": "QA",
+ "phase_since": "2026-09-27 21:24:56",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
