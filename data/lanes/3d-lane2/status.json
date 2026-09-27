@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-28 01:16:47",
- "updated_epoch": 1790525807,
+ "updated": "2026-09-28 01:19:00",
+ "updated_epoch": 1790525940,
  "ended": "2026-09-28 00:41:11",
  "progress": {
   "groups_total": 48,
   "groups_done": 46,
   "groups_waiting": 0,
   "steps_total": 229,
-  "steps_done": 225
+  "steps_done": 226
  },
  "started": "2026-09-24 21:26:58",
  "group": "G-158",
  "step": "1",
  "step_title": "낚싯대 낚시를 spec 에 적는다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-28 01:16:47",
+ "phase": "QA",
+ "phase_since": "2026-09-28 01:18:22",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-27 15:00:00",

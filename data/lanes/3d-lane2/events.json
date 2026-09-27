@@ -3492,5 +3492,61 @@
    ],
    "decision": null
   }
+ },
+ {
+  "time": "2026-09-28 01:19:00",
+  "epoch": 1790525940,
+  "type": "pass",
+  "title": "통과 — G-158 단계 1 (낚싯대 낚시를 spec 에 적는다)",
+  "group": "G-158",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "spec/04_life/fishing.md 에 낚싯대 낚시 규칙(떡밥 · 영역 · 3~5마리 · 10분/다 잡으면 끝 · 게이지 0 이면 한 마리 놓침 · 찌)을 적고 작살총은 나중으로 남겼다. 낡은 요약 두 줄(README · hunting.md)을 맞췄다",
+   "approach": "fishing.md 본문은 앞 회차(d629a7c)에 이미 적혀 있었다 — current.md 의 사람 규칙 일곱 줄과 한 줄씩 대조해 모두 들어 있음을 확인했다(규칙 · 수치 · 수용 기준 · 작살총 절에 「나중에 한다 (사람 결정 2026-09-28)」 · 답한 것에 F-2 · 미정에 물고기 종류 · 떡밥 등급 · 찌 · 떡밥/낚싯대 얻는 법). 43줄. spec 전체를 훑어 낡은 줄 두 곳을 고쳤다: README 의 「fishing.md — 작살총 물속 사냥」→「떡밥 · 낚싯대 (작살총은 나중)」, hunting.md 의 「사냥과 낚시는 같은 시스템」→「사냥과 작살총 낚시는 같은 시스템 … 지금 낚시는 떡밥 · 낚싯대만」. 코드는 만들지 않았으므로 테스트도 없다.",
+   "why": "",
+   "files": [
+    "spec/04_life/fishing.md",
+    "spec/04_life/hunting.md",
+    "spec/README.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "`spec/04_life/fishing.md` 에 위 규칙을 적는다 — 「사람 결정 2026-09-28」을 붙인다",
+     "evidence": "fishing.md 8~15줄 「규칙 — 낚싯대 (사람 결정 2026-09-28)」 절에 current.md 의 사람 규칙 일곱 줄(떡밥 필수 · 영역 안에 3~5마리 · 종류 랜덤/목록은 나중 · 영역 안에 던져야 문다 · 미끼 없음/찌 기본 없음 · 다 잡거나 10분 · 게이지 0 이면 한 마리 놓침)이 한 줄씩 그대로 있다. 수치 절(24~25줄)에도 3~5마리 · 10분이 사람 결정 표시와 함께 있다. 목적 절에 「기본만」 사람 말도 인용했다"
+    },
+    {
+     "ok": true,
+     "criterion": "작살총 줄은 **그대로 남긴다** — 「나중에 한다 (사람 결정 2026-09-28)」를 붙인다. 미정의 F-2 는 답한 것으로 옮긴다",
+     "evidence": "main 과 비교해 작살총 네 줄(18~21줄)이 글자 그대로 남았고 절 제목에 「나중에 한다 (사람 결정 2026-09-28)」가 붙었다. 옛 수용 기준(작살총 명중 … 같은 코드 경로)도 「(나중 — 작살총)」으로 남았다. 미정의 F-2 는 지워지고 「답한 것」 36줄로 옮겨졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "미정에 남길 것 — **물고기 종류 목록** · **떡밥 등급이 몇 단이고 등급마다 몇 마리인가** · **찌가 무엇을 얼마나 쉽게 만드나** · 떡밥 · 낚싯대를 어떻게 얻나",
+     "evidence": "미정 39~42줄에 넷이 다 있고, 옛 「양식장 규칙 미정」도 남았다"
+    },
+    {
+     "ok": true,
+     "criterion": "md 가 150줄을 넘지 않는다",
+     "evidence": "wc -l: fishing.md 43 · hunting.md 82 · README.md 50"
+    },
+    {
+     "ok": true,
+     "criterion": "이 단계는 코드를 만들지 않는다 — spec 만 바뀐다",
+     "evidence": "이 묶음 커밋 d629a7c 는 current.md · fishing.md 만, 작업 트리 변경은 current.md(하네스) · hunting.md · README.md 뿐이다. game/ · tools/ 변경 없음. test.log 의 바뀐 곳 54개 431개 통과 · guard 통과"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "spec 전체를 훑어 낡은 요약 두 줄을 맞췄다 — README 의 fishing.md 요약, hunting.md 의 「사냥과 낚시는 같은 시스템」→「사냥과 작살총 낚시는 …」. 사람 결정 표시가 붙은 줄이 아니었고 뜻을 좁혀 맞춘 것이라 문제 없다"
+   ]
+  },
+  "test": "--- 바뀐 곳만: 54 개 ---\ntest.sh: 파일 54 개를 6 개씩 한꺼번에 돌린다\nok     16s  res://tests/world/terrain/test_island_shape_marks_note.gd\nok     18s  res://tests/player/hunger_thirst/test_hunger_thirst.gd\nok     14s  res://tests/core/debug/test_dev_box.gd\nok     12s  res://tests/combat/tools_as_weapons/test_per_gun_magazine.gd\nok     31s  res://tests/combat/tools_as_weapons/test_fire_rate.gd\nok     35s  res://tests/life/hunting/test_animal_sound.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     10s  res://tests/player/inventory_hotbar/test_weight.gd\nok      9s  res://tests/core/debug/test_ui_shots.gd\nok      8s  res://tests/player/movement_controls/test_crouch.gd\nok     45s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok      6s  res://tests/build/test_building_chain_grade.gd\nok      6s  res://tests/life/climbing/test_climb_face_aim.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      2s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/life/food/test_food.gd\nok      2s  res://tests/build/test_building_stairs_note.gd\nok      4s  res://tests/ui/layout/test_window_layout.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok     51s  res://tests/life/hunting/test_animal_walk.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            54\nTests             431\nPassing Tests     431\nFailing Tests       0\nRisky/Pending       0\nAsserts         58481\nTime           57s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "3f94235"
  }
 ]
