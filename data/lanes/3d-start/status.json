@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-27 17:21:05",
- "updated_epoch": 1790497265,
+ "updated": "2026-09-27 17:32:14",
+ "updated_epoch": 1790497934,
  "ended": "2026-09-27 02:53:24",
  "progress": {
   "groups_total": 45,
   "groups_done": 43,
   "groups_waiting": 1,
   "steps_total": 216,
-  "steps_done": 206
+  "steps_done": 207
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-920",
  "step": "7",
  "step_title": "앵커를 박는 길이 왕복 테스트에서 빠졌다 (G-920 단계 1)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-27 17:21:05",
+ "phase": "QA",
+ "phase_since": "2026-09-27 17:31:10",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
