@@ -1344,8 +1344,10 @@
   - 기준: 새 테스트의 단언 글이 낡은 이름을 쓴다 — game/tests/ui/hud/test_station_row_columns.gd 의 test_needs_stands_in_one_column_in_every_language 에서 workbench(제작대)를 여는데 단언 글이 「가공대는 줄이 많다」다. 「제작대는 줄이 많다」로 고쳐라
 - [x] 4. spec 에 등반 중 조준 규칙이 없다 (G-920 단계 6)
   - 기준: spec 에 등반 중 조준 규칙이 없다 — face_aim 이 붙은 동안 안 돈다는 규칙이 코드 주석에만 있다. spec/02_player/movement-controls.md 의 「휘두르기 · 쏘기 · 상호작용 때 캐릭터가 조준점 쪽을 본다」 줄 옆(또는 spec/04_life/climbing.md)에 「벽에 붙었거나 줄에 걸린 동안은 몸이 벽 · 줄 쪽을 그대로 본다」 한 줄을 적어라
-- [ ] 2. 옆 테스트 주석이 제작대를 가공대라 부른다 (G-920 단계 7)
+- [x] 2. 옆 테스트 주석이 제작대를 가공대라 부른다 (G-920 단계 7)
   - 기준: 옆 테스트 주석이 제작대를 가공대라 부른다 — 이번 기준 밖이다. game/tests/ui/hud/test_station_output.gd(12·14·16·53행) · test_station_short_rows.gd(10·12행) · test_station_window.gd(11·14·16·18행)의 주석이 workbench 를 옛 이름 「가공대」로 부른다. 가리키는 것은 workbench 상수이고 ITEM_workbench 는 「제작대」다. 이 주석들의 「가공대」를 「제작대」로 고쳐라. test_station_window.gd 11행 「가공대 · 제련로 — 서로 다른 레시피를 든 두 제작대」는 「제작대(workbench) · 제련로 — …」처럼 이름과 갈래가 헷갈리지 않게 적어라
+- [ ] 1. 다른 코드 주석에도 가공대가 남았다 (G-920 단계 2)
+  - 기준: 다른 코드 주석에도 가공대가 남았다 — workbench 를 「가공대」로 부르는 주석이 game/ui/hud/station_window.gd(13·24행), game/tests/ui/hud/test_station_collect_note.gd, game/tests/craft/stations/test_station_recipes.gd · test_stations.gd, game/tests/craft/recipes/test_recipes.gd, game/tests/life/food/test_food.gd, game/tests/life/hunting/test_carry_cage.gd, game/tests/life/farming/test_farmland.gd, game/tests/build/test_room_chests.gd · test_room_kinds.gd 에 남아 있다. `grep -rn 가공대 game --include='*.gd'` 로 찾아 workbench 를 가리키는 것만 「제작대」로 고쳐라 (갈래 이름으로 쓴 곳은 「제작대(workbench)」처럼 풀어 적는다)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
