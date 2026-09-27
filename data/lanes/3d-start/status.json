@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "목록을 읽는다",
- "updated": "2026-09-28 00:19:15",
- "updated_epoch": 1790522355,
+ "updated": "2026-09-28 00:19:17",
+ "updated_epoch": 1790522357,
  "ended": "2026-09-27 21:25:40",
  "progress": {
   "groups_total": 47,
@@ -16,8 +16,8 @@
  "step": "2",
  "step_title": "(앞 단계 QA) 상자 창 안내 글이 가방과만 주고받는다고 한다",
  "attempt": "1",
- "phase": "QA",
- "phase_since": "2026-09-27 21:24:56",
+ "phase": "차선 합치기",
+ "phase_since": "2026-09-28 00:19:17",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
