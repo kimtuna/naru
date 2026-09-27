@@ -1,55 +1,5 @@
 [
  {
-  "time": "2026-09-23 07:07:59",
-  "epoch": 1790114879,
-  "type": "pass",
-  "title": "통과 — G-130 단계 1 (걸어 다닌다)",
-  "group": "G-130",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "동물(Animal)이 집 둘레를 내비메시로 걸어 다닌다 — 물 · 절벽을 피하고 나무를 돌아가며, 길찾기=내비메시를 spec 에 적었다. 바뀐 곳만 30개 스크립트 · 210개 테스트 통과 (전체는 돌리지 않았다)",
-   "approach": "Animal 은 Mob 을 이어받고(체력 · 맞기는 그대로), 집 둘레 20m 에서 한 곳을 골라 걷고 쉬기를 되풀이한다. 섬(2km) 전체를 굽지 않고 집 둘레만 높이 맵으로 내비메시를 굽는다(AnimalNav, 한 번에 약 19ms): 물에 잠긴 점(is_under_water · 바다 높이)이 있는 칸은 빼고, 절벽은 비탈 한계 40°로 걸러지고, 나무 · 돌 밑동은 도려낸다. 막힌 곳 셋: (1) NavigationAgent3D 는 복셀 때문에 땅보다 ~0.5m 뜬 길 점을 높이까지 넣어 재서 첫 점에 영영 닿지 못했다 → 에이전트를 버리고 map_get_path 의 점을 수평 거리로만 따라간다. (2) 물가 자갈밭 표시(is_wet)는 마른 물가까지 덮어 물가를 못 걸었다 → 진짜 물 판정만 쓴다. (3) 새 땅이 지도에 들어오기 전 받은 빈 길을 「닿음」으로 쳤다 → 빈 길이면 쉬었다 다시 고른다. 테스트는 진짜 섬에서 물리를 8배 빠르게 돌린다. 테스트가 정말 잡는지 코드를 일부러 망가뜨려 봤다: 물 칸을 넣으면 물 테스트 둘이 깨지고, 비탈 한계를 풀면 절벽 테스트가 깨지고(이 섬 절벽은 60° 남짓이라 떨어지지 않고 미끄러진다 — 그래서 틱 사이 내려간 높이로 잰다), 밑동을 안 도려내면 숲 테스트가 11번 끼인다. 섬에 동물을 실제로 놓는 일(스폰)은 spec 에 규칙이 없어(mob-ai.md 미정) 하지 않았다.",
-   "why": "Animal.WALK_SPEED 1.5 m/s — 동물 목록이 미정이라 하나로 잡았다 (사람 걷기보다 느리게); Animal.WANDER_RADIUS 20 m — 집에서 도는 반경, 동물 목록이 미정; Animal.REST_MIN/REST_MAX 1~4초 — 닿은 뒤 쉬는 시간",
-   "files": [
-    "game/life/hunting/animal.gd",
-    "game/life/hunting/animal_nav.gd",
-    "game/tests/life/hunting/test_animal_walk.gd",
-    "spec/04_life/hunting.md",
-    "spec/08_combat/mob-ai.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "동물이 섬 위를 걸어 다닌다 — 물 · 절벽에 빠지거나 끼이지 않는다 (테스트)",
-     "evidence": "test_animal_walk.gd 가 진짜 섬(test_island.tscn)에 동물을 놓고 물리를 돌린다. test_wanders_around_home 은 30초에 10m 넘게 걷고 반경 안에 있는지 본다. test_never_steps_into_water_even_when_sent_there 는 연못 가운데로 보내도 틱마다 물속 자리가 없고 물가에서 멈추는지(arrived) 본다. test_does_not_fall_off_cliff_even_when_sent_below 는 절벽 아래로 보내도 가파른 땅에 서지 않고 떨어진 높이가 1m 미만인지 본다. test_goes_around_trees_not_stuck 은 나무마다 그 너머로 보내 stuck 0 · 전부 닿는지 본다. test_nav_mesh_has_no_water_or_cliff 는 내비메시 위 무작위 400점에 물·절벽이 없는지 본다. QA 가 animal_nav.gd _dry 의 물 판정을 `return true` 로 바꿔 돌리자 물 테스트 · 내비메시 테스트 둘이 깨졌다(4/6) — 되돌림 확인. test.log 에서 6/6 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "길찾기 수단을 하나로 정하고 spec 에 적는다 (내비메시)",
-     "evidence": "spec/04_life/hunting.md 규칙에 「길찾기는 내비메시 하나로 한다」 + 굽는 방식이 적혔고, 미정의 「길찾기 수단 미정」 줄이 지워졌다. mob-ai.md 에도 「길찾기는 내비메시」. 코드도 NavigationServer3D.map_get_path 하나만 쓴다"
-    },
-    {
-     "ok": true,
-     "criterion": "값(걷는 속도 · 도는 반경)은 한 곳에 있고 「임시」라고 적는다",
-     "evidence": "animal.gd 의 WALK_SPEED 1.5 · WANDER_RADIUS 20 · REST_MIN/MAX 위 주석에 「임시」, spec 수치에도 「임시」로 적혔다. test_walk_values_live_in_one_place_marked_temporary 가 두 상수 윗줄의 「임시」와 animal_nav.gd 에 같은 값이 다시 정의되지 않았는지 본다"
-    }
-   ],
-   "issues": [
-    "내비메시 비탈 · 몸 값에 「임시」 표시가 없다 — game/life/hunting/animal_nav.gd 의 MAX_SLOPE 40° · MAX_CLIMB 0.5 · AGENT_RADIUS 0.5 는 동물 목록이 미정이라 사실상 임시인데 주석에 「임시」가 없고 spec/04_life/hunting.md 「수치」에도 없다. 주석에 「임시」를 달고 수치 줄에 한 줄 더하라 (막는 것은 아니다)"
-   ],
-   "good": [
-    "Animal.arrived · Animal.stuck 시그널과 Animal.spawn() — 테스트에 쓰는 것이라 덤이라기엔 작다. 섬에 실제로 놓는 일(스폰 규칙)은 하지 않았다"
-   ]
-  },
-  "test": "_comment\n4/4 passed.\n\n\nres://tests/test_po_is_in_one_place.gd\n* test_only_one_file_parses_the_po\n* test_the_tests_that_read_the_po_call_that_one_place\n* test_the_one_place_really_is_there\n* test_the_check_catches_a_second_parser\n* test_the_walk_really_finds_the_test_files\n5/5 passed.\n\n\nres://tests/ui/hud/test_bag_hand_craft.gd\n* test_the_bag_has_a_made_by_hand_panel\n* test_only_the_three_hand_recipes_show_up_there\n* test_a_recipe_that_needs_a_station_does_not_show_up_there\n* test_a_hand_recipe_added_to_the_file_shows_up_in_the_bag\n* test_a_station_recipe_added_to_the_file_does_not_show_up_in_the_bag\n* test_from_empty_hands_to_the_first_axe\n6/6 passed.\n\n\nres://tests/ui/hud/test_bag_temporary_note.gd\n* test_the_header_says_the_dim_and_the_layer_are_temporary\n* test_the_header_quotes_the_color_the_scene_actually_uses\n* test_the_header_quotes_the_layer_the_bag_actually_sits_on\n* test_the_note_does_not_stick_to_the_slot_size\n* test_the_check_catches_a_missing_or_stale_note\n5/5 passed.\n\n\nres://tests/ui/hud/test_station_collect_note.gd\n* test_the_spec_lists_the_per_slot_collect_as_undecided\n* test_one_collect_really_takes_the_whole_buffer\n* test_every_buffer_slot_is_wired_to_the_same_press\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/ui/menu/test_character_create.gd\n* test_rows_come_from_the_data_file\n* test_row_shows_the_item_label_and_the_chosen_value\n* test_next_and_prev_walk_the_choices_and_wrap_around\n* test_added_item_shows_up_without_touching_the_code\n* test_empty_name_is_refused\n* test_created_character_keeps_name_and_chosen_look\n* test_says_so_when_it_cannot_save\n* test_back_goes_back_without_saving\n8/8 passed.\n\n\nres://tests/ui/menu/test_menu_text.gd\n* test_every_screen_shows_only_translation_keys\n* test_every_key_written_in_the_menu_files_is_translated\n* test_menu_reads_korean_and_english\n3/3 passed.\n\n\nres://tests/ui/menu/test_pause_menu_dim_note.gd\n* test_the_header_says_the_dim_color_is_temporary\n* test_the_header_quotes_the_color_the_scene_actually_uses\n* test_the_check_catches_a_missing_or_stale_note\n3/3 passed.\n\n\nres://tests/world/day_night/test_day_length.gd\n* test_the_day_length_is_written_in_exactly_one_place\n* test_the_one_place_says_forty_minutes\n* test_a_fresh_clock_and_island_take_the_same_value\n3/3 passed.\n\n\nres://tests/world/frontier_islands/test_island_design_notes.gd\n* test_the_island_list_says_the_sulfur_design_is_temporary\n* test_the_sulfur_blueprint_the_note_talks_about_is_still_there\n* test_the_blueprint_header_marks_every_value_temporary\n* test_the_mountain_and_cliff_values_are_still_in_the_blueprint\n* test_the_spec_marks_the_whole_design_temporary\n* test_the_spec_line_does_not_repeat_itself\n* test_no_test_leans_on_the_two_islands_being_different_sizes\n* test_the_island_split_is_still_checked_by_what_is_in_it\n* test_the_check_catches_a_missing_or_narrow_note\n9/9 passed.\n\n\nres://tests/world/storage/test_reach_temporary_notes.gd\n* test_the_chest_reach_is_marked_temporary\n* test_the_station_reach_is_marked_temporary\n* test_both_notes_still_tell_the_truth_about_being_the_same_value\n* test_the_check_catches_a_missing_note\n4/4 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              30\nTests               210\nPassing Tests       210\nAsserts            3131\nTime              89.315s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "faf2be8"
- },
- {
   "time": "2026-09-23 07:32:44",
   "epoch": 1790116364,
   "type": "pass",
@@ -7628,5 +7578,92 @@
   },
   "test": "--- 바뀐 곳만: 54 개 ---\ntest.sh: 파일 54 개를 6 개씩 한꺼번에 돌린다\nok     16s  res://tests/world/terrain/test_island_shape_marks_note.gd\nok     19s  res://tests/player/hunger_thirst/test_hunger_thirst.gd\nok     14s  res://tests/core/debug/test_dev_box.gd\nok     12s  res://tests/combat/tools_as_weapons/test_per_gun_magazine.gd\nok     31s  res://tests/combat/tools_as_weapons/test_fire_rate.gd\nok     35s  res://tests/life/hunting/test_animal_sound.gd\nok      9s  res://tests/core/debug/test_ui_shots.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok     11s  res://tests/player/inventory_hotbar/test_weight.gd\nok      8s  res://tests/player/movement_controls/test_crouch.gd\nok      5s  res://tests/build/test_building_chain_grade.gd\nok     45s  res://tests/combat/tools_as_weapons/test_tranq_ammo.gd\nok      5s  res://tests/life/climbing/test_climb_face_aim.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      5s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/craft/recipes/test_recipes.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      2s  res://tests/build/test_size_4x4.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/life/hunting/test_body_parts.gd\nok     51s  res://tests/life/hunting/test_animal_walk.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/life/food/test_food.gd\nok      3s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            54\nTests             431\nPassing Tests     431\nFailing Tests       0\nRisky/Pending       0\nAsserts         58481\nTime           57s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "12ac7ca"
+ },
+ {
+  "time": "2026-09-28 00:50:17",
+  "epoch": 1790524217,
+  "type": "pass",
+  "title": "통과 — G-157 단계 2 (NPC 한 명이 섬에 산다)",
+  "group": "G-157",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "개발용 월드에서 F4 로 주민 한 명을 세운다 — 이름 · 나이를 갖고 뭍에 붙어 서며, 가까이 가면 이름표가 뜨고, 저장 · 불러오기에 그대로 남는다. 바뀐 곳만 돌렸다: 파일 164 개 · 테스트 1405 개 통과 (전체는 안 돌렸다)",
+   "approach": "주민 한 명(Villager, CharacterBody3D)과 섬의 주민들(Villagers)을 game/automation/villagers/ 에 새로 만들었다. 세우는 길은 디버그 키 F4(debug_villager) 하나로, 개발용 월드에서만 캐릭터 앞 2.5m 에 선다 — 바다 · 연못 · 개울이면 세우지 않고, 선 뒤에는 떨어져 땅에 붙는다. 이름은 번역 키(VILLAGER_NAME_*)로 쥐어 저장본에도 키가 담기고, 나이와 함께 세울 때 고른다. 가까이(6m) 가면 머리 위 Label3D 이름표가 뜬다. 저장은 IslandState 에 villagers 키로 이름 · 나이 · 자리를 담고 되돌린다(짐승과 달리 몸째 — 다시 나는 것이 아니라 한 사람이라서). 저장 테스트에서 처음에는 되돌린 주민이 7m 밀려났다 — 떠난 게임을 걷지 않아 같은 물리 공간에 옛 주민의 몸이 겹쳐 있었기 때문이라 불러오기 전에 떠난 게임을 걷어 냈다. 속성을 훑는 비교(SaveRoundTrip.diff)로도 같음을 본다. 아직 걷지 않으므로 짐승과 나눌 걷기 · 길 찾기가 없다 — 떨어지는 가속 · 몸 크기만 같이 쓰고, 걷게 될 때 한 곳으로 모은다고 spec 에 적었다. spec 에는 여기까지 만든 것 · 임시 수치 · 앞 단계 QA 두 줄(동물의 숲/림월드 가르기, 2026-09-28 노동 목록을 2026-09-24 목록과 잇는 줄)을 적었다. harness/shot.sh 의 villager 자리로 찍어 확인했다 (.loop/out/villager.png — 푸른 캡슐이 풀밭에 서 있고 머리 위에 「다솜 · 43살」).",
+   "why": "주민 이름 여섯(하람 · 소담 · 누리 · 가온 · 다솜 · 한결) — 누가 어떤 이름으로 들어오는지 사람이 아직 안 정했다 (Villagers.NAMES); 나이 18~60살 — 나이가 무엇을 바꾸는지 아직 없다 (Villagers.AGE_MIN/AGE_MAX); 이름표가 뜨는 거리 6m — 말을 걸 만한 거리 (Villagers.TAG_RANGE); F4 가 세우는 자리 캐릭터 앞 2.5m (DebugTools.VILLAGER_AHEAD); 주민 몸 색 푸른색 · 크기는 Mob 과 같다 (Villager.COLOR)",
+   "files": [
+    "game/automation/villagers/villager.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/core/debug/debug_tools.gd",
+    "game/core/debug/shots.gd",
+    "game/core/input/input_actions.gd",
+    "game/project.godot",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/world/terrain/test_island.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/settings/save/world_data.gd",
+    "spec/07_automation/npc-villagers.md",
+    "spec/01_settings/save.md",
+    "game/tests/automation/villagers/test_villager.gd",
+    "game/automation/villagers/villager.gd.uid",
+    "game/automation/villagers/villagers.gd.uid",
+    "game/tests/automation/villagers/test_villager.gd.uid"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "개발용 상자(또는 디버그 키)로 NPC 를 한 명 섬에 세울 수 있다 — 서 있고, 땅에 붙어 있고, 물에 안 빠진다 (테스트)",
+     "evidence": "test_villager.gd — test_f4_settles_one_villager_in_front_of_the_character 는 개발용 월드 GameRoot 에 DEBUG_VILLAGER 입력을 넣어 한 명이 캐릭터 앞에 서는지 본다. test_the_villager_stands_on_the_ground_not_in_water 는 is_on_floor · 높이 맵과 0.3m 안 · 물속이 아님 · 30프레임 뒤에도 움직이지 않음을 본다. test_water_is_refused 는 바다와 연못에서 거부되는지 본다. test_f4_does_nothing_outside_a_dev_world 도 있다. can_stand_at 을 늘 true 로 바꿔 보니 test_water_is_refused 가 떨어졌다(되돌려 두었다)"
+    },
+    {
+     "ok": true,
+     "criterion": "**이름과 나이**를 갖는다 — 세울 때 정해지고 게임 안에서 보인다 (번역 키) (테스트)",
+     "evidence": "test_the_villager_has_a_name_and_an_age 는 이름 키가 NAMES 안에 있는지, 나이가 AGE_MIN~AGE_MAX 사이인지, display_name 이 키 그대로가 아닌지, 이름표 글에 이름과 나이가 들어가는지 본다. test_every_name_and_the_tag_are_translated_in_both_languages 는 ko.po · en.po 둘 다에 VILLAGER_TAG 와 이름 여섯이 있는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "**저장하고 불러오면 그대로다** — 이름 · 나이 · 자리 (테스트, spec/01_settings/save.md)",
+     "evidence": "test_name_age_and_place_come_back_after_save_and_load 는 실제 SaveStore 로 저장한 뒤 새 GameRoot 로 다시 들어가 주민 수 · 같은 자리(0.05m 안) · 이름 · 나이를 보고, SaveRoundTrip.diff 로 속성 전부를 견준다. IslandState.of 에서 villagers 를 담는 줄을 빼 보니 세 단언이 떨어졌다(되돌려 두었다). save.md 월드 목록에 주민이 올라갔다"
+    },
+    {
+     "ok": true,
+     "criterion": "가까이 가면 누구인지 보인다 — 이름표든 말 걸기든, 한 가지 길로 (테스트)",
+     "evidence": "test_the_name_tag_shows_near_and_hides_far 는 가까이에서 이름표가 뜨는지 · 이름표 글이 이름과 나이인지 · 멀리(24m) 가면 걷히는지 · 돌아오면 다시 뜨는지 본다. 거리 비교를 늘 true 로 바꿔 보니 「멀어지면 이름표가 걷힌다」가 떨어졌다(되돌려 두었다)"
+    },
+    {
+     "ok": true,
+     "criterion": "`spec/07_automation/npc-villagers.md` 에 여기까지 만든 것을 적는다",
+     "evidence": "「지금 만든 것 (G-157.2)」 절과 임시 수치 절, 수용 기준 절이 채워졌다. 53줄이고 사람 결정 줄은 지워지지 않았다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 섬에 선 NPC 한 장",
+     "evidence": ".loop/out/villager.png 를 직접 보았다. 풀밭에 푸른 캡슐이 땅에 붙어 서 있고, 머리 위에 「다솜 · 43살」이 읽힌다. shots.gd 에 villager 장면이 더해졌다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 목적 절 「동물의 숲 참고」가 림월드식과 겹친다 — npc-villagers.md 4행 목적은 「하나씩 섬에 들어와 일하는 주민 (동물의 숲 참고)」인데 규칙은 이제 림월드식 「개인」이다. 줄을 지우지 말고 무엇을 어디서 따왔는지 갈라 적어라: 예 「들어오는 모습은 동물의 숲, 사람됨(나이·특성·죽음)은 림월드」",
+     "evidence": "4행은 그대로 두고, 그 아래에 「들어오는 모습은 동물의 숲 … 사람됨(나이 · 특성 · 스트레스 · 관계 · 죽음)은 림월드의 「개인」」 하위 줄을 달았다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 일하는 목록 두 줄이 겹친다 — 규칙 절 「[노동] 담당은 NPC (2026-09-28) — 물 주기·광산·제작·요리」와 「일을 한다 — 광질·제작·나무·돌 캐기·물 주기 (2026-09-24)」가 따로 있다. 둘 다 남기되 2026-09-28 줄에 「요리가 더해졌다 — 아래 2026-09-24 목록과 합쳐 본다」처럼 잇는 한 줄을 달아라",
+     "evidence": "2026-09-28 [노동] 줄 아래에 「요리가 더해졌다 — 아래 2026-09-24 목록(광질 · 제작 · 나무 · 돌 캐기 · 물 주기)과 합쳐 본다」를 달았다. 두 줄 모두 남아 있다"
+    }
+   ],
+   "issues": [
+    "IslandState 가 섬을 get 으로 묻는다 — island_state.gd 의 of · apply 는 다른 칸은 island.animals 처럼 바로 읽는데, 주민만 island.get(&\"villagers\") 로 묻는다. 주석에는 「주민이 없는 땅도 있어서」라고 적혀 있지만, 그런 땅이 어디인지(TestIsland 말고 IslandState 를 받는 섬이 있는지) 확인해라. 없다면 island.villagers 로 맞추고, 있다면 주석에 그 섬 이름을 적어라"
+   ],
+   "good": [
+    "DEBUG_FPS 도움말(ko · en)에 「F4 주민(개발용)」을 더했다 — 디버그 키 안내라 기준의 연장이다"
+   ]
+  },
+  "test": "e/test_throw_out.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           164\nTests            1405\nPassing Tests    1405\nFailing Tests       0\nRisky/Pending       0\nAsserts         76299\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "e1a7369"
  }
 ]
