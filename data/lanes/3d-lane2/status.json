@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "G-158 합쳤다",
- "updated": "2026-09-28 02:35:28",
- "updated_epoch": 1790530528,
+ "updated": "2026-09-28 02:35:30",
+ "updated_epoch": 1790530530,
  "ended": "2026-09-28 00:41:11",
  "progress": {
   "groups_total": 48,
@@ -17,7 +17,7 @@
  "step_title": "(앞 단계 QA) 낚시 알림 테스트가 ui_shots 를 돌려 보지 않는다",
  "attempt": "1",
  "phase": "차선 합치기",
- "phase_since": "2026-09-28 02:35:28",
+ "phase_since": "2026-09-28 02:35:30",
  "lane": "3d-lane2",
  "model": "opus",
  "resume_at": "2026-09-27 15:00:00",
