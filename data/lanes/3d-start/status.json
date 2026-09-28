@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "G-160 합쳤다",
- "updated": "2026-09-28 23:06:18",
- "updated_epoch": 1790604378,
- "ended": "2026-09-28 15:25:13",
+ "state": "done",
+ "reason": "이 차선(3d-start) 몫을 다 했다 — 다른 차선 몫으로 남은 것: G-161 (그 차선이 꺼져 있으면 아무도 안 한다)",
+ "updated": "2026-09-28 23:06:20",
+ "updated_epoch": 1790604380,
+ "ended": "2026-09-28 23:06:20",
  "progress": {
   "groups_total": 51,
   "groups_done": 50,
