@@ -1527,7 +1527,7 @@
   - 기준: 벨 나무 · 캘 광물이 없으면 멈춰 선다 — 헛돌지 않는다 (테스트)
   - 기준: 찍어서 확인한다 — 직무를 받은 NPC 가 일하는 그림
   - 기준: (앞 단계 QA) 직무 틀 채움 단언이 물려받은 것도 센다 — test_villager_jobs.gd test_every_listed_job_has_a_name_a_work_and_a_turn 가 get_script_method_list() 로 tick · halt 등을 찾는데, 이 목록은 JobWork 에서 물려받은 메서드도 담아 일 스크립트가 틀을 비워 둬도 통과할 수 있다. 막는 것은 아니다 — 스크립트 소스(source_code)에서 "func tick(" 등을 찾거나 get_base_script() 의 목록을 빼고 세도록 고쳐라
-- [ ] 4. (앞 단계 QA) 나무꾼이 바위를 안 치는 단언이 약하다
+- [x] 4. (앞 단계 QA) 나무꾼이 바위를 안 치는 단언이 약하다
   - 기준: 나무꾼이 바위를 안 치는 단언이 약하다 — test_villager_gathering.gd test_the_woodcutter_fells_the_tree_the_way_the_player_does 는 나무를 다 벤 바로 그 순간 바위 내구도를 본다. 바위(ROCK_AT)가 나무보다 멀어 나무꾼이 바위도 치게 깨 봐도(woodcutting.gd groups=["tree","stone"]) 이 테스트는 통과했다 (다른 테스트가 잡아 기준은 지켜진다). 나무를 벤 뒤 _drift(2.0) 만큼 더 돌린 다음 바위 내구도가 그대로인지 보거나, 바위를 나무보다 가깝게 놓아라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
