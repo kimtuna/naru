@@ -1530,7 +1530,7 @@
 - [x] 4. (앞 단계 QA) 나무꾼이 바위를 안 치는 단언이 약하다
   - 기준: 나무꾼이 바위를 안 치는 단언이 약하다 — test_villager_gathering.gd test_the_woodcutter_fells_the_tree_the_way_the_player_does 는 나무를 다 벤 바로 그 순간 바위 내구도를 본다. 바위(ROCK_AT)가 나무보다 멀어 나무꾼이 바위도 치게 깨 봐도(woodcutting.gd groups=["tree","stone"]) 이 테스트는 통과했다 (다른 테스트가 잡아 기준은 지켜진다). 나무를 벤 뒤 _drift(2.0) 만큼 더 돌린 다음 바위 내구도가 그대로인지 보거나, 바위를 나무보다 가깝게 놓아라
 
-## [ ] G-160 주민 설계를 고정한다 — spec 을 사람이 만든 판으로 (사람 결정 2026-09-28)
+## [x] G-160 주민 설계를 고정한다 — spec 을 사람이 만든 판으로 (사람 결정 2026-09-28)
 - 차선: 3d-start
 - spec: spec/07_automation/npc-villagers.md, spec/06_build/rooms.md
 - **사람이 만든 설계다. 이대로 고정한다 — 낡은 것은 지운다** (2026-09-28)
