@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-29 05:06:12",
- "updated_epoch": 1790625972,
+ "updated": "2026-09-29 05:27:42",
+ "updated_epoch": 1790627262,
  "ended": "2026-09-28 23:06:20",
  "progress": {
   "groups_total": 52,
   "groups_done": 51,
   "groups_waiting": 0,
   "steps_total": 246,
-  "steps_done": 244
+  "steps_done": 245
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-162",
  "step": "2",
  "step_title": "O 로 방 페이지를 연다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-29 05:06:12",
+ "phase": "QA",
+ "phase_since": "2026-09-29 05:26:15",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
