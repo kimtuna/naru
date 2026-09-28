@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-28 22:17:21",
- "updated_epoch": 1790601441,
+ "updated": "2026-09-28 22:19:55",
+ "updated_epoch": 1790601595,
  "ended": "2026-09-28 15:25:13",
  "progress": {
   "groups_total": 51,
   "groups_done": 49,
   "groups_waiting": 0,
   "steps_total": 240,
-  "steps_done": 236
+  "steps_done": 237
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-160",
  "step": "1",
  "step_title": "새 설계를 spec 에 고정하고 낡은 것을 지운다",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-28 22:17:21",
+ "phase": "QA",
+ "phase_since": "2026-09-28 22:19:01",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
