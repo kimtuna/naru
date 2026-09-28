@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-23 19:45:27",
-  "epoch": 1790160327,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-23 20:11:01",
   "epoch": 1790161861,
   "type": "pass",
@@ -7728,5 +7722,74 @@
    ]
   },
   "test": "ebug/test_dev_box_everything.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      0s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/test_temp_dir.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           226\nTests            1860\nPassing Tests    1860\nFailing Tests       0\nRisky/Pending       0\nAsserts         85069\nTime           436s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-29 05:06:09",
+  "epoch": 1790625969,
+  "type": "pass",
+  "title": "통과 — G-162 단계 1 (방이 눈에 보인다 — 오버레이)",
+  "group": "G-162",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "방 오버레이 — L 로 켜면 방마다 바닥 판이 방 종류의 빛깔로 물든다 (잡실도 제 빛깔, 방 아닌 곳은 안 물듦, 벽을 헐면 그 프레임에 사라짐). 바뀐 곳 142개 파일 · 1256개 테스트 통과",
+   "approach": "방은 그때그때 재는 것이라 오버레이도 따로 상태를 두지 않고 Buildings.rooms() 를 다시 재서 판마다 반투명 판을 그린다 (RoomOverlay, 섬이 Buildings 옆에 붙인다). 건축물 placed · broken · collapsed 신호가 오면 그 프레임 끝에 다시 재어 벽을 헐면 곧바로 사라지고, 제작대 · 밭이 들고 나는 것은 신호가 없어 켜 둔 동안 0.5초마다 다시 잰다. 빛깔은 방 종류표 rooms.json 에 color 로 한 줄씩 더했고(없으면 이름에서 지어 한 줄만 적어도 제 빛깔), 잡실은 RoomCatalog.MISC_COLOR. 오버레이는 깊이를 안 봐 지붕 너머로도 보인다 — 밖에서 봐도 어느 방인지 안다. 켜고 끄는 키는 L(임시, O 는 방 페이지 몫) — input.md 에 적었고, 켜 둔 것은 보는 방식이라 저장하지 않는다고 save.md 에 적었다. shots.gd 에 room_overlay 자리를 더해 찍었다: 서쪽 제작소(주황) · 동쪽 잡실(연보라)이 판 경계대로 다른 빛깔로 물든다. 처음 잡실을 회색으로 했더니 흰 지붕 위에서 안 보여 연보라로 바꿨다.",
+   "why": "방 빛깔 (rooms.json color: 농장 #7ed957 · 작업실 #e0a040 · 대장간 #e05a3a · 연구실 #5aa8f0 · 주방 #f0d040) · 잡실 MISC_COLOR(0.62,0.45,0.9) — 눈으로 잡았다, 아트는 범위 밖; RoomOverlay.ALPHA 0.45 — 바닥 결이 비쳐 보이게 눈으로 잡았다; RoomOverlay.REFRESH 0.5초 — 제작대 · 밭이 들고 날 때 빛깔이 바뀌기까지 기다릴 만한 틈; 오버레이 키 L — O 는 방 페이지 몫이라 비어 있던 글자 가운데 골랐다",
+   "files": [
+    "game/build/room_overlay.gd",
+    "game/build/room_catalog.gd",
+    "game/build/rooms.json",
+    "game/core/input/input_actions.gd",
+    "game/project.godot",
+    "game/world/terrain/test_island.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/build/test_room_overlay.gd",
+    "spec/01_settings/input.md",
+    "spec/01_settings/save.md",
+    "spec/06_build/rooms.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "방 안에 서면(또는 방을 겨누면) 그 방의 바닥 판이 물들어 보인다 — 어디부터 어디까지가 한 방인지 한눈에 (테스트)",
+     "evidence": "test_standing_in_a_room_its_floor_plates_are_tinted — 두 판짜리 방을 place_at 으로 막고 Rooms.id_at 으로 방 안에 선 것을 확인한 뒤, 두 판이 다 tinted 에 들고 color_at 이 투명이 아니며 한 빛깔이고 그린 판이 2장인지 본다. 켜면 모든 방이 물드는 방식이라 선 방도 물든다"
+    },
+    {
+     "ok": true,
+     "criterion": "방 종류마다 다른 빛깔이다 — 잡실도 제 빛깔이 있다 (테스트)",
+     "evidence": "test_every_room_kind_has_its_own_color_and_misc_too — 다섯 종류 + 잡실의 빛깔이 보이고(알파>0) 서로 겹치지 않아 여섯인지 본다. test_two_rooms_of_different_kinds_are_tinted_differently — 제작대 방(workshop)과 빈 방(misc)이 실제 바닥에서 다른 빛깔. test_a_room_without_a_color_line_still_gets_one — color 가 없는 줄도 잡실 아닌 제 빛깔"
+    },
+    {
+     "ok": true,
+     "criterion": "방이 아닌 곳은 안 물든다 — 사방이 안 막혔으면 아무것도 안 보인다 (테스트)",
+     "evidence": "test_an_unclosed_space_is_not_tinted — 벽 셋 + 지붕(한 변 트임)에서 rooms 0 · tinted 0 · 자식 0 · color_at 투명"
+    },
+    {
+     "ok": true,
+     "criterion": "벽을 헐면 그 자리에서 사라진다 — 다시 재는 것과 어긋나지 않는다 (테스트)",
+     "evidence": "test_breaking_a_wall_clears_the_tint_right_away — hit_piece 로 벽을 헐고 한 프레임 뒤 rooms 0 · tinted 0, 다시 세우면 tinted == rooms == 1. 일부러 _on_broken 의 _dirty=true 를 빼 보니 이 테스트가 떨어졌다(되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "오버레이를 켜고 끌 수 있다 — 늘 떠 있으면 거슬린다. 무엇으로 켜고 끄는지 input.md 에 적는다",
+     "evidence": "test_it_starts_off_and_the_key_toggles_it — 처음 꺼짐, 진짜 L 키 이벤트(push_input)로 켜지고 물들고 다시 누르면 걷힘. test_the_key_is_l_and_written_in_input_md — InputMap 에 L 하나, input.md 키 표 L 줄에 「방 오버레이」. project.godot 에 L(76) 은 이 액션 하나뿐"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 방 둘이 서로 다른 빛깔로 물든 그림",
+     "evidence": "/tmp/g162/room_overlay.png — 나란한 두 방이 판 경계대로 서쪽 주황(제작소) · 동쪽 연보라(잡실)로 물들었다. shots.gd 에 room_overlay 자리가 더해졌다"
+    }
+   ],
+   "issues": [
+    "rooms.md 수치 절이 「없음」으로 남았다 — spec/06_build/rooms.md 의 「## 수치 - 없음」인데 이번에 임시 수치(방 빛깔 다섯 · 잡실 MISC_COLOR · RoomOverlay.ALPHA 0.45 · REFRESH 0.5초)가 생겼다. 코드 · rooms.json 에는 「임시」라 적혔으나 spec 수치 절에는 없다. 그 절에 이 넷을 「(임시)」로 한 줄씩 적어라"
+   ],
+   "good": []
+  },
+  "test": "menu/test_pause_menu.gd\nok      5s  res://tests/build/test_building_stairs_flip.gd\nok      4s  res://tests/combat/tools_as_weapons/test_ammo_kinds.gd\nok      3s  res://tests/life/food/test_food.gd\nok      4s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      5s  res://tests/combat/tools_as_weapons/test_gun_ladder.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      3s  res://tests/build/test_building_downgrade.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      3s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      2s  res://tests/craft/recipes/test_recipes.gd\nok      3s  res://tests/build/test_foundation_wheel_attach.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      3s  res://tests/life/climbing/test_grapple_ammo.gd\nok      2s  res://tests/ui/hud/test_map_window.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/build/test_build_piece_tidy.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/build/test_buildings_tidy.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      2s  res://tests/build/test_room_overlay.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      3s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      3s  res://tests/ui/hud/test_villager_window.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_placeable.gd\nok      1s  res://tests/world/storage/test_chest_move_inside.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      0s  res://tests/core/input/test_debug_keys.gd\nok      2s  res://tests/build/test_room_chests.gd\nok      2s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      0s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           142\nTests            1256\nPassing Tests    1256\nFailing Tests       0\nRisky/Pending       0\nAsserts         81846\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "8fe65330"
  }
 ]
