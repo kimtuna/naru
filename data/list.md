@@ -1608,7 +1608,7 @@
 - [x] 3. (앞 단계 QA) 낡은 주석
   - 기준: 낡은 주석 — 진짜 좌클릭이라 적었다 — game/tests/automation/villagers/test_villager_jobs.gd 의 _pick 주석이 「직무 단추를 진짜 좌클릭으로 누르고」라고 하지만 VillagerClicks.click 은 보이는지 · 화면 안인지 본 뒤 pressed.emit() 을 낸다. 「창의 단추를 누른다(pressed — villager_clicks.gd 참고)」로 고쳐라
   - 기준: (앞 단계 QA) 주민 목록에 같은 이름이 둘 선다 — villagers_release_en.png 에 Nuri 가 두 줄이다(settle 이 이름 여섯 가운데 겹쳐 뽑는다). 창에서 누가 누구인지 가려 고르기 어렵다. Villagers.settle 이 이미 섬에 있는 이름을 먼저 피해 고르게 하고(다 쓰였을 때만 겹친다), 세 명을 세우면 이름이 다 다른지 보는 테스트를 test_villager.gd 에 더하라
-- [ ] 4. (앞 단계 QA) 이름이 다 쓰였을 때 갈래에 테스트가 없다
+- [x] 4. (앞 단계 QA) 이름이 다 쓰였을 때 갈래에 테스트가 없다
   - 기준: 이름이 다 쓰였을 때 갈래에 테스트가 없다 — Villagers._free_name 의 `if free.is_empty(): free = NAMES` 갈래(일곱째 주민부터 겹쳐 뽑기)를 아무 테스트도 거치지 않는다. test_villager.gd 에 주민 일곱을 세워 settle 이 null 이 아니고 이름이 NAMES 안에 있는지, 앞 여섯의 이름은 다 다른지 보는 테스트를 더하라 (막는 것은 아니다 — 이번 기준은 셋까지만 요구했다)
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
