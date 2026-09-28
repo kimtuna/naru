@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-28 14:23:56",
- "updated_epoch": 1790573036,
+ "updated": "2026-09-28 14:46:54",
+ "updated_epoch": 1790574414,
  "ended": "2026-09-28 01:54:40",
  "progress": {
   "groups_total": 49,
   "groups_done": 48,
   "groups_waiting": 0,
   "steps_total": 235,
-  "steps_done": 233
+  "steps_done": 234
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-159",
  "step": "2",
  "step_title": "직무를 줄 수 있고, 농부가 그 틀로 돈다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-28 14:23:56",
+ "phase": "QA",
+ "phase_since": "2026-09-28 14:45:26",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
