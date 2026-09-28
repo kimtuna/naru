@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-28 14:21:31",
- "updated_epoch": 1790572891,
+ "updated": "2026-09-28 14:23:53",
+ "updated_epoch": 1790573033,
  "ended": "2026-09-28 01:54:40",
  "progress": {
   "groups_total": 49,
   "groups_done": 48,
   "groups_waiting": 0,
   "steps_total": 235,
-  "steps_done": 232
+  "steps_done": 233
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-159",
  "step": "1",
  "step_title": "직무를 spec 에 적는다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-28 14:21:31",
+ "phase": "QA",
+ "phase_since": "2026-09-28 14:23:15",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
