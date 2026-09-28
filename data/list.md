@@ -1611,7 +1611,7 @@
 - [x] 4. (앞 단계 QA) 이름이 다 쓰였을 때 갈래에 테스트가 없다
   - 기준: 이름이 다 쓰였을 때 갈래에 테스트가 없다 — Villagers._free_name 의 `if free.is_empty(): free = NAMES` 갈래(일곱째 주민부터 겹쳐 뽑기)를 아무 테스트도 거치지 않는다. test_villager.gd 에 주민 일곱을 세워 settle 이 null 이 아니고 이름이 NAMES 안에 있는지, 앞 여섯의 이름은 다 다른지 보는 테스트를 더하라 (막는 것은 아니다 — 이번 기준은 셋까지만 요구했다)
 
-## [ ] G-162 방을 눈으로 본다 — 오버레이 · 방 페이지(O) · 이름 바꾸기 (사람 결정 2026-09-29)
+## [x] G-162 방을 눈으로 본다 — 오버레이 · 방 페이지(O) · 이름 바꾸기 (사람 결정 2026-09-29)
 - 차선: 3d-start
 - spec: spec/06_build/rooms.md, spec/12_ui/hud.md, spec/01_settings/input.md, spec/01_settings/save.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 — 깨끗해질 때까지
