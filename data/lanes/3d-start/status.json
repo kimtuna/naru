@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-28 22:08:30",
- "updated_epoch": 1790600910,
+ "updated": "2026-09-28 22:10:32",
+ "updated_epoch": 1790601032,
  "ended": "2026-09-28 15:25:13",
  "progress": {
   "groups_total": 51,
@@ -16,8 +16,8 @@
  "step": "1",
  "step_title": "새 설계를 spec 에 고정하고 낡은 것을 지운다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-28 22:08:30",
+ "phase": "QA",
+ "phase_since": "2026-09-28 22:10:32",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
