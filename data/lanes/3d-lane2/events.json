@@ -3907,5 +3907,102 @@
   "epoch": 1790600907,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-28 22:41:27",
+  "epoch": 1790602887,
+  "type": "pass",
+  "title": "통과 — G-161 단계 1 (주민 창을 연다 — 목록과 그 주민을 한눈에)",
+  "group": "G-161",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "V 로 여는 주민 창 — 왼쪽 목록 · 오른쪽 그 주민(이름 · 나이 · 직무 · 스텟 다섯 레벨 · 긍정/부정 특성 · 수면 · 스트레스), 없으면 「아직 없다」. 바뀐 곳만 돈 테스트 153 파일 1366 개 통과",
+   "approach": "주민이 스텟 · 특성 · 수면 · 스트레스를 아예 들고 있지 않았다 — 창에 보일 것이 없었다. 그래서 먼저 Persona(automation/villagers/persona.gd)에 사람이 정한 목록(스텟 다섯 · 최대 100레벨, 긍정 특성 여덟 · 부정 넷, 수면 · 스트레스 최대 100 — list.md G-160 에 고정된 사람 설계)을 두고, Villager 가 값을 들고 저장 · 복원하게 했다(옛 저장본은 불러올 때 한 번 정해 그 뒤로 그대로 — 특성은 변하지 않는다). 값이 움직이는 규칙(스텟 성장 · 수면 감소 · 스트레스 경고 · 특성 효과)은 만들지 않았다 — 기준은 보이는 것까지다. 창은 VillagerWindow(ui/hud/villager_window.gd) — 틀을 코드로 세우고 열 때 · 고를 때 · 말을 바꿀 때 다시 읽는다. 키는 비어 있던 V(Villager). GameRoot 는 다른 창과 같은 길로 여닫고(window_open 에 들어가 조작 잠금 · 조준점 · 걷기 안내 줄이 저절로 따라온다) Esc 로 닫히며, 떠 있는 동안 E · M 이 안 먹고 다른 창이 떠 있으면 V 가 안 먹는다. 섬이 데려온 Villagers 를 node_added 로 받아 창에 건다. 찍은 것: .loop/out/shots_g161/villagers_ko.png · villagers_en.png (둘째 주민을 고른 채) — 잘림 · 겹침 없음. 바뀐 곳만: 153 파일 1366 개 통과 (전체는 안 돌렸다). J 키는 이 단계에서 그대로 두었다 — 빼는 것은 단계 2 기준이다.",
+   "why": "들어올 때 스텟 레벨 1~10 (Persona.STAT_START_MIN/MAX) — 어떻게 정해지는지 spec 에 없다; 들어올 때 특성 긍정 1 · 부정 1 (Persona.GOOD_COUNT/BAD_COUNT) — 특성을 어떻게 얻나는 spec 미정. 하나씩이라 외향/내향 · 대식/소식이 같이 붙지 않는다; 들어올 때 수면 100 · 스트레스 0; 창 폭 — 목록 180px · 오른쪽 400px (테마 Window/villager_list_width · villager_detail_width); 영어 특성 이름 (Big hand → 'Generous hand', 부수기 → 'Smasher' 등) — 번역은 임시",
+   "files": [
+    "game/automation/villagers/persona.gd",
+    "game/automation/villagers/villager.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/ui/hud/villager_window.gd",
+    "game/ui/hud/villager_window.tscn",
+    "game/core/game_root.gd",
+    "game/core/game_root.tscn",
+    "game/core/input/input_actions.gd",
+    "game/project.godot",
+    "game/ui/theme/naru_theme.tres",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/tests/ui/hud/test_villager_window.gd",
+    "game/tests/ui/layout/test_window_layout.gd",
+    "game/tests/core/input/test_input_spec_table.gd",
+    "spec/01_settings/input.md",
+    "spec/07_automation/npc-villagers.md",
+    "spec/12_ui/hud.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "키 하나로 주민 창이 열리고 닫힌다 — 어느 키인지 정해 `spec/01_settings/input.md` 표에 한 줄 (테스트)",
+     "evidence": "test_villager_window.gd test_v_opens_and_closes_the_villager_window 가 진짜 KEY_V 입력을 push_input 으로 넣어 열림 · 닫힘 · Esc 닫힘(설정 창은 안 열림)을 본다. test_the_key_is_in_the_input_table 이 InputMap 의 V 묶임과 input.md 의 「| **V**」 줄(「주민 창」)을 읽어 본다. test_input_spec_table.gd BOUND 에도 V 줄이 들어갔다"
+    },
+    {
+     "ok": true,
+     "criterion": "**왼쪽에 주민 목록** · 고르면 **오른쪽에 그 주민**이 뜬다 — 이름 · 나이 · 지금 직무 (테스트)",
+     "evidence": "test_the_list_is_on_the_left_and_the_chosen_one_on_the_right — 주민 둘을 세워 목록 두 줄(하람 · 누리), 첫 주민 골라짐, 이름 · 「24살」 · 「직무: 없음」, 목록 rect.end.x < 오른쪽 이름 rect.x 로 좌우를 재고, 둘째 줄을 눌러 「누리 · 51살 · 직무: 나무꾼」으로 바뀌는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "**스텟 다섯**(힘 · 민첩 · 체력 · 지식 · 손재주)이 레벨과 함께 보인다 (테스트)",
+     "evidence": "test_five_stats_show_with_their_levels — 스텟마다 다른 레벨(7·3·12·1·100)을 넣고 칸마다 보이는지 · 「Lv n」이 맞는지, 이름이 번역되어 [힘, 민첩, 체력, 지식, 손재주] 인지 본다. 이름은 plan/list.md G-160 의 사람 설계와 같다"
+    },
+    {
+     "ok": true,
+     "criterion": "**특성**이 보인다 — 긍정 · 부정을 가려 볼 수 있다 (테스트)",
+     "evidence": "test_traits_show_split_into_good_and_bad — 긍정 둘 · 부정 하나를 섞어 넣고 긍정 줄 「협상가 · 내향인」, 부정 줄 「가출」, 두 줄의 글자색이 다른지, 없으면 「—」인지 본다. 긍정 여덟 · 부정 넷은 사람 설계(G-160) 그대로"
+    },
+    {
+     "ok": true,
+     "criterion": "**수면 · 스트레스**가 보인다 — 숫자든 막대든 (테스트)",
+     "evidence": "test_sleep_and_stress_show — sleep 42 · stress 81.4 를 넣고 막대 value · max_value 와 숫자 글자(42 · 81)를 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "주민이 없으면 「아직 없다」가 뜬다 — 빈 창이 아니다 (테스트)",
+     "evidence": "test_no_villagers_says_none_yet — empty_label 이 보이고 VILLAGERS_EMPTY 가 번역되며 오른쪽이 안 뜨는지 본다. QA 가 일부러 깨 봤다: refresh 의 _empty.visible 을 false 로 박으니 이 테스트가 떨어졌다 (되돌림 확인)"
+    },
+    {
+     "ok": true,
+     "criterion": "창이 떠 있는 동안 조작이 잠기고, 걷기 안내 줄이 숨는다 — 다른 창과 같은 규칙 (테스트)",
+     "evidence": "test_controls_lock_and_walk_hint_hides_while_open — 진짜 V 로 열어 LOCK_WINDOW 잠금 · HUD/Hint 숨음 · 조준점 숨음 · window_open() 참, 닫으면 돌아옴을 본다. test_window_layout.gd 의 _open/_close_all 에 주민 창이 들어가 창마다 도는 공통 검사도 받는다. test_other_windows_and_the_villager_window_do_not_stack 가 창이 겹치지 않음을 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "글자는 번역 키다 — ko · en 둘 다 (테스트)",
+     "evidence": "test_every_text_is_a_translation_key_in_ko_and_en 이 VillagerWindow.KEYS · 스텟 이름 · 특성 이름 전부를 ko · en 번역 객체에서 찾는다. test_the_window_follows_the_language 가 en 으로 바꾸면 창 글자(Haram · Age 24 · Job: None · Gifted · Binge eater)가 따라오는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 주민을 고른 창 한 장",
+     "evidence": ".loop/out/shots_g161/villagers_ko.png · villagers_en.png 를 열어 봤다 — 둘째 주민(다솜)을 고른 채 목록 · 이름 · 나이 · 직무 · 스텟 다섯 · 긍정(초록)/부정(빨강) 특성 · 수면/스트레스 막대와 숫자가 잘림 · 겹침 없이 보이고, 걷기 안내 줄이 숨어 있다"
+    }
+   ],
+   "issues": [
+    "npc-villagers.md 의 옛 줄이 낡았다 — spec/07_automation/npc-villagers.md 43행(「지금 만든 것 (G-157.2)」)이 「특성 · 스트레스 · 관계 · 결혼 · 아기는 아직 없다」라고 한다. 이제 특성 · 스트레스는 들고 있다(G-161.1). 「관계 · 결혼 · 아기는 아직 없다 — 특성 · 스트레스는 G-161.1 에서 들게 됐다」처럼 고쳐라",
+    "TMPDIR 에 naru_island_cache_* 가 남는다 — test.log 에 naru_island_cache_2640387327 이 TempDir.clean 으로 지워지지 않고 남았다고 나온다. .loop/out/test_files/ 로그에서 그 캐시를 만든 테스트를 찾아 after_all/after_each 에서 TempDir.clean 을 불러라 (이번 변경 탓인지는 확인 못 했다)"
+   ],
+   "good": [
+    "주민이 스텟 · 특성 · 수면 · 스트레스를 실제로 들고 저장 · 복원하게 했다(Persona · Villager._load_persona) — 창에 보일 값이 있어야 하므로 이 단계에 필요한 몫이다. 값이 움직이는 규칙은 만들지 않았다. 처음 값(스텟 1~10 · 특성 긍정1 부정1 · 수면100 · 스트레스0)은 코드와 spec 에 「임시」로 적혀 있다"
+   ]
+  },
+  "test": "test_island_key.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      3s  res://tests/world/lighting/test_torch.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      2s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      3s  res://tests/combat/damage_death/test_death_chest_owner.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           153\nTests            1366\nPassing Tests    1366\nFailing Tests       0\nRisky/Pending       0\nAsserts         75658\nTime           436s  (godot 6 개)\n\nTMPDIR 에 새로 남은 naru_* 1 개 (테스트가 TempDir.clean 으로 지우지 않았다 — /var/folders/13/ht4_hck554d3rdqm2b3342880000gn/T):\n  naru_island_cache_2640387327\n\n파일별 로그: /Users/tuna/Desktop/naru-lane2/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "d0129154"
  }
 ]
