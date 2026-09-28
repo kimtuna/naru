@@ -1485,7 +1485,7 @@
 - [x] 5. (앞 단계 QA) 낚시 알림 테스트가 ui_shots 를 돌려 보지 않는다
   - 기준: 낚시 알림 테스트가 ui_shots 를 돌려 보지 않는다 — test_fishing_shots_say_the_notice_again_in_each_language 의 뒤쪽 절반은 Notice.say 만 직접 불러 보고 ui_shots 의 _fishing 은 부르지 않는다. 소스 글자 검사로 회귀는 막지만, SHOTS.new() 로 shots._fishing(player, stations, "fishing") 을 불러 shots._fish_notice == [Fishing.SAY_SPREAD, [fishing.fish_left(...)]] 이고 "fishing_caught" 면 [Fishing.SAY_LANDED, [0 이상]] 인지 단언하는 검사를 덧붙이면 마리 수가 실제 영역과 맞는지까지 지킨다
 
-## [ ] G-159 NPC 자동화 — 직무를 준다 (사람 결정 2026-09-28)
+## [x] G-159 NPC 자동화 — 직무를 준다 (사람 결정 2026-09-28)
 - 차선: 3d-start
 - spec: spec/07_automation/npc-villagers.md, spec/06_build/rooms.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 — 깨끗해질 때까지
