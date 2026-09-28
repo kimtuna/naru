@@ -18,3 +18,9 @@
 - 어디서: 차선 합치기 (3d-lane2)
 - 무엇: 부딪힌다: game/i18n/en.po game/i18n/ko.po game/settings/save/world_data.gd game/world/frontier_islands/island_state.gd — 이 줄기(3d-lane2)에서 `git merge 3d-start` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-start 없이 돈다
 - **사람이 답할 것**: 
+
+## 물음 — 차선 3d-lane2(4fc4ae36) 을 3d-start 에 합치지 못했다
+- 물은 때: 2026-09-28 14:21:29
+- 어디서: 차선 합치기 (3d-start)
+- 무엇: 부딪힌다: game/i18n/en.po game/i18n/ko.po game/settings/save/world_data.gd game/world/frontier_islands/island_state.gd — 이 줄기(3d-start)에서 `git merge 3d-lane2` 을 손으로 풀어 커밋해 달라. 풀릴 때까지 이 차선은 3d-lane2 없이 돈다
+- **사람이 답할 것**: 

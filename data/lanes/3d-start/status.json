@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "목록을 읽는다",
- "updated": "2026-09-28 14:21:27",
- "updated_epoch": 1790572887,
+ "updated": "2026-09-28 14:21:29",
+ "updated_epoch": 1790572889,
  "ended": "2026-09-28 01:54:40",
  "progress": {
   "groups_total": 49,
@@ -17,7 +17,7 @@
  "step_title": "(앞 단계 QA) 찍기 주석이 그림과 다르다",
  "attempt": "1",
  "phase": "차선 합치기",
- "phase_since": "2026-09-28 01:47:11",
+ "phase_since": "2026-09-28 14:21:29",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",

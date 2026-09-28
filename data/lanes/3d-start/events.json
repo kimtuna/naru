@@ -1,124 +1,5 @@
 [
  {
-  "time": "2026-09-23 08:47:46",
-  "epoch": 1790120866,
-  "type": "pass",
-  "title": "통과 — G-135 단계 2 (배고픔과 목마름)",
-  "group": "G-135",
-  "step": "2",
-  "attempt": "1",
-  "report": {
-   "problem": "배고픔 · 목마름 — 기본 이동 속도(가득=달리기 · 하나 바닥=걷기 · 둘 다=걷기 -30%), 죽지 않음, 음식으로 배고픔 · 연못/개울 물로 목마름 채우기, 버프는 기본 속도 위에. 새 테스트 12개 통과, 바뀐 곳에 걸리는 것 79개 파일 748개 테스트 통과",
-   "approach": "Player 가 HungerThirst 노드(0..1, 실제 초로 줄어든다)를 들고, 이동 속력을 base_speed()(= move_speed × 배고픔·목마름 배율) × 버프 배수 × 웅크림 × 비탈로 나눴다 — 버프는 base_speed 에 들어가지 않아 두 층이 섞이지 않는다. 체력을 건드리는 길이 없어 바닥이어도 죽지 않는다. 수치(한 끼 = GameClock.MINUTES_PER_DAY*60/3 초 · 걷기 배율 · -30% · 한 모금)는 hunger_thirst.gd 한 곳에 「임시」로 모았다(하루 길이는 GameClock 값을 가져다 써서 하루 길이 한 곳 검사를 지킨다). 음식은 foods.json 에 hunger 칸을 더해 Food.eat_held 가 배고픔을 채운다(버프 없이 hunger 만 있는 음식도 받는다). 물은 새 Drinking 노드가 우클릭으로 마신다 — 연못이 3m 깊어 광선이 바닥에 닿지 않으므로 조준 광선을 0.2m 간격으로 따라가며 손 닿는 곳(Aim.REACH)에서 민물 수면 아래로 들어가는지 본다. 민물 판정은 IslandShape.fresh_water_level_at/is_fresh_water(바다 제외, water_level_at 은 이것 위에 다시 세웠다). 섬에서는 우클릭 받는 것들 가운데 가장 앞에 붙여 제작대·상자·밭·음식이 먼저 가져가게 했다. 앞 단계 QA: test_crouch.gd 머리 주석 경로를 test_animal_sound.gd 의 「웅크리기 (G-135.1)」 절로 고쳤다. HUD 게이지 · 저장은 이 단계 기준에 없어 만들지 않았다.",
-   "why": "HungerThirst.LASTS_SECONDS = 하루 40분 / 3 = 800초 — 하루 세 끼(사람 결정), 13분쯤 버틴다는 spec 임시값; HungerThirst.WALK_FACTOR = 0.55 (걷기 3.3 m/s) — 걷기 속도 미정, 사람이 뛰어 보고 정한다; HungerThirst.BOTH_EMPTY_SLOWDOWN = 0.3 — spec 의 -30%, 임시; HungerThirst.SIP = 0.5 — 한 모금에 목마름 절반, 두 모금이면 가득. spec 에 값 없음; foods.json wheat_bread hunger = 1.0 — 빵 하나가 배를 가득 채운다. 음식별 값 미정",
-   "files": [
-    "game/player/hunger_thirst/hunger_thirst.gd",
-    "game/player/hunger_thirst/drinking.gd",
-    "game/player/movement_controls/player.gd",
-    "game/life/food/food.gd",
-    "game/life/food/food_catalog.gd",
-    "game/life/food/foods.json",
-    "game/world/terrain/island_shape.gd",
-    "game/world/terrain/test_island.gd",
-    "game/tests/player/movement_controls/test_crouch.gd",
-    "game/tests/player/hunger_thirst/test_hunger_thirst.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "둘 다 차 있으면 **달리기 속도**, 하나가 바닥이면 **걷기**, 둘 다면 거기서 **-30%** (테스트)",
-     "evidence": "test_hunger_thirst.gd test_full_is_running_one_empty_is_walking_both_empty_is_thirty_percent_slower — W 를 눌러 실제로 걸어 재고, 기대값은 move_speed · WALK_FACTOR · 0.7(하드코딩)로 비교. test.log: 가득 6.20 · 배고파 3.41 · 목말라 3.41 · 둘 다 2.39 m/s. test_a_little_left_is_still_running 이 0.01 남았을 때 여전히 달리기임을 막는다"
-    },
-    {
-     "ok": true,
-     "criterion": "바닥이어도 **죽지 않는다** (테스트)",
-     "evidence": "test_empty_never_kills — LASTS_SECONDS×20 흘려 둘 다 0 으로 만든 뒤 is_dead false · 체력 그대로 · 조작 가능 · 걸을 수 있음(속력>1)을 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "음식을 먹으면 배고픔이, 물을 마시면 목마름이 찬다 — 물은 연못 · 개울에서 마신다 (테스트)",
-     "evidence": "test_eating_food_fills_hunger(빵 → hunger 가 foods.json 값만큼, 목마름 불변), test_drinking_from_fresh_water_fills_thirst(실제 우클릭 입력으로 SIP 만큼 참 · 가득 초과 없음 · 배고픔 불변), test_no_drinking_without_fresh_water, test_no_drinking_while_a_window_is_open, test_on_the_island_ponds_and_streams_are_fresh_but_the_sea_is_not(실제 섬 IslandShape 로 연못 · 개울 중간점이 민물, 바다는 물이지만 민물 아님)"
-    },
-    {
-     "ok": true,
-     "criterion": "**하루 세 끼 정도**로 준다 (하루 40분). 값은 한 곳에 있고 「임시」라고 적는다",
-     "evidence": "LASTS_SECONDS = GameClock.MINUTES_PER_DAY*60/3 (800초). test_three_meals_a_day 가 LASTS×3 = 하루, tick 반/전부 뒤 0.5/0 을 본다. test_values_live_in_one_place_and_are_marked_temporary 가 hunger_thirst.gd 네 상수 윗줄에 「임시」가 있는지, 다른 스크립트가 같은 이름으로 값을 또 적지 않는지 훑는다. foods.json _temporary 에도 hunger 몫이 임시라고 적혔다"
-    },
-    {
-     "ok": true,
-     "criterion": "버프 음식은 **기본 속도 위에** 얹힌다 — 둘이 섞이지 않는다 (테스트)",
-     "evidence": "test_buff_food_rides_on_top_of_the_base_speed — 버프 1.2 가 있을 때 base_speed()==move_speed(버프 미포함), 실측 = run×1.2; 둘 다 바닥일 때 base_speed()==run×WALK×0.7, 실측 = 그×1.2, 버프 값 불변. test_eating_buff_food_fills_hunger_and_buffs_separately — 버프가 풀려도 찬 배는 그대로"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) test_crouch.gd 머리 주석이 없는 파일을 가리킨다 — game/tests/player/movement_controls/test_crouch.gd 3행이 발소리 · 총소리 테스트가 'tests/life/hunting/test_crouch_sound.gd' 에 있다고 적었는데, 그런 파일은 없다. 실제 테스트는 tests/life/hunting/test_animal_sound.gd 의 「웅크리기 (G-135.1)」 절에 있다. 주석의 경로를 그 파일로 고쳐라",
-     "evidence": "git diff: 3행이 'tests/life/hunting/test_animal_sound.gd 의 「웅크리기 (G-135.1)」 절' 로 바뀌었다"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "HungerThirst.changed 시그널 — 「HUD 게이지가 듣는다」고 적었지만 아직 듣는 곳은 없다 (HUD 게이지는 다음 단계 몫, 만들지는 않았다)",
-    "IslandShape.fresh_water_level_at / is_fresh_water 를 새로 두고 water_level_at 을 그 위에 다시 세웠다 — 물 마시기에 필요한 것이라 기준 안쪽으로 본다",
-    "foods.json 에 버프 없이 hunger 만 있는 음식도 받도록 FoodCatalog._read 를 넓혔다 (지금 그런 음식은 없다)"
-   ]
-  },
-  "test": "\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              87\nTests               812\nPassing Tests       812\nAsserts           28772\nTime              670.875s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "d819c46"
- },
- {
-  "time": "2026-09-23 09:10:04",
-  "epoch": 1790122204,
-  "type": "pass",
-  "title": "통과 — G-135 단계 3 (동그란 게이지)",
-  "group": "G-135",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "왼쪽 아래 체력 막대 바로 위에 배고픔 · 목마름 동그란 게이지 둘(남은 양에 따라 초록 → 주황 → 빨강, 숫자 없음, 이름은 번역 키 HUD_HUNGER · HUD_THIRST). 새 테스트 13개 통과, 바뀐 곳에 걸리는 것 72개 파일 703개 테스트 통과",
-   "approach": "새 NeedGauge(ui/hud/need_gauge.gd)가 원 하나를 그린다 — 빈 자리 링 위에 맨 위에서 시계 방향으로 남은 몫만큼 draw_arc 로 칠하고, 색은 남은 몫으로 고른다(초록 > 0.5 ≥ 주황 > 0.2 ≥ 빨강). NeedsGauges(needs_gauges.tscn)가 원 둘과 이름 글자 둘을 체력 막대(offset_top -116) 바로 위(-160..-122)에 체력 막대 폭 안으로 놓고, HungerThirst.changed 를 들어 따라간다. Player._ready 에서 HungerThirst 를 만든 뒤 watch 한다. 모든 노드는 mouse_filter=IGNORE(좌클릭은 평타). 숫자는 그리지 않고, 어느 원이 무엇인지는 옆 글자로 알린다 — HUD_HUNGER · HUD_THIRST 를 ko · en po 둘 다에 넣었다. 테스트는 진짜 Player 를 세워 배고픔 · 목마름을 먹기 · 마시기 · 시간으로 움직이고 게이지의 몫 · 호 각도 · 색 · 자리(체력 막대 폭 안, 바로 위, 겹치지 않음, 화면 안 왼쪽 아래) · 정사각형 자리를 본다. 이미 바닥인 값은 tick 이 신호를 내지 않아 첫 시도에서 테스트 하나가 틀렸다 — 가득에서 끝까지 줄이는 식으로 고쳤다. shot.sh --ui hud 로 찍어 보니 체력 막대 위에 두 원과 이름이 잘리지 않고 보였다.",
-   "why": "NeedGauge 색(GREEN · ORANGE · RED)과 경계(GREEN_ABOVE 0.5 · ORANGE_ABOVE 0.2) — 기력 막대처럼 초록 → 주황 → 빨강으로 두었다. 사람이 보고 정한다; NeedGauge RING_WIDTH 5px · 원 자리 38px(needs_gauges.tscn) · 글자 크기 14 — 보기 좋은가는 사람이 정한다",
-   "files": [
-    "game/ui/hud/need_gauge.gd",
-    "game/ui/hud/needs_gauges.gd",
-    "game/ui/hud/needs_gauges.tscn",
-    "game/player/movement_controls/player.gd",
-    "game/player/movement_controls/player.tscn",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/ui/hud/test_needs_gauges.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "왼쪽 아래 체력과 한자리에 배고픔 · 목마름이 동그란 게이지로 보인다 (테스트)",
-     "evidence": "test_needs_gauges.gd 가 진짜 Player 를 세워 본다 — test_the_gauges_are_on_screen_from_the_start(CanvasLayer 위 · 늘 보임), test_the_gauges_sit_bottom_left_inside_the_screen(화면 안 · 왼쪽 · 아래), test_the_gauges_sit_right_by_the_health_bar(체력 막대 폭 안 · 바로 위 16px 안 · 안 겹침), test_the_gauges_are_round_not_bars(정사각 자리 · 반지름). player.gd 의 _needs_gauges.watch(_needs) 를 일부러 지우고 tests/ui/hud 를 돌리니 13개 중 5개가 떨어졌다 — 연결을 정말 지킨다(되돌려 놓았다). 전체 1090개 통과 · guard 통과(test.log)"
-    },
-    {
-     "ok": true,
-     "criterion": "남은 양에 따라 색이 바뀐다. 숫자는 없다 (테스트)",
-     "evidence": "test_the_colour_changes_as_it_runs_low 가 1.0 · 0.35 · 0.1 에서 색이 셋 다 다르고 초록 · 빨강인지 보고, test_each_gauge_takes_its_own_colour · test_the_colour_only_gets_worse_as_it_drains 가 따로 · 단조로 바뀌는지 본다. test_there_are_no_numbers 가 글자에 숫자 · % 가 없고 Range 노드가 없는지 본다. 색 · 경계 · 굵기는 need_gauge.gd 에 「임시」로 적혀 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "글자가 있으면 번역 키다 (ko · en 둘 다)",
-     "evidence": "Label 두 개의 text 가 HUD_HUNGER · HUD_THIRST 이고, ko.po(배고픔 · 목마름) · en.po(Hunger · Thirst) 에 다 있다. test_the_words_are_translation_keys_in_both_languages 가 두 po 를 읽어 키 그대로가 아닌 번역이 있는지 본다"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_resources.gd\n* test_the_world_seed_places_the_resources\n* test_the_resources_do_not_come_from_the_shape_seed\n* test_the_same_seed_gives_the_same_resource_in_every_cell\n* test_the_saved_island_places_the_resources_like_a_freshly_baked_one\n* test_a_different_seed_lays_the_resources_out_differently\n* test_every_kind_still_grows_under_a_different_seed\n* test_the_land_is_the_same_whatever_the_seed\n* test_the_decorations_are_the_same_whatever_the_seed\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_shape.gd\n* test_same_blueprint_gives_same_island\n* test_island_shape_is_data\n* test_island_is_about_1_4km_across\n* test_sea_surrounds_island\n* test_spawn_area_is_clear_flat_land\n* test_every_cliff_is_at_least_8m\n* test_cliffs_face_many_directions\n* test_walk_path_from_spawn_to_peak_without_cliffs\n* test_cliff_blocks_walking_where_cliffs_stand\n* test_ledges_are_carved_into_cliffs\n* test_ledges_narrow_into_the_wall_toward_their_ends\n* test_ledges_cannot_be_walked_to\n* test_summit_is_flat\n* test_ponds_hold_water\n* test_stream_leaves_the_pond_without_a_dam\n* test_rivers_run_downhill_to_the_sea\n* test_water_ribbon_edges_are_buried_in_the_bank\n* test_water_ribbon_draws_every_segment\n* test_stream_is_unbroken_from_pond_to_sea\n* test_stream_ends_in_the_sea\n* test_water_spots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             124\nTests              1090\nPassing Tests      1090\nAsserts           31677\nTime              680.994s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "9e393d9"
- },
- {
   "time": "2026-09-23 09:34:36",
   "epoch": 1790123676,
   "type": "pass",
@@ -7664,6 +7545,74 @@
   "group": "G-157",
   "step": "4",
   "attempt": "1",
+  "report": {
+   "problem": "villager_water 찍기 주석을 실제 그림(젖은 셋 · 마른 하나)에 맞추고, water_spots 주석을 「연못 물가 점 · 개울 점」으로 고쳤다. 바뀐 곳만: 13 파일 110 테스트 통과",
+   "approach": "첫 장은 둘이 젖기를 기다린 뒤 찍지만, 찍기 전 SETTLE_FRAMES + 60 프레임 동안에도 주민이 계속 일해서 연못에서 물을 채워 와 셋째 밭까지 준 때가 잡힌다. 기다림 조건을 고치는 대신(주민을 멈추려면 코드가 늘어난다) 주석을 실제 모습대로 고쳤다. harness/shot.sh 로 villager_water 를 찍어 보니 젖은 셋 · 마른 하나였고, 고친 주석과 맞았다. field_care.gd 의 water_spots 주석도 TestIsland._fresh_water_spots 가 실제로 주는 것(연못 물가 선의 점 · 개울 점)으로 맞췄다. 주석만 고쳐서 새 테스트는 없다. changed_tests 그물로 13 파일 110 테스트가 통과했다.",
+   "why": "",
+   "files": [
+    "game/core/debug/shots.gd",
+    "game/automation/villagers/field_care.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "찍기 주석이 그림과 다르다 — game/core/debug/shots.gd 의 villager_water 주석(「둘을 준 때(젖은 밭 둘 · 마른 밭 둘)」)과 달리 실제 첫 장은 젖은 셋 · 마른 하나다(물 2번치를 다 쓰고 이미 채워 하나 더 준 뒤 찍힌다). 주석을 「물 두 번치가 떨어져 연못에서 채우러 간 뒤, 젖은 밭 · 마른 밭이 섞인 때」처럼 실제 모습으로 고치거나, want 를 셋째 밭 전에 잡히게 기다림 조건을 고쳐라",
+     "evidence": "shots.gd 192~197줄 주석이 「첫 장은 둘이 젖은 뒤에 찍는데 찍기 전 프레임 동안 주민이 계속 일해 물 두 번치가 떨어져 연못에서 채워 온 뒤(젖은 밭 · 마른 밭이 섞인 때 — 흔히 젖은 셋 · 마른 하나)」로 바뀌었다. .loop/out/care/villager_water.png 를 직접 보니 짙은(젖은) 밭 셋 · 밝은 갈색(마른) 밭 하나로 주석과 맞다. 주석만 고치는 기준이라 테스트는 요구되지 않는다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) water_spots 주석이 낡았다 — game/automation/villagers/field_care.gd 의 `var water_spots` 주석이 「연못 가운데 · 개울 점」이라 적혀 있는데, TestIsland._fresh_water_spots 는 연못 가운데가 아니라 물가 선의 점들을 준다. 「연못 물가 점 · 개울 점」으로 고쳐라",
+     "evidence": "field_care.gd 45줄이 「(Vector3, 연못 물가 점 · 개울 점)」으로 바뀌었다. test_island.gd:327 _fresh_water_spots 는 pond rim 의 점들과 river 점들을 돌려주어 주석과 맞다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "death/test_health.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           222\nTests            1813\nPassing Tests    1813\nFailing Tests       0\nRisky/Pending       0\nAsserts         81342\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-28 14:21:29",
+  "epoch": 1790572889,
+  "type": "start",
+  "title": "루프 시작",
+  "report": {
+   "problem": "villager_water 찍기 주석을 실제 그림(젖은 셋 · 마른 하나)에 맞추고, water_spots 주석을 「연못 물가 점 · 개울 점」으로 고쳤다. 바뀐 곳만: 13 파일 110 테스트 통과",
+   "approach": "첫 장은 둘이 젖기를 기다린 뒤 찍지만, 찍기 전 SETTLE_FRAMES + 60 프레임 동안에도 주민이 계속 일해서 연못에서 물을 채워 와 셋째 밭까지 준 때가 잡힌다. 기다림 조건을 고치는 대신(주민을 멈추려면 코드가 늘어난다) 주석을 실제 모습대로 고쳤다. harness/shot.sh 로 villager_water 를 찍어 보니 젖은 셋 · 마른 하나였고, 고친 주석과 맞았다. field_care.gd 의 water_spots 주석도 TestIsland._fresh_water_spots 가 실제로 주는 것(연못 물가 선의 점 · 개울 점)으로 맞췄다. 주석만 고쳐서 새 테스트는 없다. changed_tests 그물로 13 파일 110 테스트가 통과했다.",
+   "why": "",
+   "files": [
+    "game/core/debug/shots.gd",
+    "game/automation/villagers/field_care.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "찍기 주석이 그림과 다르다 — game/core/debug/shots.gd 의 villager_water 주석(「둘을 준 때(젖은 밭 둘 · 마른 밭 둘)」)과 달리 실제 첫 장은 젖은 셋 · 마른 하나다(물 2번치를 다 쓰고 이미 채워 하나 더 준 뒤 찍힌다). 주석을 「물 두 번치가 떨어져 연못에서 채우러 간 뒤, 젖은 밭 · 마른 밭이 섞인 때」처럼 실제 모습으로 고치거나, want 를 셋째 밭 전에 잡히게 기다림 조건을 고쳐라",
+     "evidence": "shots.gd 192~197줄 주석이 「첫 장은 둘이 젖은 뒤에 찍는데 찍기 전 프레임 동안 주민이 계속 일해 물 두 번치가 떨어져 연못에서 채워 온 뒤(젖은 밭 · 마른 밭이 섞인 때 — 흔히 젖은 셋 · 마른 하나)」로 바뀌었다. .loop/out/care/villager_water.png 를 직접 보니 짙은(젖은) 밭 셋 · 밝은 갈색(마른) 밭 하나로 주석과 맞다. 주석만 고치는 기준이라 테스트는 요구되지 않는다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) water_spots 주석이 낡았다 — game/automation/villagers/field_care.gd 의 `var water_spots` 주석이 「연못 가운데 · 개울 점」이라 적혀 있는데, TestIsland._fresh_water_spots 는 연못 가운데가 아니라 물가 선의 점들을 준다. 「연못 물가 점 · 개울 점」으로 고쳐라",
+     "evidence": "field_care.gd 45줄이 「(Vector3, 연못 물가 점 · 개울 점)」으로 바뀌었다. test_island.gd:327 _fresh_water_spots 는 pond rim 의 점들과 river 점들을 돌려주어 주석과 맞다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "death/test_health.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      0s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/test_translation.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      0s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           222\nTests            1813\nPassing Tests    1813\nFailing Tests       0\nRisky/Pending       0\nAsserts         81342\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-28 14:21:29",
+  "epoch": 1790572889,
+  "type": "fail",
+  "title": "차선 합치기 실패 — 3d-lane2(4fc4ae36) → 3d-start",
   "report": {
    "problem": "villager_water 찍기 주석을 실제 그림(젖은 셋 · 마른 하나)에 맞추고, water_spots 주석을 「연못 물가 점 · 개울 점」으로 고쳤다. 바뀐 곳만: 13 파일 110 테스트 통과",
    "approach": "첫 장은 둘이 젖기를 기다린 뒤 찍지만, 찍기 전 SETTLE_FRAMES + 60 프레임 동안에도 주민이 계속 일해서 연못에서 물을 채워 와 셋째 밭까지 준 때가 잡힌다. 기다림 조건을 고치는 대신(주민을 멈추려면 코드가 늘어난다) 주석을 실제 모습대로 고쳤다. harness/shot.sh 로 villager_water 를 찍어 보니 젖은 셋 · 마른 하나였고, 고친 주석과 맞았다. field_care.gd 의 water_spots 주석도 TestIsland._fresh_water_spots 가 실제로 주는 것(연못 물가 선의 점 · 개울 점)으로 맞췄다. 주석만 고쳐서 새 테스트는 없다. changed_tests 그물로 13 파일 110 테스트가 통과했다.",
