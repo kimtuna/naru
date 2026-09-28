@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "G-159 합쳤다",
- "updated": "2026-09-28 15:25:08",
- "updated_epoch": 1790576708,
+ "updated": "2026-09-28 15:25:11",
+ "updated_epoch": 1790576711,
  "ended": "2026-09-28 01:54:40",
  "progress": {
   "groups_total": 49,
@@ -17,7 +17,7 @@
  "step_title": "(앞 단계 QA) 나무꾼이 바위를 안 치는 단언이 약하다",
  "attempt": "1",
  "phase": "차선 합치기",
- "phase_since": "2026-09-28 15:25:08",
+ "phase_since": "2026-09-28 15:25:11",
  "lane": "3d-start",
  "model": "opus",
  "resume_at": "2026-09-26 07:00:00",
