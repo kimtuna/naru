@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-23 20:12:07",
-  "epoch": 1790161927,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-23 20:28:10",
   "epoch": 1790162890,
   "type": "pass",
@@ -7831,5 +7825,79 @@
   },
   "test": "1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      2s  res://tests/player/inventory_hotbar/test_held_item.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok    434s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           181\nTests            1571\nPassing Tests    1571\nFailing Tests       0\nRisky/Pending       0\nAsserts         85905\nTime           434s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "e44b7b31"
+ },
+ {
+  "time": "2026-09-29 05:49:33",
+  "epoch": 1790628573,
+  "type": "pass",
+  "title": "통과 — G-162 단계 3 (방 이름을 바꾸고 저장한다)",
+  "group": "G-162",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "방 이름 바꾸기 — 방 ID(가장 작은 판 + 바닥 높이)를 같은 방의 열쇠로 정하고, 방 페이지 이름 칸에서 고쳐 쓰며, 안 지으면 방 종류가 대신하고, 섬마다 저장되고, 헐었다 같은 자리에 다시 지으면 이름이 돌아온다. 바뀐 곳만 119개 파일 · 943개 테스트 통과",
+   "approach": "방은 그때그때 재는 것이라 이름을 방이 아니라 이미 있던 방 ID(Rooms.find 의 id = 가장 작은 판 + 바닥 높이)에 붙였다 — 몇 번을 재도 · 제작대를 들여 역할이 바뀌어도 같고, 서·북쪽으로 넓혀 가장 작은 판이 바뀌면 다른 방이다(rooms.md 에 적었다). 이름은 창이 아니라 건축물(Buildings.room_names, ID → 이름)이 쥐고 IslandState 가 섬마다 room_names 로 담고 되돌린다. 헐린 방의 이름도 지우지 않기로 정해, 같은 자리에 다시 지으면 같은 ID 라 이름이 돌아온다(테스트로 못 박음). 방 페이지의 이름 칸은 LineEdit 로 바꿨다 — Enter · 다른 곳 누름 · 창 닫기에 붙이고, 비우거나 방 종류 그대로면 지은 이름을 지워 방 종류(번역)가 대신한다(차례 이름 「방 %d」 키는 없앴다). 0.5초마다 다시 재는 것이 쓰던 칸을 날리지 않게, 방 ID 들이 그대로면 줄을 다시 세우지 않고 역할 · 쓰고 있지 않은 칸만 제자리에서 고친다(바뀌면 쓰던 것을 먼저 붙이고 같은 방 칸을 다시 잡는다). 쓰는 동안 O 를 쳐도 칸이 글자로 삼켜 창이 닫히지 않는 것을 진짜 키 이벤트로 확인했다. 헤드리스에서는 GUI 로 가는 마우스 클릭이 닿지 않아 칸을 잡는 것은 지도 표 칸 테스트와 같이 grab_focus + edit() 로 했다. 왕복 검사(test_round_trip)에 이름 하나를 더해 저장이 빠지면 걸리게 했다. ui_shots 에 rooms_named 자리를 더해 찍었다: ko · en 모두 대장간 줄에 지은 이름, 나머지 둘은 방 종류 이름이 잘리지 않고 보인다. (앞 단계 QA) rooms.md 수치 절에 ROOM_FOR_FRAME 120px (임시) 줄을 더했다.",
+   "why": "",
+   "files": [
+    "game/build/buildings.gd",
+    "game/ui/hud/room_window.gd",
+    "game/world/frontier_islands/island_state.gd",
+    "game/settings/save/world_data.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/ui/hud/test_room_names.gd",
+    "game/tests/ui/hud/test_room_window.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "spec/06_build/rooms.md",
+    "spec/01_settings/save.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "같은 방인지 알아보는 열쇠를 정하고 rooms.md 에 적는다 — 무엇이 같으면 같은 방인가 (테스트)",
+     "evidence": "rooms.md 「방 이름」 절에 열쇠 = 가장 작은 판 + 바닥 높이, 역할·넓이는 안 봄, 서·북쪽으로 넓히면 다른 방이라고 적혔다. test_room_names.gd test_the_key_is_least_plate_and_floor_level 이 id == Rooms._key(가장 작은 판, level) · 다른 판은 다른 id · 제련로를 들여도 id 그대로인지 · rooms.md 에 적혔는지 확인하고, test_the_name_sticks_to_the_room_when_its_role_changes 가 역할이 바뀌어도 이름이 남는지 본다"
+    },
+    {
+     "ok": true,
+     "criterion": "페이지에서 이름을 고쳐 쓸 수 있다 (테스트)",
+     "evidence": "test_typing_in_the_page_renames_the_room — O 로 연 페이지의 LineEdit 에 진짜 키 이벤트로 「부엌 o」를 치고(O 가 창을 닫지 않음까지), 0.5초 재측정 뒤에도 글이 남고, Enter 로 buildings.room_name(id) 에 붙고, 닫았다 열어도 보인다. test_closing_the_page_while_typing_keeps_what_was_typed 가 쓰던 채 닫는 경우를 본다. 일부러 refresh 의 has_focus 막이를 없애자 4개 단언이 떨어졌다(되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "이름을 안 지으면 방 종류가 이름을 대신한다 — 빈 줄이 아니다 (테스트)",
+     "evidence": "test_an_unnamed_room_shows_its_kind_not_a_blank — 이름 없는 제작소 방 칸이 「제작소」, 다 지우고 Enter 하면 room_name 이 \"\" 이고 칸은 다시 「제작소」, 빈칸만의 이름도 짓지 않은 것, 영어로 바꾸면 「Workshop」. test_room_window.gd 의 목록 테스트도 이름 == 역할로 바뀌었다"
+    },
+    {
+     "ok": true,
+     "criterion": "저장된다 — 껐다 켜도 지은 이름이 그대로다 (테스트, spec/01_settings/save.md)",
+     "evidence": "test_names_come_back_after_saving 이 SaveStore 로 실제 파일에 쓰고 읽은 뒤 새 Buildings 에 IslandState.apply 해 이름이 돌아오는지(두 번 불러도 겹치지 않음, 페이지에도 보임) 본다. island_state.gd 의 restore_room_names 호출을 지우자 이 테스트가 떨어졌다(되돌림). test_round_trip 에도 이름 하나를 더해 전체 스냅숏 왕복에 걸린다. save.md 월드 목록에 「지은 방 이름」, 안 담는다 줄도 고쳐 적었다"
+    },
+    {
+     "ok": true,
+     "criterion": "벽을 헐어 방이 사라졌다가 같은 자리에 다시 지으면 그 이름이 돌아오는지 아닌지를 정하고 적는다 — 어느 쪽이든 테스트로 못 박는다 (테스트)",
+     "evidence": "rooms.md 에 「같은 자리에 다시 지으면(같은 ID) 그 이름이 돌아온다」로 정해 적었다. test_rebuilding_in_the_same_place_brings_the_name_back 이 벽을 HITS 번 쳐 헐고(방 0개, 페이지 줄 0개, 이름은 남음) 같은 자리에 벽을 다시 세워 같은 id 와 페이지의 「서재」를 확인한다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 이름을 바꾼 뒤의 페이지",
+     "evidence": "ui_shots 에 rooms_named 자리가 더해졌고 /tmp/g1623/rooms_named_ko.png 를 직접 봤다 — 제작소 · 「망치 소리 나는 곳」(대장간) · 잡실 세 줄, 이름 칸과 역할이 잘리지 않고 보인다. en 도 찍혀 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) ROOM_FOR_FRAME 이 spec 수치 절에 없다",
+     "evidence": "rooms.md 「## 수치」에 「방 페이지 목록 밖 창 몫 높이 RoomWindow.ROOM_FOR_FRAME 120px (임시) — 눈으로 잡았다」가 더해졌고, test_the_frame_height_is_in_the_numbers 가 수치 절 안에 그 줄이 있는지와 코드 값 120 이 같은지 본다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "k      3s  res://tests/world/storage/test_chest_slots.gd\nok      2s  res://tests/build/test_placeable.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/build/test_spec_readme_building_kinds.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           231\nTests            1911\nPassing Tests    1911\nFailing Tests       0\nRisky/Pending       0\nAsserts         89198\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "a3fb4683"
  }
 ]
