@@ -1,15 +1,15 @@
 {
- "state": "done",
- "reason": "이 차선(3d-start) 몫을 다 했다 — 다른 차선 몫으로 남은 것: G-158 (그 차선이 꺼져 있으면 아무도 안 한다)",
- "updated": "2026-09-28 01:54:40",
- "updated_epoch": 1790528080,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-28 14:21:27",
+ "updated_epoch": 1790572887,
  "ended": "2026-09-28 01:54:40",
  "progress": {
-  "groups_total": 48,
-  "groups_done": 47,
+  "groups_total": 49,
+  "groups_done": 48,
   "groups_waiting": 0,
-  "steps_total": 230,
-  "steps_done": 229
+  "steps_total": 235,
+  "steps_done": 232
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-157",
