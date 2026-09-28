@@ -1577,7 +1577,7 @@
   - 기준: 코드 주석 · 테스트 이름에 옛 말 「직무」가 남았다 — spec 은 「직업」으로 맞췄는데 jobs.gd · villager.gd · villagers.gd · gather_work.gd 주석과 test_villager_jobs.gd 의 단언 글(「약초꾼이 직무 목록에 없다」 등), gather_work.gd 가 가리키는 spec 절 이름 「직무」(지금은 없는 절이다)에 옛 말이 그대로다. 주석과 글에서 「직무」를 「직업」으로 바꾸고 spec 절을 가리키는 곳은 지금 npc-villagers.md 에 있는 절 이름으로 고쳐라. 막는 것은 아니다
   - 기준: (앞 단계 QA) test_villager.gd 가 임시 폴더를 남긴다 — test.log 에 TMPDIR naru_villager_2240277995 가 남았다고 나온다. 이름꼴 naru_villager_%d 는 tests/automation/villagers/test_villager.gd:32 의 것이다. after_each 의 TempDir.clean(self, _dir)(59행)이 모든 경로에서 불리는지(이른 return · await 도중 끝남) 보고, _dir 을 만드는 테스트마다 확실히 지워지게 고쳐라. 이번 변경과는 상관없다
 
-## [ ] G-161 주민 창 — 한눈에 보고 직무를 준다 (사람 결정 2026-09-28)
+## [x] G-161 주민 창 — 한눈에 보고 직무를 준다 (사람 결정 2026-09-28)
 - 차선: 3d-lane2
 - spec: spec/07_automation/npc-villagers.md, spec/12_ui/hud.md, spec/01_settings/input.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 — 깨끗해질 때까지
