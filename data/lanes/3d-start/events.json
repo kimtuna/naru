@@ -1,27 +1,5 @@
 [
  {
-  "time": "2026-09-24 17:47:39",
-  "epoch": 1790239659,
-  "type": "fail",
-  "title": "기계 검사 실패 — G-145 단계 1 (시도 1)",
-  "group": "G-145",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "턱 0.3m 걸어 오르기를 게임 규칙으로 넣었다(PlayerConfig.step_height). test_from_empty_hands 의 건축 부분도 통과한다. 바뀐 곳만 돌린 결과: 89개 파일 · 851개 테스트 전부 통과",
-   "approach": "이어 붙인 개수에 대한 기준(ROOF_SPAN 제거 · 0/1/2 개수 · 나무3/석재4/철5 · 기둥에서 0 · 연쇄 붕괴)은 앞 회차 커밋(test_building_link_count.gd)에 이미 들어 있었다. 이번에 tests/build 100개가 전부 통과하는 것을 확인했다. 막혔던 것은 test_from_empty_hands 였다. (1) 캐릭터 캡슐의 둥근 발이 0.2m 토대 모서리에 닿으면 그 모서리를 벽으로 보고 멈췄다. 그래서 Player._step_up 을 넣었다: 앞이 막히고 그것이 비탈이 아니면, config.step_height(0.3m)만큼 들어 올리고 적어도 STEP_REACH(0.15m) 앞으로 민 뒤 내려 디딘다. 이 셋이 다 되면 그 자리로 옮긴다. 조금이라도 앞으로 미는 것은, 느리게 걸을 때도 모서리를 45° 안쪽에서 바닥으로 딛게 하려는 것이다. (2) 제작대에서 집 자리로 가는 길을 과녁이 막고 있었다. 테스트에서 쏘기를 마친 뒤 과녁을 치운다(_take_down). 맞은 것을 세던 시그널 연결도 함께 끊는다 — 그대로 두면 치운 과녁을 붙든 람다 때문에 엔진 오류가 났다. (3) 토대 위에서 벽을 조준하던 _aim_at 이 제대로 맞추지 못했다. 방향을 카메라에서 재고 있었는데, 카메라는 돌 때마다 캐릭터 둘레로 자리를 옮긴다. 그래서 발 앞 변을 겨누면 맞춰지지 않고 피치 한계(-65°)를 넘었다. 방향은 캐릭터에서 재도록 바꿨다(조준선은 늘 캐릭터 위 축을 지난다). test_from_empty_hands 를 따로 돌려 통과했다. roof_reach 를 찍어 확인했다(.loop/out/roof_steps.png): 벽 한 장에서 1~3장째가 초록, 4~6장째가 빨강이다.",
-   "why": "Player.STEP_REACH 0.15m — 턱을 오를 때 적어도 이만큼 앞으로 내디딘다. 캡슐 반지름 0.35 에 맞춘 값이라 몸 크기가 바뀌면 다시 잰다 (턱 높이 0.3m 는 사람 결정이라 임시가 아니다)",
-   "files": [
-    "game/player/movement_controls/player.gd",
-    "game/player/movement_controls/player_config.gd",
-    "game/tests/player/movement_controls/test_step_up.gd",
-    "game/tests/craft/test_from_empty_hands.gd"
-   ],
-   "decision": null
-  },
-  "test": "pots_are_under_water\n* test_pond_shores_can_be_walked_to\n* test_resources_follow_the_ratio\n* test_resources_avoid_water_cliffs_and_spawn\n* test_island_has_its_own_ores_only\n* test_vegetation_is_placed_by_rules\n26/26 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= 36 Orphans\n==============================================\ntest_ui_shots.gd\n    - test_island_shot_builds_the_real_island\n        * [HandView:<Control#4265070325932>(hand_view.gd)] + 5\ntest_bag_temporary_note.gd\n    - test_the_header_says_the_dim_and_the_layer_are_temporary\n        * [HandView:<Control#12882402089434>(hand_view.gd)] + 5\n    - test_the_header_points_at_the_theme_the_scene_actually_uses\n        * [HandView:<Control#12883542940209>(hand_view.gd)] + 5\n        * [HandView:<Control#12883006090831>(hand_view.gd)] + 5\n    - test_the_header_quotes_the_layer_the_bag_actually_sits_on\n        * [HandView:<Control#12884281159552>(hand_view.gd)] + 5\n    - test_the_note_does_not_stick_to_the_slot_size\n        * [HandView:<Control#12884918670619>(hand_view.gd)] + 5\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/settings/save/test_world_data_keys_note.gd\n- test_the_islands_comment_names_every_stored_key\n    [Failed]:  주석에 animals 가 없다 — 저장되지 않는 것으로 읽힌다: ## **섬마다** 바뀐 것 — 섬 id → {gone(캔 자리), taken(캔 날), stations(지은 것),\n    ## buildings(지은 건축물), chests(놓은 상자), death_chests(죽은 자리의 상자), docks(지은 선착장),\n    ## fields(놓은 밭), crops(심긴 작물), drops(바닥에 떨어진 것), map(밝힌 지도)}\n    ## (world/frontier_islands/island_state.gd). 섬끼리 섞이지 않게 id 로 갈라 담는다.\n          at line 71\n\nTotals\n------\nScripts             164\nTests              1399\nPassing Tests      1398\nFailing Tests         1\nAsserts           65156/65157\nOrphans              36\nTime              1277.953s\n\n\n---- 1 failing tests ----\n\nWARNING: 36 RIDs of type \"CanvasItem\" were leaked.\n   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2735)\nWARNING: 179 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\nERROR: 9 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.\nERROR: 100 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.\nERROR: 1 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
- },
- {
   "time": "2026-09-24 18:39:49",
   "epoch": 1790242789,
   "type": "pass",
@@ -8151,5 +8129,67 @@
   },
   "test": "ife/gathering/test_gathering.gd\nok     18s  res://tests/automation/villagers/test_villager_walks_in.gd\nok     17s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     17s  res://tests/automation/villagers/test_villager_jobs.gd\nok     18s  res://tests/life/hunting/test_butchery.gd\nok     15s  res://tests/automation/villagers/test_villager_as_built.gd\nok     17s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     16s  res://tests/automation/villagers/test_villager_planting.gd\nok     11s  res://tests/build/test_building_roof_stairs.gd\nok     15s  res://tests/life/hunting/test_carry_cage.gd\nok     15s  res://tests/core/debug/test_dev_box.gd\nok     16s  res://tests/world/terrain/test_island_shape_marks_note.gd\nok     12s  res://tests/life/farming/test_farmland.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok     12s  res://tests/life/hunting/test_leg_slow.gd\nok      9s  res://tests/core/debug/test_dev_box_open.gd\nok     11s  res://tests/world/day_night/test_day_light.gd\nok      9s  res://tests/core/debug/test_ui_shots.gd\nok      8s  res://tests/world/frontier_islands/test_dock_building.gd\nok      8s  res://tests/life/gathering/test_herbs.gd\nok      9s  res://tests/life/hunting/test_sedation_capture.gd\nok      8s  res://tests/world/storage/test_chest_break.gd\nok      8s  res://tests/world/day_night/test_day_in_world.gd\nok      5s  res://tests/combat/tools_as_weapons/test_bullet_trace.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      6s  res://tests/life/fishing/test_bait_zone.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      3s  res://tests/life/hunting/test_body_parts.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      5s  res://tests/ui/menu/test_pause_menu.gd\nok      5s  res://tests/combat/tools_as_weapons/test_aiming.gd\nok      2s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      2s  res://tests/life/food/test_food.gd\nok      3s  res://tests/build/test_bed.gd\nok      2s  res://tests/player/movement_controls/test_control_locks.gd\nok      1s  res://tests/automation/villagers/test_villager_door.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      4s  res://tests/ui/hud/test_room_names.gd\nok      3s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/lighting/test_torch.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      2s  res://tests/settings/save/test_death_chest_save.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            83\nTests             719\nPassing Tests     719\nFailing Tests       0\nRisky/Pending       0\nAsserts         16753\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "26541808"
+ },
+ {
+  "time": "2026-09-30 06:19:33",
+  "epoch": 1790716773,
+  "type": "fail",
+  "title": "QA 불합격 — G-168 단계 2 (시도 1)",
+  "group": "G-168",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "사람이 찍어 보낸 짜임(2×2 방 · 구석 상자 · 길 한가운데 횃불)에서 농부가 횃불을 돌아 상자에 닿는 것을 테스트 3개로 지키고, 찍기 자리 villager_torch 를 더했다 — 바뀐 곳 그물 34개 파일 · 230 테스트 통과",
+   "approach": "도려내기 자체는 G-168.1 에서 끝났다 — 이번 단계는 사람이 찍어 보낸 그 짜임을 그대로 테스트로 세웠다. 2×2 판 방 구석(벽에 바짝)에 씨앗 상자, 반대 구석에 농부와 밭, 둘을 곧게 잇는 줄 한가운데에 횃불(사람이 놓는 길 Torches.place_at). (1) 걸을 땅 위 길이 횃불을 몸 닿는 거리(횃불 반 폭 + 주민 반지름 0.47m) 밖으로 돌고, 농부가 상자에서 씨앗을 꺼내 밭에 심는 동안 매 프레임 잰 횃불까지의 최소 거리가 0.50m 였다. (2) 그동안 창의 까닭에 WHY_CANT_GET_THERE · WHY_NO_ROOM_AT_CHEST 가 한 번도 안 뜨고, 설 자리 재기(cramped) · 알림 목록 · last_said 에도 「설 자리가 없다」가 없다. (3) 주민이 선 뒤 횃불을 놓으면 2 물리 프레임 만에 길이 돌아가고 길 끝이 상자 손 거리 안이다 (대조: 놓기 전에는 가운데를 곧게 지난다). 찍기: harness/shot.sh --ui 에 villager_torch 자리를 더했다 — 사람이 지은 그대로의 방(AsBuiltRoom)에서 문과 상자 사이에 횃불을 세우고, 농부가 횃불과 나란히 비껴 지날 때 찍는다. 그림으로 주민이 횃불 옆을 돌아 상자 쪽으로 가고 창의 까닭이 비어 있음을 확인했다 (가장 가까이 0.54m). 앞 단계 QA 두 줄: node_added 를 트리 전체에서 듣는 까닭(Godot 에 무리 든 신호가 없고 놓는 곳이 여럿이라 하나씩 걸면 또 빠진다 · 클래스 검사로 먼저 걸러 싸다)을 _enter_tree 주석에 적었고, _changed_at 주석 첫 마디를 「저장 목록에 둘 까닭이 없다 — 불러오면 섬이 설 때 같은 자리가 다시 모인다」로 맞췄다. 확인: 바뀐 곳 그물(changed_tests.py) 34개 파일 · 230 테스트 통과.",
+   "why": "",
+   "files": [
+    "game/tests/automation/villagers/test_villager_torch_detour.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "사람이 찍어 보낸 그 짜임 — 방 안에 횃불이 길 한가운데 서 있고 상자는 구석. 주민이 돌아서 상자에 닿는다 (테스트)",
+     "evidence": "test_villager_torch_detour.gd::test_the_farmer_walks_around_the_torch_to_the_chest_in_the_corner — 걸을 땅 위 길이 횃불에서 CLEAR(0.47m) 밖으로 도는지 보고, 농부가 상자에서 씨앗을 꺼내 심는지 본다. _carve_body 에서 Torch 를 건너뛰게 깨 보니 길 단언(0.19m < 0.47m)에서 떨어졌다. G-167 완료 시점(05395b97) 코드에서도 같은 단언으로 떨어진다. 단, 몸 거리 단언(CLEAR-0.05)은 고치기 전 코드에서도 0.48m 로 통과해 몸 쪽은 아무것도 지키지 않는다 — problems 참고"
+    },
+    {
+     "ok": false,
+     "criterion": "「길이 막혔다」 · 「설 자리가 없다」가 이 짜임에서는 안 뜬다 (테스트)",
+     "evidence": "test_no_blocked_or_cramped_word_shows_in_this_layout 는 G-168.1 이전 코드(05395b97 워크트리에 새 테스트만 넣어 돌림)에서도, 지금 코드에서 횃불 도려내기만 꺼도 그대로 통과했다. 이 짜임에서는 고치기 전에도 주민이 횃불에 몸을 비비며 미끄러져 지나가 막힘이 안 뜬다 — 사람이 본 「막혔다고 일을 안 한다」를 재현하지 못하니 이 테스트는 아무것도 지키지 않는다"
+    },
+    {
+     "ok": true,
+     "criterion": "횃불을 나중에 놓아도 걸을 땅이 다시 구워진다 — 놓자마자 길이 돌아간다 (테스트)",
+     "evidence": "test_a_torch_placed_later_turns_the_path_at_once — 놓기 전엔 길이 가운데를 곧게 지나는지(대조) 보고, Torches.place_at 뒤 30 물리 프레임 안에 길이 CLEAR 밖으로 도는지 · 길 끝이 상자 손 거리 안인지 본다. 지금 2 프레임. 도려내기를 끄면 -1 로 떨어지고 옛 코드에서도 떨어진다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 횃불을 돌아 상자로 가는 주민",
+     "evidence": "ui_shots 에 villager_torch 자리를 더했다. /tmp/shot_torch/villager_torch_ko.png 에서 AsBuiltRoom 방 안 주민이 횃불 곁에 비껴 서서 상자 쪽으로 가는 모습이 보인다 (report: 가장 가까이 0.54m, 창의 까닭 빔)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 트리 전체 node_added 를 듣는다 — … 까닭을 주석에 적어 두면 좋다",
+     "evidence": "villagers.gd _enter_tree 위에 트리 전체를 듣는 까닭(무리 든 신호가 없음 · 놓는 곳이 여럿 · CollisionObject3D 검사로 먼저 거름)을 주석으로 적었다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) _changed_at 의 저장 까닭이 흩어졌다 — … 주석 첫 마디를 맞춰라",
+     "evidence": "villagers.gd _changed_at 주석 첫 마디가 「저장 목록에 둘 까닭이 없다 — 불러오면 섬이 설 때 … 다시 모인다」로 바뀌었고 test_round_trip 의 「안 담는다」에 없는 까닭도 적었다"
+    }
+   ],
+   "issues": [
+    "막힘 테스트가 옛 코드에서도 통과한다 — test_villager_torch_detour.gd::test_no_blocked_or_cramped_word_shows_in_this_layout 를 05395b97(G-168.1 이전) 코드에 넣어 돌려도, 지금 코드에서 animal_nav.gd _carve_body 첫 줄에 `if thing is Torch: return` 을 넣어도 통과했다. 이 짜임(2×2 방 · 대각선 한가운데 횃불)에서는 고치기 전에도 주민이 횃불(0.14m 기둥)에 몸을 비벼 미끄러져 지나가 WHY_CANT_GET_THERE 가 안 뜬다. 사람이 본 「막혔다고 일을 안 한다」가 실제로 나는 짜임을 찾아라 — 예: 횃불을 여럿(좁은 통로를 가로막게 두세 개) 두거나, 상자 앞 설 자리 · 문 앞처럼 몸이 비켜 갈 틈이 없는 곳에 두거나, 제작대처럼 몸이 큰 것을 함께 둔다. 기준: 도려내기를 끈 코드(또는 05395b97)에서 이 테스트가 「길이 막혔다」 또는 심지 못함으로 떨어지고, 지금 코드에서 통과해야 한다. 깨 본 결과를 테스트 머리 주석에 적어 두어라",
+    "몸이 돌아갔다는 단언이 느슨하다 — test_the_farmer_walks_around_the_torch_to_the_chest_in_the_corner 의 assert_gte(nearest, CLEAR - 0.05) 는 옛 코드(길이 횃불을 뚫는데도)에서 0.48m 로 통과했다. 몸은 물리로 미끄러져 늘 CLEAR 근처에 머문다. 몸 거리로 돌아감을 보려면 옛 코드에서 떨어지는 문턱을 골라라(예: 도려낸 길은 THING_PAD 만큼 더 멀리 지나니 CLEAR + 여유) 아니면 이 단언을 빼고 길 단언이 기준을 지킨다고 주석에 적어라"
+   ],
+   "good": []
+  },
+  "test": "ts/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      0s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      2s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      0s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      0s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           252\nTests            2025\nPassing Tests    2025\nFailing Tests       0\nRisky/Pending       0\nAsserts         98710\nTime           453s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
