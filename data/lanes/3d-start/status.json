@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-29 16:45:28",
- "updated_epoch": 1790667928,
+ "updated": "2026-09-29 17:12:08",
+ "updated_epoch": 1790669528,
  "ended": "2026-09-29 14:44:23",
  "progress": {
   "groups_total": 56,
   "groups_done": 55,
   "groups_waiting": 0,
   "steps_total": 262,
-  "steps_done": 259
+  "steps_done": 260
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-165",
  "step": "1",
  "step_title": "닿는다는 것이 사람과 같아진다",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-29 16:45:28",
+ "phase": "QA",
+ "phase_since": "2026-09-29 17:09:39",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
