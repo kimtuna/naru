@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 02:34:41",
- "updated_epoch": 1790703281,
+ "updated": "2026-09-30 02:59:00",
+ "updated_epoch": 1790704740,
  "ended": "2026-09-29 22:52:13",
  "progress": {
   "groups_total": 58,
   "groups_done": 57,
   "groups_waiting": 0,
   "steps_total": 272,
-  "steps_done": 269
+  "steps_done": 270
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-167",
  "step": "2",
  "step_title": "닿게 고친다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-30 02:34:41",
+ "phase": "QA",
+ "phase_since": "2026-09-30 02:55:09",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
