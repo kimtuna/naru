@@ -1,30 +1,5 @@
 [
  {
-  "time": "2026-09-24 03:25:15",
-  "epoch": 1790187915,
-  "type": "wait",
-  "title": "기다린다 — 토큰 한도에 걸렸다 (재개 시각을 못 뽑아 30분 쉰다)",
-  "group": "G-140",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "계단이 토대 한 장(3×3칸) 안의 얇은 비탈 판이 되어 밑으로 걸어 지나가고, 걸어서 위층에 오르며, 방 판정도 그대로다 — 바뀐 곳 테스트 105개 파일 952개 통과",
-   "approach": "계단이 토대 두 장을 차지했고 속이 꽉 찬 쐐기(PrismMesh)였다. STAIRS_PLATES 를 1 로 줄이고, 판을 기울이지 않고 밀어서(shear) 세운 얇은 비탈 판(두께 0.2m)으로 바꿨다. 기울이면 두께만큼 옆 판으로 튀어나가지만, 밀면 앞뒤 끝이 곧게 서서 판 한 장 안에 머문다. 몸은 밀린 모양을 그대로 받을 수 없어서 여덟 꼭짓점으로 볼록 몸을 만들었다. 한 장(3m)에 한 층(3.2m)을 오르면 약 47°라 캐릭터의 45° 한도를 넘는다. 그래서 몸에 『여기까지는 바닥』 기울기를 메타(Player.WALK_ANGLE_META)로 적을 수 있게 했고, 플레이어는 닿은 몸의 메타를 보고 floor_max_angle 을 올린다. 계단을 벗어나면 45°로 돌아가고, 지형에는 이 메타가 없어서 절벽 규칙은 그대로다. 처음 해 보니 꼭대기에서 위층 바닥 모서리가 약 50° 면으로 잡혀 멈췄다(여유 1°는 멈추고 3°는 아슬아슬해서 5°로 잡았다). 계단이 앞 판을 딛지 않으므로 앞에 판이 없어도 놓인다. 방 판정은 그대로라 계단 판은 아래층 천장이 막힌 것으로 치고, 위층 구멍은 한 장이다. 테스트는 몸 꼭짓점과 그림이 판 안에 있는지, 계단 밑 0.5m·1m 에 몸이 없는지, 서쪽 판에서 동쪽 판으로 계단 밑을 걸어 건너는지, D에서 북쪽으로 걷기만 해서 위층 바닥 높이에 서는지, 계단 밑 자리가 아래층 방 ID 에 드는지를 본다. 그림은 harness/shot.sh 에 build_stairs 자리를 새로 만들어 옆에서 낮게 찍었다. 얇은 판이 제 판 뒷변에서 앞변까지만 오르고 밑으로 풀밭이 보인다. spec 미정 줄 『계단 길이 임시 두 장』을 지금 상태로 고쳤다(사람 결정 줄은 건드리지 않았다).",
-   "why": "BuildPiece.STAIRS_THICKNESS = 0.2m — spec 에 수치가 없어서 토대·지붕과 같은 두께로 잡았다; BuildPiece.STAIRS_WALK_MARGIN_DEG = 5° — 계단 기울기(약 46.8°)보다 이만큼 가팔라도 계단 몸 위에서는 바닥으로 친다. 꼭대기 모서리가 약 50°로 잡혀 1°로는 멈췄고 3°는 아슬아슬했다",
-   "files": [
-    "game/build/build_piece.gd",
-    "game/build/buildings.gd",
-    "game/player/movement_controls/player.gd",
-    "game/core/debug/shots.gd",
-    "game/tests/build/test_building_roof_stairs.gd",
-    "game/tests/build/test_rooms.gd",
-    "game/tests/build/test_building_pillar.gd",
-    "spec/06_build/building.md"
-   ],
-   "decision": null
-  }
- },
- {
   "time": "2026-09-24 03:41:14",
   "epoch": 1790188874,
   "type": "start",
@@ -7992,5 +7967,56 @@
   "epoch": 1790658718,
   "type": "start",
   "title": "루프 시작"
+ },
+ {
+  "time": "2026-09-29 14:44:18",
+  "epoch": 1790660658,
+  "type": "pass",
+  "title": "통과 — G-164 단계 3 (한 바퀴가 돈다 — 빈 밭에서 거둘 때까지)",
+  "group": "G-164",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "농사 한 바퀴(심기 → 물 → 비료 → 거두기 → 다시 심기)가 사람 손 없이 돈다. 테스트 · spec 차례 · 세 장 확인. 찍다 보니 농부가 상자에 막혀 멈추는 문제가 있어 고쳤다 — 걸을 땅이 놓은 상자를 돌아간다. 바뀐 곳만: 파일 75개 683개 중 680개 통과, 떨어진 test_round_trip.gd 를 고친 뒤 그 파일만 다시 돌려 21개 통과",
+   "approach": "앞 회차에서 한 바퀴 테스트(test_villager_farm_cycle.gd, Crops.next_day 로 날을 넘긴다)와 spec 의 「밭일을 고르는 차례」(거두기 → 심기 → 물 → 비료 → 든 것 두기)는 이미 적혀 있었다. 테스트를 돌리면 villagers 폴더 11개 파일 78개가 통과한다. 남은 건 사진 세 장이었는데, 찍어 보니 farm_planted 가 실패했다. 농부가 상자에서 씨앗 6개를 꺼내 손이 닿는 두 밭에 심은 뒤, 상자 너머 먼 두 밭에는 가지 못하고 제자리에 서 있었다. 원인: 걸을 땅(AnimalNav)에 놓은 상자가 없어서 내비메시 길이 상자를 곧게 뚫고 났고, 농부는 상자에 걸려 STUCK → RETRY 를 되풀이했다. 실제 게임에서도 밭이 상자 너머에 있으면 한 바퀴가 멈춘다. 고친 것: AnimalNav._add_buildings 가 StorageChest 를 받으면 벽처럼 WALL_PAD 만큼 넉넉히 도려낸다. Villagers._pieces 가 놓은 상자도 넘기고, 새 Villagers.watch_chests(Chests) 는 상자를 놓거나 부수면 그 자리의 걸을 땅을 다시 굽는다(건축물과 같은 _changed_at 길). TestIsland 에서 이것을 건다. 새 테스트 test_villager_chest_detour.gd 는 (1) 상자 너머 6m 밭에 농부가 심는지, (2) 나중에 놓은 상자를 길이 돌아가는지 본다. 고친 것을 잠깐 끄면 두 테스트 모두 실패하는 것도 확인했다. 사진: 두 사진이 똑같이 보이지 않게, 상자에 씨앗을 한 바퀴 몫 + 2(FARM_REPLANT)만 넣었다. 그래서 farm_harvested 에서는 거둔 뒤 두 자리만 새 싹이고 두 자리는 거둔 빈 밭이다. 세 장(.loop/out/farm/farm_bare · farm_planted · farm_harvested.png)을 열어 봤다. 빈 밭 넷 → 싹 넷(물 먹어 짙은 밭) → 싹 둘 + 빈 밭 둘이고, 로그에는 FARM_CYCLE 상자 밀 12 · 씨앗 0 이 찍힌다. 앞 회차가 남긴 PROBE-TMP · DEBUG 출력은 지웠다. 저장: 상자를 놓은 프레임에 _changed_at 이 남아 test_round_trip.gd 의 누설 검사에 걸렸다. 걸을 땅을 다시 굽기 위한 일시 목록이고 불러오면 새로 굽기 때문에 DONT_SAVE 에 까닭을 적어 넣었다. 테스트 결과: changed_tests 그물 75개 파일 683개 중 680개 통과, 떨어진 3개는 모두 test_round_trip.gd 였다. 고친 뒤 그 파일만 다시 돌려 21개 통과했다. 그물 전체를 다시 돌리지는 않았다.",
+   "why": "상자를 도려내는 몫 = AnimalNav.WALL_PAD(0.45m, 이미 임시) — 벽과 같은 몫을 썼다",
+   "files": [
+    "game/life/hunting/animal_nav.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/world/terrain/test_island.gd",
+    "game/core/debug/shots.gd",
+    "game/tests/automation/villagers/test_villager_chest_detour.gd",
+    "game/tests/settings/save/test_round_trip.gd",
+    "spec/07_automation/npc-villagers.md",
+    "spec/07_automation/villager-rooms.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "**심기 → 물 → 비료 → 거두기 → 다시 심기**가 사람 손 없이 이어진다 — 빈 밭 · 씨앗 든 상자 · 농부 하나로 시작해 거둔 것이 상자에 쌓일 때까지 실제로 돌려 본다 (테스트)",
+     "evidence": "test_villager_farm_cycle.gd::test_bare_fields_go_round_to_harvest_and_back_without_a_hand — 빈 밭 셋 · 씨앗 6 · 빈 물뿌리개 · 비료 든 상자 · 농부 하나로 시작해 사람은 Crops.next_day 만 부른다. 두 바퀴를 돌며 바퀴마다 상자 밀 수(each×3×회차)를 단언하고, 칸마다 신호 차례가 plant→water→feed 로 시작하는지 · 첫 harvest 바로 뒤가 plant 인지 · 끝이 harvest 인지 · 씨앗 0 · 사람 가방 밀 0 · 방 밖 밭은 그대로인지 본다. 전체 실행(test.log, 1963개 모두 통과)에서 통과했다. 새 test_villager_chest_detour.gd 두 테스트는 상자 도려내기(_carve_chest)를 끄고 돌리면 둘 다 실패한다(QA 가 직접 깨 봤고 되돌렸다)"
+    },
+    {
+     "ok": true,
+     "criterion": "할 일을 고르는 차례를 spec 에 적는다 — 무엇을 먼저 하나 (심기 · 물 · 비료 · 거두기)",
+     "evidence": "spec/07_automation/npc-villagers.md 「밭일을 고르는 차례 (G-164.3)」 — 1 거두기 → 2 심기 → 3 물 → 4 비료 → 5 든 것 두기, 차례마다 까닭을 적었다. 파일은 142줄로 150줄 안이다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 빈 밭 · 심은 뒤 · 거둔 뒤 세 장",
+     "evidence": ".loop/out/farm/farm_bare · farm_planted · farm_harvested.png 를 열어 봤다. 빈 밭(갈색 흙) → 싹 넷 · 물 먹어 짙은 밭 · 농부 → 싹 둘 + 거둔 빈 자리 둘로 갈린다. shots.gd 의 replanted 조건이 상자 밀 · 씨앗 0 · 새 싹 수(FARM_REPLANT)를 확인하고 못 맞추면 _wrong 에 적는다"
+    }
+   ],
+   "issues": [],
+   "good": [
+    "놓은 상자를 주민 걸을 땅에서 도려내고 놓고 · 부술 때 다시 굽는다(AnimalNav._carve_chest · Villagers.watch_chests) — 스크린숏을 찍다 드러난 실제 버그(상자 너머 밭으로 못 간다)를 고친 것이라 이 기준을 채우는 데 필요했다. 테스트(test_villager_chest_detour.gd)와 spec(villager-rooms.md) 줄이 붙어 있고, _changed_at 은 DONT_SAVE 에 까닭을 적었다"
+   ]
+  },
+  "test": " res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      0s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      0s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           240\nTests            1963\nPassing Tests    1963\nFailing Tests       0\nRisky/Pending       0\nAsserts         95687\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "98619e17"
  }
 ]
