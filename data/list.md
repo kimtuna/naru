@@ -1722,7 +1722,7 @@
 - [x] 2. NAV_HALF 의 5.0 이 이름 없는 임시 수치다 (G-930 단계 2)
   - 기준: NAV_HALF 의 5.0 이 이름 없는 임시 수치다 — game/automation/villagers/villagers.gd:54 `const NAV_HALF := FieldCare.WATER_RADIUS + 5.0` 의 5.0 은 NAV_MARGIN 과 같은 여유값인데 숫자로 박혀 있고 「임시」 표시도 spec 수치 줄도 없다. NAV_MARGIN 을 NAV_HALF 위로 올려 `FieldCare.WATER_RADIUS + NAV_MARGIN` 으로 쓰거나, 다른 값이면 주석에 **임시** 와 까닭을 달고 npc-villagers.md 「수치」 NAV_MARGIN 줄에 「걸을 땅은 적어도 민물 반경 60m + 5m」를 더하라
 
-## [ ] G-164 농부가 심고 거둔다 — 농사 한 바퀴를 닫는다 (사람 결정 2026-09-29)
+## [x] G-164 농부가 심고 거둔다 — 농사 한 바퀴를 닫는다 (사람 결정 2026-09-29)
 - 차선: 3d-start
 - spec: spec/07_automation/npc-villagers.md, spec/04_life/farming.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 — 깨끗해질 때까지
