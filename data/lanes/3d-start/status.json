@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 02:18:53",
- "updated_epoch": 1790702333,
+ "updated": "2026-09-30 02:27:18",
+ "updated_epoch": 1790702838,
  "ended": "2026-09-29 22:52:13",
  "progress": {
   "groups_total": 58,
@@ -16,8 +16,8 @@
  "step": "1",
  "step_title": "왜 설 자리가 없는지 재서 밝힌다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-30 02:18:53",
+ "phase": "QA",
+ "phase_since": "2026-09-30 02:27:18",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",

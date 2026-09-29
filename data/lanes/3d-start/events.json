@@ -1,44 +1,5 @@
 [
  {
-  "time": "2026-09-24 11:20:03",
-  "epoch": 1790216403,
-  "type": "pass",
-  "title": "통과 — G-903 단계 1 (총과 탄까지 이어진다)",
-  "group": "G-903",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "빈손 한 바퀴 테스트를 철괴 → 리볼버 · 권총탄 → 과녁 사격 → R 재장전 → 탄이 없으면 안 채워짐까지 이었다 (중간에 넣어 준 아이템 없음)",
-   "approach": "게임 코드는 고치지 않았다 — 길은 이미 이어져 있었고, 끝까지 실제로 치는 테스트만 없었다. 권총탄은 철괴 1 + 유황 1 이라 유황이 필요하다. 그래서 캐는 줄 끝에 철광석 넷(철괴 다섯 몫: 리볼버 4 · 탄 1)과 유황 하나를 더 놓았다. 목재는 소나무 일곱에서 28개가 나오는데 제작대 20 · 도끼 3 · 곡괭이 3 · 리볼버 2 로 딱 맞는다. 제련로에서 철괴 다섯 · 유황 하나를 뽑고, 제작대에서 리볼버 · 권총탄 10발을 만든다. 테스트에 섬에 붙는 것과 같은 Attack 노드를 붙이고 체력 달린 과녁 상자를 세운 뒤 진짜 좌클릭으로 쏜다. 공짜로 차 있는 첫 탄창 6발을 비운 다음 진짜 R 키로 6발 · 4발을 넣어(한 발씩 장전) 만든 탄 10발을 다 쏘고, 발마다 과녁에 맞아 피해가 들어가는지 본다. 가방이 빈 뒤에는 R 을 눌러도 재장전이 걸리지 않고, 시간이 지나도 탄창이 0 이며, 좌클릭해도 나가지 않는다. 한계: 유황은 원래 개척 섬에서 난다. 섬을 건너는 길(연구대 → 해금 아이템 → 선착장 → 배)은 이 테스트가 치지 않는다 — 지형을 걷어 낸 평평한 줄에 놓았다(철광석을 그렇게 두는 것과 같은 방식). 그 연결은 따로 칠 몫으로 남는다.",
-   "why": "",
-   "files": [
-    "game/tests/craft/test_from_empty_hands.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "철괴에서 **총 · 탄약**을 만들어 실제로 쏜다 — 중간에 아이템을 넣어 주지 않는다 (테스트)",
-     "evidence": "test_from_empty_hands.gd 의 test_from_empty_hands_to_a_fired_gun_without_being_handed_anything: 제련로에서 철괴 5 · 유황 1을 뽑고, 제작대에서 revolver 1 · pistol_ammo(레시피 count 만큼)를 _craft_at 으로 만든다. 철괴 · 유황이 0이 되고 가방 탄이 만든 수와 같은지 단언한다. 진짜 좌클릭(Click.click)으로 과녁(Health 붙은 StaticBody)을 쏘고, 발마다 Projectile.hit 로 과녁 피해(_hits)가 느는지, 나간 발 수가 처음 탄창 + 만든 탄 수와 같은지 본다. 파일에 bag.add · set_slot 이 없다(grep). 주운 것이 캔 것과 똑같은지 맞춰 보는 단언도 그대로 있다. test.log: 1/1 통과 · 211 asserts · guard 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "R 로 재장전하고, 탄이 없으면 안 채워진다 (테스트)",
-     "evidence": "같은 테스트의 8·9단계: 진짜 R(InputActions.RELOAD 액션을 push_input)을 누르면 is_reloading 이 켜지고, 탄창에 min(크기, 가방 탄)발이 들어가며 가방에서 그만큼 빠지는지 본다. 가방이 빈 뒤 R 을 누르면 is_reloading 이 꺼진 채이고, 시간이 지나도 left()==0 이며, 좌클릭해도 발 수가 늘지 않는다. 일부러 깨 봤다: magazine.gd begin_reload 의 한 발씩 장전에서 『가방에 탄이 없으면 false』 줄을 지우고 돌리니 『탄이 없으니 R 을 눌러도 재장전이 걸리지 않는다』에서 실패했다. 본 뒤 되돌렸다(git diff 깨끗)"
-    }
-   ],
-   "issues": [
-    "유황을 캐러 섬을 건너는 길은 치지 않는다 — 유황은 개척 섬에서 난다(roadmap 「자원」). 그런데 test_from_empty_hands.gd 는 유황 광석을 내 섬의 평평한 줄에 놓아 캤다. 연구대 → 해금 아이템 → 선착장 → 배로 건너가는 길은 이 한 바퀴 테스트가 치지 않는다. 이번 기준 밖이니 G-903 단계 4 「한 바퀴가 한 번도 끊기지 않는다」나 G-900 에서, 개척 섬으로 건너가 유황을 캐는 데까지 실제로 치는 테스트를 이어 붙여라"
-   ],
-   "good": []
-  },
-  "test": "--- 바뀐 곳만: 1 개 ---\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/craft/test_from_empty_hands.gd\n* test_from_empty_hands_to_a_fired_gun_without_being_handed_anything\n    --- Awaiting 1.0 seconds  ---\n1/1 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts               1\nTests                 1\nPassing Tests         1\nAsserts             211\nTime              54.802s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "818bd6e"
- },
- {
   "time": "2026-09-24 11:40:35",
   "epoch": 1790217635,
   "type": "pass",
@@ -7894,5 +7855,52 @@
    "good": []
   },
   "test": "/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           248\nTests            2002\nPassing Tests    2002\nFailing Tests       0\nRisky/Pending       0\nAsserts         97760\nTime           441s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-30 02:30:04",
+  "epoch": 1790703004,
+  "type": "fail",
+  "title": "QA 불합격 — G-167 단계 1 (시도 1)",
+  "group": "G-167",
+  "step": "1",
+  "attempt": "1",
+  "report": {
+   "problem": "사람의 저장본(2026-09-30 02:20) 그대로 방을 세워 쟀다 — 방 안에도 상자 곁 설 자리가 있고(수평 0.75~0.80m, 서면 손이 닿는다), 길 끝이 북쪽 벽 밖으로 뽑혀 벽이 손을 막는다. 바뀐 곳 테스트 2개 파일 3개 통과",
+   "approach": "AsBuiltRoom(G-166.3 판)부터 쟀더니 상자 곁 걸을 땅이 0.75m 에 있고 길 끝도 방 안이라 닿았다 — 그 판으로는 사람의 흠이 안 난다. 그래서 사람의 저장본(user://saves/worlds, 시드 1189391314)을 읽어 그대로 옮겼다: 2×2 판 방 x -384~-376 · z 200~208 · 바닥 18.73m, 서쪽 벽 문 + 계단, 상자는 **북서 구석** (-383.5, 200.5), 주민은 **서쪽 벽 바깥** (-384.51, 18.37, 200.67) 에 서 있었다 — 상자와 수평 1m 인데 벽 너머. 진짜 섬 높이 맵으로 구워 잰 값: 방 바닥 걸을 땅 48.0㎡ (방이 좁지 않다), 방 안에서 상자에 가장 가까운 걸을 땅 수평 0.75~0.80m (남 · 동 쪽), 거기 서면 in_reach 참. 그런데 방 가운데에서도 · 벽 밖에서도 상자로 묻는 길의 끝이 모두 북쪽 벽 밖 (-383.52, 18.88, 199.72) 이고 거기서는 in_reach 거짓(벽이 광선을 막는다) → 걸어가 ARRIVED 인데 손이 안 닿아 WHY_NO_ROOM_AT_CHEST 가 뜬다. **까닭 하나: 길 끝 고르기** — 길을 상자 발밑 점(chest.global_position)으로 묻고, 걸을 땅은 그 점에서 3차원으로 가장 가까운 점을 끝으로 준다. 이 방은 비탈에 서서 벽 밖 땅(18.37)이 바닥(18.73)보다 0.36m 만 낮다. 벽 밖 점은 수평 0.78 · 높이 +0.14 → 3차원 0.79m, 방 안 점은 수평 0.80 · 바닥 걸을 땅이 0.39m 떠 있어 높이 +0.39 → 3차원 0.89m. 벽 밖이 0.1m 더 가깝다고 뽑힌다. AsBuiltRoom 은 벽 밖 땅이 1.2m 낮아 방 안이 이겼다 — 그래서 G-166.3 테스트가 못 잡았다. 네 후보를 하나씩 빼고 다시 구워 가렸다: 상자 도려내기 뺌 → 방 안 0.00m (이것이 방 안 점을 0.75m 밀어내 벽 밖과 겨루게 하지만 설 자리를 없애지는 않는다) · 벽 도려내기 뺌 → 방 안 0.75m 그대로 · 몸 반지름 0 → 0.75m 그대로 · 방 넓이 48㎡. 넷 다 설 자리를 없애지 않는다 — current.md 의 짐작(벽까지 깎여 좁은 방에 설 자리가 통째로 없다)은 잰 값과 어긋난다. 이 단계에서는 고치지 않았다 (게임 코드 무변경).",
+   "why": "",
+   "files": [
+    "game/tests/automation/villagers/test_villager_chest_saved_room.gd",
+    "game/tests/automation/villagers/test_villager_chest_room_measure.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": false,
+   "checks": [
+    {
+     "ok": false,
+     "criterion": "**사람이 지은 그대로** 만든다 — 턱 + 계단 + 2×2 판 방 + 문 + **벽에 붙은 상자** + 밭. 그 자리에서 걸을 땅이 상자 둘레 어디까지 남는지 **숫자로 재어** report 에 적는다 (테스트)",
+     "evidence": "test_villager_chest_saved_room.gd::test_measure_the_saved_room 은 사람의 저장본(saves/worlds/1790014507_e428c509.sav)을 옮겼다. 방 토막 17개(바닥 18.73 · 서쪽 벽 문 · 계단 (-386, 15.53, 206)), 상자 (-383.5, 18.73, 200.5), 주민 (-384.51, 18.37, 200.67)은 저장본을 풀어 대 보니 다 맞다. 진짜 섬 높이 맵으로 턱도 들어갔다. 네 쪽 거리를 재어 report 에 적었고 단언도 셋이다(방 안 걸을 땅이 있다 · 손 거리 안이다 · 거기 서면 in_reach 참). 그런데 **밭이 없다**. 저장본의 fields 에는 **방 안** 밭이 넷 있다(origin (-379,205) · (-379,201) · (-382,201) · (-382,205), 밀). 테스트는 Farmland 노드만 만들고 밭 칸은 하나도 세우지 않는다. 머리 주석도 「방 둘레 것만」을 옮겼다고 적었다. 기준이 이름으로 짚은 것이 빠졌으니 「사람이 지은 그대로」가 아니다. 다음 단계는 이 판으로 「밭에서 씨앗을 가지러 상자에 가서 닿는다」를 확인해야 하는데, 밭이 없으면 그 길(밭 → 상자)을 이 판에서 밟을 수 없다"
+    },
+    {
+     "ok": true,
+     "criterion": "안 닿는 까닭을 **하나로 짚는다** — 상자 도려내기 · 벽 도려내기 · 몸 반지름 · 방이 좁아서 중 무엇인가. 짐작이 아니라 잰 값으로 적는다",
+     "evidence": "같은 테스트가 넷을 하나씩 빼고 다시 구워 잰다(로그: 그대로 0.75m · 상자 뺌 0.00m · 벽 뺌 0.75m · 반지름 0 은 0.75m · 방 넓이 48㎡). 넷 다 설 자리를 없애지 않는다. 까닭은 하나로 짚었다 — 길 끝 고르기다. 방 가운데에서도 벽 밖에서도 상자로 묻는 길의 끝이 북쪽 벽 밖 (-383.52, 18.88, 199.72) 이다(3차원 0.79m 이고, 방 안 점은 바닥 걸을 땅이 +0.39m 떠 있어 0.89m). 거기 서면 in_reach 가 거짓이다. 게임 코드와도 맞다: field_care.gd:372 _go_chest 가 _walk.plan(v, chest.global_position, true) 로 상자 발밑 점을 묻고, 테스트도 같은 물음(map_get_path · FOLK_LAYERS)을 한다. 몸 반지름 0 이 같은 값인 까닭도 맞다 — 벽 도려내기 WALL_PAD 0.45 + 벽 두께 절반이 바닥 끝 깎임 0.5 와 겹친다. 잰 값으로 적었다"
+    },
+    {
+     "ok": true,
+     "criterion": "이 단계에서는 고치지 않는다 — 재서 밝히기만 한다",
+     "evidence": "git status 로 보면 바뀐 것은 current.md(하네스가 쓴 것)와 새 테스트 파일 둘(+ .uid)뿐이다. game/ 아래 게임 코드는 그대로다"
+    }
+   ],
+   "issues": [
+    "저장본 판에 밭이 없다 — test_villager_chest_saved_room.gd 의 before_each 가 Farmland 노드만 만들고 밭 칸을 안 세운다. 저장본 fields 에는 방 안 밭 넷이 있다: origin (-379,205) · (-379,201) · (-382,201) · (-382,205), 밀 · stage 0. 저장본 그대로 farmland 에 되살려라(island_state.gd:146 이 fields 를 되살리는 길을 그대로 쓰면 된다). assert_eq 로 밭 네 칸이 섰는지 단언하고, 잰 값(방 안 0.75~0.80m · 길 끝 북쪽 벽 밖)이 그대로인지 다시 재어 report 에 적어라. 머리 주석의 「방 둘레 것만」도 고쳐라",
+    "까닭을 로그로만 남겼다 — 길 끝이 벽 밖이고 거기서 in_reach 가 거짓이라는 것은 gut.p 로만 찍힌다. 이 단계의 기준은 아니지만 다음 단계가 고친 뒤에 뒤집어 단언할 자리다. 지금 assert_false(_in_room(end)) · assert_false(villager.in_reach(top, chest)) 로 적어 두고 「G-167.1 — 고치면 뒤집는다」 주석을 달아 두면, 다음 단계가 무엇을 뒤집어야 하는지 보인다"
+   ],
+   "good": [
+    "test_villager_chest_room_measure.gd — AsBuiltRoom(G-166.3 판)으로 잰 테스트. 그 판에서는 흠이 안 난다는 것을 보인 비교로 쓸모는 있다. 다만 저장본 판과 _gaps · _nearest · _area · _bake 가 거의 똑같이 두 번 적혀 있다. 한 곳으로 모으는 것을 다음 단계에서 봐라"
+   ]
+  },
+  "test": "--- 바뀐 곳만: 2 개 ---\ntest.sh: 파일 2 개를 6 개씩 한꺼번에 돌린다\nok      2s  res://tests/automation/villagers/test_villager_chest_room_measure.gd\nok      2s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             2\nTests               3\nPassing Tests       3\nFailing Tests       0\nRisky/Pending       0\nAsserts            12\nTime           2s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
