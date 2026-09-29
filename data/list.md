@@ -1652,7 +1652,7 @@
   - 기준: 찍어서 확인한다 — 이름을 바꾼 뒤의 페이지
   - 기준: (앞 단계 QA) ROOM_FOR_FRAME 이 spec 수치 절에 없다 — game/ui/hud/room_window.gd 의 ROOM_FOR_FRAME 120px 는 코드에 「임시」라 적혔으나 spec/06_build/rooms.md(또는 spec/12_ui/hud.md) 「## 수치」에는 없다. 앞 단계 QA 가 짚은 것과 같은 꼴이다 — rooms.md 수치 절에 「방 페이지 목록 밖 창 몫 높이 RoomWindow.ROOM_FOR_FRAME 120px (임시) — 눈으로 잡았다」 한 줄을 더해라
 
-## [ ] G-163 주민은 방을 기준으로 일한다 (사람 결정 2026-09-29)
+## [x] G-163 주민은 방을 기준으로 일한다 (사람 결정 2026-09-29)
 - 차선: 3d-start (G-162 와 같은 방 파일을 만진다 — 한 차선에 모은다)
 - spec: spec/07_automation/npc-villagers.md, spec/06_build/rooms.md, spec/06_build/storage.md
 - **자가 피드백**: 찾은 것을 단계로 계속 붙인다 — 깨끗해질 때까지
