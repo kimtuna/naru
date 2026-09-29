@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-29 18:40:20",
- "updated_epoch": 1790674820,
+ "updated": "2026-09-29 18:49:52",
+ "updated_epoch": 1790675392,
  "ended": "2026-09-29 14:44:23",
  "progress": {
   "groups_total": 56,
@@ -16,8 +16,8 @@
  "step": "5",
  "step_title": "(앞 단계 QA) 코드 주석이 옮긴 단계 기록을 본문으로 가리킨다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-29 18:40:20",
+ "phase": "기계 검사",
+ "phase_since": "2026-09-29 18:49:52",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",

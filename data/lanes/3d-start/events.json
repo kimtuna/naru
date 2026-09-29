@@ -1,66 +1,5 @@
 [
  {
-  "time": "2026-09-24 06:01:59",
-  "epoch": 1790197319,
-  "type": "pass",
-  "title": "통과 — G-144 단계 1 (장 수를 줄인다)",
-  "group": "G-144",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "지붕 받침 장 수를 벽 2장(변 양쪽 한 장씩) · 기둥 1장(제 판)으로 줄였다 — 바뀐 곳 그물 21개 스크립트 157개 테스트 통과",
-   "approach": "받치는 범위는 BuildPiece.ROOF_SPAN 한 곳에서 나온다 — {pillar 3×3, wall 3×2} 를 {pillar 1×1, wall 1×2} 로 바꾸니 roof_plates() 가 기둥은 제 판, 벽 · 문은 변 양쪽 한 장씩만 돌려준다 (spec 은 이미 새 장 수였다). 받침 검사를 새 장 수로 다시 적었고(문도 벽과 같은 경우로 함께 잰다), 연쇄 붕괴 검사의 줄집은 판 3 지붕을 기둥 대신 판 2|3 사이 벽이 받치게 고쳤으며, 벽을 헐면 그 벽만 받치던 처마와 그 위 상자가 · 기둥을 헐면 제 판 지붕이 무너지는 검사를 더했다. 방 판정은 3×3 판 홀에서 둘레 벽이 가운데 판을 못 받쳐 방이 아니다가 가운데 기둥 하나를 세우면 81칸 한 방이 되는 것으로 잰다. 그림: harness/shot.sh <폴더> roof_reach — 판 7×3 에 기둥 하나 · 벽 한 장을 세우고 판마다 plan_roof_at 결과로 지붕 미리 보기를 칠했다. 초록은 정확히 3장(기둥 판 1 + 벽 양쪽 2)이고 로그에도 'ROOF_REACH 초록 3장'이 찍힌다. 바뀐 곳 그물(changed_tests.py): 21개 스크립트 · 157개 테스트 전부 통과 — 전체는 돌리지 않았다.",
-   "why": "",
-   "files": [
-    "game/build/build_piece.gd",
-    "game/tests/build/test_building_roof_support.gd",
-    "game/tests/build/test_building_collapse.gd",
-    "game/tests/build/test_rooms.gd",
-    "game/core/debug/shots.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "벽 하나가 받치는 지붕은 두 장 — 벽이 선 그 자리에서 양쪽으로 한 장씩 (테스트)",
-     "evidence": "test_building_roof_support.gd::test_a_wall_or_door_holds_two_roofs_one_on_each_side — 북쪽 변 wood_wall · 동쪽 변 stone_wall 에 대해 _expect_roofs 가 5×5 판을 하나씩 plan_roof_at 으로 짚어 변 양쪽 두 판만 ok 인지, 전부 놓아 본 뒤 정확히 2장이 받치는 판에만 한 층 위로 놓였는지 센다. test_the_counts_come_from_one_value 도 ROOF_SPAN wall=(1,2) · roof_plates().size()==2 를 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "기둥 하나가 받치는 지붕은 한 장 — 기둥이 선 제 판만 (테스트)",
-     "evidence": "test_a_pillar_holds_one_roof_its_own_plate — 5×5 판 중 (0,0) 만 ok · 놓인 지붕 1장. 위층 기둥도 제 판만 받치고 옆 판(동 · 북)은 ok=false. test_bare_ground_beyond_the_reach_is_not_a_roof_spot 가 한 장 밖 판을 거부하는지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "문도 벽과 똑같다 (테스트)",
-     "evidence": "같은 테스트의 세 번째 경우 wood_door 를 북쪽 변에 세워 벽과 같은 두 판(0,-1)·(0,0)만 받치는지 _expect_roofs 로 잰다. test_the_counts_come_from_one_value 에서 door.roof_plates().size()==wall 장 수"
-    },
-    {
-     "ok": true,
-     "criterion": "받침이 없어진 지붕은 그대로 무너진다 — 연쇄 붕괴가 새 장 수로도 맞는다 (테스트)",
-     "evidence": "test_building_collapse.gd::test_breaking_a_wall_or_pillar_brings_down_exactly_the_roofs_only_it_held — 벽을 헐면 벽만 받치던 처마 지붕과 그 위 상자가 무너지고 기둥이 받치는 판 0 지붕은 남으며, 기둥을 헐면 판 0 지붕도 무너지고 토대는 남는다. 두 장 밖 · 벽을 따라 옆 장은 놓이지 않는 것도 단언. _row_house 를 새 장 수에 맞게 판 2|3 벽을 더해 고쳤고 기존 연쇄 테스트 7개 통과(test.log)"
-    },
-    {
-     "ok": true,
-     "criterion": "방 판정이 새 장 수로도 맞는다 — 사방과 위가 막히면 방이다 (테스트)",
-     "evidence": "test_rooms.gd::test_a_three_by_three_hall_needs_a_pillar_in_the_middle_to_be_a_room — 3×3 판 홀에서 가운데 판이 no_support 이고 둘레 지붕만으로는 방 0개, 가운데 기둥+지붕을 얹으면 방 1개 81칸. 기존 방 테스트 7/7 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 확인한다 — 벽 한 장 · 기둥 한 개를 세우고 지붕 미리보기가 딱 그만큼만 초록이다",
-     "evidence": "shots.gd 에 roof_reach 자리를 더했다. /private/tmp/g144/roof_reach.png 를 직접 보았다 — 판 7×3 중 기둥 판 1장, 벽 양쪽 2장 = 초록 정확히 3장, 나머지 18장은 주황(BAD_COLOR)"
-    }
-   ],
-   "issues": [],
-   "good": []
-  },
-  "test": "ng_is_there_now\n* test_gathered_farmed_herbs_tools_and_climbing_gear_are_in_the_box\n* test_nothing_is_packed_twice\n* test_a_recipe_added_to_the_file_lands_in_the_box_by_itself\n6/6 passed.\n\n\nres://tests/core/debug/test_dev_box_open.gd\n* test_the_right_click_opens_the_dev_box_in_front\n* test_the_window_lays_out_what_the_box_holds\n* test_dragging_a_slot_into_the_bag_takes_it_out\n3/3 passed.\n\n\nres://tests/core/debug/test_ui_shots.gd\n* test_every_place_is_shot_in_korean_and_english\n* test_english_changes_the_window_text\n* test_plan_has_touching_and_island\n* test_drag_shot_is_really_dragging_over_another_slot\n* test_station_shots_show_short_rows\n* test_island_shot_builds_the_real_island\n* test_reset_closes_the_station_window\n7/7 passed.\n\n\nres://tests/life/hunting/test_butchery.gd\n* test_the_button_shows_only_beside_a_dead_animal\n* test_clicking_the_button_puts_the_yield_in_the_bag\n    다리만 쏴 잡고 도축 — { \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 }\n* test_right_click_butchers\n* test_right_click_with_a_gun_aims_and_the_button_still_butchers\n* test_a_living_animal_cannot_be_butchered\n* test_the_scorecard_shows_hits_and_percent_left_per_part\n    머리 1발 · 몸통 4발로 잡았다 — [\"머리 — 1발 · 산출 74%\", \"몸통 — 4발 · 산출 26%\", \"다리 — 0발 · 산출물 없음\"]\n* test_shots_on_a_carcass_do_not_count\n* test_every_text_is_a_translation_key_in_ko_and_en\n* test_the_scorecard_follows_the_language\n    ko [\"머리 — 0발 · 산출 100%\", \"몸통 — 0발 · 산출 100%\", \"다리 — 10발 · 산출물 없음\"] · en [\"Head — 0 hits · yield 100%\", \"Body — 0 hits · yield 100%\", \"Legs — 10 hits · no yield\"]\n9/9 passed.\n\n\nres://tests/life/hunting/test_carry_cage.gd\n* test_right_click_puts_the_captured_animal_in_the_bag\n* test_a_live_animal_is_not_picked_up\n* test_each_captive_keeps_its_own_slot\n* test_a_full_bag_leaves_the_animal_on_the_ground\n* test_on_the_ground_the_gauge_falls_and_the_animal_wakes_and_flees\n    --- Awaiting 0.5 seconds  ---\n* test_in_the_bag_the_gauge_falls_and_the_animal_escapes\n    --- Awaiting 0.5 seconds  ---\n* test_how_long_it_sleeps_differs_by_animal\n    --- Awaiting 1.0 seconds  ---\n* test_three_cages_are_crafted\n* test_a_caged_animal_wakes_but_does_not_escape\n* test_an_animal_does_not_fit_a_cage_smaller_than_itself\n* test_the_smallest_cage_that_fits_is_used\n11/11 passed.\n\n\nres://tests/life/hunting/test_part_yields.gd\n* test_deer_parts_yield_what_the_data_says\n* test_an_unhurt_deer_yields_everything_in_the_data\n* test_yields_are_read_from_the_data_not_the_animal\n* test_a_head_shot_cuts_only_the_head_yield\n    머리 한 발 — 머리 피해 { &\"head\": 26 } · 산출 { \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 } → { \"antler\": 1, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 }\n* test_a_body_shot_cuts_only_the_body_yield\n* test_more_damage_to_a_part_leaves_less_of_it\n    몸통에 맞을수록 남는 몫: [1.0, 0.8, 0.6, 0.4]\n* test_part_damage_is_what_actually_came_off\n* test_killing_by_legs_only_keeps_head_and_body_whole\n    다리만 10 발로 잡았다 — 산출 { \"antler\": 2, \"beast_head\": 1, \"raw_meat\": 4, \"hide\": 2 }\n* test_killing_by_body_shots_ruins_the_body_but_not_the_head\n9/9 passed.\n\n\nres://tests/life/hunting/test_sedation_capture.gd\n* test_above_ten_percent_the_gauge_does_not_rise\n* test_below_ten_percent_the_same_round_raises_the_gauge\n* test_a_full_gauge_captures_and_that_differs_from_a_kill\n* test_a_captured_animal_stays_put\n    --- Awaiting 30 physics frames  ---\n* test_aconite_over_the_need_kills_instead_of_capturing\n* test_aconite_exactly_filling_the_gauge_still_captures\n* test_lower_tiers_over_the_need_still_capture\n* test_a_deer_takes_three_low_tier_rounds\n* test_the_amount_differs_by_animal\n* test_sedation_values_live_in_one_place_marked_temporary\n10/10 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              21\nTests               157\nPassing Tests       157\nAsserts            2373\nTime              98.443s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "8744a12"
- },
- {
   "time": "2026-09-24 06:23:34",
   "epoch": 1790198614,
   "type": "pass",
@@ -8096,5 +8035,29 @@
   },
   "test": "build/test_room_overlay.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/build/test_water_rule_at_sea_level.gd\nok      0s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      0s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/core/test_grid.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           244\nTests            1984\nPassing Tests    1984\nFailing Tests       0\nRisky/Pending       0\nAsserts         96669\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "75a44a3b"
+ },
+ {
+  "time": "2026-09-29 18:57:18",
+  "epoch": 1790675838,
+  "type": "fail",
+  "title": "기계 검사 실패 — G-165 단계 5 (시도 1)",
+  "group": "G-165",
+  "step": "5",
+  "attempt": "1",
+  "report": {
+   "problem": "옮긴 단계 기록을 적은 코드 주석 다섯 곳이 npc-villagers-history.md 「지금 만든 것 (G-…)」 을 가리킨다",
+   "approach": "G-165.4 에서 단계 기록을 npc-villagers-history.md 로 떼었는데 G-161.1 · G-157.2 · G-157.3 을 적은 주석 다섯 곳은 아직 본문을 가리켰다. 그 다섯을 `spec/07_automation/npc-villagers-history.md 「지금 만든 것 (G-…)」` 로 바꾸고, 「직업」 절을 가리키는 jobs.gd 등은 그대로 두었다. 테스트는 다섯 파일이 기록 쪽 절을 가리키고 그 절이 기록 파일에 실제로 있는지, jobs.gd · woodcutting.gd 는 본문 「직업」 그대로인지 본다. 바뀐 곳 그물(changed_tests.py, 168개 파일 · 1487개 테스트) 모두 통과.",
+   "why": "",
+   "files": [
+    "game/ui/hud/villager_window.gd",
+    "game/core/game_root.gd",
+    "game/core/input/input_actions.gd",
+    "game/core/debug/shots.gd",
+    "game/automation/villagers/field_care.gd",
+    "game/tests/automation/villagers/test_npc_villagers_spec_split.gd"
+   ],
+   "decision": null
+  },
+  "test": "ore.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      0s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/menu/test_character_preview.gd\nok      2s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n================ 떨어진 파일: res://tests/life/hunting/test_animal_walk.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/life/hunting/test_animal_walk.gd\nWARNING: instance_reset_physics_interpolation() is deprecated.\n     at: _instance_reset_physics_interpolation_bind_compat_104269 (servers/rendering/rendering_server.compat.inc:62)\n     GDScript backtrace (most recent call first):\n         [0] _build_terrain (res://world/terrain/test_island.gd:176)\n         [1] _ready (res://world/terrain/test_island.gd:103)\n         [2] before_all (res://tests/life/hunting/test_animal_walk.gd:17)\n         [3] _call_before_all (res://addons/gut/gut.gd:684)\n         [4] _test_the_scripts (res://addons/gut/gut.gd:813)\n         [5] test_scripts (res://addons/gut/gut.gd:1047)\n         [6] run_tests (res://addons/gut/gui/GutRunner.gd:198)\n         [7] _run_tests (res://addons/gut/cli/gut_cli.gd:239)\n         [8] main (res://addons/gut/cli/gut_cli.gd:297)\n         [9] _init (res://addons/gut/gut_cmdln.gd:39)\n* test_wanders_around_home\n    [Failed]:  [21.0858955383301] expected to be < than [21.0]:  집 둘레 반경 안에서 논다\n      at line 141\n* test_never_steps_into_water_even_when_sent_there\n* test_does_not_fall_off_cliff_even_when_sent_below\n* test_nav_mesh_has_no_water_or_cliff\n* test_goes_around_trees_not_stuck\n* test_walk_values_live_in_one_place_marked_temporary\n5/6 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/life/hunting/test_animal_walk.gd\n- test_wanders_around_home\n    [Failed]:  [21.0858955383301] expected to be < than [21.0]:  집 둘레 반경 안에서 논다\n          at line 141\n\nTotals\n------\nScripts               1\nTests                 6\nPassing Tests         5\nFailing Tests         1\nAsserts           177/178\nTime              49.425s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           244\nTests            1985\nPassing Tests    1984\nFailing Tests       1\nRisky/Pending       0\nAsserts         96602\nTime           437s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/life/hunting/test_animal_walk.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
  }
 ]
