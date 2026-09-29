@@ -1,59 +1,5 @@
 [
  {
-  "time": "2026-09-24 02:39:52",
-  "epoch": 1790185192,
-  "type": "pass",
-  "title": "통과 — G-140 단계 1 (토대가 옆에 붙는다)",
-  "group": "G-140",
-  "step": "1",
-  "attempt": "1",
-  "report": {
-   "problem": "토대가 변을 맞댄 옆 토대 윗면에 먼저 붙고, 토대를 든 동안 휠로 높낮이를 올리고 내리며, 땅에서 5m 를 넘으면 놓이지 않는다. 바뀐 곳에 걸리는 테스트(스크립트 70개 · 688개) 전부 통과",
-   "approach": "문제: plan_at 이 판마다 제 밑 땅의 가장 높은 곳에 윗면을 맞춰, 땅이 오르내리면 이웃 판끼리 높이가 달라졌다. 푼 것: plan_at 이 먼저 변을 맞댄 판(동서남북, 모서리만 닿은 판은 빼고)에서 토대를 찾고(neighbor), 있으면 그 윗면 높이를 쓴다. 판은 여전히 가장 낮은 땅까지 내려가 메운다(depth). 이웃이 여럿이면 땅 높이에 가장 가까운 것을 고른다. 붙어 있을 때는 판이 틈을 메우므로 급경사(MAX_DROP) 검사를 건너뛴다. 휠: 새 액션 build_raise/build_lower(휠 위/아래)를 project.godot 과 InputActions.all() 에 넣었다. Buildings._unhandled_input 이 토대를 든 동안에만 받아 raise_by 로 RAISE_STEP 씩 옮긴다(탄 고르기가 떠 있으면 _input 에서 먼저 삼킨다). 토대를 손에서 내려놓으면 올린 높이가 0 으로 돌아간다. 새 까닭 둘: too_high(윗면이 가장 낮은 땅보다 MAX_HEIGHT=5m 넘게 높다, 붙이는 중이어도)와 buried(땅이 윗면 위로 뚫고 나온다). 처음에는 buried 를 '땅이 판 밑면보다 높다'로 잡았더니, 찍어 보니 build 장면의 뒤 토대가 거부되고 계단이 사라졌다(땅이 판 두께 안으로 0.1m 쯤만 들어와 보이지 않는데도). 그래서 '땅이 윗면보다 높다'로 풀고 그 경우를 지키는 테스트를 더했다. 그림: shots.gd 에 build_row 자리를 더했다. 스폰 둘레 비탈에서 가장 높은 판부터 다섯 장을 이어 깐다. 찍은 결과 다섯 장이 모두 y=18.055 로 수평으로 이어졌다(땅은 17.28~17.66). build 장면도 다시 찍어 계단 · 초록 미리 보기가 제대로 보이는 것을 확인했다. 올린 높이(_raise)는 저장하지 않는다. 놓는 동안의 손짓일 뿐이고 손에서 내려놓으면 0 이 된다. 왕복 테스트에서는 두 쪽 다 0 이라 DONT_SAVE 에 적으면 오히려 '낡은 항목'으로 걸린다. 그래서 까닭은 코드 주석에 적었다.",
-   "why": "Buildings.RAISE_STEP = 0.25m — 휠 한 칸에 오르내리는 높이. spec 에 수치가 없어 계단 한 단쯤으로 잡았다; 5m 는 판 아래 가장 낮은 땅에서 잰다(LEVEL_SLACK 0.1m 만큼 봐준다) — spec 은 '땅에서 5m' 만 말한다",
-   "files": [
-    "game/build/buildings.gd",
-    "game/core/input/input_actions.gd",
-    "game/project.godot",
-    "game/core/debug/shots.gd",
-    "game/tests/build/test_foundation_attach.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "이미 놓인 토대가 곁에 있으면 **그 변에 먼저 붙는다** — 땅보다 우선이다 (테스트)",
-     "evidence": "test_foundation_attach.gd — test_a_foundation_beside_one_on_a_raised_step_takes_its_height_not_the_grounds 가 0.6m 턱 위 토대의 동서남북 네 판이 땅(0.2m)이 아니라 옆 윗면(0.8m)에 맞고 attached 인지, 모서리만 닿은 판 · 먼 판은 땅에 맞는지(막아야 할 경우)까지 본다. test_a_row_on_uneven_ground_stays_level 은 0/0.5/0.2/0.8 땅에서 네 장이 같은 높이이고 판 밑면이 제 땅에 닿는지 본다. test_the_neighbor_wins_even_where_the_ground_alone_would_be_too_steep 는 급경사 땅에서도 붙기가 먼저 적용되는지(buried → 올리면 ok) 본다. test.log 8/8 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "**마우스 휠로 높낮이를 올리고 내린다** — 건축물을 들고 있는 동안에만 (테스트)",
-     "evidence": "test_the_wheel_raises_and_lowers_while_holding_a_foundation 가 root.push_input 으로 진짜 휠 위/아래 이벤트를 넣어 raise · plan 윗면 · 미리 보기 높이 · 우클릭으로 놓인 높이까지 본다. test_the_wheel_does_nothing_unless_a_foundation_is_in_hand 는 나무 · 빈손일 때 휠이 안 먹고, 토대를 내려놓으면 0 으로 돌아가는지 본다. project.godot 에 build_raise(휠 4) · build_lower(휠 5) 가 들어가고 InputActions.all() 에 올랐다"
-    },
-    {
-     "ok": true,
-     "criterion": "**땅에서 5m 를 넘으면 놓이지 않는다** — 옆에 붙이는 중이어도 (테스트)",
-     "evidence": "test_more_than_five_meters_off_the_ground_is_refused_even_when_attaching — 5.5m 턱 위 토대 옆 땅(0)에 붙이면 attached 이면서 why=too_high, place_at 이 null. 휠로 1m 내리면 ok 가 된다(경계 양쪽). test_raising_a_lone_foundation_past_five_meters_is_refused 는 혼자 놓을 때 5m 바로 안쪽은 ok, 한 칸 더 올리면 too_high 인지 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "찍어서 눈으로 확인한다 — 토대 여럿이 **수평으로 이어진다**",
-     "evidence": "QA 가 직접 harness/shot.sh /tmp/qa140 build_row 로 찍어 보았다. 땅 17.28~17.66m 비탈에 다섯 장이 모두 y=18.055 로 놓였고(ROW 로그), build_row.png 에서 한 판처럼 곧은 수평 띠로 이어지고 판 밑이 땅에 묻혀 떠 보이지 않는다"
-    }
-   ],
-   "issues": [
-    "input.md 휠 줄이 구현과 어긋난다 — spec/01_settings/input.md 19줄은 「건축물을 들고 있으면 놓을 높낮이」인데 Buildings._holding_foundation 은 토대일 때만 휠을 받는다 (building.md 14줄은 토대 항목 아래라 구현이 맞다). input.md 줄을 「토대를 들고 있으면」으로 좁혀 적고(사람 결정 줄이니 뜻은 그대로 두고 괄호로 「벽 · 기둥 등은 변 · 바닥에 스냅되어 높낮이가 없다」를 덧붙인다), test_the_wheel_does_nothing_unless_a_foundation_is_in_hand 에 벽(wood_wall)을 든 경우도 넣어 raise()==0 을 단언하라 — 지금은 재료(wood)와 빈손만 본다",
-    "shots.gd _set_up_row 에 print 가 남았다 — game/core/debug/shots.gd 의 print(\"ROW …\") 는 확인용 출력이다. 다른 자리 설정 함수처럼 조용히 두거나, 남길 거면 까닭 주석을 달아라"
-   ],
-   "good": []
-  },
-  "test": "/world/frontier_islands/test_dock_building.gd\n* test_my_islands_dock_is_not_prebuilt_but_the_frontier_islands_is\n* test_the_dock_is_made_at_the_wood_workbench\n* test_crafting_the_dock_at_a_workbench_puts_it_in_my_bag\n* test_right_clicking_at_the_water_puts_the_dock_down\n* test_right_clicking_inland_puts_nothing_down\n* test_an_empty_hand_puts_nothing_down\n* test_the_dock_i_put_down_is_saved_with_the_island\n* test_restoring_twice_does_not_stack_docks\n* test_the_pillars_stand_at_the_shore_corners_and_leave_the_landing_spot_clear\n* test_the_plank_has_no_body_so_the_one_who_lands_walks_out\n* test_hitting_the_shore_pillar_breaks_the_dock_and_gives_it_back\n* test_a_broken_dock_does_not_stay_in_standing\n* test_landing_without_a_dock_falls_back_to_the_spawn\n* test_the_other_pillar_can_be_aimed_at_too\n* test_a_dock_fixed_in_the_map_cannot_be_broken\n15/15 passed.\n\n\nres://tests/world/storage/test_chest_break.gd\n* test_the_left_click_breaks_the_empty_chest_in_front\n* test_breaking_an_empty_chest_returns_the_chest_itself\n* test_a_chest_with_something_inside_does_not_break\n* test_the_chest_breaks_once_it_is_emptied\n* test_the_death_chest_and_the_dev_box_are_not_broken_by_hitting\n* test_the_death_chest_and_the_dev_box_still_open_and_hand_things_over\n6/6 passed.\n\n\nres://tests/world/storage/test_chest_place.gd\n* test_the_right_click_puts_the_held_chest_on_the_ground\n* test_nothing_is_placed_when_the_hand_is_not_holding_a_chest\n* test_nothing_is_placed_on_ground_out_of_reach\n* test_a_wood_chest_has_ten_slots\n* test_nothing_is_placed_on_a_cell_that_is_already_taken\n* test_a_chest_is_not_stacked_on_a_chest\n* test_a_station_and_a_chest_do_not_share_a_cell\n* test_the_right_click_opens_and_closes_the_placed_chest\n* test_the_bag_opens_with_the_chest\n* test_the_escape_key_closes_the_open_chest\n* test_moving_does_not_reach_the_game_while_the_chest_is_open\n* test_the_camera_does_not_turn_while_the_chest_is_open\n* test_the_mouse_cursor_is_visible_while_the_chest_is_open\n13/13 passed.\n\n\nres://tests/world/terrain/test_island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts              70\nTests               688\nPassing Tests       688\nAsserts           28500\nTime              452.935s\n\n\n---- All tests passed! ----\n\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "67cb5b9"
- },
- {
   "time": "2026-09-24 02:55:17",
   "epoch": 1790186117,
   "type": "pass",
@@ -8044,5 +7990,52 @@
   },
   "test": "--- 바뀐 곳만: 10 개 ---\ntest.sh: 파일 10 개를 6 개씩 한꺼번에 돌린다\nok     14s  res://tests/automation/villagers/test_villager_jobs.gd\nok     17s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     21s  res://tests/automation/villagers/test_villager_watering.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      8s  res://tests/automation/villagers/test_villager_planting.gd\nok     28s  res://tests/automation/villagers/test_villager.gd\nok     30s  res://tests/automation/villagers/test_villager_chests_full.gd\nok     66s  res://tests/automation/villagers/test_villager_gathering.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            10\nTests              87\nPassing Tests      87\nFailing Tests       0\nRisky/Pending       0\nAsserts          2220\nTime           66s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "9439505a"
+ },
+ {
+  "time": "2026-09-29 13:16:40",
+  "epoch": 1790655400,
+  "type": "pass",
+  "title": "통과 — G-164 단계 2 (농부가 다 자란 것을 거둔다)",
+  "group": "G-164",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "농부가 방 안의 다 자란 밭을 Crops.harvest 로 거둬 방 상자에 두고(차면 멈추고 알린다), 씨앗이 있으면 그 자리에 다시 심는다 — 바뀐 곳만(파일 32개) 276개 통과",
+   "approach": "Crops.harvest 는 나온 것을 사람 가방(player.inventory)에 넣어서 주민이 그대로 부르면 밀이 사람 가방으로 샜다. 그래서 harvest 에 into(item, count) -> 못 받은 개수 를 선택 인자로 더했다 — 거두는 규칙 · harvested 신호 · 못 받은 몫이 바닥에 떨어지는 것은 사람과 같고, 받는 곳만 주민의 손이 된다. 거두면 나올 것을 미리 보는 Crops.yields_at 도 더했다. FieldCare 에는 HARVEST 일을 더해 고르기 맨 앞(거두기 → 심기 → 물 → 비료 → 든 것 두기)에 넣었다. 방 안(Rooms.holds) · 남이 안 붙든 다 자란 밭만 고르고, 나올 것이 손에 다 안 들면(has_room_for) 먼저 방 상자에 두러 간다 — 바닥에 흘리지 않는다. 다 거두면 기존의 「든 것을 전부 방 상자에」가 두고, 방 상자가 다 차면 G-163.4 의 같은 길(_go_chest → Villagers.stall)로 멈추고 알린다. 거둔 자리는 빈 밭이 되어 G-164.1 의 심기가 방 상자 씨앗으로 다시 심는다(손이 거둔 것으로 차 씨앗을 못 들면 먼저 두고 온다 — 헛걸음 되풀이를 막는다). 새 상태는 없다 — 거둔 것은 이미 저장되는 손(hands)에 든다. spec 은 npc-villagers.md 에 G-164.2 절, farming.md 에 한 줄, villager-rooms.md 의 낡은 순서 줄을 고쳤다. 새 테스트 파일 5개 통과, changed_tests 그물 32개 파일 276개 통과.",
+   "why": "",
+   "files": [
+    "game/life/farming/crops.gd",
+    "game/automation/villagers/field_care.gd",
+    "game/tests/automation/villagers/test_villager_harvesting.gd",
+    "spec/07_automation/npc-villagers.md",
+    "spec/07_automation/villager-rooms.md",
+    "spec/04_life/farming.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "거주지 방 안의 **다 자란 밭**을 거둔다 — `Crops.harvest` 그대로 (테스트)",
+     "evidence": "test_the_farmer_harvests_ripe_fields_inside_the_room_the_way_a_person_does — 방 안 셋이 다 거둬지고 Crops.harvested 가 3번 울리며 방 밖 밭은 다 자란 채 남는지 본다. field_care.gd 는 crops.harvest(_cell, into) 를 부른다(사람과 같은 규칙·신호, 받는 곳만 손). test.log 에서 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "거둔 것을 **그 방 상자에 둔다** — 상자가 차면 멈추고 알린다 (G-163.4 와 같은 길) (테스트)",
+     "evidence": "test_what_was_harvested_goes_into_the_room_chest_not_the_players_bag(상자에 밀 전부 · 사람 가방 0 · 바닥 0), test_with_a_full_room_chest_the_farmer_stops_and_tells_with_the_harvest_in_hand(stalled · SAY_CHESTS_FULL · 알림 1 · 손에 밀), test_hands_too_full_for_the_harvest_go_to_the_chest_first. 일부러 깨 봤다: harvest 를 into 없이 부르게 하니 3개 실패, _try_harvest 의 has_room_for 검사를 빼니 바닥에 밀 9가 떨어져 1개 실패 — 둘 다 되돌렸다"
+    },
+    {
+     "ok": true,
+     "criterion": "거둔 자리에 **다시 심는다** — 심을 씨앗이 상자에 있으면 (테스트)",
+     "evidence": "test_the_harvested_fields_are_planted_again_from_the_room_chest_seeds — 상자 씨앗 5개로 거둔 세 칸에 밀이 stage 0 으로 다시 심기고 Crops.planted 가 울리며 씨앗이 3 줄고 거둔 밀은 상자에 든다. 씨앗이 없으면 빈 채로 두는 것은 첫 테스트가 본다"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "--- 바뀐 곳만: 32 개 ---\ntest.sh: 파일 32 개를 6 개씩 한꺼번에 돌린다\nok     30s  res://tests/automation/villagers/test_villager_chests_full.gd\nok     30s  res://tests/world/terrain/test_island_in_game.gd\nok     32s  res://tests/automation/villagers/test_villager.gd\nok     17s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     21s  res://tests/automation/villagers/test_villager_watering.gd\nok     26s  res://tests/world/terrain/test_island_walk.gd\nok     14s  res://tests/automation/villagers/test_villager_jobs.gd\nok     63s  res://tests/life/gathering/test_belladonna_slope.gd\nok     13s  res://tests/core/debug/test_dev_box.gd\nok     66s  res://tests/automation/villagers/test_villager_gathering.gd\nok     12s  res://tests/life/farming/test_farmland.gd\nok     10s  res://tests/life/farming/test_field_free_grid.gd\nok     10s  res://tests/life/farming/test_crops.gd\nok     10s  res://tests/automation/villagers/test_villager_harvesting.gd\nok     12s  res://tests/life/farming/test_water_and_fertilizer.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok     10s  res://tests/automation/villagers/test_villager_home.gd\nok      3s  res://tests/build/test_bed.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      3s  res://tests/life/food/test_food.gd\nok      8s  res://tests/automation/villagers/test_villager_planting.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      8s  res://tests/world/day_night/test_day_in_world.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/build/test_collapse_takes_everything_placed.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok    434s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            32\nTests             276\nPassing Tests     276\nFailing Tests       0\nRisky/Pending       0\nAsserts          5952\nTime           434s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "a1eb58e5"
  }
 ]
