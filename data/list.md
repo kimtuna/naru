@@ -1883,8 +1883,10 @@
   - 기준: 찍어서 확인한다 — 횃불을 돌아 상자로 가는 주민
   - 기준: (앞 단계 QA) 트리 전체 node_added 를 듣는다 — Villagers._enter_tree 가 get_tree().node_added/node_removed 에 붙어 총알 · 떨어진 물건 · 이펙트 등 트리에 드는 모든 노드마다 _changes_ground 를 부른다. 지금은 `is CollisionObject3D` 로 먼저 걸러 싸지만, Placeable 쪽에 신호(예: Placeable 무리에 들 때 한 번 알리기)로 좁히거나 까닭을 주석에 적어 두면 좋다
   - 기준: (앞 단계 QA) _changed_at 의 저장 까닭이 흩어졌다 — test_round_trip.gd 의 DONT_SAVE 에서 Island/Villagers:_changed_at 줄을 뺐는데 villagers.gd 주석은 「담지 않는다」로 시작한다. 왕복에서 값이 같아져 빠진 것이면 주석 첫 마디를 「저장 목록에 둘 까닭이 없다 — 불러오면 섬이 설 때 같은 자리가 다시 모인다」처럼 맞춰 헷갈리지 않게 하라
-- [ ] 3. (앞 단계 QA) 찍기 짜임이 테스트 짜임과 다르다
+- [x] 3. (앞 단계 QA) 찍기 짜임이 테스트 짜임과 다르다
   - 기준: 찍기 짜임이 테스트 짜임과 다르다 — ui_shots.gd _torch_between 은 횃불 하나만 세운다. 테스트는 하나로는 몸이 비벼 지나가 막힘이 안 난다며 줄을 세웠으니, 사진은 「돌아간다」보다 「곁을 스친다」를 보인다. 사람이 볼 사진이면 테스트의 _row() 처럼 횃불 줄을 세워 찍게 맞추면 좋다 (막는 것은 아니다)
+- [ ] 4. (앞 단계 QA) 낡은 횃불 사진이 .loop/out 에 남았다
+  - 기준: 낡은 횃불 사진이 .loop/out 에 남았다 — .loop/out/torch_shot/villager_torch_{ko,en}.png 는 06:25(G-168.2 이전) 것으로 횃불 하나만 보인다. 새 사진은 /tmp/g1683/ 에만 있다. 사람이 볼 곳에 두려면 .loop/out/torch_shot/ 를 새 사진으로 바꾸거나 지워라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
