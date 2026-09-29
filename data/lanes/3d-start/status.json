@@ -1,14 +1,14 @@
 {
- "state": "done",
- "reason": "목록의 할 일을 모두 처리했다",
- "updated": "2026-09-30 04:46:54",
- "updated_epoch": 1790711214,
+ "state": "running",
+ "reason": "목록을 읽는다",
+ "updated": "2026-09-30 04:55:19",
+ "updated_epoch": 1790711719,
  "ended": "2026-09-30 04:46:54",
  "progress": {
-  "groups_total": 58,
+  "groups_total": 59,
   "groups_done": 58,
   "groups_waiting": 0,
-  "steps_total": 273,
+  "steps_total": 275,
   "steps_done": 273
  },
  "started": "2026-09-21 06:54:49",
