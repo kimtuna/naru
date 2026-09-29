@@ -1,78 +1,5 @@
 [
  {
-  "time": "2026-09-24 10:34:43",
-  "epoch": 1790213683,
-  "type": "pass",
-  "title": "통과 — G-902 단계 3 (창 밖에 놓으면 버린다)",
-  "group": "G-902",
-  "step": "3",
-  "attempt": "1",
-  "report": {
-   "problem": "창 밖에 놓으면 캐릭터 앞 바닥에 떨어진다(끌어 놓기 · 든 채 창 밖 좌클릭) — 밟으면 다시 줍히고, 바닥에 떨어진 것은 섬에 저장된다. 든 것을 커서 곁에 보여 주는 HandView 를 붙였다",
-   "approach": "창 밖에서 칸을 받는 것이 없었다. 가방 창(Bag)의 뿌리가 화면 전체를 덮으니 거기가 곧 「창 밖」이다. 그래서 덮개(Dim)와 창 자리(Center)를 mouse_filter PASS 로 바꿔 끌어 놓기가 Bag 까지 올라오게 했다. Bag._can_drop_data 는 놓은 자리가 가방 패널이나 같이 뜬 상자 창 패널 밖인지 가린다 — 칸 사이 틈이나 테두리는 창 안이라 버리지 않는다. 클릭은 뿌리가 STOP 이라 전처럼 삼킨다. 든 채 창 밖을 좌클릭하면 든 것만 버린다(우클릭으로 반 집었으면 그 반). 창 밖 우클릭은 G-902.2 대로 창을 닫고 제자리로 돌린다. 떨어뜨리는 일은 GameRoot.throw_away → 섬의 Pickup.throw 가 한다. 캐릭터가 보는 쪽으로 1.5m 앞에 광선으로 땅 높이를 재서 DroppedItem 을 놓는다. 줍는 반경(1m)보다 멀어야 하는데, 발밑에 떨어지면 버리자마자 도로 줍히기 때문이다. 무너진 건축물이 떨어지는 그 DroppedItem 길을 그대로 써서 밟으면 줍힌다. 잡은 짐승처럼 제 상태를 가진 칸은 바닥에 놓을 모양이 없어 버리지 않고 칸에 남긴다. 저장: 알고 보니 바닥에 떨어진 것은 원래 하나도 저장되지 않았다(벤 것 · 무너진 것도). Pickup.standing/restore 를 만들어 IslandState 에 drops 로 섬마다 담았다(save.md 「담는 것이 기본」). QA 지적 둘: slot_hand.gd 머리 주석의 테스트 경로를 고쳤다. 든 것을 보여 주는 HandView(mouse_filter IGNORE, z_index 10)를 가방 창에 붙였고, 커서 위치는 Pointer.position 으로만 읽는다. shot.sh --ui 에 held 자리를 더해 찍어 보니 칸 바탕과 같은 색이라 묻혀서 고른 칸 색으로 칠했다. 검사: test_throw_out 11개 통과. changed_tests 그물 첫 번은 1135개 중 1개 실패 — world_data.gd 의 키 주석에 drops 가 없다는 검사였다. 주석을 고친 뒤 다시 돌린 그물(134개 스크립트 · 1172개 테스트)은 모두 통과했다. 전체는 돌리지 않았다.",
-   "why": "Pickup.THROW_DISTANCE = 1.5m — 줍는 반경(1m)보다 멀고 한 걸음이면 닿는 거리; Pickup.THROW_PROBE = 3m — 떨어질 땅을 찾는 광선의 위아래 길이; HandView.OFFSET = (12,12)px · ALPHA 0.85 — 커서 곁에 뜨는 든 것 그림의 자리 · 흐림",
-   "files": [
-    "game/player/pickup/pickup.gd",
-    "game/world/frontier_islands/island_state.gd",
-    "game/settings/save/world_data.gd",
-    "game/ui/hud/bag.gd",
-    "game/ui/hud/bag.tscn",
-    "game/ui/hud/hand_view.gd",
-    "game/ui/hud/chest_window.gd",
-    "game/core/game_root.gd",
-    "game/player/inventory_hotbar/slot_hand.gd",
-    "game/core/debug/ui_shots.gd",
-    "game/core/debug/ui_shots_kit.gd",
-    "game/tests/world/storage/test_throw_out.gd",
-    "spec/01_settings/save.md",
-    "spec/02_player/pickup.md",
-    "spec/02_player/inventory-hotbar.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "칸을 **창 밖으로 끌어다 놓으면** 그것이 **캐릭터 앞 바닥에 떨어진다** (테스트)",
-     "evidence": "test_throw_out.gd — test_dragging_a_bag_slot_outside_the_window_drops_it_in_front_of_the_character 가 _get_drag_data → Bag._can_drop_data/_drop_data(창 밖 좌표) 차례로 넣고, 가방 칸이 비는지 · 덩어리 하나 · 나무 7개 · 위치가 player.facing()*THROW_DISTANCE 앞 · 땅 높이+LIFT 인지 본다. 상자 칸도(test_dragging_a_chest_slot_outside_drops_it_too), 창 위(가방 패널 · 상자 패널)는 버리지 않는 것도(test_dropping_onto_the_window_itself_throws_nothing) 본다. outside() 의 패널 판정을 꺼 보니 그 테스트가 실패했다 — 껍데기 아님. 실제 씬에서 Dim · Center 가 PASS, ChestWindow · StationWindow 는 IGNORE 라 끌어 놓기가 Bag 까지 올라간다"
-    },
-    {
-     "ok": true,
-     "criterion": "떨어진 것은 **다시 주울 수 있다** — 밟으면 줍는다 (spec/02_player/pickup.md) (테스트)",
-     "evidence": "test_what_was_thrown_stays_until_walked_over_then_is_picked_up — 버린 뒤 10 물리 프레임 동안 도로 줍히지 않고, 캐릭터를 그 자리에 세우면 가방에 5개가 돌아오고 바닥이 빈다 (진짜 Pickup · Player · 땅)"
-    },
-    {
-     "ok": true,
-     "criterion": "우클릭으로 **반만 집어** 밖에 놓으면 반만 버려진다 (테스트)",
-     "evidence": "test_half_picked_up_with_right_click_then_clicked_outside_throws_only_that_half — 9개 우클릭 → 손 5, 창 밖 좌클릭 → 바닥 5 · 칸 4 · 손 빔. 빈 손 클릭은 아무 일 없음, 창 밖 우클릭은 버리지 않음도 따로 본다"
-    },
-    {
-     "ok": true,
-     "criterion": "버린 것은 저장본에 남는다 — 나갔다 들어와도 그 자리에 있다 (테스트)",
-     "evidence": "test_what_was_thrown_is_still_there_after_leaving_and_returning — IslandState.of → SaveStore 디스크 저장 · 읽기 → game.free 로 섬을 치우고 → 새 Pickup 에 IslandState.apply → 나무 4개가 같은 자리에. Pickup.standing 이 빈 목록을 내게 깨 보니 이 테스트가 실패했다. 두 번 되돌려도 안 겹치는 것도 본다. save.md 월드 줄 · world_data.gd 키 주석에 drops 가 적혔다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 낡은 테스트 경로 주석 — game/player/inventory_hotbar/slot_hand.gd 의 머리 주석이 tests/player/inventory_hotbar/test_slot_hand.gd 를 가리키는데 그 파일은 없다. 실제 테스트인 tests/world/storage/test_chest_right_click.gd 로 고쳐라",
-     "evidence": "slot_hand.gd 10줄 주석이 tests/world/storage/test_chest_right_click.gd 로 바뀌었고 그 파일이 있다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 집어 든 것이 화면에 안 보인다 — 우클릭으로 집으면 칸 개수만 줄고 든 것(아이콘 · 개수)이 어디에도 보이지 않아, 사람은 무엇을 몇 개 들었는지 모른다. 든 것을 보여 주는 Control(mouse_filter IGNORE)을 창에 붙여라 — 커서 위치가 필요하면 LOOP.md 2절대로 Pointer 를 거쳐야 한다(커서를 직접 읽지 말 것). 들면 보이고 다 놓으면 숨는지 테스트로 확인하라",
-     "evidence": "ui/hud/hand_view.gd (IGNORE, 자식도 IGNORE, 위치는 Pointer.position). test_what_is_held_is_shown_and_hidden_when_put_down 가 IGNORE · 가방에 붙음 · 빈 손이면 숨음 · 들면 보임 · 이름 키 · 개수 4→3 · Pointer 흉내 위치+OFFSET · 다 놓으면 숨음을 보고, test_the_held_view_hides_after_throwing 가 버린 뒤 숨는지 본다. guard 통과"
-    }
-   ],
-   "issues": [],
-   "good": [
-    "ui_shots 에 held 자리(우클릭으로 반 집은 채 찍기)를 더했다 — 든 것 보이기를 눈으로 확인하려는 개발용 도구라 흐름을 흐트러뜨리지 않는다"
-   ]
-  },
-  "test": "island_in_game.gd\n* test_entering_a_world_puts_an_island_under_the_character\n* test_the_screen_shows_the_island_not_grey\n* test_the_character_starts_standing_on_the_ground\n* test_the_character_does_not_start_in_the_water\n* test_the_hotbar_still_picks_up_what_is_in_hand_on_the_island\n* test_e_still_opens_the_bag_on_the_island\n* test_escape_still_opens_the_settings_window_on_the_island\n* test_the_world_seed_of_the_entered_world_places_the_resources\n* test_dying_on_the_island_drops_a_chest_and_revives_at_the_island_spawn\n* test_dying_with_a_window_open_blocks_the_controls_again\n* test_the_island_wired_the_bullet_trace_to_its_attack\n* test_leaving_and_entering_the_same_world_gives_the_same_island\n12/12 passed.\n\n\nres://tests/world/terrain/test_island_shape_marks_note.gd\n* test_the_marks_note_says_what_the_three_are_for\n* test_the_marks_note_says_it_goes_into_the_saved_island\n* test_the_field_note_and_the_marks_note_agree\n* test_the_cache_really_carries_the_three_marks\n* test_placing_resources_really_reads_the_three_marks\n* test_an_island_loaded_from_the_cache_still_places_resources\n* test_the_three_marks_round_trip_through_marks_and_set_marks\n* test_the_check_catches_a_missing_or_stale_note\n8/8 passed.\n\n\nres://tests/world/terrain/test_island_walk.gd\n* test_player_stands_on_terrain_at_spawn\n* test_terrain_matches_island_data\n* test_terrain_uses_chunks_not_nodes_per_cell\n* test_uphill_slower_than_flat_slower_than_downhill\n* test_cannot_walk_or_jump_up_a_cliff\n* test_cannot_grip_a_real_cliff_without_spikes\n    --- Awaiting 1.5 seconds  ---\n* test_spikes_grip_the_real_cliff_and_climb_it\n    --- Awaiting 3.0 seconds  ---\n* test_cannot_walk_into_sea\n    --- Awaiting 4.0 seconds  ---\n* test_felling_a_tree_the_island_grew\n* test_the_island_grows_back_what_was_felled_once_the_days_have_passed\n* test_sun_casts_shadows\n* test_debug_fly_camera_and_overview\n* test_placing_a_field_on_the_real_terrain\n* test_the_island_wired_its_water_into_the_farmland\n* test_aiming_is_the_last_child_that_takes_a_right_click\n* test_eating_on_the_island_speeds_the_walk_and_leaves_the_crop_alone\n16/16 passed.\n\n\n\n\n==============================================\n= 36 Orphans\n==============================================\ntest_ui_shots.gd\n    - test_island_shot_builds_the_real_island\n        * [HandView:<Control#4090956377670>(hand_view.gd)] + 5\ntest_bag_temporary_note.gd\n    - test_the_header_says_the_dim_and_the_layer_are_temporary\n        * [HandView:<Control#10224018659293>(hand_view.gd)] + 5\n    - test_the_header_points_at_the_theme_the_scene_actually_uses\n        * [HandView:<Control#10224622639341>(hand_view.gd)] + 5\n        * [HandView:<Control#10225159531059>(hand_view.gd)] + 5\n    - test_the_header_quotes_the_layer_the_bag_actually_sits_on\n        * [HandView:<Control#10225897728599>(hand_view.gd)] + 5\n    - test_the_note_does_not_stick_to_the_slot_size\n        * [HandView:<Control#10226535242029>(hand_view.gd)] + 5\n\n\n==============================================\n= Run Summary\n==============================================\n\nTotals\n------\nScripts             137\nTests              1202\nPassing Tests      1202\nAsserts           55878\nOrphans              36\nTime              718.116s\n\n\n---- All tests passed! ----\n\nWARNING: 36 RIDs of type \"CanvasItem\" were leaked.\n   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2735)\nWARNING: 179 ObjectDB instances were leaked at exit (run with `--verbose` for details).\n   at: cleanup (core/object/object.cpp:2536)\nERROR: 1 resources still in use at exit (run with --verbose for details).\n   at: clear (core/io/resource.cpp:822)\nERROR: 9 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.\nERROR: 100 RID allocations of type 'PN18TextServerAdvanced22ShapedTextDataAdvancedE' were leaked at exit.\nERROR: 1 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "6328ac9"
- },
- {
   "time": "2026-09-24 11:10:30",
   "epoch": 1790215830,
   "type": "pass",
@@ -7951,5 +7878,43 @@
   },
   "test": "/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           248\nTests            2002\nPassing Tests    2002\nFailing Tests       0\nRisky/Pending       0\nAsserts         97760\nTime           441s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "baa90901"
+ },
+ {
+  "time": "2026-09-29 22:52:13",
+  "epoch": 1790689933,
+  "type": "stop",
+  "title": "루프 끝 — 목록을 모두 처리했다",
+  "group": "G-166",
+  "step": "4",
+  "attempt": "1",
+  "report": {
+   "problem": "_pick_spot 다시 고르기를 밟는 테스트(옛 코드면 23.17m 로 떨어짐)와, AsBuiltRoom 에 민물 · 빈 물뿌리개를 두고 계단을 내려가 물을 떠 와 방 안 밭 둘에 다 주는 테스트를 더했다 — 바뀐 곳 그물 6개 파일 40개 통과",
+   "approach": "(1) 연못 셋 둘레 뭍(물가에서 10~22m · 네 방향)에 집을 두고 한 번 고르기(옛 _pick_spot — _snap 한 번)를 재 보니 연못 2 북쪽 (130, 27.4) 에서 200번 중 8번이 반경 밖, 가장 멀리 23.17m 였다. 새 테스트는 그런 집을 스스로 찾아(대조: 밖으로 나간 횟수 > 0 단언) 그 집에서 _pick_spot 300번이 WANDER_RADIUS + STEP 안인지 본다. animal.gd 를 잠깐 옛 코드로 바꿔 돌리면 23.17m < 20.5 로 떨어지고, 되돌리면 통과함을 확인했다 (animal.gd 는 그대로). (2) AsBuiltRoom 에 방 서쪽 땅 민물(x < -6, 높이 0.3, 물가 점 (-6.5, 0.3, -6))과 상자 둘째 칸 빈 물뿌리개를 두었다. 새 테스트에서 주민은 다 심음 → 물뿌리개를 꺼냄 → 땅(y 0.0006)에서 채움 → 물 들고 계단 → 방 안 → 방 안에 서서 밭 둘에 물 줌 차례로 해냈다. 기존 심기 테스트 · UI 찍기 테스트도 통과. 바뀐 곳 그물(changed_tests.py 6개 파일)로 40개 모두 통과 — 전체는 안 돌렸다",
+   "why": "",
+   "files": [
+    "game/core/debug/as_built_room.gd",
+    "game/tests/automation/villagers/test_villager_as_built.gd",
+    "game/tests/life/hunting/test_animal_walk.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "_pick_spot 다시 고르기 길을 아무 테스트도 안 밟는다 — test_picked_spots_stay_within_the_wander_radius 는 옛 _pick_spot(다시 고르기 없음)으로 돌려도 통과했다(집 셋에서 가장 멀리 19.96 · 19.79 · 19.84m). 고른 점이 물 · 바위에 막혀 _snap 이 반경 밖을 돌려주는 집이 없어서다. test_animal_walk.gd 에 집 둘레 반쪽이 물인 자리(예: 못 한가운데 가까이, 또는 바닷가 끝)를 골라 옛 코드면 반경 밖 점이 나오는지 먼저 재고, 그런 집에서 새 코드가 WANDER_RADIUS + STEP 안인지 단언해라. 그런 자리가 섬에 없다면 PICK_TRIES 갈래는 지워도 된다",
+     "evidence": "test_animal_walk.gd::test_picks_again_where_a_single_pick_lands_outside 가 연못 둘레 뭍에서 한 번 고르기(_snap 한 번)가 반경 밖으로 나가는 집을 찾아(대조 assert_gt outs>0 — (130, 27.4) 에서 200번 중 8번, 23.17m) 그 집에서 _pick_spot 300번이 20.5m 안인지 단언한다. QA 가 animal.gd 의 반경 검사를 `if true:` 로 깨 돌리자 이 테스트가 23.17m < 20.5 로 떨어졌다(되돌림 확인). 전체 테스트 2002개 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) AsBuiltRoom 의 밭은 심기까지만 본다 — 기준의 「밭을 돌보는지」를 심기로 읽었다. water_spots 가 빈 목록이라 물 주기는 이 판에서 안 돈다. 방 안 밭에 물을 떠다 주는 길(계단을 두 번 오르내림)도 보려면 AsBuiltRoom 에 물가를 두고 test_villager_as_built.gd 에 물 준 밭을 단언하는 테스트를 더해라",
+     "evidence": "AsBuiltRoom 에 방 서쪽 민물(in_pond · POND_AT)과 상자 둘째 칸 빈 물뿌리개를 두었고, test_a_villager_fetches_water_down_the_stairs_and_waters_every_field_inside 가 물뿌리개 꺼냄 → 땅(y<0.3)에서 채움 → 물 들고 계단 → 물 들고 방 안 → 방 안에서 밭 둘 다 물 줌을 차례까지 단언한다. QA 가 water_spots 를 [] 로 되돌려 돌리자 채움 · 계단 · 방 안 · 물 준 밭 0/2 단언이 모두 떨어졌다(되돌림 확인)"
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      0s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_path_walk.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/hunting/test_carcass_decay.gd\nok      1s  res://tests/player/equipment/test_equipment.gd\nok      1s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      2s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok    436s  res://tests/craft/test_from_empty_hands.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      2s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           248\nTests            2002\nPassing Tests    2002\nFailing Tests       0\nRisky/Pending       0\nAsserts         97760\nTime           441s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
  }
 ]
