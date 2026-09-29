@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 02:59:02",
- "updated_epoch": 1790704742,
+ "updated": "2026-09-30 03:22:29",
+ "updated_epoch": 1790706149,
  "ended": "2026-09-29 22:52:13",
  "progress": {
   "groups_total": 58,
   "groups_done": 57,
   "groups_waiting": 0,
   "steps_total": 272,
-  "steps_done": 270
+  "steps_done": 271
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-167",
  "step": "3",
  "step_title": "좁은 방에서 한 바퀴가 돈다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-30 02:59:02",
+ "phase": "QA",
+ "phase_since": "2026-09-30 03:19:55",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",

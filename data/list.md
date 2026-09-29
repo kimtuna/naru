@@ -1840,7 +1840,7 @@
   - 기준: 찍어서 확인한다 — 벽에 붙은 상자 앞에 선 주민
   - 기준: (앞 단계 QA) 합성 판 테스트가 흠을 재현하지 못한다 — test_villager_chest_room_measure.gd 는 머리 주석에 「사람이 지은 그대로(AsBuiltRoom)」라 적지만 거기서는 길 끝이 방 안이라 assert_true(room.in_room(end)) 가 통과한다. 흠은 저장본 판(test_villager_chest_saved_room.gd)에서만 난다. 머리 주석에 「AsBuiltRoom 판은 방 바닥과 벽 밖 땅의 높이 차가 달라 흠이 안 난다 — 흠 재현은 test_villager_chest_saved_room.gd」라고 적거나, 까닭 가리기가 saved_room 과 겹치니 이 파일을 지우고 한 곳으로 모아라
   - 기준: (앞 단계 QA) 까닭 가리기 헬퍼가 두 파일에 겹친다 — _bake · _area · _nearest · _gaps 가 test_villager_chest_room_measure.gd 와 test_villager_chest_saved_room.gd 에 거의 그대로 둘이다. 위 정리 때 한 파일로 모으거나 tests 쪽 공용 헬퍼로 빼라
-- [ ] 3. 좁은 방에서 한 바퀴가 돈다
+- [x] 3. 좁은 방에서 한 바퀴가 돈다
   - 기준: 2×2 판 방에서 **심기 → 물 → 비료 → 거두기**가 끝까지 돈다 — 사람이 지은 크기 그대로 (테스트)
   - 기준: 밭과 상자를 방에 꽉 채워도 다닐 자리가 남는다 — 안 남으면 놓을 때 막거나 알린다 (테스트)
   - 기준: (앞 단계 QA) 지운 파일의 스테이징이 짝이 안 맞는다 — test_villager_chest_room_measure.gd 삭제는 인덱스에 스테이징됐고(git rm --cached) 짝 .uid 삭제는 워킹트리에만 있다. 커밋할 때 둘 다 `git add -A game/tests/automation/villagers/` 로 함께 담아라 (내용은 둘 다 지운 상태로 맞다)
