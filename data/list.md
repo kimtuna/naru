@@ -1705,7 +1705,7 @@
   - 기준: (앞 단계 QA) 주민의 걸을 땅이 방 벽을 모른다 — AnimalNav 내비메시가 건축물을 안 넣어서 주민이 방 벽 너머로 곧장 걷다 막힌다. spec/07_automation/npc-villagers.md 에는 적혀 있다. 테스트는 자원을 방의 한쪽(동쪽)에만 둬서 이 문제를 비켜 간다(test_villager_gathering.gd 의 ROCK_AT 주석). 방 기준 일은 방 안팎을 드나드는 것이 전제다. 내비메시를 구울 때 건축물(벽 · 토대)을 넣고 문으로 드나들게 하라. 테스트: 자원을 방 반대쪽(서쪽)에 두고 주민이 방 안 상자와 오가며 캐는지 본다
 - [x] 5. (앞 단계 QA) npc-villagers.md 가 150줄 꽉 찼다
   - 기준: npc-villagers.md 가 150줄 꽉 찼다 — spec/07_automation/npc-villagers.md 가 정확히 150줄이다(넘지는 않았다). 다음 단계에서 한 줄만 더해도 넘으니, G-163 묶음을 마칠 때 G-163.x 절(방 기준 일 · 상자 참 · 문 드나들기)을 spec/07_automation/ 아래 새 md(예: villager-rooms.md)로 떼어 내고 원래 파일에는 가리키는 한 줄만 남겨라. 사람 결정 줄은 옮기되 지우지 마라
-- [ ] 6. (앞 단계 QA) G-163 내용을 가리키는 낡은 spec 경로가 남았다
+- [x] 6. (앞 단계 QA) G-163 내용을 가리키는 낡은 spec 경로가 남았다
   - 기준: G-163 내용을 가리키는 낡은 spec 경로가 남았다 — 옮긴 절(거주지 · 방 상자 · 상자 참 멈춤 · 돌아다니기)을 가리키는 곳이 아직 npc-villagers.md 를 적고 있다: game/automation/villagers/stroll.gd 3줄(G-163.4 idle 돌아다니기), game/automation/villagers/field_care.gd 3줄(G-163.3 방 안의 밭), game/automation/villagers/gather_work.gd 4줄(G-163.3), game/build/beds/bed.gd 4줄 · game/tests/build/test_bed.gd 2줄 · spec/06_build/rooms.md 24줄(침실이 거주지가 된다), spec/01_settings/save.md 13줄(거주지 방 · 반경 · 멈췄나). 이 경로들을 spec/07_automation/villager-rooms.md 로 고치거나 둘 다 적어라 (npc-villagers.md 가 한 줄로 넘겨 주니 막히지는 않는다)
 
 ## [ ] G-930 루프가 찾은 것 — 스스로 갚는다

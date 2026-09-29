@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-29 09:35:51",
- "updated_epoch": 1790642151,
+ "updated": "2026-09-29 09:46:01",
+ "updated_epoch": 1790642761,
  "ended": "2026-09-29 05:49:38",
  "progress": {
   "groups_total": 54,
   "groups_done": 52,
   "groups_waiting": 0,
   "steps_total": 254,
-  "steps_done": 251
+  "steps_done": 252
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-163",
  "step": "6",
  "step_title": "(앞 단계 QA) G-163 내용을 가리키는 낡은 spec 경로가 남았다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-29 09:35:51",
+ "phase": "QA",
+ "phase_since": "2026-09-29 09:45:11",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
