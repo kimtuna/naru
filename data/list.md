@@ -1779,8 +1779,10 @@
   - 기준: 찍어서 확인한다 — 주민이 방 안에서 일하는 그림 · 밖에서 심는 일이 없다
   - 기준: (앞 단계 QA) SHORE_STEP 에 「임시」 표시가 없다 — game/world/terrain/test_island.gd 의 SHORE_STEP(0.5m) 주석에 **임시** 를 달아라. report 의 temporary 목록에는 있는데 코드 주석에는 없다
   - 기준: (앞 단계 QA) 찍은 그림을 남기지 않았다 — 구현 세션이 farm_planted 를 다시 찍었다고 했으나 그 PNG 가 어디에도 없다(.loop/out/farm 은 G-164 때 것). 찍은 뒤 .loop/out/<단계>/ 에 남겨 QA 가 볼 수 있게 하라 (이번에는 QA 가 .loop/out/qa_g1652 에 다시 찍었다)
-- [ ] 4. (앞 단계 QA) npc-villagers.md 가 딱 150줄이다
+- [x] 4. (앞 단계 QA) npc-villagers.md 가 딱 150줄이다
   - 기준: npc-villagers.md 가 딱 150줄이다 — 이번에 두 줄을 한 줄로 합쳐 겨우 맞췄다. 다음에 한 줄만 더해도 넘는다. 「지금 만든 것」 · 「멈추지 않는다」 같은 단계별 기록 절을 spec/07_automation/ 아래 따로 떼어(예: npc-villagers-history.md) 본문을 120줄 안팎으로 줄여 두어라
+- [ ] 5. (앞 단계 QA) 코드 주석이 옮긴 단계 기록을 본문으로 가리킨다
+  - 기준: 코드 주석이 옮긴 단계 기록을 본문으로 가리킨다 — villager_window.gd:3 · game_root.gd:361 · input_actions.gd:42 (G-161.1), shots.gd:199 (G-157.2), field_care.gd:3 (G-157.3) 이 `spec/07_automation/npc-villagers.md` 를 적고 있다. 그 단계의 「지금 만든 것」은 이제 npc-villagers-history.md 에 있다. 본문 「단계별 기록」 절이 기록 파일을 가리키니 따라가면 닿기는 한다. 그래도 이 다섯 주석은 `spec/07_automation/npc-villagers-history.md 「지금 만든 것 (G-…)」` 로 바꿔 두어라. 「직업」 절을 가리키는 jobs.gd · job_work.gd · woodcutting.gd · mining_work.gd · harvest_work.gd · gather_work.gd 는 본문에 그 절이 남았으니 그대로 둔다
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
