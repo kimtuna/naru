@@ -1,11 +1,5 @@
 [
  {
-  "time": "2026-09-24 13:34:50",
-  "epoch": 1790224490,
-  "type": "start",
-  "title": "루프 시작"
- },
- {
   "time": "2026-09-24 13:43:03",
   "epoch": 1790224983,
   "type": "start",
@@ -7950,5 +7944,63 @@
    ]
   },
   "test": "gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      0s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      0s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      2s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      2s  res://tests/player/equipment/test_equipment.gd\nok      2s  res://tests/player/inventory_hotbar/test_bag_twenty.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_move_inside.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           250\nTests            2014\nPassing Tests    2014\nFailing Tests       0\nRisky/Pending       0\nAsserts         98246\nTime           452s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-30 04:35:48",
+  "epoch": 1790710548,
+  "type": "pass",
+  "title": "통과 — G-167 단계 4 (길이 없으면 직선으로 가지 않는다)",
+  "group": "G-167",
+  "step": "4",
+  "attempt": "2",
+  "report": {
+   "problem": "주민은 걸을 땅이 있는데 길이 없으면 곧장 가지 않고 「길이 막혔다」로 선다 · 벽 몫 0.6m · 턱 아래 땅까지 도려내 모퉁이에서 비비지 않는다 — 비비기를 결정적 단언(걸을 땅이 벽에서 0.5m 넘게 떨어졌다)으로 못 박았다. 바뀐 곳만: 44개 파일 328개 테스트 통과",
+   "approach": "PathWalk.plan 이 주민(straight)에게 길이 없으면 목표로 곧장 가는 길을 줬다. 이제 제 층의 걸을 땅이 지도에 있으면(has_ground) 빈 길 → NO_PATH 로 서고, 곧장 가는 것은 걸을 땅이 하나도 없을 때(섬이 없는 땅 · 굽기 전)만 남겼다(주석에 까닭). 짐승은 그대로 — 다른 땅의 길도 따른다(test_path_walk). 비비기: 벽 몫 0.45 로는 걸을 땅이 벽 바깥면에서 0.4m(몸 반지름과 같다)에 나 모퉁이에서 걸렸고, 턱 위 벽은 1m 아래까지만 도려내 높은 턱 곁 땅은 벽 밑동 바로 밑까지 걸을 땅이었다 → 벽 몸통 WALL_PAD 0.6 (문 기둥 DOOR_PAD · 상자 CHEST_PAD 0.45 그대로), 벽은 MAX_HEIGHT+1 아래까지 도려낸다. QA 지적대로 걷기 테스트는 매번 같은 길로 돌아 고침을 못 잡았으므로, 방 둘레 땅 격자(0.25m)마다 map_get_closest_point 를 뽑아 벽 몸통까지 수평 거리를 재는 결정적 단언(≥0.5m)을 더했다 — 지금 0.502m. 되돌려 확인: WALL_PAD 0.45 → 0.40m 로 떨어진다 · below 1.0 → 턱 아래 0.0m 로 떨어진다(LIFT 4 · 1.2m 에서는 1m 로도 땅에 닿아 못 잡으므로 땅 재기는 LIFT 10 · 바닥 2.7m 로 잰다). 상자 대조 단언은 벽 몫 0.6 에서 길 끝이 실제로 방 안(-383.25, 19.1, 201.25)이라 assert_true(방 안)로 되살리고 까닭을 주석에 적었다. spec 에 걸을 땅(NAV_HALF) 밖 주민이 서 버리는 남은 한계와 풀 길을 적었다.",
+   "why": "AnimalNav.WALL_PAD 0.6m — 굽는 칸 0.25m 에 맞춰 걸을 땅이 벽에서 몸 반지름 0.4 보다 넉넉히(0.5) 떨어지게; AnimalNav.CHEST_PAD 0.45m — 벽과 같던 값 그대로 (Villagers.CHEST_RINGS 가 이것으로 쟀다); 테스트의 WALL_CLEAR 0.5m — 몸 반지름 0.4 보다 넉넉히",
+   "files": [
+    "game/core/path_walk.gd",
+    "game/life/hunting/animal_nav.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/tests/automation/villagers/test_villager_no_straight.gd",
+    "game/tests/automation/villagers/test_villager_chest_saved_room.gd",
+    "game/tests/core/test_path_walk.gd",
+    "spec/07_automation/npc-villagers.md",
+    "spec/07_automation/villager-rooms.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "주민은 길이 없으면 직선으로 가지 않는다 — 가지 않고 「길이 막혔다」로 선다 (테스트)",
+     "evidence": "test_villager_no_straight.gd test_a_villager_off_the_walking_ground_stands_blocked_instead_of_walking_straight (걸을 땅 밖 주민 — far<0.5 · WHY_CANT_GET_THERE) · test_path_walk.gd test_a_villager_does_not_walk_straight_when_the_map_has_no_path_from_here (빈 길 · NO_PATH · 속도 0). 깨 봄: path_walk.gd 의 has_ground 갈래를 false 로 놓자 두 테스트 모두 떨어졌다 (24.03m 걸어감 · 곧장 가는 길 [(5,0,0)]). 되돌렸다"
+    },
+    {
+     "ok": true,
+     "criterion": "직선 되돌림이 왜 있는지 밝히고, 정말 필요한 자리만 남긴다 — 내비메시가 아직 안 구워졌을 때처럼. 남긴 자리마다 까닭을 주석에 적는다 (그냥 다 없애면 다른 곳이 멈춘다)",
+     "evidence": "PathWalk.plan 주석 · 줄 주석에 남긴 자리 둘(섬이 없는 땅 · 굽기 전 첫 프레임들)과 까닭을 적었다. has_ground 로 가른다. test_without_any_walking_ground_a_villager_still_walks_straight_to_work(섬 없는 땅에서 곧장 걸어 심는다) · test_a_villager_walks_straight_only_when_there_is_no_ground_of_its_layer 가 남긴 자리를 지킨다. 전체 250파일 2016개 통과 — 다른 곳이 멈추지 않았다"
+    },
+    {
+     "ok": true,
+     "criterion": "짐승은 그대로다 — 짐승이 직선으로 다니던 것이 바뀌면 spec 에 적고 테스트로 못 박는다 (테스트)",
+     "evidence": "짐승(straight=false) 갈래는 코드상 그대로다. test_path_walk.gd test_an_animal_follows_a_path_that_starts_elsewhere_as_before (다른 땅의 길을 그대로 따라 WALKING · +x) · 기존 test_an_animal_without_a_path_stops. spec 「길이 없으면 곧장 가지 않는다」 절에 짐승은 그대로라고 적었다. 전체 실행에서 짐승 테스트(test_animal_walk 등) 통과"
+    },
+    {
+     "ok": true,
+     "criterion": "벽 · 계단으로 막힌 자리에서 주민이 벽에 처박혀 비비지 않는다 (테스트)",
+     "evidence": "앞 QA 지적대로 결정적 단언을 더했다 — test_the_walking_ground_keeps_clear_of_the_walls_of_a_doorless_room · test_the_walking_ground_below_a_ledge_keeps_clear_of_the_wall_foot (map_get_closest_point 격자로 걸을 땅이 벽 몸통에서 ≥0.5m). 깨 봄: WALL_PAD 0.6→0.45 이면 두 땅 재기가 0.40m 로 떨어지고 문 없는 방 걷기 테스트도 5.73초 비벼 떨어졌다. _carve_rect below MAX_HEIGHT+1→1.0 이면 턱 아래 땅 재기가 0.00m 로 떨어졌다. 모두 되돌렸다"
+    }
+   ],
+   "issues": [
+    "벽 거리 여유가 2mm 뿐이다 — test_villager_no_straight.gd 의 땅 재기가 지금 0.502m 로 WALL_CLEAR 0.5 를 겨우 넘는다(report). 굽는 칸 0.25m 에 맞춰 난 값이라 엔진 · 굽기 설정이 조금만 달라져도 흔들릴 수 있다. WALL_CLEAR 를 몸 반지름 0.4 보다 넉넉한 0.45 쯤으로 낮추거나(0.45 로 되돌리면 0.40 이 나므로 여전히 잡는다) 그 이유를 WALL_CLEAR 주석에 적어라",
+    "상자 대조 단언의 뜻이 뒤집혔다 — test_villager_chest_saved_room.gd 의 대조가 이제 「길 끝이 방 안이다」(assert_true)라 G-167.1 이 잰 흠(방 밖)을 더는 재현하지 않는다. 주석에 까닭은 적혔으나 테스트 이름 · 머리 주석(test_measure_the_saved_room 이 흠을 잰다는 설명)이 옛 뜻이면 맞춰 고쳐라",
+    "벽 몫 변경이 짐승 걸을 땅도 바꾼다 — AnimalNav.WALL_PAD 0.6 은 짐승 굽기에도 쓰인다(짐승은 벽에서 0.15m 더 물러난다). 전체 테스트는 통과했으나 spec/07_automation/npc-villagers.md 「짐승은 그대로다」 줄 곁 또는 짐승 spec 에 이 한 줄(벽 둘레 짐승 걸을 땅도 0.6m 로 물러났다)을 적어라"
+   ],
+   "good": []
+  },
+  "test": "re/debug/test_dev_box_everything.gd\nok      0s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      2s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      2s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/test_world_settings_in_game.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/build/test_placers_comment.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           250\nTests            2016\nPassing Tests    2016\nFailing Tests       0\nRisky/Pending       0\nAsserts         98291\nTime           453s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "79c37006"
  }
 ]
