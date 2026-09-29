@@ -1708,7 +1708,7 @@
 - [x] 6. (앞 단계 QA) G-163 내용을 가리키는 낡은 spec 경로가 남았다
   - 기준: G-163 내용을 가리키는 낡은 spec 경로가 남았다 — 옮긴 절(거주지 · 방 상자 · 상자 참 멈춤 · 돌아다니기)을 가리키는 곳이 아직 npc-villagers.md 를 적고 있다: game/automation/villagers/stroll.gd 3줄(G-163.4 idle 돌아다니기), game/automation/villagers/field_care.gd 3줄(G-163.3 방 안의 밭), game/automation/villagers/gather_work.gd 4줄(G-163.3), game/build/beds/bed.gd 4줄 · game/tests/build/test_bed.gd 2줄 · spec/06_build/rooms.md 24줄(침실이 거주지가 된다), spec/01_settings/save.md 13줄(거주지 방 · 반경 · 멈췄나). 이 경로들을 spec/07_automation/villager-rooms.md 로 고치거나 둘 다 적어라 (npc-villagers.md 가 한 줄로 넘겨 주니 막히지는 않는다)
 
-## [ ] G-930 루프가 찾은 것 — 스스로 갚는다
+## [x] G-930 루프가 찾은 것 — 스스로 갚는다
 - 차선: 3d-start (루프가 가져갔다 2026-09-29 09:46)
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
   루프가 제 손으로 갚는다 — 사람은 순서를 바꾸고 싶을 때만 손댄다
