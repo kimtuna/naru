@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 02:30:07",
- "updated_epoch": 1790703007,
+ "updated": "2026-09-30 02:34:39",
+ "updated_epoch": 1790703279,
  "ended": "2026-09-29 22:52:13",
  "progress": {
   "groups_total": 58,
   "groups_done": 57,
   "groups_waiting": 0,
   "steps_total": 272,
-  "steps_done": 268
+  "steps_done": 269
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-167",
  "step": "1",
  "step_title": "왜 설 자리가 없는지 재서 밝힌다",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-30 02:30:07",
+ "phase": "QA",
+ "phase_since": "2026-09-30 02:33:44",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
