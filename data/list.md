@@ -1784,7 +1784,7 @@
 - [x] 5. (앞 단계 QA) 코드 주석이 옮긴 단계 기록을 본문으로 가리킨다
   - 기준: 코드 주석이 옮긴 단계 기록을 본문으로 가리킨다 — villager_window.gd:3 · game_root.gd:361 · input_actions.gd:42 (G-161.1), shots.gd:199 (G-157.2), field_care.gd:3 (G-157.3) 이 `spec/07_automation/npc-villagers.md` 를 적고 있다. 그 단계의 「지금 만든 것」은 이제 npc-villagers-history.md 에 있다. 본문 「단계별 기록」 절이 기록 파일을 가리키니 따라가면 닿기는 한다. 그래도 이 다섯 주석은 `spec/07_automation/npc-villagers-history.md 「지금 만든 것 (G-…)」` 로 바꿔 두어라. 「직업」 절을 가리키는 jobs.gd · job_work.gd · woodcutting.gd · mining_work.gd · harvest_work.gd · gather_work.gd 는 본문에 그 절이 남았으니 그대로 둔다
 
-## [ ] G-166 주민이 계단을 오른다 (사람이 플레이하고 짚었다 2026-09-29)
+## [x] G-166 주민이 계단을 오른다 (사람이 플레이하고 짚었다 2026-09-29)
 - 차선: 3d-start
 - spec: spec/07_automation/npc-villagers.md, spec/06_build/rooms.md
 - **자가 피드백**: 찾은 것을 계속 붙인다 — 깨끗해질 때까지
