@@ -1715,10 +1715,12 @@
 - 기능을 더하지 않는다. 지키는 것이 없던 자리에 지키는 것을 넣는 일이다
 - [x] 1. 낡은 주석 둘 (G-163 단계 3)
   - 기준: 낡은 주석 둘 — game/automation/villagers/villager.gd:69 「직업을 바꿔도 남는다 (든 물뿌리개가 사라지지 않게)」와 :240 「농부를 내려놓아도 든 물뿌리개는 그대로다」. 이제 물뿌리개는 일(JobWork)이 아니라 손(hands)에 있다. 두 줄을 손 기준으로 고쳐라
-- [ ] 2. NAV_MARGIN 에 「임시」 표시가 없다 (G-163 단계 3)
+- [x] 2. NAV_MARGIN 에 「임시」 표시가 없다 (G-163 단계 3)
   - 기준: NAV_MARGIN 에 「임시」 표시가 없다 — game/automation/villagers/villagers.gd:45 의 NAV_MARGIN := 5.0 에 주석이 없다. 보고서는 이 값을 임시라 했고 spec 수치 절에도 없다. 줄 위에 「**임시**」 주석을 달고 spec/07_automation/npc-villagers.md 「수치」에 한 줄 더하라 (CHEST_REACH 도 spec 수치에 없다)
 - [ ] 2. to_dict 주석의 「일마다 쥔 것」이 비었다 (G-930 단계 1)
   - 기준: to_dict 주석의 「일마다 쥔 것」이 비었다 — villager.gd:285 는 「일마다 쥔 것(work: 직업 id → 그 일의 save_state)」을 담는다고 적지만, 지금 save_state 를 덮어쓰는 JobWork 가 하나도 없어(job_work.gd:36 만 {} 를 돌려준다) work 줄은 저장본에 늘 안 생긴다. 88줄 「직업을 바꿔도 남는다」도 이제 지킬 까닭이 적혀 있지 않다. 두 줄에 「지금은 담을 것이 있는 일이 없다 — 앞으로 제 상태를 가진 일이 생기면 담는다」처럼 지금 사정을 적어 두거나, 까닭 없이 남기는 것이면 그렇다고 적어라 (막는 것은 아니다 — 주석만의 일)
+- [ ] 2. NAV_HALF 의 5.0 이 이름 없는 임시 수치다 (G-930 단계 2)
+  - 기준: NAV_HALF 의 5.0 이 이름 없는 임시 수치다 — game/automation/villagers/villagers.gd:54 `const NAV_HALF := FieldCare.WATER_RADIUS + 5.0` 의 5.0 은 NAV_MARGIN 과 같은 여유값인데 숫자로 박혀 있고 「임시」 표시도 spec 수치 줄도 없다. NAV_MARGIN 을 NAV_HALF 위로 올려 `FieldCare.WATER_RADIUS + NAV_MARGIN` 으로 쓰거나, 다른 값이면 주석에 **임시** 와 까닭을 달고 npc-villagers.md 「수치」 NAV_MARGIN 줄에 「걸을 땅은 적어도 민물 반경 60m + 5m」를 더하라
 
 ## 다음 — 위가 끝난 뒤 대화로 적는다
 - **사람이 직접 플레이해 보는 자리다** — 루프가 할 일이 아니다 (2026-09-21).
