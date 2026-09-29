@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-29 18:57:20",
- "updated_epoch": 1790675840,
+ "updated": "2026-09-29 19:15:48",
+ "updated_epoch": 1790676948,
  "ended": "2026-09-29 14:44:23",
  "progress": {
   "groups_total": 56,
   "groups_done": 55,
   "groups_waiting": 0,
   "steps_total": 264,
-  "steps_done": 263
+  "steps_done": 264
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-165",
  "step": "5",
  "step_title": "(앞 단계 QA) 코드 주석이 옮긴 단계 기록을 본문으로 가리킨다",
  "attempt": "2",
- "phase": "구현",
- "phase_since": "2026-09-29 18:57:20",
+ "phase": "QA",
+ "phase_since": "2026-09-29 19:15:09",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
