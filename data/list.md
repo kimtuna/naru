@@ -1703,8 +1703,10 @@
   - 기준: 찍어서 확인한다 — 상자가 차서 멈춘 주민과 그 알림
   - 기준: (앞 단계 QA) 디버그 찍기 장면 넷이 틀린 채 남았다 — game/core/debug/shots.gd 의 villager_water · villager_water_done · villager_woodcut · villager_woodcut_done 이 거주지 방 · 방 상자 없이 주민을 세운다. G-163.2 · G-163.3 부터는 일을 시작하지 않으니 찍으면 _wrong 에 남는다 (구현 세션도 그렇게 적어 뒀다). _set_up_villager_water 와 _set_up_woodcutter 에서 주민 곁에 막힌 방(토대 · 벽 · 지붕)을 짓고, 그 안에 물뿌리개(또는 빈 상자)를 넣은 상자를 두고, villagers.house 로 거주지를 줘라. 두 장면이 다시 젖은 밭 · 벤 나무를 찍는지 확인하라
   - 기준: (앞 단계 QA) 주민의 걸을 땅이 방 벽을 모른다 — AnimalNav 내비메시가 건축물을 안 넣어서 주민이 방 벽 너머로 곧장 걷다 막힌다. spec/07_automation/npc-villagers.md 에는 적혀 있다. 테스트는 자원을 방의 한쪽(동쪽)에만 둬서 이 문제를 비켜 간다(test_villager_gathering.gd 의 ROCK_AT 주석). 방 기준 일은 방 안팎을 드나드는 것이 전제다. 내비메시를 구울 때 건축물(벽 · 토대)을 넣고 문으로 드나들게 하라. 테스트: 자원을 방 반대쪽(서쪽)에 두고 주민이 방 안 상자와 오가며 캐는지 본다
-- [ ] 5. (앞 단계 QA) npc-villagers.md 가 150줄 꽉 찼다
+- [x] 5. (앞 단계 QA) npc-villagers.md 가 150줄 꽉 찼다
   - 기준: npc-villagers.md 가 150줄 꽉 찼다 — spec/07_automation/npc-villagers.md 가 정확히 150줄이다(넘지는 않았다). 다음 단계에서 한 줄만 더해도 넘으니, G-163 묶음을 마칠 때 G-163.x 절(방 기준 일 · 상자 참 · 문 드나들기)을 spec/07_automation/ 아래 새 md(예: villager-rooms.md)로 떼어 내고 원래 파일에는 가리키는 한 줄만 남겨라. 사람 결정 줄은 옮기되 지우지 마라
+- [ ] 6. (앞 단계 QA) G-163 내용을 가리키는 낡은 spec 경로가 남았다
+  - 기준: G-163 내용을 가리키는 낡은 spec 경로가 남았다 — 옮긴 절(거주지 · 방 상자 · 상자 참 멈춤 · 돌아다니기)을 가리키는 곳이 아직 npc-villagers.md 를 적고 있다: game/automation/villagers/stroll.gd 3줄(G-163.4 idle 돌아다니기), game/automation/villagers/field_care.gd 3줄(G-163.3 방 안의 밭), game/automation/villagers/gather_work.gd 4줄(G-163.3), game/build/beds/bed.gd 4줄 · game/tests/build/test_bed.gd 2줄 · spec/06_build/rooms.md 24줄(침실이 거주지가 된다), spec/01_settings/save.md 13줄(거주지 방 · 반경 · 멈췄나). 이 경로들을 spec/07_automation/villager-rooms.md 로 고치거나 둘 다 적어라 (npc-villagers.md 가 한 줄로 넘겨 주니 막히지는 않는다)
 
 ## [ ] G-930 루프가 찾은 것 — 스스로 갚는다
 - QA 가 통과시키면서 찾은 것이다. **물어볼 것이 아니면 여기로 온다** (사람 결정 2026-09-22).
