@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-29 12:47:15",
- "updated_epoch": 1790653635,
+ "updated": "2026-09-29 12:57:11",
+ "updated_epoch": 1790654231,
  "ended": "2026-09-29 10:09:49",
  "progress": {
   "groups_total": 55,
   "groups_done": 54,
   "groups_waiting": 0,
   "steps_total": 259,
-  "steps_done": 256
+  "steps_done": 257
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-164",
  "step": "1",
  "step_title": "농부가 방 상자의 씨앗으로 빈 밭에 심는다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-29 12:47:15",
+ "phase": "QA",
+ "phase_since": "2026-09-29 12:55:06",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
