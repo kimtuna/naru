@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 05:19:59",
- "updated_epoch": 1790713199,
+ "updated": "2026-09-30 05:27:28",
+ "updated_epoch": 1790713648,
  "ended": "2026-09-30 04:46:54",
  "progress": {
   "groups_total": 59,
@@ -15,9 +15,9 @@
  "group": "G-168",
  "step": "1",
  "step_title": "놓이는 것 전부를 도려낸다",
- "attempt": "1",
- "phase": "기계 검사",
- "phase_since": "2026-09-30 05:19:59",
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-30 05:27:28",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
