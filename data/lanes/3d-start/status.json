@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 16:45:16",
- "updated_epoch": 1790754316,
+ "updated": "2026-09-30 16:56:57",
+ "updated_epoch": 1790755017,
  "ended": "2026-09-30 07:01:29",
  "progress": {
   "groups_total": 61,
   "groups_done": 60,
   "groups_waiting": 0,
   "steps_total": 284,
-  "steps_done": 283
+  "steps_done": 284
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-940",
  "step": "2",
  "step_title": "villager-rooms.md 한 줄에 마침 구분이 빠졌다 (G-169 단계 2)",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-30 16:45:16",
+ "phase": "QA",
+ "phase_since": "2026-09-30 16:56:31",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
