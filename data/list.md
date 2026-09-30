@@ -1888,7 +1888,7 @@
 - [x] 4. (앞 단계 QA) 낡은 횃불 사진이 .loop/out 에 남았다
   - 기준: 낡은 횃불 사진이 .loop/out 에 남았다 — .loop/out/torch_shot/villager_torch_{ko,en}.png 는 06:25(G-168.2 이전) 것으로 횃불 하나만 보인다. 새 사진은 /tmp/g1683/ 에만 있다. 사람이 볼 곳에 두려면 .loop/out/torch_shot/ 를 새 사진으로 바꾸거나 지워라
 
-## [ ] G-169 주민이 상자를 붙들고 놓지 않는다 — 사람도 못 집는다 (사람이 플레이하고 짚었다 2026-09-30)
+## [x] G-169 주민이 상자를 붙들고 놓지 않는다 — 사람도 못 집는다 (사람이 플레이하고 짚었다 2026-09-30)
 - 차선: 3d-start
 - spec: spec/07_automation/npc-villagers.md, spec/06_build/storage.md
 - **자가 피드백**: 찾은 것을 계속 붙인다 — 깨끗해질 때까지
