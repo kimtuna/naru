@@ -1,77 +1,5 @@
 [
  {
-  "time": "2026-09-24 23:04:08",
-  "epoch": 1790258648,
-  "type": "pass",
-  "title": "통과 — G-145 단계 5 (등급 셋 — 나무 · 석재 · 철)",
-  "group": "G-145",
-  "step": "5",
-  "attempt": "1",
-  "report": {
-   "problem": "건축 등급 셋(나무 · 석재 · 철) — 철 건축물 여섯을 더하고, 도면을 든 채 G 로 겨눈 건축물을 그 자리에서 한 등급 올린다. 바뀐 곳만 돌린 테스트(84개 파일, 797개)가 통과했다",
-   "approach": "철 건축물이 없었다. BuildPiece.PIECES 에 철 여섯을 더하고 GRADES(나무→석재→철) · next_grade · upgrade 를 두었다. upgrade 는 노드를 갈아 끼우지 않고 이름과 색만 바꾼다(자리 · 변 · 문 여닫음이 그대로 남는다). Buildings.upgrade_piece 가 새 등급 한 개 값을 가방에서 내고 spent 에 더한다 — 철거 · 저장이 이미 spent 를 쓰므로 올리며 쓴 것까지 돌아오고 껐다 켜도 남는다. 키는 도면을 든 채 G(임시, build_upgrade)이고, 새 도구 아이템은 두지 않았다. 등급이 오르면 그 건축물의 LINK_LIMIT 가 늘어난다: 테스트에서 기둥을 헐어 지붕들이 4 · 5 · 6 으로 밀릴 때 석재 · 철로 올린 판은 버티고 나무 판은 무너진다. 손으로 놓는 것은 여전히 나무이고 놓은 뒤에 올린다(러스트와 같은 흐름). 앞 단계 QA 몫 둘도 고쳤다: 밭 테스트 둘이 Farmland.plate_of · center_of 를 쓰도록 바꿨고, _time_marks 는 '_' 로 나눈 낱말이 정확히 맞는지(+ 정확한 이름 목록)로 보게 했다 — damage · stage · storage · image 를 잡지 않는다는 테스트도 붙였다. 옛 test_blueprint 는 건축물을 12개로 세고 있어서 18개(옛 12 + 철 6)로 고쳤다.",
-   "why": "업그레이드 키 G(build_upgrade) — spec 에 키가 정해지지 않았다; 철 색 Color(0.3,0.32,0.36) — 장식 없는 회색 단계에서 셋을 구별하려고 잡은 값; 등급을 올릴 때 새 등급 한 개 값(Blueprint.COST)을 통째로 낸다 — spec 에는 「등급마다 재료 값 미정」으로만 적혀 있다",
-   "files": [
-    "game/build/build_piece.gd",
-    "game/build/buildings.gd",
-    "game/build/blueprint.gd",
-    "game/core/input/input_actions.gd",
-    "game/project.godot",
-    "game/i18n/ko.po",
-    "game/i18n/en.po",
-    "game/tests/build/test_building_grades.gd",
-    "game/tests/build/test_blueprint.gd",
-    "game/tests/settings/save/test_round_trip.gd",
-    "game/tests/world/day_night/test_day_in_world.gd",
-    "spec/01_settings/input.md",
-    "spec/06_build/building.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "같은 건축물을 **나무 · 석재 · 철** 세 등급으로 짓는다 (테스트)",
-     "evidence": "test_building_grades.gd test_the_same_pieces_are_built_in_wood_stone_and_iron — 여섯 종류 × 세 등급이 Blueprint.piece_of · 재료(판자/석재 블록/철괴) · 번역 키를 갖고, 등급마다 토대 · 벽 · 문 · 기둥 · 지붕 · 계단이 실제로 place_at 으로 서며 재료가 맞고 색 셋이 갈린다. 철 건축물 여섯이 PIECES · ko/en.po 에 더해졌다. 전체 테스트(1429개) 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "**도면으로 그 자리에서 등급을 올린다** — 망치 같은 도구를 새로 두지 않는다 (테스트)",
-     "evidence": "test_the_blueprint_upgrades_a_piece_in_place_without_a_new_tool — 진짜 우클릭으로 나무 토대를 놓고 진짜 G 입력(InputEventAction)으로 석재 → 철, 재료가 빠지고, 같은 노드 · 같은 자리 · 철 색, 철 위는 오르지 않고 재료도 안 빠진다, 손에 든 것은 줄곧 도면. test_without_the_blueprint_or_materials_nothing_is_upgraded 가 재료 부족 · 도면 안 든 경우를 막는다"
-    },
-    {
-     "ok": true,
-     "criterion": "등급을 올리면 **이을 수 있는 개수도 늘어난다** (테스트)",
-     "evidence": "test_upgrading_raises_how_far_a_piece_can_link — link_limit 3→4→5 에 더해, 기둥을 헐어 지붕 판 4 · 5 · 6 이 개수 4 · 5 · 6 이 될 때 석재로 올린 판 4 와 철로 올린 판 5 는 버티고 나무 판 6 은 무너진다(올리지 않았다면 4 · 5 도 나무 한계 3 을 넘어 무너졌다 — 실제 행동을 본다)"
-    },
-    {
-     "ok": true,
-     "criterion": "올린 것을 철거하면 **올리며 쓴 재료까지 전부** 돌아온다 (테스트)",
-     "evidence": "test_breaking_an_upgraded_piece_returns_what_the_upgrades_spent_too — 나무→석재→철로 올린 뒤 spent 가 판자4 · 석재4 · 철4, 저장본(standing)에 등급 · spent 가 담기고 restore 뒤에도 같으며, HITS 만큼 쳐서 철거하면 셋이 전부 가방에 돌아온다"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 옛 테스트가 1m 칸을 밭 판으로 넘긴다 — …Farmland.plate_of(pos) 로 판을 구하고 높이는 Farmland.center_of(plate) 자리에서 재도록 고쳐라",
-     "evidence": "test_round_trip.gd:330 · test_day_in_world.gd:40 이 Farmland.plate_of 로 판을 구하고 Farmland.center_of(plate) 자리의 height_at_local 로 높이를 잰다. 두 파일 모두 전체 실행에서 통과"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 시각 이름 검사의 'age' 가 엉뚱한 것을 잡는다 — …정확한 이름 목록으로 바꿔라",
-     "evidence": "test_blueprint.gd _time_marks 가 '_' 로 쪼갠 낱말의 정확한 일치 + 정확한 이름 목록으로 바뀌었고, test_the_time_mark_check_catches_times_but_not_lookalikes 가 placed_at · lock_time · age 는 잡고 damage · stage · storage · image · edge 는 놓아주는지 직접 단언한다"
-    }
-   ],
-   "issues": [
-    "spec 의 「등급을 내린다」를 만들 길이 없다 — spec/06_build/building.md 수용 기준(80줄)은 「등급을 올리고 내릴 수 있고」인데 이번 단계는 올리기만 만들었다. 이 묶음 뒤 단계나 G-900 에서 도면으로 한 등급 내리는 손짓(임시 키)과 그때 돌려줄 재료 규칙(철거처럼 올린 몫을 그대로 돌려주나)을 만들고, 내린 뒤 LINK_LIMIT 가 줄어 넘치는 것이 무너지는지 보는 테스트를 짜라. 규칙이 spec 에 없으면 「미정」에 한 줄 적어라",
-    "Buildings._grade 가 이제 거의 쓰이지 않는다 — buildings.gd:113 의 _grade 는 손으로 놓는 것이 늘 나무가 된 뒤 pick() 으로만 바뀐다. 테스트 편의로만 남았으면 주석에 그렇게 적거나, 필요 없으면 걷어내라"
-   ],
-   "good": []
-  },
-  "test": "s://tests/ui/menu/test_character_create.gd\nok      2s  res://tests/ui/hud/test_map_window.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      0s  res://tests/combat/damage_death/test_health.gd\nok      2s  res://tests/build/test_rooms.gd\nok      2s  res://tests/build/test_placeable.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      2s  res://tests/combat/tools_as_weapons/test_tools.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      2s  res://tests/settings/test_translation.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      2s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    296s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           167\nTests            1429\nPassing Tests    1429\nFailing Tests       0\nPending             0\nAsserts         66100\nTime           296s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "ce12f6b"
- },
- {
   "time": "2026-09-24 23:44:10",
   "epoch": 1790261050,
   "type": "start",
@@ -8126,5 +8054,69 @@
   },
   "test": "r_chests_full.gd\nok     74s  res://tests/automation/villagers/test_villager_gathering.gd\nok     27s  res://tests/automation/villagers/test_villager.gd\nok     93s  res://tests/automation/villagers/test_villager_chest_wall.gd\nok     21s  res://tests/automation/villagers/test_villager_harvesting.gd\nok     23s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\nok     20s  res://tests/automation/villagers/test_villager_reach.gd\nok     19s  res://tests/automation/villagers/test_villager_can_churn.gd\nok     16s  res://tests/automation/villagers/test_villager_as_built.gd\nok     16s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     18s  res://tests/automation/villagers/test_villager_walks_in.gd\nok     18s  res://tests/automation/villagers/test_villager_room_doors.gd\nok      7s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      9s  res://tests/automation/villagers/test_villager_hands_room.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok     16s  res://tests/automation/villagers/test_villager_jobs.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      5s  res://tests/ui/hud/test_target_bars.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok     15s  res://tests/automation/villagers/test_villager_planting.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      2s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/automation/villagers/test_villager_door.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      1s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            63\nTests             465\nPassing Tests     465\nFailing Tests       0\nRisky/Pending       0\nAsserts          8853\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "f56af838"
+ },
+ {
+  "time": "2026-09-30 15:28:21",
+  "epoch": 1790749701,
+  "type": "pass",
+  "title": "통과 — G-169 단계 3 (사람과 주민이 같은 상자를 같이 쓴다)",
+  "group": "G-169",
+  "step": "3",
+  "attempt": "1",
+  "report": {
+   "problem": "사람과 농부가 같은 방 상자를 같이 쓴다 — 꺼내러 가는 사이 사람이 먼저 집으면 농부가 곧바로 길을 접고 없는 대로 한다 (test.log 「파일 34 개」 바뀐 곳만: 216개 통과)",
+   "approach": "상자에는 잠금·붙들기가 없어서(G-169.1 에서 잰 대로) 사람 손을 막는 것은 G-169.2 가 고친 되풀이뿐이었다. 남은 흠은 하나였다 — 농부가 씨앗·물뿌리개를 꺼내러 걸어가는 사이 사람이 먼저 집으면 농부는 상자 앞까지 걸어가 서서 「상자 곁에 설 자리가 없다」(틀린 까닭)를 남기고 RETRY 5초를 섰다. 그래서 FieldCare.tick 의 TO_CHEST 에서 방 상자에 꺼낼 것(_fetch_pick)이 더는 없으면 곧바로 _stop(0.0) 해 다시 고르게 했다 → 할 일이 없으면 「할 일이 없다」. 테스트(새 파일 test_villager_chest_shared.gd, 방 · 문 너머 연못 · 농부는 상자에서 떨어져 선다): (1) 농부가 물뿌리개를 꺼내 채워 물을 주는 동안 사람이 밀 칸을 Shift+클릭 30번 · 끌어 놓기 30번 — 다 됐고 밀 합 20 그대로, 농부는 밭 셋에 물을 다 줬고 떠나보내지 않았다(villagers.all() 에 그대로). (2) 사람이 먼저 — 씨앗 · 물뿌리개 각각, 꺼내러 가는 중에 사람이 다 집으면 3 물리 틱 안에 IDLE · 창은 WHY_NOTHING_TO_DO · 손 빈 채 · 사람 가방에 다 있다. (3) 농부가 먼저 — 씨앗 5 에서 빈 밭 수만큼 3 을 꺼내면 사람은 남은 2 를 집고 농부는 셋을 다 심는다. 상자 · 손 · 가방 · 심은 밭의 씨앗 합을 상자가 바뀔 때마다 · 프레임마다 재 한 번도 5 에서 벗어나지 않았다. (4) (앞 단계 QA) REFETCH · WHY_PUT_BACK — 농부가 씨앗을 꺼낸 순간 사람이 빈 밭 셋을 먼저 심는다 → 쓸 곳이 없어 도로 둔다 → 새 빈 밭을 갈아도 게임 시간 20초(REFETCH 30초 안) 동안 한 번도 다시 안 꺼내고 창은 WHY_PUT_BACK. 지킴 확인: 고친 줄을 되돌리면 (2) 둘이 떨어지고, field_care.gd 의 `_shun[k] = REFETCH` 를 `pass` 로 바꾸면 (4) 가 떨어졌다(다시 꺼냄 2번 · 창은 NOTHING_TO_DO). 되돌려 놓았다. 찍기: harness/shot.sh --ui 에 villager_chest_shared 자리를 더했다 — AsBuiltRoom 에서 농부가 씨앗을 꺼내 든 채(손 2) 사람이 상자 창을 열고 남은 씨앗 8 을 Shift+클릭으로 가방에 집은 그림. 카메라를 동쪽으로 비켜 방 · 농부가 창에 안 가리게 했다 (.loop/out/g1693/villager_chest_shared_ko.png · _en.png 열어 봤다 — 잘림 · 가림 없음).",
+   "why": "",
+   "files": [
+    "game/automation/villagers/field_care.gd",
+    "game/tests/automation/villagers/test_villager_chest_shared.gd",
+    "game/core/debug/ui_shots.gd",
+    "game/core/debug/ui_shots_kit.gd",
+    "spec/07_automation/npc-villagers.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "주민이 일하는 중에도 사람이 그 상자에서 집을 수 있다 (테스트)",
+     "evidence": "test_villager_chest_shared.gd test_a_person_takes_from_the_chest_while_the_farmer_works — 농부가 IDLE 이 아닌 프레임에만 밀 칸을 Shift+클릭(quick_into_bag) · 끌어 놓기(SlotDrop._get_drag_data/_drop_data) 30번씩, 30/30 다 되고 밀 합 20 · 밭 셋에 물을 다 줬음을 단언. test.log 에서 ok"
+    },
+    {
+     "ok": true,
+     "criterion": "사람이 먼저 집으면 주민은 없는 대로 하고, 주민이 먼저 집으면 사람은 남은 것을 집는다 — 물건이 겹쳐 사라지거나 늘지 않는다 (테스트)",
+     "evidence": "test_when_the_person_takes_the_seeds_first / _the_can_first — 꺼내러 가는 중(TO_CHEST)에 사람이 다 집으면 3 물리 틱 안에 IDLE · WHY_NOTHING_TO_DO · 손 빔 · 합 그대로. test_when_the_farmer_takes_first_the_person_gets_the_rest — 농부 3 · 사람 2, 상자 changed 와 프레임마다 합(상자+손+가방+심은 밭)이 5 에서 한 번도 안 벗어남. field_care.gd TO_CHEST 의 새 줄을 빼면 IDLE 단언이 떨어진다(코드를 보면 3틱 뒤에도 TO_CHEST 로 남는다)"
+    },
+    {
+     "ok": true,
+     "criterion": "주민을 떠나보내지 않아도 된다 — 사람이 그것 때문에 주민을 내보내는 일이 없다 (테스트)",
+     "evidence": "test_a_person_takes_from_the_chest_while_the_farmer_works 가 집기 30번이 다 된 뒤 villagers.all().size()==1 · has(villager) · job==FARMER 를 단언 — 떠나보내지 않은 채 집기가 됐다"
+    },
+    {
+     "ok": true,
+     "criterion": "찍어서 확인한다 — 주민이 일하는 중에 사람이 상자를 연 창",
+     "evidence": ".loop/out/g1693/villager_chest_shared_ko.png 를 열어 봤다 — 상자 창(물뿌리개 칸)이 열려 있고 가방에 밀 씨앗 8 을 집었으며, 오른쪽 방 안에 농부가 보인다. 잘림 · 가림 없음. ui_shots.gd · ui_shots_kit.gd 에 villager_chest_shared 자리가 붙었다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) REFETCH(_shun) 만 지키는 테스트가 없다 — ...",
+     "evidence": "test_seeds_put_back_unused_are_not_taken_again — 농부가 씨앗을 꺼낸 순간 사람이 빈 밭을 다 심어 도로 두게 하고, 새 빈 밭을 갈아도 게임 20초 동안 다시 안 꺼냄(takes.n==1)을 단언. 직접 깨 봤다: field_care.gd:275 `_shun[k] = REFETCH` 를 `pass` 로 바꾸자 test_villager_chest_shared.gd 가 FAIL (can_churn 은 ok 그대로). 되돌렸다(diff 가 원래 +6 그대로)"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) WHY_PUT_BACK 까닭을 단언하는 테스트가 없다 — ...",
+     "evidence": "같은 테스트가 villagers.why_still(villager) == Villagers.WHY_PUT_BACK 과 tr(WHY_PUT_BACK) 이 키와 다름(번역됨)을 단언"
+    }
+   ],
+   "issues": [
+    "사람이 짚은 물뿌리개 다툼을 일하는 중 집기로 안 잰다 — test_a_person_takes_from_the_chest_while_the_farmer_works 는 농부가 안 건드리는 밀 칸만 집는다. 사람이 막혔던 것은 물뿌리개였다(G-169 머리말). 손이 거의 찬 농부(밀 · 씨앗 · 비료를 든 채)가 물 주기에 들어가는 동안 사람이 물뿌리개 칸을 Shift+클릭하는 경우를 test_villager_chest_shared.gd 에 더해, 한 번에 집히고 물뿌리개가 상자+손+가방 합 1 을 지키는지 단언하라 (막는 것은 아니다 — 되풀이 자체는 test_villager_can_churn.gd 가 지킨다)",
+    "REFETCH 테스트가 벽시계로 기다린다 — test_seeds_put_back_unused_are_not_taken_again 이 Time.get_ticks_msec 5000ms 를 기다려 「게임 시간 20초」를 가정한다. 프레임이 늦으면 게임 시간이 짧아져 REFETCH 가 풀렸어도 못 볼 수 있다. 게임 시간으로(물리 프레임 수 × delta 합으로) 20초를 재도록 바꿔라"
+   ],
+   "good": []
+  },
+  "test": "t_villager_harvesting.gd\nok     20s  res://tests/automation/villagers/test_villager_reach.gd\nok     19s  res://tests/automation/villagers/test_villager_can_churn.gd\nok     16s  res://tests/automation/villagers/test_villager_as_built.gd\nok     18s  res://tests/automation/villagers/test_villager_room_doors.gd\nok     16s  res://tests/automation/villagers/test_villager_jobs.gd\nok     19s  res://tests/automation/villagers/test_villager_walks_in.gd\nok      8s  res://tests/automation/villagers/test_villager_hands_room.gd\nok     17s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     13s  res://tests/core/debug/test_dev_box.gd\nok     14s  res://tests/automation/villagers/test_villager_chest_shared.gd\nok     15s  res://tests/automation/villagers/test_villager_planting.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok      5s  res://tests/ui/hud/test_target_bars.gd\nok      9s  res://tests/core/debug/test_dev_box_open.gd\nok      8s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok     10s  res://tests/core/debug/test_ui_shots.gd\nok      2s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/build/test_bed.gd\nok      2s  res://tests/ui/hud/test_map_pin.gd\nok      4s  res://tests/ui/hud/test_bag.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/ui/hud/test_villager_window.gd\nok      4s  res://tests/ui/hud/test_station_output.gd\nok      2s  res://tests/automation/villagers/test_villager_door.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      2s  res://tests/core/test_open_chest_window.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_health_bar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      3s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok    438s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            69\nTests             504\nPassing Tests     504\nFailing Tests       0\nRisky/Pending       0\nAsserts          9531\nTime           438s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "01a63a18"
  }
 ]

@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 15:10:39",
- "updated_epoch": 1790748639,
+ "updated": "2026-09-30 15:28:21",
+ "updated_epoch": 1790749701,
  "ended": "2026-09-30 07:01:29",
  "progress": {
   "groups_total": 61,
   "groups_done": 59,
   "groups_waiting": 0,
   "steps_total": 283,
-  "steps_done": 279
+  "steps_done": 280
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-169",
  "step": "3",
  "step_title": "사람과 주민이 같은 상자를 같이 쓴다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-30 15:10:39",
+ "phase": "QA",
+ "phase_since": "2026-09-30 15:25:22",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
