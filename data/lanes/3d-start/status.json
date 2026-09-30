@@ -1,8 +1,8 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 16:01:55",
- "updated_epoch": 1790751715,
+ "updated": "2026-09-30 16:09:48",
+ "updated_epoch": 1790752188,
  "ended": "2026-09-30 07:01:29",
  "progress": {
   "groups_total": 61,
@@ -15,9 +15,9 @@
  "group": "G-169",
  "step": "5",
  "step_title": "(앞 단계 QA) 이 변경 전의 저장본에서 주민이 열어 둔 문은 계속 열려 있다",
- "attempt": "1",
- "phase": "기계 검사",
- "phase_since": "2026-09-30 16:01:55",
+ "attempt": "2",
+ "phase": "구현",
+ "phase_since": "2026-09-30 16:09:48",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
