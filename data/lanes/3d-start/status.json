@@ -1,23 +1,23 @@
 {
  "state": "running",
  "reason": "",
- "updated": "2026-09-30 19:15:33",
- "updated_epoch": 1790763333,
+ "updated": "2026-09-30 20:04:52",
+ "updated_epoch": 1790766292,
  "ended": "2026-09-30 18:03:18",
  "progress": {
   "groups_total": 63,
   "groups_done": 62,
   "groups_waiting": 0,
   "steps_total": 290,
-  "steps_done": 288
+  "steps_done": 289
  },
  "started": "2026-09-21 06:54:49",
  "group": "G-171",
  "step": "2",
  "step_title": "재현된 것을 고친다",
  "attempt": "1",
- "phase": "구현",
- "phase_since": "2026-09-30 19:15:33",
+ "phase": "QA",
+ "phase_since": "2026-09-30 19:59:39",
  "lane": "3d-start",
  "model": "claude-opus-5-5",
  "resume_at": "2026-09-26 07:00:00",
