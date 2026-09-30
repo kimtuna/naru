@@ -1,88 +1,5 @@
 [
  {
-  "time": "2026-09-24 22:46:28",
-  "epoch": 1790257588,
-  "type": "pass",
-  "title": "통과 — G-145 단계 4 (토대 4×4칸 · 밭 2×2칸)",
-  "group": "G-145",
-  "step": "4",
-  "attempt": "1",
-  "report": {
-   "problem": "토대 한 장을 4×4칸(4m)으로, 밭 한 장을 2×2칸(2m 판)으로 바꿨다. 토대 한 장에 밭이 정확히 네 장 들어간다. 임시 크기 시험 코드(SizeTrial · 그 테스트 · shots.gd 의 size_trial·size_trial_top)를 지웠다. test_blueprint 의 고아 노드와 시간 제한 단언도 고쳤다. 바뀐 곳만 돌린 39개 파일 315개 테스트 통과 (전체를 돌린 것은 아니다)",
-   "approach": "토대: BuildPiece.FOUNDATION_CELLS 를 3에서 4로 바꿨다. 벽·문·지붕·계단은 side() 에서 크기를 받으므로 모두 4m 가 된다. 한 장에 한 층을 오르는 계단은 약 47°에서 약 39°가 됐다. 밭: Farmland.FIELD_CELLS=2 를 두고 plate_of·center_of·side 를 새로 만들었다. 조준·놓기·제작대 판정·흙판 크기와 작물 자리가 1m 칸 대신 2m 밭 판을 쓴다. 격자가 월드 원점에서 시작하므로 4m 토대 한 장에 2m 밭 네 장이 딱 맞는다. 작물은 밭 한 장에 하나다. 저장: 밭·작물을 plate 키로 적는다. 1칸이던 옛 저장본(cell)은 그 칸이 든 판으로 읽는다(Farmland.plate_in). 크기 시험: size_trial.gd·그 테스트·.uid 를 지웠고, shots.gd 의 크기 시험 장면·_trial_spot·_set_up_size_trial·_checker 도 지웠다. test_size_4x4 가 res:// 아래 모든 .gd 를 훑어 이름이 남지 않았는지 본다. shots.gd 에 박혀 있던 3m 좌표는 BuildPiece.side() 로 바꿨고, build·stairs_down 등을 찍어 눈으로 확인했다. 테스트 13개 파일이 3m·1칸 좌표를 박아 두고 있어 side()에서 계산하게 고쳤다. 단언을 약하게 한 것은 하나다: 계단이 45°보다 가파르다는 단언은 4m 에서는 참이 아니다. 그래서 계단 몸이 제 기울기까지 바닥으로 친다는 단언(WALK_ANGLE_META)으로 바꿨다. 그 결과 45°를 넘는 비탈을 딛게 하는 장치는 이제 어떤 테스트도 필요로 하지 않는다. 밭 테스트는 캐릭터가 판 경계(x=0)에 서서 조준이 반올림 오차로 옆 판에 떨어졌다. 캐릭터를 판 한가운데에 세웠다. (앞 단계 QA) test_blueprint: restore 뒤 wait_process_frames(1) 을 넣었고, 이제 고아 경고가 나오지 않는다. 시간 제한 테스트는 600프레임을 기다리지 않는다. 대신 토대·벽·Buildings 의 스크립트 변수와 메타에 시각·나이·잠금 이름(time·placed_at·age·lock·since·stamp·msec·clock)이 없다는 것을 단언한다. 시각이 적히지 않으면 잠글 수 없다. 끝내기 전에 changed_tests 그물(39개 파일)을 돌렸고 315/315 통과했다.",
-   "why": "shots.gd 의 벽·문·계단 겨냥 거리(side()*0.45·0.4) — 찍는 장면에서만 쓰는 값이다. 한 변 가까이를 겨누려고 잡았다; 옛 1칸 밭 저장본은 한 판에 넷이 모이면 한 장만 선다. 나머지 밭(farm_plot)은 돌려주지 않는다 — 프로토타입 저장본이라 되돌리는 길은 두지 않았다",
-   "files": [
-    "game/build/build_piece.gd",
-    "game/build/buildings.gd",
-    "game/build/rooms.gd",
-    "game/build/size_trial.gd (삭제)",
-    "game/core/debug/shots.gd",
-    "game/life/farming/farmland.gd",
-    "game/life/farming/crops.gd",
-    "game/tests/build/test_size_4x4.gd (새로)",
-    "game/tests/build/test_size_trial.gd (삭제)",
-    "game/tests/build/test_blueprint.gd",
-    "game/tests/build/test_building_collapse.gd",
-    "game/tests/build/test_building_link_count.gd",
-    "game/tests/build/test_building_pillar.gd",
-    "game/tests/build/test_building_preview.gd",
-    "game/tests/build/test_building_roof_stairs.gd",
-    "game/tests/build/test_building_sockets.gd",
-    "game/tests/build/test_building_walls.gd",
-    "game/tests/build/test_foundation_attach.gd",
-    "game/tests/build/test_room_chests.gd",
-    "game/tests/build/test_rooms.gd",
-    "game/tests/life/farming/test_crops.gd",
-    "game/tests/life/farming/test_farm_save.gd",
-    "game/tests/life/farming/test_farmland.gd",
-    "spec/04_life/farming.md",
-    "spec/06_build/building.md",
-    "spec/06_build/rooms.md"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": true,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "토대 한 변이 **4칸(4m)** 이다 — 벽 · 문 · 지붕 · 계단도 4m 다 (테스트)",
-     "evidence": "test_size_4x4.gd test_a_foundation_is_4_by_4_cells 가 place_at 으로 진짜 놓은 토대의 SlabMesh 가 4×4m, plan cells 16칸, 4m 판 한가운데 스냅, 옆 판이 4m 옆인지 본다. test_wall_door_roof_and_stairs_are_4m 가 벽 WallMesh 4m · 양끝이 토대 모서리, 문틀 폭 4m, 지붕 RoofMesh 4×4, 계단 길이 4m·판 한 장·4m 옆으로 뻗는지를 메시 크기로 잰다. 전체 1423/1423 통과(test.log)"
-    },
-    {
-     "ok": true,
-     "criterion": "밭 한 변이 **2칸(2m)** 이고, 토대 한 장에 **정확히 네 장** 들어간다 (테스트)",
-     "evidence": "test_a_field_is_2_by_2_cells 가 till 로 놓은 흙판이 2×2m · 2m 판 한가운데 스냅 · 같은 판/옆 판 구별을 본다. test_exactly_four_fields_fit_on_a_foundation 이 토대 위 16칸을 모두 광선으로 짚어 놓아 보고 정확히 4장 · 넓이 16m² · 판 밖으로 안 삐져나옴 · 판 윗면에 얹힘 · 다섯째 자리 없음을 단언한다. FIELD_CELLS 가 1 이면 16장이 되어 깨진다"
-    },
-    {
-     "ok": true,
-     "criterion": "임시 시험 코드를 **지운다** — `build/size_trial.gd` · 그 테스트 · `shots.gd` 의 `size_trial` · `size_trial_top`. 남은 곳이 없다 (테스트)",
-     "evidence": "size_trial.gd · .uid · test_size_trial.gd · .uid 삭제 확인(git status). test_the_size_trial_code_is_gone 이 파일 부재, 전역 클래스 목록에 SizeTrial 없음, res:// 아래 모든 .gd(addons 제외)에 size_trial/SizeTrial/TrialFoundation 이 없음을 본다. grep 으로도 .gd 에 남은 곳 없음(md 인 current.md · list.md 만)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) test_blueprint 에 고아 노드가 남는다 — test_what_was_spent_is_saved_and_an_old_save_counts_the_piece_price 가 restore 를 두 번 불러 BuildPiece 6개가 고아로 잡힌다(test.log). restore 뒤 await wait_process_frames(1) 을 넣거나 끝에 남은 조각을 free 해 고아가 0 이 되게 하라",
-     "evidence": "restore 두 번 뒤에 각각 await wait_process_frames(1) 을 넣었다. test_blueprint.gd 하나만 godot 으로 돌려 13/13 통과, 출력에 orphan 경고 0건"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) 시간 제한 테스트가 10초만 기다린다 — test_rotating_and_breaking_have_no_time_limit 는 600 물리 프레임(약 10초)만 보낸다. 지금은 잠금 코드가 아예 없어 문제없지만, 나중에 누가 분 단위 잠금을 넣으면 못 잡는다. BuildPiece 에 놓은 시각을 두지 않는다는 것을 직접 보거나(예: 놓인 조각에 placed_at 같은 메타가 없다) 시계를 몇 분 앞당겨 보는 단언으로 바꿔라",
-     "evidence": "600프레임 대기를 없애고 _time_marks 로 토대 · 벽 · Buildings 의 스크립트 변수와 메타에 time/placed_at/age/lock/since/stamp/msec/clock 이름이 없음을 단언한다 — 기준이 예로 든 방법 그대로다. 그 뒤 회전 · 부수기가 되는 기존 단언은 남았다"
-    }
-   ],
-   "issues": [
-    "옛 테스트가 1m 칸을 밭 판으로 넘긴다 — tests/settings/save/test_round_trip.gd:330 과 tests/world/day_night/test_day_in_world.gd:40 이 Grid.world_to_cell(...) 로 구한 1m 칸을 farmland.till · crops.plant 에 그대로 넘긴다. 이제 그 인자는 2m 밭 판 좌표라 밭이 뜻한 자리의 두 배 먼 곳에 서고, 높이도 엉뚱한 자리(Grid.cell_to_world(cell))에서 잰다. 지금은 우연히 통과한다. Farmland.plate_of(pos) 로 판을 구하고 높이는 Farmland.center_of(plate) 자리에서 재도록 고쳐라",
-    "시각 이름 검사의 'age' 가 엉뚱한 것을 잡는다 — test_blueprint.gd _time_marks 는 부분 문자열로 찾아서 damage · stage · storage · image 같은 변수가 BuildPiece · Buildings 에 생기면 시각이 아닌데도 깨진다. 이름을 '_' 로 쪼갠 낱말이 정확히 age · time · lock 등과 같은지로 보거나, placed_at · placed_time · lock_time 같은 정확한 이름 목록으로 바꿔라",
-    "밭 API 가 판을 아직 cell 이라 부른다 — Farmland.is_tilled(cell) · till(cell) · aimed_ground()[\"cell\"] · Crops 의 cell 인자가 이제 2m 밭 판 좌표인데 이름이 1m 칸 그대로라 위의 테스트처럼 헷갈려 잘못 넘긴다. 이름을 plate 로 바꾸거나(저장본 키는 이미 plate) 적어도 aimed_ground 의 키를 plate 로 바꿔라"
-   ],
-   "good": [
-    "옛 1칸 밭 · 작물 저장본을 판 좌표로 옮겨 읽는 길(Farmland.plate_in)과 그 테스트 — 저장 키가 바뀌어 필요했으니 덤이라기보다 뒤따른 일이다. 한 판에 모인 옛 밭 넷 중 셋은 돌려주지 않는다(report temporary 에 적힘)"
-   ]
-  },
-  "test": "t_islands.gd\nok      2s  res://tests/world/frontier_islands/test_island_key.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      7s  res://tests/world/frontier_islands/test_dock_building.gd\nok      3s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      8s  res://tests/world/frontier_islands/test_lime.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok     32s  res://tests/settings/save/test_dead_save.gd\nok      1s  res://tests/world/storage/test_chest_right_click.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      6s  res://tests/world/storage/test_chest_break.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      3s  res://tests/world/storage/test_throw_out.gd\nok      9s  res://tests/world/storage/test_chest_place.gd\nok     16s  res://tests/world/frontier_islands/test_volcano.gd\nok     17s  res://tests/world/terrain/test_island_shape_marks_note.gd\nok     33s  res://tests/world/frontier_islands/test_voyage.gd\nok     33s  res://tests/world/terrain/test_island_in_game.gd\nok     44s  res://tests/world/terrain/test_island_resources.gd\nok     26s  res://tests/world/terrain/test_island_walk.gd\nok     16s  res://tests/build/test_building_sockets.gd\nok     33s  res://tests/settings/save/test_round_trip.gd\nok     14s  res://tests/build/test_building_walls.gd\nok     14s  res://tests/core/debug/test_dev_box.gd\nok     14s  res://tests/life/hunting/test_butchery.gd\nok     12s  res://tests/build/test_building_roof_stairs.gd\nok     13s  res://tests/life/hunting/test_carry_cage.gd\nok     10s  res://tests/life/farming/test_crops.gd\nok     11s  res://tests/life/farming/test_farmland.gd\nok     10s  res://tests/life/hunting/test_sedation_capture.gd\nok      9s  res://tests/core/debug/test_dev_box_open.gd\nok      8s  res://tests/world/day_night/test_day_in_world.gd\nok      5s  res://tests/build/test_blueprint.gd\nok      8s  res://tests/build/test_building_pillar.gd\nok      5s  res://tests/build/test_building_preview.gd\nok      5s  res://tests/build/test_building_stairs_roof.gd\nok      6s  res://tests/life/hunting/test_part_yields.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      2s  res://tests/build/test_building_link_count.gd\nok      2s  res://tests/life/food/test_food.gd\nok      3s  res://tests/build/test_building_collapse.gd\nok      1s  res://tests/build/test_room_chests.gd\nok      4s  res://tests/build/test_foundation_attach.gd\nok      2s  res://tests/build/test_rooms.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/build/test_size_4x4.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      2s  res://tests/core/debug/test_ui_shots.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_farm_save.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/build/test_room_kinds.gd\nok      2s  res://tests/build/test_placeable.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      2s  res://tests/life/gathering/test_herb_kinds.gd\nok    145s  res://tests/world/terrain/test_island_shape.gd\nok    295s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           166\nTests            1423\nPassing Tests    1423\nFailing Tests       0\nPending             0\nAsserts         65773\nTime           415s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
-  "commit": "9968f40"
- },
- {
   "time": "2026-09-24 23:04:08",
   "epoch": 1790258648,
   "type": "pass",
@@ -8128,5 +8045,86 @@
   },
   "test": "--- 바뀐 곳만: 1 개 ---\ntest.sh: 파일 1 개를 6 개씩 한꺼번에 돌린다\nok     13s  res://tests/automation/villagers/test_villager_can_churn.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts             1\nTests               4\nPassing Tests       4\nFailing Tests       0\nRisky/Pending       0\nAsserts           113\nTime           13s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
   "commit": "df40ddd7"
+ },
+ {
+  "time": "2026-09-30 15:10:37",
+  "epoch": 1790748637,
+  "type": "pass",
+  "title": "통과 — G-169 단계 2 (되풀이를 멈춘다)",
+  "group": "G-169",
+  "step": "2",
+  "attempt": "1",
+  "report": {
+   "problem": "농부가 물뿌리개를 꺼냈다 도로 넣기를 멈췄다 — 꺼내기 전에 쓸 수 있는지 보고, 못 쓰고 둔 것은 30초 동안 안 꺼내며, 까닭을 창에 남긴다. 손 칸 4→6 · 거둘 때 한 칸 비워 둠 (test.log 첫 줄 「파일 63 개」 바뀐 곳만: 465개 통과)",
+   "approach": "되풀이는 두 갈래였다. (1) G-169.1 에서 잰 것 — 빈 물뿌리개 · 민물 없음(또는 못 가 빼 둔 물가)이면 _try_water 가 상자에 물뿌리개가 있다는 것만 보고 꺼내고, 다음 틱에 채울 곳이 없어 「일을 마쳤다」로 도로 넣었다 (초당 60번). 이제 꺼내기 전에 본다: 민물에 못 가면 물이 든 물뿌리개만 꺼내고(_can_pick = _wet_can), 없으면 물 주기를 건너뛰고 창에 WHY_NO_WATER 「채울 민물에 못 가서 섰다」를 남긴다. 그래도 꺼낸 것을 한 번도 못 쓰고 도로 두면(_took 에 남은 것) REFETCH(30초) 동안 다시 안 꺼내고 WHY_PUT_BACK 을 남긴다 — 물 막힘 짜임에서 처음 한 번 꺼내 물가로 가 봤고, 도로 둔 뒤 게임 20초 동안 0번. (2) 대화 세션이 찾은 것 — 물뿌리개는 빈 칸에만 드는데 손 4칸이 차면 take_from 이 0 을 돌려 상자 앞에서 헛돌았다. 손을 6칸으로 늘리고(농부 한 바퀴의 다섯 가지 + 비울 한 칸), 거둘 때 SPARE 한 칸을 남기게 has_room_for(loot, spare) 를 썼고, 물뿌리개 · 비료를 꺼내기 전에 들 자리가 없으면 먼저 상자에 두고 온다. 잰 값 (G-169.1 → 지금): 물 없음 상자 칸 바뀜 초당 60.0 → 0.0 · 물 막힘 60.4 → 0.0 · 물리 틱 20번 뒤집힘 19 → 0 · Shift+클릭 30번 18 → 30 · 끌어 놓기 30번 9 → 30 · 상자 창을 연 채 칸 그림 다시 그림 0번. 밀 99개 6칸을 든 채 마른 밭 셋 → 밀을 두고 물뿌리개를 한 번 꺼내 다 줬다.",
+   "why": "VillagerHands.SLOTS 4 → 6 — 농부가 한 바퀴에 드는 다섯 가지(물뿌리개 · 비료 · 심을 씨앗 · 거둔 작물 둘) + 비워 둘 한 칸. spec 에 정한 것이 없다; VillagerHands.SPARE 1 — 거둔 것 · 캔 것으로 채우지 않는 칸, 물뿌리개 들 자리; FieldCare.REFETCH 30초 — 꺼냈다가 못 쓰고 도로 둔 것을 다시 안 꺼내는 시간. 가다 막힌 밭(FORGET_FIELD)과 같게 잡았다",
+   "files": [
+    "game/automation/villagers/hands.gd",
+    "game/automation/villagers/field_care.gd",
+    "game/automation/villagers/villagers.gd",
+    "game/ui/hud/villager_window.gd",
+    "game/i18n/ko.po",
+    "game/i18n/en.po",
+    "game/tests/automation/villagers/test_villager_can_churn.gd",
+    "game/tests/automation/villagers/test_villager_hands_room.gd",
+    "spec/07_automation/npc-villagers.md",
+    "spec/07_automation/villager-rooms.md"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "손 칸을 늘린다 (hands.gd SLOTS 4) — 몇 칸으로 늘릴지 정하고 왜 그 수인지 주석에 적고 「임시」를 붙인다 (테스트)",
+     "evidence": "hands.gd SLOTS 6 — 「**임시**」 줄 아래 다섯 가지(물뿌리개·비료·씨앗·거둔 작물 둘)+SPARE 한 칸이라는 까닭이 적혔다. test_villager_hands_room.gd test_hands_have_room_for_a_whole_farming_round_and_a_spare 가 SLOTS>4 · 주민 손 칸 수 · 다섯 가지를 다 들고도 빈 칸이 SPARE 만큼 남는지를 단언한다"
+    },
+    {
+     "ok": true,
+     "criterion": "거둔 것을 먼저 상자에 둔다 — 손이 차기 전에 두러 가서, 물뿌리개를 들 자리를 비워 둔다 (테스트)",
+     "evidence": "test_has_room_for_keeps_the_spare_slot_empty(단위) + test_the_farmer_puts_things_away_before_the_harvest_takes_the_last_slot(5칸 찬 손으로 밭 셋을 거두면 첫 거두기 전에 상자에 둔다). 일부러 깨 봄: _try_harvest 의 SPARE 인자를 빼니 「[3] expected to equal [0]」 으로 떨어졌다 (되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "밀을 한가득 거둔 뒤에도 물뿌리개를 든다 — 사람이 본 그 자리가 풀린다 (테스트)",
+     "evidence": "test_with_hands_full_of_wheat_the_farmer_still_takes_the_can_and_waters — 6칸을 밀 99로 채운 채 마른 밭 셋, 밀을 두고 물뿌리개를 한 번만 꺼내 다 준다. 일부러 깨 봄: _try_water 의 empty_slots()==0 → 두고 오기를 빼니 이 테스트가 떨어졌다 (되돌림)"
+    },
+    {
+     "ok": true,
+     "criterion": "주민이 꺼냈으면 쓰거나, 못 쓰면 다시 꺼내지 않는다 — 같은 것을 몇 초 안에 되풀이해 꺼내지 않는다 (테스트)",
+     "evidence": "test_a_can_put_back_unused_is_not_taken_again_within_seconds — 물 막힘 짜임에서 한 번 꺼내 도로 둔 뒤 게임 20초 동안 0번. 대조군 test_with_reachable_water_the_chest_barely_changes 는 꺼내 쓴다. 일부러 깨 봄: _wet_can 미리 보기를 빼도 REFETCH(_shun)가 되풀이를 막아 1번·0번이 유지됐고(까닭은 WHY_PUT_BACK 으로 바뀌어 다른 단언이 떨어짐), 둘 다 없으면 G-169.1 의 초당 60번으로 돌아간다 — 행동은 지켜진다"
+    },
+    {
+     "ok": true,
+     "criterion": "못 쓰는 까닭이 있으면 멈추고 창에 남긴다 — 말없이 되풀이하지 않는다 (테스트)",
+     "evidence": "물 없음 · 물 막힘 두 테스트가 villagers.why_still(villager)==WHY_NO_WATER 와 번역 키가 글로 바뀌는지를 단언한다. villager_window.gd:434 가 why_still 을 그대로 보인다. ko.po · en.po 둘 다 두 키가 있다"
+    },
+    {
+     "ok": true,
+     "criterion": "상자 칸이 초당 몇 번씩 바뀌지 않는다 — 단계 1 에서 잰 값과 견준다 (테스트)",
+     "evidence": "CALM=1.0/초, 주석에 G-169.1 의 60·60.4 번과 견줌. 물 없음 · 물 막힘 모두 assert_lte(changes/secs, CALM) · 물뿌리개가 모든 프레임 상자에 · 물리 틱 20번 뒤집힘 0 — 잰 것 0.0/초"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 되풀이 기대는 고칠 때 뒤집어야 한다 — test_villager_can_churn.gd 의 세 테스트(물 없음 · 사람 막힘 · 물 막힘)는 지금의 흠을 단언한다(assert_gt(changes, ticks/2), flips>=18, 헛돎>0). 고치는 단계에서 이 단언을 「초당 몇 번 이하 · 물뿌리개가 상자에 머문다 · Shift+클릭 30번 다 된다」로 뒤집어야 한다. 머리 주석에 적혀 있으나 다음 단계 기준에 꼭 넣어라",
+     "evidence": "세 테스트 이름과 단언이 뒤집혔다 — assert_lte(changes/secs, CALM) · in_chest==frames · _flips()==0 · click.got==30 · drag.got==30. 머리 주석의 「흠을 박아 둔 기대다」 줄도 지웠다"
+    },
+    {
+     "ok": true,
+     "criterion": "(앞 단계 QA) 상자 칸 그림 깜박임은 재지 않았다 — report 는 창 칸 그림이 Chest.changed 마다 다시 그려져 틱마다 깜박인다(사람이 본 「엄청 클릭한다」)고 적었으나 테스트로 확인하지 않았다. 고치는 단계에서 상자 창을 연 채 칸 그림이 다시 그려지는 횟수를 세는 단언을 붙이면 사람이 본 증상까지 막힌다",
+     "evidence": "test_the_open_chest_window_does_not_flicker — ChestWindow 를 띄워 chest.changed 가 win._refresh 에 걸렸는지 단언한 뒤 120 프레임 동안 다시 그린 횟수/초 <= CALM. 일부러 깨 봄(미리 보기 제거) 때 2.47/초로 떨어졌다"
+    }
+   ],
+   "issues": [
+    "REFETCH(_shun) 만 지키는 테스트가 없다 — field_care.gd 의 `_shun[k] = REFETCH` 를 `pass` 로 바꿔도 test_villager_can_churn.gd 가 다 통과했다. 물 막힘 짜임에서는 _wet_can 미리 보기가 먼저 막아 REFETCH 가 한 번도 안 쓰인다. 씨앗 · 비료처럼 미리 보기가 없는 것을 꺼냈다가 못 쓰는 짜임(예: 방 상자에 씨앗, 심을 밭이 꺼낸 뒤 가다 막혀 빠짐)을 만들어 도로 둔 뒤 REFETCH 동안 다시 안 꺼내는지 · why_still==WHY_PUT_BACK 인지 단언하라",
+    "WHY_PUT_BACK 까닭을 단언하는 테스트가 없다 — grep 에서 Villagers.WHY_PUT_BACK 을 보는 테스트가 0개다. 위 REFETCH 테스트에 함께 넣으면 된다",
+    "SPARE 상수에 「임시」 표시가 없다 — hands.gd 의 `const SPARE := 1` 주석에 **임시** 를 붙여라 (report temporary 와 spec 수치에는 적혀 있다)",
+    "villager-rooms.md 한 줄에 마침 구분이 빠졌다 — 「물뿌리개는 빈 칸에만 든다 (G-169.2) 상자가 차서…」 사이에 「.」 또는 「 · 」 를 넣고 줄이 너무 길면 나눠라"
+   ],
+   "good": []
+  },
+  "test": "r_chests_full.gd\nok     74s  res://tests/automation/villagers/test_villager_gathering.gd\nok     27s  res://tests/automation/villagers/test_villager.gd\nok     93s  res://tests/automation/villagers/test_villager_chest_wall.gd\nok     21s  res://tests/automation/villagers/test_villager_harvesting.gd\nok     23s  res://tests/automation/villagers/test_villager_chest_saved_room.gd\nok     20s  res://tests/automation/villagers/test_villager_reach.gd\nok     19s  res://tests/automation/villagers/test_villager_can_churn.gd\nok     16s  res://tests/automation/villagers/test_villager_as_built.gd\nok     16s  res://tests/automation/villagers/test_villager_many_fields.gd\nok     18s  res://tests/automation/villagers/test_villager_walks_in.gd\nok     18s  res://tests/automation/villagers/test_villager_room_doors.gd\nok      7s  res://tests/automation/villagers/test_villager_torch_detour.gd\nok      9s  res://tests/automation/villagers/test_villager_hands_room.gd\nok      9s  res://tests/automation/villagers/test_villager_home.gd\nok     16s  res://tests/automation/villagers/test_villager_jobs.gd\nok      4s  res://tests/ui/hud/test_bag_hand_craft.gd\nok      3s  res://tests/automation/villagers/test_villager_chest_detour.gd\nok      5s  res://tests/ui/hud/test_target_bars.gd\nok      5s  res://tests/ui/layout/test_window_layout.gd\nok     15s  res://tests/automation/villagers/test_villager_planting.gd\nok      3s  res://tests/ui/hud/test_bag.gd\nok      2s  res://tests/ui/hud/test_health_bar.gd\nok      3s  res://tests/ui/hud/test_station_window.gd\nok      3s  res://tests/automation/villagers/test_villager_nav_everything_placed.gd\nok      3s  res://tests/build/test_bed.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      3s  res://tests/ui/hud/test_map_pin.gd\nok      3s  res://tests/ui/hud/test_room_names.gd\nok      3s  res://tests/ui/hud/test_room_window.gd\nok      2s  res://tests/ui/hud/test_station_short_rows.gd\nok      3s  res://tests/ui/hud/test_station_output.gd\nok      3s  res://tests/ui/hud/test_villager_window.gd\nok      1s  res://tests/automation/villagers/test_villager_nav_half.gd\nok      1s  res://tests/automation/villagers/test_villager_door.gd\nok      2s  res://tests/ui/hud/test_villager_window_release.gd\nok      2s  res://tests/ui/hud/test_ammo_label.gd\nok      1s  res://tests/ui/hud/test_ammo_label_by_gun.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      2s  res://tests/ui/hud/test_bag_move_slots.gd\nok      2s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      1s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_equip_blocked_notice.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_hotbar.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/automation/villagers/test_npc_villagers_spec_split.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      2s  res://tests/ui/hud/test_map_coords.gd\nok      2s  res://tests/ui/hud/test_station_row_columns.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok    437s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts            63\nTests             465\nPassing Tests     465\nFailing Tests       0\nRisky/Pending       0\nAsserts          8853\nTime           437s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "f56af838"
  }
 ]
