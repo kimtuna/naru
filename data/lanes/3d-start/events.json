@@ -1,71 +1,5 @@
 [
  {
-  "time": "2026-09-25 00:08:20",
-  "epoch": 1790262500,
-  "type": "fail",
-  "title": "QA 불합격 — G-145 단계 6 (시도 1)",
-  "group": "G-145",
-  "step": "6",
-  "attempt": "1",
-  "report": {
-   "problem": "휠로 올린 토대도 옆 토대 윗면에 딱 붙고 한 장 놓을 때마다 휠이 0 으로 돌아간다. 도면 H 로 한 등급 내린다(임시 키 · 임시 반환 규칙). test.log: changed_tests 가 빈 목록이라 전체 169개 파일 1437개 테스트 통과",
-   "approach": "plan_at 이 이웃 토대 윗면에 휠 값(_raise)을 또 더해서, 이어 붙일수록 계단처럼 올라가다가 5m 에 걸렸다. 이제 휠 값은 '휠을 안 굴렸다면 놓일 윗면'(옆 토대, 없으면 땅)에 한 번만 더한다(want). 그 높이에 가장 가까운 이웃을 다시 골라서 반 칸(RAISE_STEP/2) 안이면 그 윗면에 딱 맞추고, 아니면 올린 높이 그대로 놓는다. 그래서 이웃과 다른 높이로 놓는 것과 5m 제한은 그대로 된다. place_held 에서 한 장 놓을 때마다 _raise=0 으로 돌린다. 'steep' 판정은 원래 붙을 이웃(beside)이 있느냐로 본다. (QA) 등급 내리기: 도면을 든 채 H(임시)를 누르면 downgrade_piece 가 실행된다. 지금 등급 한 개 값을 돌려주고(가방이 차면 바닥에 떨어진다), spent 에서 그만큼 빼고, collapse 로 줄어든 LINK_LIMIT 를 넘는 것을 무너뜨린다. spent 가 비어 있는 것(place_at)은 나무부터 올려 온 것으로 쳐서 재료가 거저 생기지 않는다. 반환 규칙은 spec 「미정」에 한 줄 적었다. (QA) _grade 는 pick() 으로만 바뀌는 테스트 편의라고 주석에 적었다.",
-   "why": "H 키로 한 등급 내리기 — 임시 키; 내릴 때 지금 등급 한 개 값을 그대로 돌려준다 — 임시 규칙(spec 미정); 휠로 올린 높이에서 이웃에 붙는 범위 = 반 칸(RAISE_STEP*0.5) — 임시",
-   "files": [
-    "game/build/buildings.gd",
-    "game/build/build_piece.gd",
-    "game/core/input/input_actions.gd",
-    "game/project.godot",
-    "spec/01_settings/input.md",
-    "spec/06_build/building.md",
-    "game/tests/build/test_foundation_wheel_attach.gd",
-    "game/tests/build/test_building_downgrade.gd"
-   ],
-   "decision": null
-  },
-  "qa": {
-   "pass": false,
-   "checks": [
-    {
-     "ok": true,
-     "criterion": "옆에 붙을 때는 이웃 윗면에 딱 맞춘다 — 휠 값을 더하지 않는다 (테스트)",
-     "evidence": "test_foundation_wheel_attach.gd::test_after_placing_a_raised_one_the_next_snaps_flush_without_the_wheel — 1m 올려 놓은 뒤 옆 세 장이 attached · 같은 y · ok. 휠 초기화를 빼거나 plan_at 이 휠을 또 더하면 떨어진다(plan_at 을 옛 식으로 되돌리면 test_the_wheel_still_sets... 가 떨어짐을 확인)"
-    },
-    {
-     "ok": true,
-     "criterion": "한 장 놓을 때마다 휠 값이 0 으로 돌아간다 (테스트)",
-     "evidence": "test_the_wheel_resets_after_every_placement_by_hand — 진짜 휠 · 우클릭으로 두 장 놓고 매번 raise()==0 확인. place_held 의 _raise = 0.0"
-    },
-    {
-     "ok": false,
-     "criterion": "이웃을 고를 때 올린 높이 기준으로 고른다 (테스트)",
-     "evidence": "test_the_raised_height_picks_which_neighbor_to_snap_to 는 이것을 가려내지 못한다. plan_at 을 옛 식(땅 기준 이웃 + _raise)으로 되돌려 돌렸더니 이 테스트는 그대로 통과했다 — 두 이웃의 높이 차(1.0m)가 휠 칸(0.25m)의 딱 배수라 낮은 이웃 + 휠 = 높은 이웃 윗면이 우연히 같고, attached 도 낮은 이웃에 붙은 것으로 참이 된다"
-    },
-    {
-     "ok": true,
-     "criterion": "휠로 이웃과 다른 높이로 놓는 것은 그대로 된다. 5m 제한도 그대로 (테스트)",
-     "evidence": "test_the_wheel_still_sets_a_height_different_from_the_neighbor — 3칸 올리면 attached=false · ok · y=첫장+0.75, 내리면 buried, 5m 넘기면 too_high. 옛 plan_at 으로 되돌리면 떨어진다(확인함)"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) spec 의 「등급을 내린다」를 만들 길이 없다 — …",
-     "evidence": "downgrade_piece + H(임시 키, project.godot · InputActions.all · spec/01_settings/input.md 에 적힘). test_building_downgrade.gd 4개: H 로 철→석재→나무, 올린 몫 반환 · spent 차감 · 철거 시 이중 반환 없음, 도면 없으면 안 됨, spent 없는 place_at 은 재료가 거저 안 생김, 내린 뒤 LINK_LIMIT 초과 판이 무너지고 collapsed 신호에 실림. 반환 규칙은 building.md 「미정」에 임시로 적힘"
-    },
-    {
-     "ok": true,
-     "criterion": "(앞 단계 QA) Buildings._grade 가 이제 거의 쓰이지 않는다 — …",
-     "evidence": "buildings.gd 의 _grade 주석에 「pick() 뿐 · 게임 안에서는 늘 wood · 테스트 편의로만 남겨 둔다」라고 적음"
-    }
-   ],
-   "issues": [
-    "올린 높이로 이웃 고르는 테스트가 껍데기다 — test_foundation_wheel_attach.gd::test_the_raised_height_picks_which_neighbor_to_snap_to 는 높은 이웃을 땅보다 딱 1.0m(휠 4칸) 위에 두어서, plan_at 을 옛 식(neighbor(plate, on_ground) + _raise)으로 되돌려도 통과한다. 높이 차가 휠 칸의 배수가 아니게 세워라 — 예: 턱 블록을 1.1m 로 해 높은 이웃 윗면을 low+1.1 에 두고 raise_by(4)(=1.0m) 한 뒤 plan_at(mid) 의 y 가 high.global_position.y(low+1.1)에 딱 맞고 attached 인지 단언한다 (옛 식이면 low+1.0 이라 떨어진다). 휠을 안 굴렸을 때 낮은 이웃에 붙는 단언도 남겨 둔다. 고친 뒤 옛 식으로 되돌려 떨어지는지 직접 확인하라",
-    "steep 설명이 코드와 어긋난다 — buildings.gd plan_at 머리말의 why 설명은 「steep (붙지 않았는데 땅이 MAX_DROP 넘게 오르내린다)」인데, 이제 판정은 붙었느냐(next_to)가 아니라 휠을 안 굴렸을 때 붙을 이웃(beside)이 있느냐로 본다. 휠로 이웃과 다른 높이로 띄우면 붙지 않았어도 steep 이 아니다. 머리말을 「옆에 토대가 없는데」로 고쳐 적어라"
-   ],
-   "good": []
-  },
-  "test": "ok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/hud/test_station_short_rows.gd\nok      2s  res://tests/ui/hud/test_needs_gauges.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      3s  res://tests/ui/hud/test_map_window.gd\nok      2s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      2s  res://tests/ui/hud/test_station_window.gd\nok      2s  res://tests/ui/menu/test_enter_game.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/ui/menu/test_world_settings_screen.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      2s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/map/test_map_memory.gd\nok      2s  res://tests/world/frontier_islands/test_locked_island.gd\nok      1s  res://tests/world/resources_regrowth/test_regrowth.gd\nok      2s  res://tests/world/storage/test_chest_right_click.gd\nok      2s  res://tests/world/storage/test_chest_save.gd\nok      2s  res://tests/world/storage/test_chest_gather_sort_fill.gd\nok      1s  res://tests/build/test_building_stairs_note.gd\nok      2s  res://tests/world/storage/test_chest_shift_click.gd\nok      1s  res://tests/combat/damage_death/test_death_chest.gd\nok      1s  res://tests/build/test_placeable.gd\nok      2s  res://tests/world/storage/test_chest_slots.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/combat/tools_as_weapons/test_no_shovel.gd\nok      1s  res://tests/core/input/test_debug_keys.gd\nok      1s  res://tests/core/debug/test_dev_box_everything.gd\nok      1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      2s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/player/inventory_hotbar/test_inventory.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      1s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      2s  res://tests/ui/menu/test_menu_navigation.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok    295s  res://tests/craft/test_from_empty_hands.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           169\nTests            1437\nPassing Tests    1437\nFailing Tests       0\nPending             0\nAsserts         66331\nTime           295s  (godot 6 개)\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n"
- },
- {
   "time": "2026-09-25 00:21:49",
   "epoch": 1790263309,
   "type": "pass",
@@ -8182,5 +8116,39 @@
    "decision": null
   },
   "test": "s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      1s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/save/test_world_data_keys_note.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      1s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_clock_label.gd\nok      2s  res://tests/ui/hud/test_grapple_ammo_label.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      1s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      2s  res://tests/ui/menu/test_world_select.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      2s  res://tests/world/map/test_map_memory.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\n\n================ 떨어진 파일: res://tests/core/tools/test_no_triple_blank_lines.gd ================\nGodot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n---  GUT  ---\n\u001b[1m[INFO]:  \u001b[0musing [/Users/tuna/Library/Application Support/Godot/app_userdata/Naru] for temporary output.\nGodot version:  4.7.2\nGUT version:  9.7.1\n\n\nres://tests/core/tools/test_no_triple_blank_lines.gd\n* test_no_script_under_game_has_three_blank_lines_in_a_row\n    [Failed]:  ARRAY([\"tests/automation/villagers/test_villager_door_close.gd:174\"]) != ARRAY([]).\n    [\"tests/automation/villagers/test_villag...e.gd:174\"] != []  1 of 1 indexes do not match.  빈 줄이 셋 이상 이어진다 — 함수 사이는 둘, 파일 끝은 줄바꿈 하나:\n    tests/automation/villagers/test_villager_door_close.gd:174\n      at line 46\n* test_the_check_catches_three_blank_lines\n* test_the_check_passes_two_blank_lines\n2/3 passed.\n\n\n\n\n==============================================\n= Run Summary\n==============================================\n\nres://tests/core/tools/test_no_triple_blank_lines.gd\n- test_no_script_under_game_has_three_blank_lines_in_a_row\n    [Failed]:  ARRAY([\"tests/automation/villagers/test_villager_door_close.gd:174\"]) != ARRAY([]).\n    [\"tests/automation/villagers/test_villag...e.gd:174\"] != []  1 of 1 indexes do not match.  빈 줄이 셋 이상 이어진다 — 함수 사이는 둘, 파일 끝은 줄바꿈 하나:\n    tests/automation/villagers/test_villager_door_close.gd:174\n          at line 46\n\nTotals\n------\nScripts               1\nTests                 3\nPassing Tests         2\nFailing Tests         1\nAsserts             7/8\nTime              0.483s\n\n\n---- 1 failing tests ----\n\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           256\nTests            2051\nPassing Tests    2050\nFailing Tests       1\nRisky/Pending       0\nAsserts         99660\nTime           462s  (godot 6 개)\n\n떨어진 파일 1 개:\n  res://tests/core/tools/test_no_triple_blank_lines.gd\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 1 · guard 0 ---\n"
+ },
+ {
+  "time": "2026-09-30 16:26:38",
+  "epoch": 1790753198,
+  "type": "pass",
+  "title": "통과 — G-169 단계 5 ((앞 단계 QA) 이 변경 전의 저장본에서 주민이 열어 둔 문은 계속 열려 있다)",
+  "group": "G-169",
+  "step": "5",
+  "attempt": "2",
+  "report": {
+   "problem": "G-169.4 전 저장본의 열린 문은 사람이 연 것으로 본다 — save.md 문 줄에 적고 테스트로 지켰다 (바뀐 곳만 66개 파일 432개 테스트 통과)",
+   "approach": "옮겨 오는 처리를 두지 않았다 — 옛 저장본은 누가 문을 열었는지 모른다. save.md 문 줄에 「G-169.4 전 저장본의 열린 문은 사람이 연 것으로 본다」를 적고, buildings.gd restore 에 주석을 달았다. 테스트는 folk 키를 지운 저장본을 불러와 문이 열린 채 서고 · folk_opened=false 이며 · 주민이 닫지 않고 · 사람이 우클릭으로 닫는 것을 단언한다. 앞 시도는 새 함수 앞에 빈 줄 셋을 둬 test_no_triple_blank_lines 에 걸렸다 — 앞뒤 빈 줄을 둘로 맞췄다. 바뀐 곳 그물(changed_tests.py) + test_no_triple_blank_lines 를 돌려 66개 파일 432개 통과.",
+   "why": "",
+   "files": [
+    "spec/01_settings/save.md",
+    "game/build/buildings.gd",
+    "game/tests/automation/villagers/test_villager_door_close.gd"
+   ],
+   "decision": null
+  },
+  "qa": {
+   "pass": true,
+   "checks": [
+    {
+     "ok": true,
+     "criterion": "이 변경 전의 저장본에서 주민이 열어 둔 문은 계속 열려 있다 — 예전 저장본에는 folk 키가 없어서, 불러오면 folk_opened=false 가 되고 주민이 그 문을 사람이 연 문으로 여긴다. 사람이 이미 겪은 그 저장본의 문은 우클릭으로 닫아야 한다. 막는 문제는 아니다. 옮겨 오는 처리를 두지 않을 거라면 spec/01_settings/save.md 의 문 줄에 「G-169.4 전 저장본의 열린 문은 사람이 연 것으로 본다」 한 줄을 적어 두어라",
+     "evidence": "옮겨 오는 처리를 두지 않는 쪽을 골랐고, spec/01_settings/save.md:49 문 줄에 「G-169.4 전 저장본의 열린 문은 사람이 연 것으로 본다」를 그대로 적었다(까닭: folk 키가 없어 누가 열었는지 모른다 · 우클릭으로 닫는다). buildings.gd restore 에도 같은 뜻의 주석을 달았다. test_villager_door_close.gd 의 test_an_open_door_from_a_save_before_folk_counts_as_the_persons 는 주민이 연 문의 저장본에서 folk 키를 지운 뒤 다시 세운다. 그리고 문이 열린 채 서는지, folk_opened=false 인지, 주민이 FRAMES 동안 닫지 않는지, 사람이 우클릭하면 닫히는지를 단언한다. QA 가 일부러 깨 보았다 — restore 의 기본값을 d.get(\"folk\", true) 로 바꾸자 이 파일에서 9개 중 1개가 떨어졌고, 본 뒤 되돌렸다. 루프의 전체 실행(test.log)은 2051/2051 통과했고, 앞 시도에 걸렸던 test_no_triple_blank_lines 도 통과했다. guard 도 통과했다."
+    }
+   ],
+   "issues": [],
+   "good": []
+  },
+  "test": "1s  res://tests/core/input/test_input_spec_table.gd\nok      1s  res://tests/core/test_guard.gd\nok      1s  res://tests/core/input/test_pointer.gd\nok      1s  res://tests/core/test_grid.gd\nok      1s  res://tests/core/test_project_setup.gd\nok      1s  res://tests/core/tools/test_no_move_to_trash.gd\nok      1s  res://tests/core/tools/test_no_triple_blank_lines.gd\nok      1s  res://tests/core/tools/test_test_totals_awk.gd\nok      1s  res://tests/craft/recipes/test_recipes_temporary_note.gd\nok      1s  res://tests/craft/recipes/test_hand_craft.gd\nok      1s  res://tests/craft/recipes/test_step_count_is_in_one_place.gd\nok      1s  res://tests/craft/stations/test_no_old_workbench_name.gd\nok      1s  res://tests/craft/recipes/test_tool_recipes.gd\nok      1s  res://tests/craft/test_from_empty_hands_asserts_to_the_end.gd\nok      1s  res://tests/life/climbing/test_climbing_temporary_notes.gd\nok      1s  res://tests/life/climbing/test_grapple_magazine_size.gd\nok      2s  res://tests/craft/stations/test_station_recipes.gd\nok      1s  res://tests/life/farming/test_farming_temporary_notes.gd\nok      1s  res://tests/life/farming/test_seed_sources.gd\nok      1s  res://tests/life/farming/test_fertilizer_farm_plot.gd\nok      1s  res://tests/life/gathering/test_herb_kinds.gd\nok      1s  res://tests/settings/save/test_atomic_save.gd\nok      1s  res://tests/player/movement_controls/test_player_notes.gd\nok      1s  res://tests/settings/save/test_broken_stays_broken.gd\nok      1s  res://tests/settings/save/test_old_belladonna_seed.gd\nok      2s  res://tests/settings/save/test_save_store.gd\nok      1s  res://tests/settings/test_translation.gd\nok      1s  res://tests/settings/test_world_settings.gd\nok      2s  res://tests/settings/save/test_close_window_save.gd\nok      1s  res://tests/test_po_is_in_one_place.gd\nok      1s  res://tests/test_temp_dir.gd\nok      1s  res://tests/test_temp_dirs_are_cleaned.gd\nok      1s  res://tests/ui/hud/test_bag_temporary_note.gd\nok      1s  res://tests/ui/hud/test_chest_window_hint.gd\nok      1s  res://tests/ui/hud/test_chest_window_death.gd\nok      2s  res://tests/ui/hud/test_bag_gear.gd\nok      1s  res://tests/ui/hud/test_hud_label_readable.gd\nok      2s  res://tests/ui/hud/test_chest_window_scroll.gd\nok      2s  res://tests/ui/hud/test_station_collect_note.gd\nok      1s  res://tests/ui/hud/test_station_window_temporary_note.gd\nok      2s  res://tests/ui/hud/test_item_slot_names_apart.gd\nok      2s  res://tests/ui/hud/test_item_slot_fit.gd\nok      1s  res://tests/ui/menu/test_character_preview.gd\nok      1s  res://tests/ui/menu/test_character_create.gd\nok      1s  res://tests/ui/menu/test_character_select.gd\nok      1s  res://tests/ui/menu/test_pause_menu_dim_note.gd\nok      1s  res://tests/ui/menu/test_menu_text.gd\nok      1s  res://tests/ui/menu/test_world_create.gd\nok      1s  res://tests/ui/menu/test_main_menu.gd\nok      1s  res://tests/ui/theme/test_ui_theme.gd\nok      1s  res://tests/world/frontier_islands/test_island_design_notes.gd\nok      1s  res://tests/world/day_night/test_day_length.gd\nok      1s  res://tests/world/frontier_islands/test_islands.gd\nok      1s  res://tests/world/storage/test_chest.gd\nok      1s  res://tests/world/day_night/test_game_clock.gd\nok      1s  res://tests/world/storage/test_chest_save.gd\nok      1s  res://tests/world/storage/test_reach_temporary_notes.gd\nok      1s  res://tests/world/terrain/test_deprecated_call_source.gd\nok      1s  res://tests/combat/damage_death/test_health.gd\nok      1s  res://tests/life/climbing/test_stamina.gd\n\n==============================================\n= 합친 결과 (파일마다 따로 돌렸다)\n==============================================\nScripts           256\nTests            2051\nPassing Tests    2051\nFailing Tests       0\nRisky/Pending       0\nAsserts         99661\nTime           466s  (godot 6 개)\n\n파일별 로그: /Users/tuna/Desktop/naru/.loop/out/test_files/\n\n---- All tests passed! ----\n--- guard ---\nguard: 통과 — 커서를 직접 다루는 곳이 없고, 찍는 창이 포커스를 뺏지 않는다\n--- 전체 테스트 0 · guard 0 ---\n",
+  "commit": "39eeb05d"
  }
 ]
