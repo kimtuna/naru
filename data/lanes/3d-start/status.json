@@ -1,9 +1,9 @@
 {
- "state": "running",
- "reason": "G-171 합쳤다",
- "updated": "2026-09-30 20:31:48",
- "updated_epoch": 1790767908,
- "ended": "2026-09-30 18:03:18",
+ "state": "done",
+ "reason": "목록의 할 일을 모두 처리했다",
+ "updated": "2026-09-30 20:31:50",
+ "updated_epoch": 1790767910,
+ "ended": "2026-09-30 20:31:50",
  "progress": {
   "groups_total": 63,
   "groups_done": 63,
